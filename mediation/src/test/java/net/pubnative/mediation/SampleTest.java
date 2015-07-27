@@ -2,10 +2,10 @@ package net.pubnative.mediation;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
 
-import android.test.AndroidTestCase;
+import junit.framework.TestCase;
 import android.test.suitebuilder.annotation.SmallTest;
 
-public class SampleTest extends AndroidTestCase
+public class SampleTest extends TestCase
 {
     protected void setUp() throws Exception
     {
@@ -16,16 +16,16 @@ public class SampleTest extends AndroidTestCase
     {
         super.tearDown();
     }
-    
+
     @SmallTest
-    public void testSampleFail()
+    public void testSampleNull()
     {
         PubnativeAdModel model = new PubnativeAdModel();
-        assertNotNull("Model shoulr not be null", null);
+        assertNotNull("Model should not be null", model);
     }
-    
+
     @SmallTest
-    public void testSampleSuccess()
+    public void testSampleTrue()
     {
         assertTrue("This should always success", true);
     }
