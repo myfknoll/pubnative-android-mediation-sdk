@@ -9,7 +9,7 @@ public class PubnativeNetworkModelTest
     @Test
     public void test_creationNotNull()
     {
-        PubnativeConfigModel model = new PubnativeConfigModel();
+        PubnativeNetworkModel model = new PubnativeNetworkModel();
         assertThat(model).isNotNull();
     }
 
