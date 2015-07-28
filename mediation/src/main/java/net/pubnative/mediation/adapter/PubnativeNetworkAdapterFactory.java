@@ -1,8 +1,8 @@
 package net.pubnative.mediation.adapter;
 
-import java.lang.reflect.Constructor;
-
 import net.pubnative.mediation.model.PubnativeNetworkModel;
+
+import java.lang.reflect.Constructor;
 
 public class PubnativeNetworkAdapterFactory
 {
@@ -12,7 +12,7 @@ public class PubnativeNetworkAdapterFactory
 
         try
         {
-            Class<?> networkClass = Class.forName(networkModel.name);
+            Class<?> networkClass = Class.forName(networkModel.adapter);
             Constructor<?> constructor= networkClass.getConstructor(PubnativeNetworkModel.class);
             result = (PubnativeNetworkAdapter) constructor.newInstance(networkModel);
         }

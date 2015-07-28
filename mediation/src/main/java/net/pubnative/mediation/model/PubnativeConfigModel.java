@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class PubnativeConfigModel
 {
-    public String overdueDate;
+    public int version;
+    public String fallback_network;
     public ArrayList<PubnativeNetworkModel> networks;
 }
