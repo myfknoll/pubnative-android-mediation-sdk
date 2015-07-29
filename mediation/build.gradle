@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 21
     buildToolsVersion "22.0.1"
 
     defaultConfig {
         minSdkVersion 10
-        targetSdkVersion 22
+        targetSdkVersion 21
         versionCode 1
         versionName "1.0"
     }
@@ -24,7 +24,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    // JVM
+    compile 'com.google.code.gson:gson:2.3.1'
+
+    // JVM tests
     testCompile 'junit:junit:4.12'
     testCompile 'com.squareup.assertj:assertj-android:1.0.0'
     testCompile "org.robolectric:robolectric:3.0"

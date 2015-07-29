@@ -1,0 +1,12 @@
+{
+  "version":1,
+  "fallback_network":"net.pubnative.mediation.adapter.network.PubnativeLibraryNetworkAdapter",
+  "networks":
+  [
+    {
+      "adapter":"net.pubnative.mediation.adapter.network.PubnativeLibraryNetworkAdapter",
+      "percent":0,
+      "data":{"test":"test"}
+    }
+  ]
+}

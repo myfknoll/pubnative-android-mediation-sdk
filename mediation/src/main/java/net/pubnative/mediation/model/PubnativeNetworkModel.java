@@ -1,10 +1,10 @@
 package net.pubnative.mediation.model;
 
-import java.util.Map;
+import java.util.HashMap;
 
 public class PubnativeNetworkModel
 {
     public String adapter;
     public int percent;
-    public Map<String, String> data;
+    public HashMap<String, String> data;
 }
