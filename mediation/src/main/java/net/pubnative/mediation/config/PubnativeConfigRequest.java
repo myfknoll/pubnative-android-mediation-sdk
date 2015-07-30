@@ -4,7 +4,8 @@ import net.pubnative.mediation.model.PubnativeConfigModel;
 
 public class PubnativeConfigRequest
 {
-    private PubnativeConfigRequestListener listener;
+    protected PubnativeConfigRequestListener listener;
+
     public void request(String app_token, PubnativeConfigRequestListener listener)
     {
         if(listener != null)
@@ -26,7 +27,7 @@ public class PubnativeConfigRequest
         }
     }
     
-    private void invokeStart()
+    protected void invokeStart()
     {
         if(this.listener != null)
         {
@@ -34,7 +35,7 @@ public class PubnativeConfigRequest
         }
     }
     
-    private void invokeLoaded(PubnativeConfigModel config)
+    protected void invokeLoaded(PubnativeConfigModel config)
     {
         if(this.listener != null)
         {
@@ -42,7 +43,7 @@ public class PubnativeConfigRequest
         }
     }
     
-    private void invokeFailed(Exception exception)
+    protected void invokeFailed(Exception exception)
     {
         if(this.listener != null)
         {
