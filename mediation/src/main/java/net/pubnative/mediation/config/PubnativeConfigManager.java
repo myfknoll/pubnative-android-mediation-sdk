@@ -5,11 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 
-import net.pubnative.mediation.R;
 import net.pubnative.mediation.model.PubnativeConfigModel;
-import net.pubnative.mediation.utils.PubnativeStringUtils;
-
-import java.io.InputStream;
 
 /**
  * Created by davidmartin on 28/07/15.
@@ -23,34 +19,31 @@ public class PubnativeConfigManager
 
     public static synchronized PubnativeConfigModel config(Context context)
     {
-        PubnativeConfigModel result = null;
-
-        // 1. Ensure that there is an stored config
-        if(!PubnativeConfigManager.hasConfig(context))
-        {
-            InputStream configStream = context.getResources().openRawResource(R.raw.default_config);
-            String defaultConfigString = PubnativeStringUtils.readTextFromInputStream(configStream);
-            PubnativeConfigManager.setConfig(context, defaultConfigString);
-        }
+        PubnativeConfigModel currentConfig = null;
 
         // 2. Get stored config
-        String storedConfigString = PubnativeConfigManager.getConfig(context);
-        Gson gson = new Gson();
+        String storedConfigString = PubnativeConfigManager.getConfigString(context);
 
-        PubnativeConfigModel currentModel = gson.fromJson(storedConfigString, PubnativeConfigModel.class);
+        if (storedConfigString != null)
+        {
+            Gson gson = new Gson();
+            currentConfig = gson.fromJson(storedConfigString, PubnativeConfigModel.class);
+        }
 
-        // TODO: [SYNC] Download config from the server >> newModel
-        // TODO: if(model.version < newModel.version)
+        // TODO: if(currentModel == null || configStoredMinutes > currentModel.conf_refresh)
         // TODO: {
-        // TODO:    SharedPreferences.Editor editor = prefs.edit();
-        // TODO:    editor.putString(gson.toJson(newModel));
-        // TODO:    editor.commit();
-        // TODO:    currentModel = newModel;
+        // TODO:    String newConfigString = [DOWNLOAD A NEW CONFIG];
+        // TODO:    PubnativeConfigModel newConfig = gson.fromJson(newConfigString, PubnativeConfigModel.class);
+        // TODO:    if(newConfig != null)
+        // TODO:    {
+        // TODO:        SharedPreferences.Editor editor = prefs.edit();
+        // TODO:        editor.putString(gson.toJson(newModel));
+        // TODO:        editor.commit();
+        // TODO:        currentModel = newModel;
+        // TODO:    }
         // TODO: }
 
-        result = currentModel;
-
-        return result;
+        return currentConfig;
     }
 
     protected static SharedPreferences getSharedPreferences(Context context)
@@ -58,7 +51,7 @@ public class PubnativeConfigManager
         return context.getSharedPreferences(SHARED_PREFERENCES_CONFIG, Context.MODE_PRIVATE);
     }
 
-    protected static synchronized void setConfig(Context context, String config)
+    protected static void setConfigString(Context context, String config)
     {
         SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
@@ -66,7 +59,7 @@ public class PubnativeConfigManager
         editor.commit();
     }
 
-    protected static String getConfig(Context context)
+    protected static String getConfigString(Context context)
     {
         String result = null;
 

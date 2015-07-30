@@ -1,9 +1,16 @@
 package net.pubnative.mediation.request;
 
+import android.content.Context;
+
+import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.model.PubnativeAdModel;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 
@@ -15,8 +22,18 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class)
 public class PubnativeNetworkRequestTest
 {
+    public Context applicationContext;
+
+    @Before
+    public void setUp()
+    {
+        this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
+    }
+
     @Test
     public void test_creationNotNull()
     {
@@ -65,7 +82,7 @@ public class PubnativeNetworkRequestTest
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
-        networkRequestSpy.request("sample_token", listenerMock);
+        networkRequestSpy.request(this.applicationContext, "sample_token", listenerMock);
 
         verify(listenerMock, times(1)).onRequestStarted(networkRequestSpy);
     }
@@ -76,7 +93,7 @@ public class PubnativeNetworkRequestTest
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
-        networkRequestSpy.request(null, listenerMock);
+        networkRequestSpy.request(this.applicationContext, null, listenerMock);
 
         verify(listenerMock, times(1)).onRequestFailed(eq(networkRequestSpy), any(Exception.class));
     }
@@ -85,7 +102,7 @@ public class PubnativeNetworkRequestTest
     public void test_requestWithNullListener()
     {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        networkRequestSpy.request("sample_token", null);
+        networkRequestSpy.request(this.applicationContext, "sample_token", null);
     }
 
     // TODO: Create tests
