@@ -1,24 +1,25 @@
 package net.pubnative.mediation.request;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+import android.content.Context;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
 
+import java.util.ArrayList;
+
 public class PubnativeNetworkRequest
 {
-    private WeakReference<PubnativeNetworkRequestListener> listener;
+    protected PubnativeNetworkRequestListener listener;
     
     public PubnativeNetworkRequest()
     {
         // Do some initialization here
     }
     
-    public void request(String app_token, PubnativeNetworkRequestListener listener)
+    public void request(Context context, String app_token, PubnativeNetworkRequestListener listener)
     {
-        if(listener != null)
+        if(context != null && listener != null)
         {
-            this.listener = new WeakReference<PubnativeNetworkRequestListener>(listener);
+            this.listener = listener;
             if(app_token != null && !app_token.isEmpty())
             {
                 this.invokeStart();
@@ -35,31 +36,31 @@ public class PubnativeNetworkRequest
         }
         else
         {
-            throw new RuntimeException("PubnativeNetworkRequest.request - should specify a listener");
+            throw new RuntimeException("PubnativeNetworkRequest.request - context and listener arguments must be specified");
         }
     }
     
     private void invokeStart()
     {
-        if(this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get().onRequestStarted(this);
+            this.listener.onRequestStarted(this);
         }
     }
     
     private void invokeLoad(ArrayList<PubnativeAdModel> ads)
     {
-        if(this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get().onRequestLoaded(this, ads);
+            this.listener.onRequestLoaded(this, ads);
         }
     }
     
     private void invokeFail(Exception exception)
     {
-        if(this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get().onRequestFailed(this, exception);
+            this.listener.onRequestFailed(this, exception);
         }
     }
 }
