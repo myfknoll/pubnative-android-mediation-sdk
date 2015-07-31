@@ -14,7 +14,6 @@ import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -35,75 +34,76 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void test_creationNotNull()
-    {
-        PubnativeNetworkRequest request = new PubnativeNetworkRequest();
-        assertThat(request).isNotNull();
-    }
-
-    @Test
-    public void test_callbacksWithValidListener()
+    public void invokeCallbacksWorks()
     {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
         networkRequestSpy.listener = listenerMock;
-        networkRequestSpy.invokeStart();
 
+        // onRequestStarted
+        networkRequestSpy.invokeStart();
+        verify(listenerMock, times(1)).onRequestStarted(networkRequestSpy);
+
+        // onRequestLoaded
         ArrayList<PubnativeAdModel> adsMock = mock(ArrayList.class);
         networkRequestSpy.invokeLoad(adsMock);
+        verify(listenerMock, times(1)).onRequestLoaded(networkRequestSpy, adsMock);
 
+        // onRequestFailed
         Exception exceptionMock = mock(Exception.class);
         networkRequestSpy.invokeFail(exceptionMock);
-
-        verify(listenerMock, times(1)).onRequestStarted(networkRequestSpy);
-        verify(listenerMock, times(1)).onRequestLoaded(networkRequestSpy, adsMock);
         verify(listenerMock, times(1)).onRequestFailed(networkRequestSpy, exceptionMock);
     }
 
     @Test
-    public void test_callbacksWithNullListener() throws NullPointerException
+    public void invokeCallbacksWithoutListenerWontCrash()
     {
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
+        PubnativeNetworkRequest requestSpy = spy(PubnativeNetworkRequest.class);
 
         // invoking method with arguments when lister is null
-        networkRequestSpy.invokeStart();
+        requestSpy.listener = null;
+        requestSpy.invokeStart();
 
         ArrayList<PubnativeAdModel> ads = mock(ArrayList.class);
-        networkRequestSpy.invokeLoad(ads);
+        requestSpy.invokeLoad(ads);
 
         Exception exception = mock(Exception.class);
-        networkRequestSpy.invokeFail(exception);
+        requestSpy.invokeFail(exception);
     }
 
     @Test
-    public void test_requestWithValidParams()
+    public void requestWithCorrectParameters()
     {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
-        networkRequestSpy.request(this.applicationContext, "sample_token", listenerMock);
-
+        // Valid parameters
+        networkRequestSpy.request(this.applicationContext, "app_token", "placement_id", listenerMock);
         verify(listenerMock, times(1)).onRequestStarted(networkRequestSpy);
+
+        // TODO: Ensure that the entire workflow works, callbacking an onRequestLoaded
     }
 
     @Test
-    public void test_requestWithNullToken()
+    public void requestWithInvalidParametersCallbacksFail()
     {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
-        networkRequestSpy.request(this.applicationContext, null, listenerMock);
+        // Invalid parameters
+        networkRequestSpy.request(null, "ap_token", "placement_id", listenerMock);
+        networkRequestSpy.request(this.applicationContext, null, "placement_id", listenerMock);
+        networkRequestSpy.request(this.applicationContext, "app_token", null, listenerMock);
+        verify(listenerMock, times(3)).onRequestFailed(eq(networkRequestSpy), any(IllegalArgumentException.class));
 
-        verify(listenerMock, times(1)).onRequestFailed(eq(networkRequestSpy), any(Exception.class));
+        // Invalid listener (just dropping the call, shouldn't crash)
+        networkRequestSpy.request(this.applicationContext, "sample_token", "placement_id", null);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test_requestWithNullListener()
+    @Test
+    public void requestWithoutConfigFails()
     {
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        networkRequestSpy.request(this.applicationContext, "sample_token", null);
+        // TODO: write a test for ensuring that with a null config we get onRequestFailed();
     }
-
-    // TODO: Create tests
 }
