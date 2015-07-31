@@ -40,7 +40,7 @@ public class PubnativeNetworkRequest
         }
     }
     
-    private void invokeStart()
+    protected void invokeStart()
     {
         if(this.listener != null)
         {
@@ -48,7 +48,7 @@ public class PubnativeNetworkRequest
         }
     }
     
-    private void invokeLoad(ArrayList<PubnativeAdModel> ads)
+    protected void invokeLoad(ArrayList<PubnativeAdModel> ads)
     {
         if(this.listener != null)
         {
@@ -56,7 +56,7 @@ public class PubnativeNetworkRequest
         }
     }
     
-    private void invokeFail(Exception exception)
+    protected void invokeFail(Exception exception)
     {
         if(this.listener != null)
         {
