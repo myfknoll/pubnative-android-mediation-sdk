@@ -7,7 +7,7 @@ import net.pubnative.mediation.model.PubnativeAdModel;
 
 public class PubnativeNetworkRequest
 {
-    private WeakReference<PubnativeNetworkRequestListener> listener;
+    protected PubnativeNetworkRequestListener listener;
     
     public PubnativeNetworkRequest()
     {
@@ -18,7 +18,7 @@ public class PubnativeNetworkRequest
     {
         if(listener != null)
         {
-            this.listener = new WeakReference<PubnativeNetworkRequestListener>(listener);
+            this.listener = listener;
             if(app_token != null && !app_token.isEmpty())
             {
                 this.invokeStart();
@@ -39,27 +39,27 @@ public class PubnativeNetworkRequest
         }
     }
     
-    private void invokeStart()
+    protected void invokeStart()
     {
-        if(this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get().onRequestStarted(this);
+            this.listener.onRequestStarted(this);
         }
     }
     
-    private void invokeLoad(ArrayList<PubnativeAdModel> ads)
+    protected void invokeLoad(ArrayList<PubnativeAdModel> ads)
     {
-        if(this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get().onRequestLoaded(this, ads);
+            this.listener.onRequestLoaded(this, ads);
         }
     }
     
-    private void invokeFail(Exception exception)
+    protected void invokeFail(Exception exception)
     {
-        if(this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get().onRequestFailed(this, exception);
+            this.listener.onRequestFailed(this, exception);
         }
     }
 }
