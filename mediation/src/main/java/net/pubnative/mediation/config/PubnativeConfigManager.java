@@ -17,7 +17,7 @@ public class PubnativeConfigManager
 
     private PubnativeConfigManager(){};
 
-    public static synchronized PubnativeConfigModel config(Context context)
+    public static synchronized PubnativeConfigModel config(Context context, String app_token)
     {
         PubnativeConfigModel currentConfig = null;
 

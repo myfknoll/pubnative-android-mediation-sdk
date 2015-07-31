@@ -36,12 +36,12 @@ public class PubnativeConfigManagerTest
     {
         InputStream configStream = this.getClass().getResourceAsStream("/test_config.json");
         assertThat(configStream).isNotNull();
-        String configString = PubnativeStringUtils.readTextFromInputStream(configStream);
+        String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
         assertThat(configString).isNotNull().isNotEmpty();
 
         // We can set a config and returns the same that has been set
         PubnativeConfigManager.setConfigString(applicationContext, configString);
-        assertThat(PubnativeConfigManager.config(applicationContext)).isNotNull();
+        assertThat(PubnativeConfigManager.config(applicationContext, "app_token")).isNotNull();
         assertThat(PubnativeConfigManager.getConfigString(applicationContext)).isEqualTo(configString);
     }
 

@@ -9,7 +9,7 @@ import java.io.InputStream;
  */
 public class PubnativeStringUtils
 {
-    public static String readTextFromInputStream(InputStream inputStream)
+    public static String readStringFromInputStream(InputStream inputStream)
     {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
