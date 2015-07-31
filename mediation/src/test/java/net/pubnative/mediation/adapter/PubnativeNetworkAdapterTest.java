@@ -1,12 +1,13 @@
 package net.pubnative.mediation.adapter;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
-import net.pubnative.mediation.model.PubnativeNetworkModel;
 
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -20,40 +21,43 @@ public class PubnativeNetworkAdapterTest
 {
 
     @Test
-    public void test_callbacksWithValidListener()
+    public void invokeCallbacksWithValidListener()
     {
-        PubnativeNetworkModel testModel = mock(PubnativeNetworkModel.class);
-        PubnativeNetworkAdapterListener testListener = mock(PubnativeNetworkAdapterListener.class);
+        HashMap<String, Object> adapterConfigMock = mock(HashMap.class);
+        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
 
-        PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(testModel)
+        PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock)
         {
             @Override
             public void request()
             {
-
+                // Do nothing
             }
         });
 
-        adapterInstance.listener = testListener;
+        adapterInstance.listener = listenerSpy;
+
+        // onRequestStarted
         adapterInstance.invokeStart();
+        verify(listenerSpy, times(1)).onAdapterRequestStarted(adapterInstance);
 
-        ArrayList<PubnativeAdModel> mockAdModelArrayList = mock(ArrayList.class);
-        adapterInstance.invokeLoaded(mockAdModelArrayList);
+        // onRequestLoaded
+        ArrayList<PubnativeAdModel> adsMock = mock(ArrayList.class);
+        adapterInstance.invokeLoaded(adsMock);
+        verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterInstance), eq(adsMock));
 
-        Exception mockException = mock(Exception.class);
-        adapterInstance.invokeFailed(mockException);
-
-        verify(testListener,times(1)).onAdapterRequestStarted(adapterInstance);
-        verify(testListener,times(1)).onAdapterRequestLoaded(adapterInstance, mockAdModelArrayList);
-        verify(testListener,times(1)).onAdapterRequestFailed(adapterInstance,mockException);
+        // onRequestFailed
+        Exception exceptionMock = mock(Exception.class);
+        adapterInstance.invokeFailed(exceptionMock);
+        verify(listenerSpy, times(1)).onAdapterRequestFailed(eq(adapterInstance), eq(exceptionMock));
 
     }
 
     @Test
-    public void test_callbacksWithNullListener()
+    public void invokeCallbacksWithNullListener()
     {
-        PubnativeNetworkModel mockModel = mock(PubnativeNetworkModel.class);
-        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(mockModel)
+        HashMap<String, Object> adapterConfigMock = mock(HashMap.class);
+        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(adapterConfigMock)
         {
             @Override
             public void request()
@@ -64,33 +68,7 @@ public class PubnativeNetworkAdapterTest
 
         adapterSpy.listener = null;
         adapterSpy.invokeStart();
-        adapterSpy.invokeLoaded(null);
-        adapterSpy.invokeFailed(null);
-    }
-
-    @Test
-    public void test_callbacksWithInvalidListener()
-    {
-        PubnativeNetworkModel mockModel = mock(PubnativeNetworkModel.class);
-        PubnativeNetworkAdapterListener mockListener = mock(PubnativeNetworkAdapterListener.class);
-
-        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(mockModel)
-        {
-            @Override
-            public void request()
-            {
-                // Do nothing
-            }
-        });
-
-        adapterSpy.listener = mockListener;
-        adapterSpy.invokeStart();
-
-        ArrayList<PubnativeAdModel> mockAdModelArrayList = mock(ArrayList.class);
-        adapterSpy.invokeLoaded(mockAdModelArrayList);
-
-        Exception mockException = mock(Exception.class);
-        adapterSpy.invokeFailed(mockException);
-
+        adapterSpy.invokeLoaded(mock(ArrayList.class));
+        adapterSpy.invokeFailed(mock(Exception.class));
     }
 }

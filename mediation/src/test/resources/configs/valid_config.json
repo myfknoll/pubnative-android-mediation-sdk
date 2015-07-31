@@ -1,0 +1,79 @@
+{
+  "conf_refresh":1,
+  "networks":
+  {
+    "sample":
+    {
+      "adapter" : "PubnativeLibraryNetworkAdapter",
+      "timeout" : 10
+    },
+    "sample2":
+    {
+      "adapter" : "PubnativeLibraryNetworkAdapter",
+      "timeout" : 10
+    },
+    "sample3":
+    {
+      "adapter" : "PubnativeLibraryNetworkAdapter",
+      "timeout" : 10
+    },
+    "sample4":
+    {
+      "adapter" : "PubnativeLibraryNetworkAdapter",
+      "timeout" : 10
+    }
+  },
+  "ad_formats":
+  {
+    "ad_format":
+    {
+      "setings" : {}
+    }
+  },
+  "placements":
+  [
+    {
+      "placement_id" : "placement_id",
+      "ad_format" : "ad_format",
+      "priority_rules":[
+        {
+          "priority_rule_id" : 1,
+          "rank" : 1,
+          "network" :
+          {
+            "name" : "sample",
+            "params" : {}
+          }
+        },
+        {
+          "priority_rule_id" : 2,
+          "rank" : 2,
+          "network" :
+          {
+            "name" : "sample2",
+            "params" : {}
+          }
+        },
+        {
+          "priority_rule_id" : 3,
+          "rank" : 3,
+          "network" :
+          {
+            "name" : "sample3",
+            "params" : {}
+          }
+        },
+        {
+          "priority_rule_id" : 4,
+          "rank" : 4,
+          "network" :
+          {
+            "name" : "sample4",
+            "params" : {}
+          }
+        }
+      ],
+      "delivery_rules":[]
+    }
+  ]
+}

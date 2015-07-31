@@ -1,55 +1,57 @@
 package net.pubnative.mediation.adapter;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
-import net.pubnative.mediation.model.PubnativeNetworkModel;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public abstract class PubnativeNetworkAdapter
 {
     protected PubnativeNetworkAdapterListener listener;
-    protected PubnativeNetworkModel networkModel;
-    
-    public PubnativeNetworkAdapter(PubnativeNetworkModel networkModel)
+    protected Map                             data;
+    protected Integer                         ad_count;
+
+    public PubnativeNetworkAdapter(Map data)
     {
-        this.networkModel = networkModel;
+        this.data = data;
     }
-    
-    public void doRequest(PubnativeNetworkAdapterListener listener)
+
+    public void doRequest(Integer ad_count, PubnativeNetworkAdapterListener listener)
     {
-        if(this.listener != null)
+        if (listener != null)
         {
             this.listener = listener;
+            this.ad_count = ad_count;
             this.invokeStart();
             this.request();
         }
         else
         {
-            new RuntimeException("PubnativeNetworkAdapter.doRequest - should specify a listener");
+            System.out.println("PubnativeNetworkAdapter.doRequest - listener not specified, dropping the call");
         }
     }
-    
+
     public abstract void request();
-    
+
     protected void invokeStart()
     {
-        if(this.listener != null)
+        if (this.listener != null)
         {
             this.listener.onAdapterRequestStarted(this);
         }
     }
-    
-    protected void invokeLoaded(ArrayList<PubnativeAdModel> networkAds)
+
+    protected void invokeLoaded(List<PubnativeAdModel> ads)
     {
-        if(this.listener != null)
+        if (this.listener != null)
         {
-            this.listener.onAdapterRequestLoaded(this, networkAds);
+            this.listener.onAdapterRequestLoaded(this, ads);
         }
     }
-    
+
     protected void invokeFailed(Exception exception)
     {
-        if(this.listener != null)
+        if (this.listener != null)
         {
             this.listener.onAdapterRequestFailed(this, exception);
         }

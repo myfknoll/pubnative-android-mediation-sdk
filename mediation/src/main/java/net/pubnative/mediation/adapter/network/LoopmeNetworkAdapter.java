@@ -1,13 +1,14 @@
 package net.pubnative.mediation.adapter.network;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.model.PubnativeNetworkModel;
+
+import java.util.Map;
 
 public class LoopmeNetworkAdapter extends PubnativeNetworkAdapter
 {
-    public LoopmeNetworkAdapter(PubnativeNetworkModel networkModel)
+    public LoopmeNetworkAdapter(Map data)
     {
-        super(networkModel);
+        super(data);
         // TODO Auto-generated constructor stub
     }
 
@@ -15,5 +16,6 @@ public class LoopmeNetworkAdapter extends PubnativeNetworkAdapter
     public void request()
     {
         // TODO Auto-generated method stub
+        this.invokeLoaded(null);
     }
 }

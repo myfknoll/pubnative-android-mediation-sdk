@@ -10,4 +10,10 @@ public class PubnativePriorityRulesModel
     public int                     priority_rule_id;
     public int                     rank;
     public HashMap<String, Object> network;
+
+    public interface NetworkContract
+    {
+        String NAME   = "name";
+        String PARAMS = "params";
+    }
 }

@@ -1,12 +1,14 @@
 package net.pubnative.mediation.adapter;
 
-import java.util.ArrayList;
-
 import net.pubnative.mediation.model.PubnativeAdModel;
+
+import java.util.List;
 
 public interface PubnativeNetworkAdapterListener
 {
-    public void onAdapterRequestStarted(PubnativeNetworkAdapter adapter);
-    public void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, ArrayList<PubnativeAdModel> ads);
-    public void onAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception);
+    void onAdapterRequestStarted(PubnativeNetworkAdapter adapter);
+
+    void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, List<PubnativeAdModel> ads);
+
+    void onAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception);
 }
