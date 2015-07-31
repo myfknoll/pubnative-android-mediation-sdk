@@ -1,14 +1,14 @@
 package net.pubnative.mediation.adapter;
 
-import java.util.ArrayList;
-
 import net.pubnative.mediation.model.PubnativeAdModel;
 import net.pubnative.mediation.model.PubnativeNetworkModel;
 
+import java.util.ArrayList;
+
 public abstract class PubnativeNetworkAdapter
 {
-    private PubnativeNetworkAdapterListener listener;
-    private PubnativeNetworkModel networkModel;
+    protected PubnativeNetworkAdapterListener listener;
+    protected PubnativeNetworkModel networkModel;
     
     public PubnativeNetworkAdapter(PubnativeNetworkModel networkModel)
     {
@@ -31,7 +31,7 @@ public abstract class PubnativeNetworkAdapter
     
     public abstract void request();
     
-    private void invokeStart()
+    protected void invokeStart()
     {
         if(this.listener != null)
         {
@@ -39,7 +39,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
     
-    private void invokeLoaded(ArrayList<PubnativeAdModel> networkAds)
+    protected void invokeLoaded(ArrayList<PubnativeAdModel> networkAds)
     {
         if(this.listener != null)
         {
@@ -47,7 +47,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
     
-    private void invokeFailed(Exception exception)
+    protected void invokeFailed(Exception exception)
     {
         if(this.listener != null)
         {
