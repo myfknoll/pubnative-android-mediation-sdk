@@ -3,7 +3,6 @@ package net.pubnative.mediation.config;
 import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,8 +10,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-
-import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,56 +22,76 @@ public class PubnativeConfigManagerTest
     @Before
     public void setUp()
     {
-        applicationContext = RuntimeEnvironment.application.getApplicationContext();
+        this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
 
         // Clean the manager on every test
-        PubnativeConfigManager.setConfigString(applicationContext, null);
+        PubnativeConfigManager.setConfigString(this.applicationContext, null);
     }
 
     @Test
-    public void test_returnedConfigIsTheLastOne()
+    public void configWithNullString()
     {
-        InputStream configStream = this.getClass().getResourceAsStream("/test_config.json");
-        assertThat(configStream).isNotNull();
-        String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
-        assertThat(configString).isNotNull().isNotEmpty();
-
-        // We can set a config and returns the same that has been set
-        PubnativeConfigManager.setConfigString(applicationContext, configString);
-        assertThat(PubnativeConfigManager.config(applicationContext, "app_token")).isNotNull();
-        assertThat(PubnativeConfigManager.getConfigString(applicationContext)).isEqualTo(configString);
+        assertThat(PubnativeConfigManager.getConfig(this.applicationContext, "app_token")).isNull();
     }
 
     @Test
-    public void test_getConfigString()
+    public void configWithDifferentJSONs()
     {
-        // getConfigString returns null when the config is not set
-        String storedConfig = PubnativeConfigManager.getConfigString(applicationContext);
+        // Valid getConfig  >> Should return an initializedConfig
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json");
+        assertThat(PubnativeConfigManager.getConfig(this.applicationContext, "app_token")).isNotNull();
+
+        // Empty getConfig  >> Should return an empty getConfig
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json");
+        assertThat(PubnativeConfigManager.getConfig(this.applicationContext, "app_token")).isNull();
+
+        // Empty JSON "{}"  >> Should return an empty getConfig
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty.json");
+        assertThat(PubnativeConfigManager.getConfig(this.applicationContext, "app_token")).isNull();
+
+        // Invalid JSON "{..<useless_data>..}" >> Should return an empty getConfig
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "invalid.json");
+        assertThat(PubnativeConfigManager.getConfig(this.applicationContext, "app_token")).isNull();
+
+        // Broken JSON "{"
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "broken.json");
+        assertThat(PubnativeConfigManager.getConfig(this.applicationContext, "app_token")).isNull();
+    }
+
+    @Test
+    public void getConfigWorks()
+    {
+        // getConfigString returns null when the getConfig is not set
+        String storedConfig = PubnativeConfigManager.getConfigString(this.applicationContext);
         assertThat(storedConfig).isNull();
 
-        // getConfigString returns the latest setted config
+        // getConfigString returns the latest setted getConfig
         String config1String = "config1";
         String config2String = "config2";
-        PubnativeConfigManager.setConfigString(applicationContext, config1String);
-        String stored_config_1 = PubnativeConfigManager.getConfigString(applicationContext);
-        PubnativeConfigManager.setConfigString(applicationContext, config2String);
-        String stored_config_2 = PubnativeConfigManager.getConfigString(applicationContext);
+        PubnativeConfigManager.setConfigString(this.applicationContext, config1String);
+        String stored_config_1 = PubnativeConfigManager.getConfigString(this.applicationContext);
+        PubnativeConfigManager.setConfigString(this.applicationContext, config2String);
+        String stored_config_2 = PubnativeConfigManager.getConfigString(this.applicationContext);
         assertThat(stored_config_1).isNotEqualTo(stored_config_2);
     }
 
     @Test
-    public void test_setConfigString()
+    public void setConfigWorks()
     {
-        String configMockString = "config";
-        // setConfigString is able to set the config and sets the correct one
-        PubnativeConfigManager.setConfigString(applicationContext, configMockString);
-        assertThat(PubnativeConfigManager.hasConfig(applicationContext)).isTrue();
-        assertThat(PubnativeConfigManager.getConfigString(applicationContext)).isEqualTo(configMockString);
+        String configMockString = "getConfig";
+        // setConfigString is able to set the getConfig and sets the correct one
+        PubnativeConfigManager.setConfigString(this.applicationContext, configMockString);
+        assertThat(PubnativeConfigManager.hasConfig(this.applicationContext)).isTrue();
+        assertThat(PubnativeConfigManager.getConfigString(this.applicationContext)).isEqualTo(configMockString);
 
         // setConfigString is able to remove the current string when there is already one
-        PubnativeConfigManager.setConfigString(applicationContext, null);
-        assertThat(PubnativeConfigManager.hasConfig(applicationContext)).isFalse();
+        PubnativeConfigManager.setConfigString(this.applicationContext, "");
+        assertThat(PubnativeConfigManager.hasConfig(this.applicationContext)).isFalse();
+
+        // setConfigString is able to remove the current string when there is already one
+        PubnativeConfigManager.setConfigString(this.applicationContext, null);
+        assertThat(PubnativeConfigManager.hasConfig(this.applicationContext)).isFalse();
     }
 
-    // TODO: Do some multithreading tests over config
+    // TODO: Do some multithreading tests over getConfig
 }

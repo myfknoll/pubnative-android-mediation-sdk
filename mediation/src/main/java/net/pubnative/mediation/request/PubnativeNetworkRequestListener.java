@@ -1,12 +1,14 @@
 package net.pubnative.mediation.request;
 
-import java.util.ArrayList;
-
 import net.pubnative.mediation.model.PubnativeAdModel;
+
+import java.util.List;
 
 public interface PubnativeNetworkRequestListener
 {
-    public void onRequestStarted(PubnativeNetworkRequest request);
-    public void onRequestLoaded(PubnativeNetworkRequest request, ArrayList<PubnativeAdModel> ads);
-    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception);
+    void onRequestStarted(PubnativeNetworkRequest request);
+
+    void onRequestLoaded(PubnativeNetworkRequest request, List<PubnativeAdModel> ads);
+
+    void onRequestFailed(PubnativeNetworkRequest request, Exception exception);
 }
