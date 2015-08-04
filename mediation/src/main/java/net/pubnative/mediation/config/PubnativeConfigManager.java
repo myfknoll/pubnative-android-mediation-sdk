@@ -10,53 +10,48 @@ import net.pubnative.mediation.model.PubnativeConfigModel;
 
 import java.util.concurrent.TimeUnit;
 
+import static net.pubnative.mediation.model.PubnativeConfigModel.ConfigContract;
 /**
  * Created by davidmartin on 28/07/15.
  */
 public class PubnativeConfigManager
 {
     protected static final String SHARED_PREFERENCES_CONFIG = "net.pubnative.mediation";
-    protected static final String CONFIG_KEY                = "net.pubnative.mediation.getConfig";
-    private static final String APP_TOKEN_KEY               = "net.pubnative.mediation.app_token";
-    private static final String TIMESTAMP_KEY               = "net.pubnative.mediation.timestamp";
-    private static final String REFRESH_KEY                 = "net.pubnative.mediation.refresh_time";
+    protected static final String CONFIG_STRING_KEY         = "config";
+    protected static final String APP_TOKEN_STRING_KEY      = "appToken";
+    protected static final String TIMESTAMP_LONG_KEY        = "config.timestamp";
+    protected static final String REFRESH_LONG_KEY          = "refresh";
 
     private PubnativeConfigManager()
     {
     }
 
-    public static synchronized PubnativeConfigModel getConfig(Context context, String app_token)
+    public static synchronized PubnativeConfigModel getConfig(Context context, String appToken)
     {
         PubnativeConfigModel currentConfig = null;
 
-        // 2. Get stored getConfig
-        String storedConfigString = PubnativeConfigManager.getConfigString(context);
-
-        if (storedConfigString != null)
+        if (context != null && !TextUtils.isEmpty(appToken))
         {
-            Gson gson = new Gson();
-            try
+            // Downloads if needed
+            if (PubnativeConfigManager.configNeedsUpdate(context, appToken))
             {
-                currentConfig = gson.fromJson(storedConfigString, PubnativeConfigModel.class);
+                downloadConfig();
             }
-            catch (Exception e)
+
+            String configString = PubnativeConfigManager.getConfigString(context);
+            if (!TextUtils.isEmpty(configString))
             {
-                System.out.println("PubnativeConfigManager.getConfig - Error:" + e);
+                Gson gson = new Gson();
+                try
+                {
+                    currentConfig = gson.fromJson(configString, PubnativeConfigModel.class);
+                }
+                catch (Exception e)
+                {
+                    System.out.println("PubnativeConfigManager.getConfig - Error:" + e);
+                }
             }
         }
-
-        // TODO: if(currentModel == null || configStoredMinutes > currentModel.conf_refresh)
-        // TODO: {
-        // TODO:    String newConfigString = [DOWNLOAD A NEW CONFIG];
-        // TODO:    PubnativeConfigModel newConfig = gson.fromJson(newConfigString, PubnativeConfigModel.class);
-        // TODO:    if(newConfig != null)
-        // TODO:    {
-        // TODO:        SharedPreferences.Editor editor = prefs.edit();
-        // TODO:        editor.putString(gson.toJson(newModel));
-        // TODO:        editor.commit();
-        // TODO:        currentModel = newModel;
-        // TODO:    }
-        // TODO: }
 
         // Ensure not returning an invalid getConfig
         if (currentConfig != null && currentConfig.isNullOrEmpty())
@@ -67,151 +62,233 @@ public class PubnativeConfigManager
         return currentConfig;
     }
 
+
+    protected static void downloadConfig()
+    {
+        // TODO: Download config
+    }
+
+    protected static boolean configNeedsUpdate(Context context, String appToken)
+    {
+        boolean result = false;
+        String configString = PubnativeConfigManager.getConfigString(context);
+        if (configString == null)
+        {
+            // Not assigned config
+            result = true;
+        }
+        else
+        {
+            String storedAppToken = PubnativeConfigManager.getAppToken(context);
+            if (TextUtils.isEmpty(storedAppToken) || TextUtils.isEmpty(appToken) || !storedAppToken.equals(appToken))
+            {
+                //Different or not assigned app token
+                result = true;
+            }
+            else
+            {
+                Long refresh = PubnativeConfigManager.getRefresh(context);
+                Long storedTimestamp = PubnativeConfigManager.getTimestamp(context);
+
+                if (refresh == null || storedTimestamp == null)
+                {
+                    // Not assigned refresh or timestamp
+                    result = true;
+                }
+                else
+                {
+                    Long currentTimestamp = System.currentTimeMillis();
+                    Long elapsed = TimeUnit.MILLISECONDS.toMinutes(currentTimestamp - storedTimestamp);
+                    if (elapsed >= refresh)
+                    {
+                        // Elapsed refresh time
+                        result = true;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    // CONFIG
+    protected static String getConfigString(Context context)
+    {
+        return PubnativeConfigManager.getStringSharedPreference(context, CONFIG_STRING_KEY);
+    }
+
+    protected static void setConfigString(Context context, String config)
+    {
+        PubnativeConfigManager.setStringSharedPreference(context, CONFIG_STRING_KEY, config);
+    }
+
+    protected static void updateConfigString(Context context, String appToken, String config)
+    {
+        if (context != null && !TextUtils.isEmpty(appToken) && !TextUtils.isEmpty(config))
+        {
+            Gson gson = new Gson();
+            PubnativeConfigModel configModel = null;
+            try
+            {
+                configModel = gson.fromJson(config, PubnativeConfigModel.class);
+            }
+            catch (Exception e)
+            {
+                System.out.println("PubnativeConfigManager.updateConfigString - Error: " + e);
+            }
+
+            if (configModel != null && !configModel.isNullOrEmpty())
+            {
+                PubnativeConfigManager.setConfigString(context, config);
+                PubnativeConfigManager.setAppToken(context, appToken);
+                PubnativeConfigManager.setTimestamp(context, System.currentTimeMillis());
+
+                if (configModel.config.containsKey(ConfigContract.REFRESH))
+                {
+                    Double refresh = (double) configModel.config.get(ConfigContract.REFRESH);
+                    PubnativeConfigManager.setRefresh(context, refresh.longValue());
+                }
+            }
+            else
+            {
+                PubnativeConfigManager.clean(context);
+            }
+        }
+        else
+        {
+            PubnativeConfigManager.clean(context);
+        }
+    }
+
+    protected static void clean(Context context)
+    {
+        PubnativeConfigManager.setAppToken(context, null);
+        PubnativeConfigManager.setTimestamp(context, null);
+        PubnativeConfigManager.setRefresh(context, null);
+        PubnativeConfigManager.setConfigString(context, null);
+    }
+
+    // APP TOKEN
+    protected static String getAppToken(Context context)
+    {
+        return PubnativeConfigManager.getStringSharedPreference(context, APP_TOKEN_STRING_KEY);
+    }
+
+    protected static void setAppToken(Context context, String appToken)
+    {
+        PubnativeConfigManager.setStringSharedPreference(context, APP_TOKEN_STRING_KEY, appToken);
+    }
+
+    // TIMESTAMP
+    protected static Long getTimestamp(Context context)
+    {
+        return PubnativeConfigManager.getLongSharedPreference(context, TIMESTAMP_LONG_KEY);
+    }
+
+    protected static void setTimestamp(Context context, Long timestamp)
+    {
+        PubnativeConfigManager.setLongSharedPreference(context, TIMESTAMP_LONG_KEY, timestamp);
+    }
+
+    // REFRESH
+    protected static Long getRefresh(Context context)
+    {
+        return PubnativeConfigManager.getLongSharedPreference(context, REFRESH_LONG_KEY);
+    }
+
+    protected static void setRefresh(Context context, Long refresh)
+    {
+        PubnativeConfigManager.setLongSharedPreference(context, REFRESH_LONG_KEY, refresh);
+    }
+
+
+    // STRING
+    protected static String getStringSharedPreference(Context context, String key)
+    {
+        String result = null;
+        if (context != null && !TextUtils.isEmpty(key))
+        {
+            SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
+            if(preferences != null && preferences.contains((key)))
+            {
+                result = preferences.getString(key, null);
+            }
+        }
+        return result;
+    }
+
+    protected static void setStringSharedPreference(Context context, String key, String value)
+    {
+        if (context != null && !TextUtils.isEmpty(key))
+        {
+            SharedPreferences.Editor editor = PubnativeConfigManager.getSharedPreferencesEditor(context);
+            if (TextUtils.isEmpty(value))
+            {
+                editor.remove(key);
+            }
+            else
+            {
+                editor.putString(key, value);
+            }
+            editor.apply();
+        }
+    }
+
+    // LONG
+    protected static Long getLongSharedPreference(Context context, String key)
+    {
+        Long result = null;
+        SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
+        if (context != null && preferences.contains(key))
+        {
+            Long value = preferences.getLong(key, 0);
+            if (value > 0)
+            {
+                result = value;
+            }
+        }
+        return result;
+    }
+
+    protected static void setLongSharedPreference(Context context, String key, Long value)
+    {
+        if (context != null && !TextUtils.isEmpty(key))
+        {
+            SharedPreferences.Editor editor = PubnativeConfigManager.getSharedPreferencesEditor(context);
+
+            if (value == null)
+            {
+                editor.remove(key);
+            }
+            else
+            {
+                editor.putLong(key, value);
+            }
+            editor.apply();
+        }
+    }
+
+    // SHARED PREFERENCES
     protected static SharedPreferences getSharedPreferences(Context context)
     {
         SharedPreferences result = null;
-        if(context != null)
+        if (context != null)
         {
             result = context.getSharedPreferences(SHARED_PREFERENCES_CONFIG, Context.MODE_PRIVATE);
         }
         return result;
     }
 
-    protected static void setConfigString(Context context, String config, String app_token)
+    protected static SharedPreferences.Editor getSharedPreferencesEditor(Context context)
     {
-        if(context != null)
-        {
-            SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
-            SharedPreferences.Editor editor = preferences.edit();
-
-            if(TextUtils.isEmpty(config))
-            {
-                editor.remove(CONFIG_KEY);
-            }
-            else
-            {
-                editor.putString(CONFIG_KEY, config);
-                try
-                {
-                    PubnativeConfigModel configModel = new Gson().fromJson(config, PubnativeConfigModel.class);
-                    if (configModel != null)
-                    {
-                        if (configModel.config != null)
-                        {
-                            if (configModel.config.get("refresh") != null)
-                            {
-                                editor.putLong(REFRESH_KEY, (long) (double) configModel.config.get("refresh"));
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-
-                }
-                editor.putLong(TIMESTAMP_KEY, System.currentTimeMillis());
-            }
-            if (TextUtils.isEmpty(app_token))
-            {
-                editor.remove(APP_TOKEN_KEY);
-            }
-            else
-            {
-                editor.putString(APP_TOKEN_KEY, app_token);
-            }
-            editor.apply();
-        }
-    }
-
-    protected static String getConfigString(Context context)
-    {
-        String result = null;
-        if(context != null)
-        {
-            SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
-            result = preferences.getString(CONFIG_KEY, null);
-        }
-        return result;
-    }
-
-    protected static boolean hasConfig(Context context)
-    {
-        boolean result = false;
-        if(context != null)
-        {
-            SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
-            result = preferences.contains(CONFIG_KEY);
-        }
-        return result;
-    }
-
-    protected static String getAppToken(Context context)
-    {
-        String token = null;
+        SharedPreferences.Editor result = null;
         if (context != null)
         {
             SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
-            token = preferences.getString(APP_TOKEN_KEY, null);
-        }
-        return token;
-    }
-
-    protected static Long getLastStoredTimestamp(Context context)
-    {
-        Long timeStamp = null;
-        if (context != null)
-        {
-            SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
-            timeStamp = preferences.getLong(TIMESTAMP_KEY, 0);
-
-            if (timeStamp == 0)
+            if (preferences != null)
             {
-                return null;
+                result = preferences.edit();
             }
-        }
-        return timeStamp;
-    }
-
-    protected static boolean hasStoredAppToken(Context context, String app_token)
-    {
-        boolean result = false;
-        if (context != null && !TextUtils.isEmpty(app_token))
-        {
-            SharedPreferences preferences = PubnativeConfigManager.getSharedPreferences(context);
-            String storedAppToken = preferences.getString(APP_TOKEN_KEY, "");
-            if (!TextUtils.isEmpty(storedAppToken))
-            {
-                result = storedAppToken.equals(app_token);
-            }
-
         }
         return result;
-    }
-
-    protected static boolean hasTimeStampExpired(Context context, Long currentTimeInMillis)
-    {
-        Long storedTime = getLastStoredTimestamp(context);
-        Long refreshPeriod = getRefreshTime(context);
-        if (currentTimeInMillis != null && refreshPeriod != null && storedTime != null)
-        {
-            if (TimeUnit.MILLISECONDS.toMinutes(currentTimeInMillis - storedTime) >= refreshPeriod)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected static Long getRefreshTime(Context context) {
-        Long refreshTime = null;
-        if (context != null)
-        {
-            refreshTime = getSharedPreferences(context).getLong(REFRESH_KEY,0);
-            if (refreshTime == 0)
-            {
-                refreshTime = null;
-            }
-        }
-        return refreshTime;
     }
 }
