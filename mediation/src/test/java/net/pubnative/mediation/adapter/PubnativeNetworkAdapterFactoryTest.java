@@ -1,27 +1,22 @@
 package net.pubnative.mediation.adapter;
 
-import net.pubnative.mediation.model.PubnativeConfigModel;
+import net.pubnative.mediation.model.PubnativeNetworkModel;
 import net.pubnative.mediation.utils.PubnativeTestUtils;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by davidmartin on 28/07/15.
  */
 public class PubnativeNetworkAdapterFactoryTest
 {
-    HashMap<String, Object> data;
+    private PubnativeNetworkModel model;
 
 
     @Test
@@ -33,7 +28,7 @@ public class PubnativeNetworkAdapterFactoryTest
     @Before
     public void setUp()
     {
-        data = new HashMap<String, Object>();
+        model = new PubnativeNetworkModel();
     }
 
     @Test
@@ -42,9 +37,9 @@ public class PubnativeNetworkAdapterFactoryTest
         List<String> adapters = PubnativeTestUtils.getClassesPackages(PubnativeNetworkAdapterFactory.NETWORK_PACKAGE);
         for(String adapterName : adapters)
         {
-            HashMap<String, Object> adapterData = new HashMap<String, Object>();
-            adapterData.put(PubnativeConfigModel.NetworkContract.ADAPTER, adapterName);
-            PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(adapterData);
+            model = new PubnativeNetworkModel();
+            model.adapter = adapterName;
+            PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
             try
             {
                 assertThat(adapterInstance).isInstanceOf(Class.forName(PubnativeNetworkAdapterFactory.getPackageName(adapterName)));
@@ -57,35 +52,26 @@ public class PubnativeNetworkAdapterFactoryTest
     }
 
     @Test
-    public void createAdapterFromAdapterContractKey()
+    public void createAdapterWithInvalidClassString()
     {
-        HashMap<String, Object> adapterSpy = spy(HashMap.class);
-        adapterSpy.put(PubnativeConfigModel.NetworkContract.ADAPTER, "adapter_data");
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(adapterSpy);
-        verify(adapterSpy,  atLeastOnce()).get(eq(PubnativeConfigModel.NetworkContract.ADAPTER));
-    }
-
-    @Test
-    public void createAdapterWithValidString()
-    {
-        data.put(PubnativeConfigModel.NetworkContract.ADAPTER, "valid_string");
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(data);
+        model.adapter = "invalid_class_string";
+        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 
     @Test
     public void createAdapterWithEmptyString()
     {
-        data.put(PubnativeConfigModel.NetworkContract.ADAPTER, "");
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(data);
+        model.adapter = "";
+        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 
     @Test
     public void createAdapterWithNullString()
     {
-        data.put(PubnativeConfigModel.NetworkContract.ADAPTER, null);
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(data);
+        model.adapter = null;
+        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 }
