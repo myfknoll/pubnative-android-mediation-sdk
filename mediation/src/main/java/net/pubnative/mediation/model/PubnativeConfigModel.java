@@ -1,14 +1,14 @@
 package net.pubnative.mediation.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PubnativeConfigModel
 {
-    public int                                conf_refresh;
-    public HashMap<String, Object>            networks;
-    public HashMap<String, Object>            ad_formats;
-    public ArrayList<PubnativePlacementModel> placements;
+    public int                           conf_refresh;
+    public Map<String, Object>           networks;
+    public Map<String, Object>           ad_formats;
+    public List<PubnativePlacementModel> placements;
 
     public interface NetworkContract
     {
@@ -19,6 +19,18 @@ public class PubnativeConfigModel
     public interface AdFormatContract
     {
         String SETTINGS = "settings";
+        String DELIVERY_RULE = "delivery_rule";
+        public interface DeliveryRuleContract
+        {
+            String FREQUENCY_LIMIT = "frequency";
+            String PACING_LIMIT = "pacing";
+
+            public interface LimitContract
+            {
+                String TIME_UNIT = "time_unit";
+                String MAX = "max";
+            }
+        }
     }
 
     public boolean isNullOrEmpty()
