@@ -1,79 +1,57 @@
 {
-  "conf_refresh":1,
-  "networks":
-  {
-    "sample":
-    {
-      "adapter" : "PubnativeLibraryNetworkAdapter",
-      "timeout" : 10
+  "config": {
+    "refresh": 10
+  },
+  "networks": {
+    "1": {
+      "auth": {
+        "placement_id": "1431803217037933_1602371133314473"
+      },
+      "adapter": "FacebookNetworkAdapter",
+      "timeout": 1000
     },
-    "sample2":
-    {
-      "adapter" : "PubnativeLibraryNetworkAdapter",
-      "timeout" : 10
-    },
-    "sample3":
-    {
-      "adapter" : "PubnativeLibraryNetworkAdapter",
-      "timeout" : 10
-    },
-    "sample4":
-    {
-      "adapter" : "PubnativeLibraryNetworkAdapter",
-      "timeout" : 10
+    "2": {
+      "auth": {
+        "app_token": "af117147db28ef258bfd6d042c718b537bc6a2b0760aca3d073a1c80865545f9"
+      },
+      "adapter": "PubnativeLibraryNetworkAdapter",
+      "timeout": 1000
     }
   },
-  "ad_formats":
-  {
-    "ad_format":
-    {
-      "setings" : {}
+  "ad_formats": {
+    "1": {
+      "impression_cap": 1000,
+      "impression_period": "hour",
+      "pacing_cap": 10,
+      "pacing_period": "minute"
     }
   },
-  "placements":
-  [
-    {
-      "placement_id" : "placement_id",
-      "ad_format" : "ad_format",
-      "priority_rules":[
+  "placements": {
+    "1": {
+      "ad_format_id": "1",
+      "priority_rules": [
         {
-          "priority_rule_id" : 1,
-          "rank" : 1,
-          "network" :
-          {
-            "name" : "sample",
-            "params" : {}
-          }
+          "network_id": "1",
+          "params": {}
         },
         {
-          "priority_rule_id" : 2,
-          "rank" : 2,
-          "network" :
-          {
-            "name" : "sample2",
-            "params" : {}
-          }
-        },
-        {
-          "priority_rule_id" : 3,
-          "rank" : 3,
-          "network" :
-          {
-            "name" : "sample3",
-            "params" : {}
-          }
-        },
-        {
-          "priority_rule_id" : 4,
-          "rank" : 4,
-          "network" :
-          {
-            "name" : "sample4",
-            "params" : {}
-          }
+          "network_id": "2",
+          "params": {}
         }
-      ],
-      "delivery_rules":[]
+      ]
+    },
+    "2": {
+      "ad_format_id": "1",
+      "priority_rules": [
+        {
+          "network_id": "2",
+          "params": {}
+        },
+        {
+          "network_id": "1",
+          "params": {}
+        }
+      ]
     }
-  ]
+  }
 }

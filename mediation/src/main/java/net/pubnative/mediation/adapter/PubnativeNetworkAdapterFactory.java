@@ -1,6 +1,6 @@
 package net.pubnative.mediation.adapter;
 
-import net.pubnative.mediation.model.PubnativeConfigModel;
+import net.pubnative.mediation.model.PubnativeNetworkModel;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -9,16 +9,15 @@ public class PubnativeNetworkAdapterFactory
 {
     protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
-    public static PubnativeNetworkAdapter createAdapter(Map adapterConfig)
+    public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model)
     {
         PubnativeNetworkAdapter result = null;
 
         try
         {
-            String adapterName = (String) adapterConfig.get(PubnativeConfigModel.NetworkContract.ADAPTER);
-            Class<?> networkClass = Class.forName(getPackageName(adapterName));
+            Class<?> networkClass = Class.forName(getPackageName(model.adapter));
             Constructor<?> constructor = networkClass.getConstructor(Map.class);
-            result = (PubnativeNetworkAdapter) constructor.newInstance(adapterConfig);
+            result = (PubnativeNetworkAdapter) constructor.newInstance(model.auth);
         }
         catch (Exception e)
         {

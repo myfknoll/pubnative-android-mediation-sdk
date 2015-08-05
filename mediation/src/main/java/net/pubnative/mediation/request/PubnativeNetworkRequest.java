@@ -10,101 +10,58 @@ import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
 import net.pubnative.mediation.config.PubnativeConfigManager;
 import net.pubnative.mediation.model.PubnativeAdModel;
 import net.pubnative.mediation.model.PubnativeConfigModel;
+import net.pubnative.mediation.model.PubnativeNetworkModel;
 import net.pubnative.mediation.model.PubnativePlacementModel;
-import net.pubnative.mediation.model.PubnativePriorityRulesModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
 {
-    protected PubnativeNetworkRequestListener listener;
-    protected Map<String, String>             parameters;
-    protected PubnativeConfigModel            config;
-    protected PubnativePlacementModel         placement;
-    protected List<PubnativeAdModel>          ads;
-    protected int                             currentRankIndex;
-
-    public interface Parameters
-    {
-        String APP_TOKEN       = "app_token";
-        String PLACEMENT_ID    = "placement_id";
-        String AD_COUNT        = "ad_count";
-        String AGE             = "age";
-        String APP_VERSION     = "app_version";
-        String SDK_VERSION     = "sdk_version";
-        String BIRTH_DATE      = "birth_date";
-        String CONNECTION_TYPE = "connection_type";
-        String DEVICE          = "device";
-        String EDUCATION       = "education";
-        String GENDER          = "gender";
-        String INTERESTS       = "interests";
-        String LAST_SESSION    = "last_session";
-        String SESSION_NUMBER  = "session_number";
-        String IAP_SPENDER     = "iap_spender";
-        String IAP_TOTAL       = "iap_total";
-        String USER_AGENT      = "user_agent";
-    }
+    protected PubnativeNetworkRequestListener   listener;
+    protected PubnativeNetworkRequestParameters parameters;
+    protected PubnativeConfigModel              config;
+    protected PubnativePlacementModel           placement;
+    protected List<PubnativeAdModel>            ads;
+    protected int                               currentRankIndex;
 
     public PubnativeNetworkRequest()
     {
         // Do some initialization here
     }
 
-    public void request(Context context, Map<String, String> parameters,
+    public void request(Context context, PubnativeNetworkRequestParameters parameters,
                         PubnativeNetworkRequestListener listener)
     {
+        this.currentRankIndex = 0;
+        this.ads = new ArrayList<>();
+
         if (listener == null)
         {
             // Just drop the call
             System.out.println("PubnativeNetworkRequest.request - listener not specified, dropping the call");
             return;
         }
-
-        this.currentRankIndex = 0;
-        this.ads = new ArrayList<>();
         this.listener = listener;
-        this.parameters = parameters;
 
-        String app_token = this.parameters.get(Parameters.APP_TOKEN);
-        String placement_id = this.parameters.get(Parameters.PLACEMENT_ID);
-
-        if (context != null && !TextUtils.isEmpty(app_token) && !TextUtils.isEmpty(placement_id))
+        this.invokeStart();
+        if (context == null || parameters == null || TextUtils.isEmpty(parameters.app_token) || TextUtils.isEmpty(parameters.placement_id))
         {
-            this.invokeStart();
-
-            this.config = PubnativeConfigManager.getConfig(context, app_token);
-            if (this.config != null)
+            this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.request - invalid request parameters"));
+        }
+        else
+        {
+            this.parameters = parameters;
+            this.config = PubnativeConfigManager.getConfig(context, this.parameters.app_token);
+            if (this.config == null)
             {
-
-                for (PubnativePlacementModel currentPlacement : this.config.placements)
+                this.invokeFail(new NetworkErrorException("PubnativeNetworkRequest.request - invalid config retrieved"));
+            }
+            else
+            {
+                if (this.config.placements.containsKey(this.parameters.placement_id))
                 {
-                    if (currentPlacement.placement_id != null)
-                    {
-                        if (placement_id.equals(currentPlacement.placement_id))
-                        {
-                            this.placement = currentPlacement;
-                            break;
-                        }
-                    }
-                }
-                if (this.placement != null)
-                {
-                    // Sort priority rules
-                    Collections.sort(placement.priority_rules, new Comparator<PubnativePriorityRulesModel>()
-                    {
-                        @Override
-                        public int compare(PubnativePriorityRulesModel priorityRule1,
-                                           PubnativePriorityRulesModel priorityRule2)
-                        {
-                            return priorityRule1.rank - priorityRule2.rank;
-                        }
-                    });
-
-                    // Start requesting ads
+                    this.placement = this.config.placements.get(this.parameters.placement_id);
                     this.doAdapterRequest();
                 }
                 else
@@ -112,64 +69,55 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
                     this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.request - placement_id not found"));
                 }
             }
-            else
-            {
-                this.invokeFail(new NetworkErrorException("PubnativeNetworkRequest.request - invalid server getConfig"));
-            }
         }
-        else
+    }
+
+    protected int getAdsLeft()
+    {
+        int requestedAds = 0; // Default value if not included
+        int foundAds = 0;
+        if (this.parameters != null)
         {
-            this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.request - invalid request parameters"));
+            requestedAds = this.parameters.ad_count;
         }
+        if (this.ads != null)
+        {
+            foundAds = this.ads.size();
+        }
+        return requestedAds - foundAds;
     }
 
     protected void doAdapterRequest()
     {
-        Integer ad_count = 1; // Default value if not included
-        if (this.parameters.containsKey(Parameters.AD_COUNT))
+        if(this.getAdsLeft() <= 0 || this.currentRankIndex < this.placement.priority_rules.size())
         {
-            ad_count = Integer.parseInt(this.parameters.get(Parameters.AD_COUNT));
+            // No more needed ads or possible networks to request
+            this.invokeLoad(this.ads);
         }
-        Integer ads_left = ad_count - this.ads.size();
-
-        // Check if there are still ads to request and networks to request from
-        if (ads_left > 0 && this.currentRankIndex < this.placement.priority_rules.size())
+        else
         {
-            PubnativePriorityRulesModel priorityRule = this.placement.priority_rules.get(this.currentRankIndex);
-
-            Map networkConfig = null;
-            String networkName = null;
-            if (priorityRule.network.containsKey(PubnativePriorityRulesModel.NetworkContract.NAME))
+            this.currentRankIndex++;
+            String networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_id;
+            if (this.config.networks.containsKey(networkIDString))
             {
-                networkName = (String) priorityRule.network.get(PubnativePriorityRulesModel.NetworkContract.NAME);
-                if (networkName != null)
-                {
-                    networkConfig = (Map) this.config.networks.get(networkName);
-                }
-            }
+                PubnativeNetworkModel network = this.config.networks.get(networkIDString);
+                PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
 
-            if (networkConfig != null)
-            {
-                PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(networkConfig);
-                if (adapter != null)
+                if (adapter == null)
                 {
-                    this.currentRankIndex++;
-                    adapter.doRequest(ads_left, this);
+                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + network.adapter + " not found"));
+                    this.doAdapterRequest();
                 }
                 else
                 {
-                    this.invokeFail(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + networkName + " adapter not found"));
+                    adapter.doRequest(this.getAdsLeft(), this);
                 }
             }
             else
             {
-                this.invokeFail(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + networkName + " network getConfig not found"));
+                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + networkIDString + " config not found"));
+                this.doAdapterRequest();
             }
-
-        }
-        else
-        {
-            this.invokeLoad(this.ads);
         }
     }
 

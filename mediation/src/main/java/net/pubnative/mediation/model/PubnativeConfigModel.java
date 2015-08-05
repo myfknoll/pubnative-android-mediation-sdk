@@ -1,36 +1,17 @@
 package net.pubnative.mediation.model;
 
-import java.util.List;
 import java.util.Map;
 
 public class PubnativeConfigModel
 {
-    public int                           conf_refresh;
-    public Map<String, Object>           networks;
-    public Map<String, Object>           ad_formats;
-    public List<PubnativePlacementModel> placements;
+    public Map<String, Object>                  config;
+    public Map<String, PubnativeNetworkModel>   networks;
+    public Map<String, PubnativeAdFormatModel>  ad_formats;
+    public Map<String, PubnativePlacementModel> placements;
 
-    public interface NetworkContract
+    public interface ConfigContract
     {
-        String ADAPTER = "adapter";
-        String TIMEOUT = "timeout";
-    }
-
-    public interface AdFormatContract
-    {
-        String SETTINGS = "settings";
-        String DELIVERY_RULE = "delivery_rule";
-        public interface DeliveryRuleContract
-        {
-            String FREQUENCY_LIMIT = "frequency";
-            String PACING_LIMIT = "pacing";
-
-            public interface LimitContract
-            {
-                String TIME_UNIT = "time_unit";
-                String MAX = "max";
-            }
-        }
+        String REFRESH = "refresh";
     }
 
     public boolean isNullOrEmpty()

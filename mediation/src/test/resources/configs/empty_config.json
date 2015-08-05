@@ -1,6 +1,8 @@
 {
-  "conf_refresh":1,
-  "networks":{},
-  "ad_formats":{},
-  "placements":[]
+  "config": {
+    "refresh": 10
+  },
+  "networks": {},
+  "ad_formats": {},
+  "placements": {},
 }

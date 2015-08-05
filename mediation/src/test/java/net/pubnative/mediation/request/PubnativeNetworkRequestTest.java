@@ -13,9 +13,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -29,45 +27,51 @@ import static org.mockito.Mockito.verify;
 @Config(constants = BuildConfig.class)
 public class PubnativeNetworkRequestTest
 {
-    public Context             applicationContext;
-    public Map<String, String> parameters;
+    final static String TEST_PLACEMENT_ID = "1";
+    final static String TEST_APP_TOKEN    = "af117147db28ef258bfd6d042c718b537bc6a2b0760aca3d073a1c80865545f9";
+
+    Context applicationContext;
+
+    // Mocks
+    PubnativeNetworkRequest         requestSpy;
+    PubnativeNetworkRequestListener listenerMock;
 
     @Before
     public void setUp()
     {
+        this.requestSpy = spy(PubnativeNetworkRequest.class);
+        this.listenerMock = mock(PubnativeNetworkRequestListener.class);
+
         this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
-        this.parameters = new HashMap<>();
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.app_token = TEST_PLACEMENT_ID;
     }
 
     @Test
     public void invokeCallbacksWithValidListener()
     {
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
-
-        networkRequestSpy.listener = listenerMock;
+        requestSpy.listener = listenerMock;
 
         // onRequestStarted
-        networkRequestSpy.invokeStart();
-        verify(listenerMock, times(1)).onRequestStarted(networkRequestSpy);
+        requestSpy.invokeStart();
+        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
 
         // onRequestLoaded
         ArrayList adsMock = mock(ArrayList.class);
-        networkRequestSpy.invokeLoad(adsMock);
-        verify(listenerMock, times(1)).onRequestLoaded(eq(networkRequestSpy), eq(adsMock));
+        requestSpy.invokeLoad(adsMock);
+        verify(listenerMock, times(1)).onRequestLoaded(eq(requestSpy), eq(adsMock));
 
         // onRequestFailed
         Exception exceptionMock = mock(Exception.class);
-        networkRequestSpy.invokeFail(exceptionMock);
-        verify(listenerMock, times(1)).onRequestFailed(eq(networkRequestSpy), eq(exceptionMock));
+        requestSpy.invokeFail(exceptionMock);
+        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), eq(exceptionMock));
     }
 
     @Test
     public void invokeCallbacksWithNullListener()
     {
-        PubnativeNetworkRequest requestSpy = spy(PubnativeNetworkRequest.class);
-
-        // invoking method with arguments when lister is null
+        // invoking method with a rguments when lister is null should not crash
         requestSpy.listener = null;
         requestSpy.invokeStart();
         requestSpy.invokeLoad(mock(ArrayList.class));
@@ -78,62 +82,95 @@ public class PubnativeNetworkRequestTest
     public void requestWithCorrectParameters()
     {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json");
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
-        // Valid parameters
-        this.parameters.put(PubnativeNetworkRequest.Parameters.AD_COUNT, "10");
-        this.parameters.put(PubnativeNetworkRequest.Parameters.APP_TOKEN, "app_token");
-        this.parameters.put(PubnativeNetworkRequest.Parameters.PLACEMENT_ID, "placement_id");
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = TEST_PLACEMENT_ID;
 
-        networkRequestSpy.request(this.applicationContext, this.parameters, listenerMock);
+        requestSpy.request(this.applicationContext, parameters, listenerMock);
 
-        verify(listenerMock, times(1)).onRequestStarted(eq(networkRequestSpy));
-        verify(listenerMock, never()).onRequestFailed(eq(networkRequestSpy), any(Exception.class));
-        verify(listenerMock, times(1)).onRequestLoaded(eq(networkRequestSpy), any(List.class));
+        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, never()).onRequestFailed(eq(requestSpy), any(Exception.class));
+        verify(listenerMock, times(1)).onRequestLoaded(eq(requestSpy), any(List.class));
     }
-
-    // TODO: Create tests for doAdapterRequest pathways
 
     @Test
-    public void requestWithInvalidParametersCallbacksFail()
+    public void requestWithNullParameters()
     {
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.app_token = TEST_PLACEMENT_ID;
 
-        // Invalid parameters
-        this.parameters.clear();
-        this.parameters.put(PubnativeNetworkRequest.Parameters.APP_TOKEN, "app_token");
-        this.parameters.put(PubnativeNetworkRequest.Parameters.PLACEMENT_ID, "placement_id");
-        networkRequestSpy.request(null, this.parameters, listenerMock);
-        this.parameters.clear();
-        this.parameters.put(PubnativeNetworkRequest.Parameters.APP_TOKEN, "app_token");
-        networkRequestSpy.request(this.applicationContext, this.parameters, listenerMock);
-        this.parameters.clear();
-        this.parameters.put(PubnativeNetworkRequest.Parameters.PLACEMENT_ID, "placement_id");
-        networkRequestSpy.request(this.applicationContext, this.parameters, listenerMock);
-        verify(listenerMock, times(3)).onRequestFailed(eq(networkRequestSpy), any(IllegalArgumentException.class));
+        requestSpy.request(null, parameters, this.listenerMock);
+        requestSpy.request(this.applicationContext, null, this.listenerMock);
 
-        // Invalid listener (just dropping the call, shouldn't crash)
-        this.parameters.clear();
-        this.parameters.put(PubnativeNetworkRequest.Parameters.APP_TOKEN, "app_token");
-        this.parameters.put(PubnativeNetworkRequest.Parameters.PLACEMENT_ID, "placement_id");
-        networkRequestSpy.request(this.applicationContext, this.parameters, null);
+        verify(listenerMock, times(2)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(2)).onRequestFailed(eq(requestSpy), any(IllegalArgumentException.class));
     }
 
-    // TODO: write test for null getConfig path
+    @Test
+    public void requestWithInvalidAppToken()
+    {
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+
+        // null app_token
+        parameters.app_token = null;
+        parameters.placement_id = TEST_PLACEMENT_ID;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        // empty app_token
+        parameters.app_token = "";
+        parameters.placement_id = TEST_PLACEMENT_ID;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        // null placement_id
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = null;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        // empty placement_id
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = "";
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        // both null
+        parameters.app_token = null;
+        parameters.placement_id = null;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        // both empty
+        parameters.app_token = "";
+        parameters.placement_id = "";
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        verify(listenerMock, times(6)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(6)).onRequestFailed(eq(requestSpy), any(IllegalArgumentException.class));
+    }
+
+    @Test
+    public void requestWithNullListenerDrops()
+    {
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+
+        // This should not crash
+        requestSpy.request(null, parameters, null);
+        requestSpy.request(this.applicationContext, null, null);
+        requestSpy.request(this.applicationContext, parameters, null);
+    }
 
     @Test
     public void requestWithEmptyPlacementConfig()
     {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json");
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        PubnativeNetworkRequestListener listenerMock = spy(PubnativeNetworkRequestListener.class);
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = TEST_PLACEMENT_ID;
 
-        this.parameters.put(PubnativeNetworkRequest.Parameters.APP_TOKEN, "app_token");
-        this.parameters.put(PubnativeNetworkRequest.Parameters.PLACEMENT_ID, "placement_id");
-        networkRequestSpy.request(this.applicationContext, this.parameters, listenerMock);
+        requestSpy.request(this.applicationContext, parameters, listenerMock);
 
-        verify(listenerMock, times(1)).onRequestFailed(eq(networkRequestSpy), any(IllegalArgumentException.class));
+        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(IllegalArgumentException.class));
     }
+
+    // TODO: Test for null getConfig path
 }

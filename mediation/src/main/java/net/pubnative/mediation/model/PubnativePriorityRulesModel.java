@@ -3,17 +3,10 @@ package net.pubnative.mediation.model;
 import java.util.Map;
 
 /**
- * Created by davidmartin on 31/07/15.
+ * Created by davidmartin on 04/08/15.
  */
 public class PubnativePriorityRulesModel
 {
-    public int                 priority_rule_id;
-    public int                 rank;
-    public Map<String, Object> network;
-
-    public interface NetworkContract
-    {
-        String NAME   = "name";
-        String PARAMS = "params";
-    }
+    public String              network_id;
+    public Map<String, Object> params;
 }
