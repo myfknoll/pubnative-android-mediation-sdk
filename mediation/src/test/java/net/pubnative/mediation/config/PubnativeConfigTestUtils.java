@@ -16,10 +16,10 @@ public class PubnativeConfigTestUtils
      * @param context
      * @param filename
      */
-    public static void setTestConfig(Context context, String filename)
+    public static void setTestConfig(Context context, String filename, String app_token)
     {
         InputStream configStream = PubnativeConfigTestUtils.class.getResourceAsStream("/configs/" + filename);
         String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
-        PubnativeConfigManager.setConfigString(context, configString);
+        PubnativeConfigManager.setConfigString(context, configString,app_token);
     }
 }
