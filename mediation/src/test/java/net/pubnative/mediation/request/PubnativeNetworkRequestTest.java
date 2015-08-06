@@ -81,7 +81,8 @@ public class PubnativeNetworkRequestTest
     @Test
     public void requestWithCorrectParameters()
     {
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json");
+
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json",TEST_APP_TOKEN);
 
         PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
         parameters.app_token = TEST_APP_TOKEN;
@@ -161,12 +162,12 @@ public class PubnativeNetworkRequestTest
     @Test
     public void requestWithEmptyPlacementConfig()
     {
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json");
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json",TEST_APP_TOKEN);
         PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
         parameters.app_token = TEST_APP_TOKEN;
         parameters.placement_id = TEST_PLACEMENT_ID;
 
-        requestSpy.request(this.applicationContext, parameters, listenerMock);
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
 
         verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
         verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(IllegalArgumentException.class));
