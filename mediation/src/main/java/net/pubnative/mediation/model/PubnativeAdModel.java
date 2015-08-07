@@ -1,11 +1,19 @@
 package net.pubnative.mediation.model;
 
-public class PubnativeAdModel
+import android.view.View;
+
+public abstract class PubnativeAdModel
 {
-    public String title;
-    public String description;
-    public String icon_url;
-    public String banner_url;
-    public String cta_text;
-    public String click_url;
+    private View adView;
+
+    // abstract get methods.
+    protected abstract String getTitle();
+    protected abstract String getDescription();
+    protected abstract String getIconUrl();
+    protected abstract String getBannerUrl();
+    protected abstract String getCallToAction();
+
+    // abstract methods for actions on adView
+    protected abstract void registerAdView(View adView);
+    protected abstract void unregisterAdView(View adView);
 }

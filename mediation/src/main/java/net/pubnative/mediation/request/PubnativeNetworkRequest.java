@@ -24,15 +24,16 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
     protected PubnativePlacementModel           placement;
     protected List<PubnativeAdModel>            ads;
     protected int                               currentRankIndex;
+    protected Context                           context;
 
     public PubnativeNetworkRequest()
     {
         // Do some initialization here
     }
 
-    public void request(Context context, PubnativeNetworkRequestParameters parameters,
-                        PubnativeNetworkRequestListener listener)
+    public void request(Context context, PubnativeNetworkRequestParameters parameters, PubnativeNetworkRequestListener listener)
     {
+        this.context = context;
         this.currentRankIndex = 0;
         this.ads = new ArrayList<>();
 
@@ -45,14 +46,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         this.listener = listener;
 
         this.invokeStart();
-        if (context == null || parameters == null || TextUtils.isEmpty(parameters.app_token) || TextUtils.isEmpty(parameters.placement_id))
+        if (this.context == null || parameters == null || TextUtils.isEmpty(parameters.app_token) || TextUtils.isEmpty(parameters.placement_id))
         {
             this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.request - invalid request parameters"));
         }
         else
         {
             this.parameters = parameters;
-            this.config = PubnativeConfigManager.getConfig(context, this.parameters.app_token);
+            this.config = PubnativeConfigManager.getConfig(this.context, this.parameters.app_token);
             if (this.config == null)
             {
                 this.invokeFail(new NetworkErrorException("PubnativeNetworkRequest.request - invalid config retrieved"));
@@ -110,7 +111,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
                 }
                 else
                 {
-                    adapter.doRequest(this.getAdsLeft(), this);
+                    adapter.doRequest(this.context, this.getAdsLeft(), this);
                 }
             }
             else
