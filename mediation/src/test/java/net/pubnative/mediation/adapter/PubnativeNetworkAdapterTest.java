@@ -1,5 +1,7 @@
 package net.pubnative.mediation.adapter;
 
+import android.content.Context;
+
 import net.pubnative.mediation.model.PubnativeAdModel;
 
 import org.junit.Test;
@@ -29,7 +31,7 @@ public class PubnativeNetworkAdapterTest
         PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock)
         {
             @Override
-            public void request()
+            public void request(Context context)
             {
                 // Do nothing
             }
@@ -60,7 +62,7 @@ public class PubnativeNetworkAdapterTest
         PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(adapterConfigMock)
         {
             @Override
-            public void request()
+            public void request(Context context)
             {
                 // Do nothing
             }

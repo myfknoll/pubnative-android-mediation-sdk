@@ -6,10 +6,12 @@ import net.pubnative.mediation.utils.PubnativeTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by davidmartin on 28/07/15.
@@ -39,6 +41,7 @@ public class PubnativeNetworkAdapterFactoryTest
         {
             model = new PubnativeNetworkModel();
             model.adapter = adapterName;
+            model.auth = mock(HashMap.class);
             PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
             try
             {

@@ -39,10 +39,11 @@ public class PubnativeNetworkRequestTest
     @Before
     public void setUp()
     {
+        this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
+
         this.requestSpy = spy(PubnativeNetworkRequest.class);
         this.listenerMock = mock(PubnativeNetworkRequestListener.class);
 
-        this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
         PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
         parameters.app_token = TEST_APP_TOKEN;
         parameters.app_token = TEST_PLACEMENT_ID;

@@ -1,5 +1,7 @@
 package net.pubnative.mediation.adapter;
 
+import android.content.Context;
+
 import net.pubnative.mediation.model.PubnativeAdModel;
 
 import java.util.List;
@@ -16,14 +18,14 @@ public abstract class PubnativeNetworkAdapter
         this.data = data;
     }
 
-    public void doRequest(Integer ad_count, PubnativeNetworkAdapterListener listener)
+    public void doRequest(Context context, Integer ad_count, PubnativeNetworkAdapterListener listener)
     {
         if (listener != null)
         {
             this.listener = listener;
             this.ad_count = ad_count;
             this.invokeStart();
-            this.request();
+            this.request(context);
         }
         else
         {
@@ -31,7 +33,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    public abstract void request();
+    public abstract void request(Context context);
 
     protected void invokeStart()
     {

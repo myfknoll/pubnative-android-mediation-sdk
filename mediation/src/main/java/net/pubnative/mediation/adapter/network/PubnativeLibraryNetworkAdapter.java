@@ -1,5 +1,7 @@
 package net.pubnative.mediation.adapter.network;
 
+import android.content.Context;
+
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 
 import java.util.Map;
@@ -14,7 +16,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter
     }
 
     @Override
-    public void request()
+    public void request(Context context)
     {
         // TODO Auto-generated method stub
         this.invokeLoaded(null);
