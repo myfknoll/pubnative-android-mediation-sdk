@@ -21,15 +21,15 @@ public class PubnativeConfigModel
 
     protected boolean isNullConfig()
     {
-        return this.networks == null &&
-                this.ad_formats == null &&
+        return this.networks == null ||
+                this.ad_formats == null ||
                 this.placements == null;
     }
 
     protected boolean isEmptyConfig()
     {
-        return this.networks.size() == 0 &&
-                this.ad_formats.size() == 0 &&
+        return this.networks.size() == 0 ||
+                this.ad_formats.size() == 0 ||
                 this.placements.size() == 0;
     }
 }
