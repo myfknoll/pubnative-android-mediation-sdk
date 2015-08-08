@@ -9,8 +9,6 @@ import com.google.gson.Gson;
 import net.pubnative.mediation.model.PubnativeConfigModel;
 
 import java.util.concurrent.TimeUnit;
-
-import static net.pubnative.mediation.model.PubnativeConfigModel.ConfigContract;
 /**
  * Created by davidmartin on 28/07/15.
  */
@@ -60,6 +58,45 @@ public class PubnativeConfigManager
         }
 
         return currentConfig;
+    }
+
+    // TODO: Hide this method with protected
+    public static void updateConfigString(Context context, String appToken, String config)
+    {
+        if (context != null && !TextUtils.isEmpty(appToken) && !TextUtils.isEmpty(config))
+        {
+            Gson gson = new Gson();
+            PubnativeConfigModel configModel = null;
+            try
+            {
+                configModel = gson.fromJson(config, PubnativeConfigModel.class);
+            }
+            catch (Exception e)
+            {
+                System.out.println("PubnativeConfigManager.updateConfigString - Error: " + e);
+            }
+
+            if (configModel != null && !configModel.isNullOrEmpty())
+            {
+                PubnativeConfigManager.setConfigString(context, config);
+                PubnativeConfigManager.setAppToken(context, appToken);
+                PubnativeConfigManager.setTimestamp(context, System.currentTimeMillis());
+
+                if (configModel.config.containsKey(PubnativeConfigModel.ConfigContract.REFRESH))
+                {
+                    Double refresh = (double) configModel.config.get(PubnativeConfigModel.ConfigContract.REFRESH);
+                    PubnativeConfigManager.setRefresh(context, refresh.longValue());
+                }
+            }
+            else
+            {
+                PubnativeConfigManager.clean(context);
+            }
+        }
+        else
+        {
+            PubnativeConfigManager.clean(context);
+        }
     }
 
 
@@ -119,44 +156,6 @@ public class PubnativeConfigManager
     protected static void setConfigString(Context context, String config)
     {
         PubnativeConfigManager.setStringSharedPreference(context, CONFIG_STRING_KEY, config);
-    }
-
-    protected static void updateConfigString(Context context, String appToken, String config)
-    {
-        if (context != null && !TextUtils.isEmpty(appToken) && !TextUtils.isEmpty(config))
-        {
-            Gson gson = new Gson();
-            PubnativeConfigModel configModel = null;
-            try
-            {
-                configModel = gson.fromJson(config, PubnativeConfigModel.class);
-            }
-            catch (Exception e)
-            {
-                System.out.println("PubnativeConfigManager.updateConfigString - Error: " + e);
-            }
-
-            if (configModel != null && !configModel.isNullOrEmpty())
-            {
-                PubnativeConfigManager.setConfigString(context, config);
-                PubnativeConfigManager.setAppToken(context, appToken);
-                PubnativeConfigManager.setTimestamp(context, System.currentTimeMillis());
-
-                if (configModel.config.containsKey(ConfigContract.REFRESH))
-                {
-                    Double refresh = (double) configModel.config.get(ConfigContract.REFRESH);
-                    PubnativeConfigManager.setRefresh(context, refresh.longValue());
-                }
-            }
-            else
-            {
-                PubnativeConfigManager.clean(context);
-            }
-        }
-        else
-        {
-            PubnativeConfigManager.clean(context);
-        }
     }
 
     protected static void clean(Context context)
