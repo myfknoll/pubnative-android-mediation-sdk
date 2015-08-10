@@ -12,6 +12,7 @@ import net.pubnative.mediation.model.PubnativeAdModel;
 public class PubnativeLibraryAdModel extends PubnativeAdModel
 {
     private NativeAdModel model;
+
     public PubnativeLibraryAdModel(NativeAdModel model)
     {
         this.model = model;
@@ -70,6 +71,17 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
             result = model.ctaText;
         }
         return result;
+    }
+
+    @Override
+    protected float getStarRating()
+    {
+        float starRating = 0;
+        if (this.model != null && this.model.app_details != null)
+        {
+            starRating = model.app_details.store_rating;
+        }
+        return starRating;
     }
 
     @Override

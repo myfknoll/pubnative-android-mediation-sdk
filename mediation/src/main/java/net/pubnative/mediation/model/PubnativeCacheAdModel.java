@@ -13,6 +13,7 @@ public class PubnativeCacheAdModel extends PubnativeAdModel
     protected String icon_url;
     protected String banner_url;
     protected String call_to_action;
+    protected float star_rating;
 
     public PubnativeCacheAdModel(PubnativeAdModel model)
     {
@@ -21,6 +22,7 @@ public class PubnativeCacheAdModel extends PubnativeAdModel
         this.icon_url = model.getIconUrl();
         this.banner_url = model.getBannerUrl();
         this.call_to_action = model.getCallToAction();
+        this.star_rating = model.getStarRating();
     }
 
     @Override
@@ -51,6 +53,12 @@ public class PubnativeCacheAdModel extends PubnativeAdModel
     protected String getCallToAction()
     {
         return call_to_action;
+    }
+
+    @Override
+    protected float getStarRating()
+    {
+        return star_rating;
     }
 
     @Override
