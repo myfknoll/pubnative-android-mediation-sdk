@@ -1,5 +1,6 @@
 package net.pubnative.mediation.model.network;
 
+import android.content.Context;
 import android.view.View;
 
 import com.facebook.ads.NativeAd;
@@ -59,15 +60,17 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected void registerAdView(View adView)
+    protected void registerAdView(Context context, View adView)
     {
+        nativeAd.registerViewForInteraction(adView);
         // TODO: register view for interactions.
         // TODO: Planning to write a method inside super class to use generally.
     }
 
     @Override
-    protected void unregisterAdView(View adView)
+    protected void unregisterAdView(Context context, View adView)
     {
+        nativeAd.unregisterView();
         // TODO: Method to remove callback bound with adView.
     }
 }
