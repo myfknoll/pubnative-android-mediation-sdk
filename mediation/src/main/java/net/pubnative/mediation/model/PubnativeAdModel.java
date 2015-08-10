@@ -1,5 +1,6 @@
 package net.pubnative.mediation.model;
 
+import android.content.Context;
 import android.view.View;
 
 public abstract class PubnativeAdModel
@@ -14,6 +15,6 @@ public abstract class PubnativeAdModel
     protected abstract String getCallToAction();
 
     // abstract methods for actions on adView
-    protected abstract void registerAdView(View adView);
-    protected abstract void unregisterAdView(View adView);
+    protected abstract void registerAdView(Context context, View adView);
+    protected abstract void unregisterAdView(Context context, View adView);
 }

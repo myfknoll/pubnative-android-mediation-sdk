@@ -1,5 +1,6 @@
 package net.pubnative.mediation.model;
 
+import android.content.Context;
 import android.view.View;
 
 /**
@@ -53,13 +54,13 @@ public class PubnativeCacheAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected void registerAdView(View adView)
+    protected void registerAdView(Context context, View adView)
     {
         // Do nothing
     }
 
     @Override
-    protected void unregisterAdView(View adView)
+    protected void unregisterAdView(Context context, View adView)
     {
         // Do nothing
     }
