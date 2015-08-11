@@ -1,0 +1,44 @@
+{
+  "config": {
+    "refresh": 10
+  },
+  "networks": {
+    "1": {
+      "auth": {
+        "placement_id": "1431803217037933_1602371133314473"
+      },
+      "adapter": "FacebookNetworkAdapter",
+      "timeout": 1000
+    },
+    "2": {
+      "auth": {
+        "app_token": "af117147db28ef258bfd6d042c718b537bc6a2b0760aca3d073a1c80865545f9"
+      },
+      "adapter": "PubnativeLibraryNetworkAdapter",
+      "timeout": 1000
+    }
+  },
+  "ad_formats": {
+    "1": {
+      "impression_cap": 1000,
+      "impression_period": "hour",
+      "pacing_cap": 10,
+      "pacing_period": "minute"
+    }
+  },
+  "placements": {
+    "placement_id": {
+      "ad_format_id": "1",
+      "priority_rules": [
+        {
+          "network_id": "1",
+          "params": {}
+        },
+        {
+          "network_id": "2",
+          "params": {}
+        }
+      ]
+    }
+  }
+}

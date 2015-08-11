@@ -90,15 +90,15 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
 
     protected void doAdapterRequest()
     {
-        if(this.getAdsLeft() <= 0 || this.currentRankIndex < this.placement.priority_rules.size())
+        if(this.getAdsLeft() <= 0 || this.currentRankIndex >= this.placement.priority_rules.size())
         {
             // No more needed ads or possible networks to request
             this.invokeLoad(this.ads);
         }
         else
         {
-            this.currentRankIndex++;
             String networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_id;
+            this.currentRankIndex++;
             if (this.config.networks.containsKey(networkIDString))
             {
                 PubnativeNetworkModel network = this.config.networks.get(networkIDString);
@@ -111,6 +111,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
                 }
                 else
                 {
+                    // TODO: Implement adapter TIMEOUT
                     adapter.doRequest(this.context, this.getAdsLeft(), this);
                 }
             }
