@@ -13,6 +13,7 @@ public abstract class PubnativeAdModel
     protected abstract String getIconUrl();
     protected abstract String getBannerUrl();
     protected abstract String getCallToAction();
+    protected abstract float getStarRating();
 
     // abstract methods for actions on adView
     protected abstract void registerAdView(Context context, View adView);

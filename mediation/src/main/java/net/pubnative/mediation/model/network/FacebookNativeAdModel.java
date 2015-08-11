@@ -60,6 +60,23 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     }
 
     @Override
+    protected float getStarRating()
+    {
+        float starRating = 0;
+        if (this.nativeAd != null)
+        {
+            NativeAd.Rating rating = nativeAd.getAdStarRating();
+            if (rating != null)
+            {
+                double rating_scale = rating.getScale();
+                double rating_value = rating.getValue();
+                starRating = (float) ((rating_value / rating_scale) * 5);
+            }
+        }
+        return starRating;
+    }
+
+    @Override
     protected void registerAdView(Context context, View adView)
     {
         nativeAd.registerViewForInteraction(adView);
