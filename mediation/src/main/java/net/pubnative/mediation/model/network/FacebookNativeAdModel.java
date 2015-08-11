@@ -20,19 +20,19 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getTitle()
+    public String getTitle()
     {
         return nativeAd.getAdTitle();
     }
 
     @Override
-    protected String getDescription()
+    public String getDescription()
     {
         return nativeAd.getAdBody();
     }
 
     @Override
-    protected String getIconUrl()
+    public String getIconUrl()
     {
         String iconUrl = null;
         if(nativeAd.getAdIcon() != null)
@@ -43,7 +43,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getBannerUrl()
+    public String getBannerUrl()
     {
         String bannerUrl = null;
         if(nativeAd.getAdCoverImage() != null)
@@ -54,13 +54,13 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getCallToAction()
+    public String getCallToAction()
     {
         return nativeAd.getAdCallToAction();
     }
 
     @Override
-    protected float getStarRating()
+    public float getStarRating()
     {
         float starRating = 0;
         if (this.nativeAd != null)
@@ -76,18 +76,14 @@ public class FacebookNativeAdModel extends PubnativeAdModel
         return starRating;
     }
 
-    @Override
-    protected void registerAdView(Context context, View adView)
+    public void registerAdView(Context context, View adView)
     {
         nativeAd.registerViewForInteraction(adView);
-        // TODO: register view for interactions.
-        // TODO: Planning to write a method inside super class to use generally.
     }
 
     @Override
-    protected void unregisterAdView(Context context, View adView)
+    public void unregisterAdView(Context context, View adView)
     {
         nativeAd.unregisterView();
-        // TODO: Method to remove callback bound with adView.
     }
 }

@@ -26,49 +26,49 @@ public class PubnativeCacheAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getTitle()
+    public String getTitle()
     {
         return title;
     }
 
     @Override
-    protected String getDescription()
+    public String getDescription()
     {
         return description;
     }
 
     @Override
-    protected String getIconUrl()
+    public String getIconUrl()
     {
         return icon_url;
     }
 
     @Override
-    protected String getBannerUrl()
+    public String getBannerUrl()
     {
         return banner_url;
     }
 
     @Override
-    protected String getCallToAction()
+    public String getCallToAction()
     {
         return call_to_action;
     }
 
     @Override
-    protected float getStarRating()
+    public float getStarRating()
     {
         return star_rating;
     }
 
     @Override
-    protected void registerAdView(Context context, View adView)
+    public void registerAdView(Context context, View adView)
     {
         // Do nothing
     }
 
     @Override
-    protected void unregisterAdView(Context context, View adView)
+    public void unregisterAdView(Context context, View adView)
     {
         // Do nothing
     }
