@@ -82,7 +82,6 @@ public class PubnativeNetworkRequestTest
     @Test
     public void requestWithCorrectParameters()
     {
-
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json",TEST_APP_TOKEN);
 
         PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();

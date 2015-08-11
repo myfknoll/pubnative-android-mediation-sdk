@@ -20,6 +20,6 @@ public class PubnativeConfigTestUtils
     {
         InputStream configStream = PubnativeConfigTestUtils.class.getResourceAsStream("/configs/" + filename);
         String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
-        PubnativeConfigManager.setConfigString(context, configString,app_token);
+        PubnativeConfigManager.updateConfigString(context, app_token, configString);
     }
 }
