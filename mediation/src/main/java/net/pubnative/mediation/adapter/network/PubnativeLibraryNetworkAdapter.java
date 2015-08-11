@@ -20,7 +20,6 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     public PubnativeLibraryNetworkAdapter(Map data)
     {
         super(data);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

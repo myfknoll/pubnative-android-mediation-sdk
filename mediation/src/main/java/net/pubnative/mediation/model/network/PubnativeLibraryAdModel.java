@@ -3,15 +3,17 @@ package net.pubnative.mediation.model.network;
 import android.content.Context;
 import android.view.View;
 
+import net.pubnative.library.Pubnative;
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.mediation.model.PubnativeAdModel;
 
 /**
  * Created by davidmartin on 10/08/15.
  */
-public class PubnativeLibraryAdModel extends PubnativeAdModel
+public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener
 {
-    private NativeAdModel model;
+    protected NativeAdModel model   = null;
+    protected Context       context = null;
 
     public PubnativeLibraryAdModel(NativeAdModel model)
     {
@@ -19,10 +21,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getTitle()
+    public String getTitle()
     {
         String result = null;
-        if(model != null)
+        if (model != null)
         {
             result = model.title;
         }
@@ -30,10 +32,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getDescription()
+    public String getDescription()
     {
         String result = null;
-        if(model != null)
+        if (model != null)
         {
             result = model.description;
         }
@@ -41,10 +43,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getIconUrl()
+    public String getIconUrl()
     {
         String result = null;
-        if(model != null)
+        if (model != null)
         {
             result = model.iconUrl;
         }
@@ -52,10 +54,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getBannerUrl()
+    public String getBannerUrl()
     {
         String result = null;
-        if(model != null)
+        if (model != null)
         {
             result = model.bannerUrl;
         }
@@ -63,10 +65,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected String getCallToAction()
+    public String getCallToAction()
     {
         String result = null;
-        if(model != null)
+        if (model != null)
         {
             result = model.ctaText;
         }
@@ -74,7 +76,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
     }
 
     @Override
-    protected float getStarRating()
+    public float getStarRating()
     {
         float starRating = 0;
         if (this.model != null && this.model.app_details != null)
@@ -84,15 +86,22 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel
         return starRating;
     }
 
-    @Override
-    protected void registerAdView(Context context, View adView)
+    public void registerAdView(Context context, View adView)
     {
+        this.context = context;
+        adView.setOnClickListener(this);
         model.confirmImpressionAutomatically(context, adView);
     }
 
     @Override
-    protected void unregisterAdView(Context context, View adView)
+    public void unregisterAdView(Context context, View adView)
     {
         // Do nothing
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        Pubnative.showInPlayStoreViaDialog(this.context, this.model);
     }
 }

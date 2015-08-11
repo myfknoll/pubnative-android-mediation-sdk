@@ -78,6 +78,6 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onAdClicked(Ad ad)
     {
-
+        // TODO:
     }
 }
