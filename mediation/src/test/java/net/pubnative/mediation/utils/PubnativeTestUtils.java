@@ -73,7 +73,7 @@ public class PubnativeTestUtils
                 assert !file.getName().contains(".");
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
             }
-            else if (file.getName().endsWith(".class") && !file.getName().contains("$"))
+            else if (file.getName().endsWith(".class") && !file.getName().contains("$") && !file.getName().endsWith("Test.class"))
             {
                 classes.add(file.getName().substring(0, file.getName()
                                                             .length() - 6));

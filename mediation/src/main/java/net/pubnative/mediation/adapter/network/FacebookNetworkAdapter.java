@@ -18,9 +18,9 @@ import java.util.Map;
 
 public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener
 {
-    private static final String KEY_PLACEMENT_ID = "placement_id";
+    protected static final String KEY_PLACEMENT_ID = "placement_id";
 
-    private NativeAd nativeAd;
+    protected  NativeAd nativeAd;
 
     public FacebookNetworkAdapter(Map data)
     {
@@ -32,12 +32,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     {
         if (data != null && data.containsKey(KEY_PLACEMENT_ID))
         {
-            String placement_id = (String) data.get(KEY_PLACEMENT_ID);
-            if (!TextUtils.isEmpty(placement_id))
+            String placementId = (String) data.get(KEY_PLACEMENT_ID);
+            if (!TextUtils.isEmpty(placementId))
             {
-                nativeAd = new NativeAd(context, placement_id);
-                nativeAd.setAdListener(this);
-                nativeAd.loadAd();
+                this.createRequest(context, placementId);
             }
             else
             {
@@ -50,10 +48,23 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         }
     }
 
+    protected void createRequest(Context context, String placementId)
+    {
+        nativeAd = new NativeAd(context, placementId);
+        nativeAd.setAdListener(this);
+        nativeAd.loadAd();
+    }
+
     @Override
     public void onError(Ad ad, AdError adError)
     {
-        invokeFailed(new Exception(adError.getErrorMessage()));
+        String errorMessage = "Pubnative - Facebook adapter error: Unknown error";
+        if (adError != null)
+        {
+            errorMessage = adError.getErrorMessage();
+        }
+
+        this.invokeFailed(new Exception(errorMessage));
     }
 
     @Override
@@ -61,7 +72,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     {
         if (ad != nativeAd)
         {
-            invokeFailed(new Exception("Found mismatching ad object"));
+            this.invokeFailed(new Exception("Found mismatching ad object"));
             return;
         }
 
@@ -72,7 +83,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         adModelList.add(adModel);
 
         // calling the invokeLoaded() callback in adapter.
-        invokeLoaded(adModelList);
+        this.invokeLoaded(adModelList);
     }
 
     @Override
