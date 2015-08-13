@@ -22,22 +22,31 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     @Override
     public String getTitle()
     {
-        return nativeAd.getAdTitle();
+        String result = null;
+        if (this.nativeAd != null) {
+            result = this.nativeAd.getAdTitle();
+        }
+        return result;
     }
 
     @Override
     public String getDescription()
     {
-        return nativeAd.getAdBody();
+        String result = null;
+        if (this.nativeAd != null)
+        {
+            result = this.nativeAd.getAdBody();
+        }
+        return result;
     }
 
     @Override
     public String getIconUrl()
     {
         String iconUrl = null;
-        if(nativeAd.getAdIcon() != null)
+        if(this.nativeAd != null && this.nativeAd.getAdIcon() != null)
         {
-            iconUrl = nativeAd.getAdIcon().getUrl();
+            iconUrl = this.nativeAd.getAdIcon().getUrl();
         }
         return iconUrl;
     }
@@ -46,9 +55,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     public String getBannerUrl()
     {
         String bannerUrl = null;
-        if(nativeAd.getAdCoverImage() != null)
+        if(this.nativeAd != null && this.nativeAd.getAdCoverImage() != null)
         {
-            bannerUrl = nativeAd.getAdCoverImage().getUrl();
+            bannerUrl = this.nativeAd.getAdCoverImage().getUrl();
         }
         return bannerUrl;
     }
@@ -56,7 +65,12 @@ public class FacebookNativeAdModel extends PubnativeAdModel
     @Override
     public String getCallToAction()
     {
-        return nativeAd.getAdCallToAction();
+        String result = null;
+        if (this.nativeAd != null)
+        {
+            result = this.nativeAd.getAdCallToAction();
+        }
+        return result;
     }
 
     @Override
@@ -65,12 +79,12 @@ public class FacebookNativeAdModel extends PubnativeAdModel
         float starRating = 0;
         if (this.nativeAd != null)
         {
-            NativeAd.Rating rating = nativeAd.getAdStarRating();
+            NativeAd.Rating rating = this.nativeAd.getAdStarRating();
             if (rating != null)
             {
-                double rating_scale = rating.getScale();
-                double rating_value = rating.getValue();
-                starRating = (float) ((rating_value / rating_scale) * 5);
+                double ratingScale = rating.getScale();
+                double ratingValue = rating.getValue();
+                starRating = (float) ((ratingValue / ratingScale) * 5);
             }
         }
         return starRating;
@@ -78,12 +92,21 @@ public class FacebookNativeAdModel extends PubnativeAdModel
 
     public void registerAdView(Context context, View adView)
     {
-        nativeAd.registerViewForInteraction(adView);
+        if (this.nativeAd != null && context != null && adView != null)
+        {
+            this.nativeAd.registerViewForInteraction(adView);
+        }
+        // TODO: register view for interactions.
+        // TODO: Planning to write a method inside super class to use generally.
     }
 
     @Override
     public void unregisterAdView(Context context, View adView)
     {
-        nativeAd.unregisterView();
+        if (this.nativeAd != null)
+        {
+            this.nativeAd.unregisterView();
+        }
+        // TODO: Method to remove callback bound with adView.
     }
 }
