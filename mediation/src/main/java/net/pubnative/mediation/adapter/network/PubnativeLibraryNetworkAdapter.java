@@ -67,7 +67,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
             return;
         }
 
-        List<PubnativeAdModel> wrapAds = new ArrayList<>();
+        List<PubnativeAdModel> wrapAds = new ArrayList();
         if (ads.size() > 0)
         {
             for (NativeAdModel model : ads)

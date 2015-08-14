@@ -7,6 +7,7 @@ import java.util.Map;
  */
 public class PubnativePriorityRulesModel
 {
-    public String              network_id;
+    public int                 priority_rule_id;
+    public String              network_code;
     public Map<String, Object> params;
 }

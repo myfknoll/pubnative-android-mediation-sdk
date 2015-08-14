@@ -19,71 +19,60 @@ public class PubnativeConfigModelTest
     {
         PubnativeConfigModel model = spy(PubnativeConfigModel.class);
 
-        assertThat(model.config).isNull();
+        assertThat(model.globals).isNull();
         assertThat(model.networks).isNull();
-        assertThat(model.ad_formats).isNull();
         assertThat(model.placements).isNull();
     }
 
     @Test
-    public void isNullIsForDifferentValues()
+    public void isNullOrEmptyForDifferentValues()
     {
         PubnativeConfigModel model = spy(PubnativeConfigModel.class);
-        Map mockMap = mock(Map.class);
 
-        // Not null when all data is setted up
-        model.networks = mockMap;
-        model.ad_formats = mockMap;
-        model.placements = mockMap;
-        assertThat(model.isNullConfig()).isFalse();
-
-        // isNull when one of them is null
-        model.networks = null;
-        model.ad_formats = mockMap;
-        model.placements = mockMap;
-        assertThat(model.isNullConfig()).isTrue();
-
-        model.networks = mockMap;
-        model.ad_formats = null;
-        model.placements = mockMap;
-        assertThat(model.isNullConfig()).isTrue();
-
-        model.networks = mockMap;
-        model.ad_formats = mockMap;
-        model.placements = null;
-        assertThat(model.isNullConfig()).isTrue();
-    }
-
-    @Test
-    public void isEmptyForDifferentValues()
-    {
-        PubnativeConfigModel model = spy(PubnativeConfigModel.class);
         Map notEmptyMap = mock(Map.class);
         doReturn(1).when(notEmptyMap).size();
 
         Map emptyMap = mock(Map.class);
         doReturn(0).when(emptyMap).size();
 
-        // is not empty if all the data is filled
-        model.networks = notEmptyMap;
-        model.ad_formats = notEmptyMap;
-        model.placements = notEmptyMap;
-        assertThat(model.isEmptyConfig()).isFalse();
+        // isNullOrEmpty when any of them is null
+        model.networks = null;
+        model.placements = null;
+        assertThat(model.isNullOrEmpty()).isTrue();
 
-        // is empty if at least one data is empty
-        model.networks = emptyMap;
-        model.ad_formats = notEmptyMap;
-        model.placements = notEmptyMap;
-        assertThat(model.isEmptyConfig()).isTrue();
-
-        model.networks = notEmptyMap;
-        model.ad_formats = emptyMap;
-        model.placements = notEmptyMap;
-        assertThat(model.isEmptyConfig()).isTrue();
-
-        model.networks = notEmptyMap;
-        model.ad_formats = notEmptyMap;
+        model.networks = null;
         model.placements = emptyMap;
-        assertThat(model.isEmptyConfig()).isTrue();
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        model.networks = emptyMap;
+        model.placements = null;
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        model.networks = null;
+        model.placements = notEmptyMap;
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        model.networks = notEmptyMap;
+        model.placements = null;
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        // isNullOrEmpty when any of them is empty
+        model.networks = emptyMap;
+        model.placements = emptyMap;
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        model.networks = emptyMap;
+        model.placements = notEmptyMap;
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        model.networks = notEmptyMap;
+        model.placements = emptyMap;
+        assertThat(model.isNullOrEmpty()).isTrue();
+
+        // isNullOrEmpty false when all data is setted up
+        model.networks = notEmptyMap;
+        model.placements = notEmptyMap;
+        assertThat(model.isNullOrEmpty()).isFalse();
     }
+
 }

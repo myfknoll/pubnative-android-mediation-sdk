@@ -35,7 +35,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
     {
         this.context = context;
         this.currentRankIndex = 0;
-        this.ads = new ArrayList<>();
+        this.ads = new ArrayList();
 
         if (listener == null)
         {
@@ -97,7 +97,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         }
         else
         {
-            String networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_id;
+            String networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_code;
             this.currentRankIndex++;
             if (this.config.networks.containsKey(networkIDString))
             {

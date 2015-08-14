@@ -22,7 +22,7 @@ public class PubnativeTestUtils
      */
     public static List<String> getClassesPackages(String packageName)
     {
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList();
 
         try
         {
@@ -30,7 +30,7 @@ public class PubnativeTestUtils
             assert classLoader != null;
             String path = packageName.replace('.', '/');
             Enumeration resources = classLoader.getResources(path);
-            List<File> dirs = new ArrayList<>();
+            List<File> dirs = new ArrayList();
             while (resources.hasMoreElements())
             {
                 URL resource = (URL) resources.nextElement();

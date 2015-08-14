@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class PubnativePlacementModel
 {
-    public String                            ad_format_id;
+    public String                            ad_format_code;
     public List<PubnativePriorityRulesModel> priority_rules;
+    public PubnativeDeliveryRuleModel        delivery_rule;
 }

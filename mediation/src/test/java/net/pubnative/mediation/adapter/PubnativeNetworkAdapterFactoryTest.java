@@ -41,7 +41,7 @@ public class PubnativeNetworkAdapterFactoryTest
         {
             model = new PubnativeNetworkModel();
             model.adapter = adapterName;
-            model.auth = mock(HashMap.class);
+            model.params = mock(HashMap.class);
             PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
             try
             {
