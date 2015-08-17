@@ -7,7 +7,7 @@ import java.util.Map;
  */
 public class PubnativeNetworkModel
 {
-    public Map<String, String> auth;
+    public Map<String, String> params;
     public String              adapter;
     public Integer             timeout;
 }

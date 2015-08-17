@@ -16,13 +16,14 @@ import org.robolectric.annotation.Config;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,7 +46,7 @@ public class FacebookNetworkAdapterTest
     @Test
     public void verifyCallbacksOnFacebookError()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
 
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
@@ -68,7 +69,7 @@ public class FacebookNetworkAdapterTest
     @Test
     public void verifyCallbacksWithValidData()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
 
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
@@ -85,7 +86,7 @@ public class FacebookNetworkAdapterTest
     @Test
     public void verifyCallbacksWithEmptyPlacementId()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "");
 
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
@@ -98,7 +99,7 @@ public class FacebookNetworkAdapterTest
     @Test
     public void verifyCallbacksWithNullPlacementId()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, null);
 
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
@@ -115,7 +116,7 @@ public class FacebookNetworkAdapterTest
     @Test
     public void verifyCallbacksWithNotNullDataButNoPlacementIdKey()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
 
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
         stubCreateRequestMethod(adapterSpy);

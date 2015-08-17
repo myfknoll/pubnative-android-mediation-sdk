@@ -18,6 +18,7 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.any;
@@ -47,7 +48,7 @@ public class PubnativeLibraryNetworkAdapterTest
     @Test
     public void verifyCallbacksOnPubnativeLibraryFailure()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, "test_placement_id");
 
         PubnativeLibraryNetworkAdapter adapterSpy = spy(new PubnativeLibraryNetworkAdapter(data));
@@ -72,7 +73,7 @@ public class PubnativeLibraryNetworkAdapterTest
     @Test
     public void verifyCallbacksWithValidParams()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, "test_app_token");
 
         PubnativeLibraryNetworkAdapter adapterSpy = spy(new PubnativeLibraryNetworkAdapter(data));
@@ -89,7 +90,7 @@ public class PubnativeLibraryNetworkAdapterTest
     @Test
     public void verifyCallbacksWithEmptyAppTocken()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, "");
 
         PubnativeLibraryNetworkAdapter adapterSpy = spy(new PubnativeLibraryNetworkAdapter(data));
@@ -104,7 +105,7 @@ public class PubnativeLibraryNetworkAdapterTest
     @Test
     public void verifyCallbacksWithNullAppToken()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
         data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, null);
 
         PubnativeLibraryNetworkAdapter adapterSpy = spy(new PubnativeLibraryNetworkAdapter(data));
@@ -119,7 +120,7 @@ public class PubnativeLibraryNetworkAdapterTest
     @Test
     public void verifyCallbacksWithNotNullDataButNoAppToken()
     {
-        HashMap<String, String> data = new HashMap<>();
+        Map<String, String> data = new HashMap();
 
         PubnativeLibraryNetworkAdapter adapterSpy = spy(new PubnativeLibraryNetworkAdapter(data));
         stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);

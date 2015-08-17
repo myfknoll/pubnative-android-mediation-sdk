@@ -1,16 +1,18 @@
 {
-  "config": {
-    "refresh": 10
+  "globals": {
+    "refresh": 10,
+    "impression_beacon": "www.google.com",
+    "click_beacon": "www.google.com"
   },
   "networks": {
-    "1": {
-      "auth": {
+    "facebook": {
+      "params": {
         "placement_id": "1431803217037933_1602371133314473"
       },
       "adapter": "FacebookNetworkAdapter",
       "timeout": 1000
     },
-    "2": {
+    "pubnative": {
       "auth": {
         "app_token": "af117147db28ef258bfd6d042c718b537bc6a2b0760aca3d073a1c80865545f9"
       },
@@ -18,40 +20,50 @@
       "timeout": 1000
     }
   },
-  "ad_formats": {
-    "1": {
-      "impression_cap": 1000,
-      "impression_period": "hour",
-      "pacing_cap": 10,
-      "pacing_period": "minute"
-    }
-  },
   "placements": {
     "1": {
-      "ad_format_id": "1",
+      "ad_format_code": "native",
       "priority_rules": [
         {
-          "network_id": "1",
+          "priority_rule_id": 1,
+          "network_code": "facebook",
           "params": {}
         },
         {
-          "network_id": "2",
+          "priority_rule_id": 2,
+          "network_code": "pubnative",
           "params": {}
         }
-      ]
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 20,
+        "imp_cap_day": 100,
+        "pacing_cap_hour": 20,
+        "pacing_cap_minute": 1,
+        "no_ads": false
+      }
     },
     "2": {
-      "ad_format_id": "1",
+      "ad_format_code": "native",
       "priority_rules": [
         {
-          "network_id": "2",
+          "priority_rule_id": 1,
+          "network_code": "pubnative",
           "params": {}
         },
         {
-          "network_id": "1",
+          "priority_rule_id": 2,
+          "network_code": "facebook",
           "params": {}
         }
-      ]
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 20,
+        "imp_cap_day": 100,
+        "pacing_cap_hour": 20,
+        "pacing_cap_minute": 1,
+        "no_ads": false
+      }
     }
   }
 }

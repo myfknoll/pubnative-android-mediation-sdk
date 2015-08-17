@@ -83,9 +83,9 @@ public class PubnativeConfigManager
                 PubnativeConfigManager.setStoredAppToken(context, appToken);
                 PubnativeConfigManager.setStoredTimestamp(context, System.currentTimeMillis());
 
-                if (configModel.config.containsKey(PubnativeConfigModel.ConfigContract.REFRESH))
+                if (configModel.globals.containsKey(PubnativeConfigModel.ConfigContract.REFRESH))
                 {
-                    Double refresh = (double) configModel.config.get(PubnativeConfigModel.ConfigContract.REFRESH);
+                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.ConfigContract.REFRESH);
                     PubnativeConfigManager.setStoredRefresh(context, refresh.longValue());
                 }
             }

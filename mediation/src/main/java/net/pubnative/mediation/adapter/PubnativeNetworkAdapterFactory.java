@@ -17,7 +17,7 @@ public class PubnativeNetworkAdapterFactory
         {
             Class<?> networkClass = Class.forName(getPackageName(model.adapter));
             Constructor<?> constructor = networkClass.getConstructor(Map.class);
-            result = (PubnativeNetworkAdapter) constructor.newInstance(model.auth);
+            result = (PubnativeNetworkAdapter) constructor.newInstance(model.params);
         }
         catch (Exception e)
         {

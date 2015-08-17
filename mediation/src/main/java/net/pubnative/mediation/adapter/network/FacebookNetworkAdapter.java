@@ -79,7 +79,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         PubnativeAdModel adModel = new FacebookNativeAdModel(nativeAd);
 
         // adding the PubnativeAdModel object to the list.
-        List<PubnativeAdModel> adModelList = new ArrayList<>();
+        List<PubnativeAdModel> adModelList = new ArrayList();
         adModelList.add(adModel);
 
         // calling the invokeLoaded() callback in adapter.
