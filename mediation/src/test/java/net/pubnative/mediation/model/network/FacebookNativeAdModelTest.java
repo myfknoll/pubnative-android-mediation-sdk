@@ -6,8 +6,8 @@ import android.view.View;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 /**
  * Created by rahul on 13/8/15.
@@ -15,31 +15,32 @@ import static org.mockito.Mockito.mock;
 public class FacebookNativeAdModelTest {
 
     @Test
-    public void checkWithNullNativeAdDoNotCrash()
+    public void memberFunctionsWithNullNativeAdDoNotFail()
     {
-        FacebookNativeAdModel model = spy(new FacebookNativeAdModel(null));
+        FacebookNativeAdModel adModel = spy(new FacebookNativeAdModel(null));
 
-        assertThat(model.getTitle()).isNull();
-        assertThat(model.getIconUrl()).isNull();
-        assertThat(model.getBannerUrl()).isNull();
-        assertThat(model.getDescription()).isNull();
-        assertThat(model.getCallToAction()).isNull();
-        assertThat(model.getStarRating()).isEqualTo(0.0f);
+        // verify getter methods returns null
+        assertThat(adModel.getTitle()).isNull();
+        assertThat(adModel.getIconUrl()).isNull();
+        assertThat(adModel.getBannerUrl()).isNull();
+        assertThat(adModel.getDescription()).isNull();
+        assertThat(adModel.getCallToAction()).isNull();
+        assertThat(adModel.getStarRating()).isZero();
 
         // check with mocked arguments.
-        model.registerAdView(mock(Context.class), mock(View.class));
-        model.unregisterAdView(mock(Context.class), mock(View.class));
+        adModel.registerAdView(mock(Context.class), mock(View.class));
+        adModel.unregisterAdView(mock(Context.class), mock(View.class));
 
         // check with null arguments.
-        model.registerAdView(null, null);
-        model.unregisterAdView(null, null);
+        adModel.registerAdView(null, null);
+        adModel.unregisterAdView(null, null);
 
         // check with combination of null and mocked arguments.
         // case #1
-        model.registerAdView(null, mock(View.class));
-        model.unregisterAdView(null, mock(View.class));
+        adModel.registerAdView(null, mock(View.class));
+        adModel.unregisterAdView(null, mock(View.class));
         // case #2
-        model.registerAdView(mock(Context.class), null);
-        model.unregisterAdView(mock(Context.class), null);
+        adModel.registerAdView(mock(Context.class), null);
+        adModel.unregisterAdView(mock(Context.class), null);
     }
 }

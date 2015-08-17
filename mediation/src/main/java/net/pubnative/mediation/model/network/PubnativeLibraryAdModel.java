@@ -89,8 +89,12 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     public void registerAdView(Context context, View adView)
     {
         this.context = context;
-        adView.setOnClickListener(this);
-        model.confirmImpressionAutomatically(context, adView);
+
+        if (model != null && context != null && adView != null)
+        {
+            adView.setOnClickListener(this);
+            model.confirmImpressionAutomatically(context, adView);
+        }
     }
 
     @Override

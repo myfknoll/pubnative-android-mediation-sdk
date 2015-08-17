@@ -1,6 +1,7 @@
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import net.pubnative.library.PubnativeContract.Request;
 import net.pubnative.library.model.NativeAdModel;
@@ -25,12 +26,28 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void request(Context context)
     {
-        AdRequest request = new AdRequest(context);
-        if(data.containsKey(APP_TOKEN_KEY))
+        if(data != null && data.containsKey(APP_TOKEN_KEY))
         {
-            String app_token = (String) data.get(APP_TOKEN_KEY);
-            request.setParameter(Request.APP_TOKEN, app_token);
+            String appToken = (String) data.get(APP_TOKEN_KEY);
+            if (!TextUtils.isEmpty(appToken))
+            {
+                createRequest(context, appToken);
+            }
+            else
+            {
+                invokeFailed(new Exception("Invalid app_token provided."));
+            }
         }
+        else
+        {
+            invokeFailed(new Exception("No app_token provided."));
+        }
+    }
+
+    protected void createRequest(Context context, String appToken)
+    {
+        AdRequest request = new AdRequest(context);
+        request.setParameter(Request.APP_TOKEN, appToken);
         request.setParameter(Request.AD_COUNT, this.ad_count.toString());
         request.start(AdRequest.Endpoint.NATIVE, this);
     }
@@ -44,11 +61,22 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads)
     {
-        List<PubnativeAdModel> wrapAds = new ArrayList<>();
-        for(NativeAdModel model : ads)
+        if (request == null || ads == null)
         {
-            wrapAds.add(new PubnativeLibraryAdModel(model));
+            this.invokeFailed(new Exception("Invalid request object or ads found"));
+            return;
         }
+
+        List<PubnativeAdModel> wrapAds = new ArrayList<>();
+        if (ads.size() > 0)
+        {
+            for (NativeAdModel model : ads)
+            {
+                wrapAds.add(new PubnativeLibraryAdModel(model));
+            }
+        }
+
+        // providing empty array instead of calling the invokeFailed to complete the workflow.
         this.invokeLoaded(wrapAds);
     }
 
