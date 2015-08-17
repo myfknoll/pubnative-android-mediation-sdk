@@ -20,16 +20,23 @@ public abstract class PubnativeNetworkAdapter
 
     public void doRequest(Context context, Integer ad_count, PubnativeNetworkAdapterListener listener)
     {
-        if (listener != null)
+        if (context != null)
         {
-            this.listener = listener;
-            this.ad_count = ad_count;
-            this.invokeStart();
-            this.request(context);
+            if (listener != null)
+            {
+                this.listener = listener;
+                this.ad_count = ad_count;
+                this.invokeStart();
+                this.request(context);
+            }
+            else
+            {
+                System.out.println("PubnativeNetworkAdapter.doRequest - listener not specified, dropping the call");
+            }
         }
         else
         {
-            System.out.println("PubnativeNetworkAdapter.doRequest - listener not specified, dropping the call");
+            System.out.println("PubnativeNetworkAdapter.doRequest - context not specified, dropping the call");
         }
     }
 
