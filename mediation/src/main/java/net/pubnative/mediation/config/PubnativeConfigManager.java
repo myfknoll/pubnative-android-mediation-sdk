@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class PubnativeConfigManager
 {
+    private static final Boolean lock = false;
+
     protected static final String SHARED_PREFERENCES_CONFIG = "net.pubnative.mediation";
     protected static final String CONFIG_STRING_KEY         = "config";
     protected static final String APP_TOKEN_STRING_KEY      = "appToken";
@@ -156,12 +158,18 @@ public class PubnativeConfigManager
     // CONFIG
     protected static String getStoredConfigString(Context context)
     {
-        return PubnativeConfigManager.getStringSharedPreference(context, CONFIG_STRING_KEY);
+        synchronized (lock)
+        {
+            return PubnativeConfigManager.getStringSharedPreference(context, CONFIG_STRING_KEY);
+        }
     }
 
     protected static void setStoredConfigString(Context context, String config)
     {
-        PubnativeConfigManager.setStringSharedPreference(context, CONFIG_STRING_KEY, config);
+        synchronized (lock)
+        {
+            PubnativeConfigManager.setStringSharedPreference(context, CONFIG_STRING_KEY, config);
+        }
     }
 
     protected static void clean(Context context)
