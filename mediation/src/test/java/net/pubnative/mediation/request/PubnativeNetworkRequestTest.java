@@ -7,6 +7,7 @@ import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
 import net.pubnative.mediation.config.PubnativeConfigTestUtils;
+import net.pubnative.mediation.config.PubnativeFrequencyManager;
 import net.pubnative.mediation.model.PubnativeNetworkModel;
 
 import org.junit.Before;
@@ -208,6 +209,88 @@ public class PubnativeNetworkRequestTest
 
         verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
         verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(IllegalArgumentException.class));
+    }
+
+    @Test
+    public void requestWithDeliverInactive()
+    {
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "delivery_inactive.json", TEST_APP_TOKEN);
+        PubnativeFrequencyManager.logImpression(this.applicationContext);
+
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = TEST_PLACEMENT_ID;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
+        verify(listenerMock, never()).onRequestLoaded(eq(requestSpy), any(List.class));
+    }
+
+    @Test
+    public void requestWithFrequencyDayLimitReached()
+    {
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "delivery_freq_day.json", TEST_APP_TOKEN);
+        PubnativeFrequencyManager.logImpression(this.applicationContext);
+
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = TEST_PLACEMENT_ID;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
+        verify(listenerMock, never()).onRequestLoaded(eq(requestSpy), any(List.class));
+    }
+
+    @Test
+    public void requestWithFrequencyHourLimitReached()
+    {
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "delivery_freq_hour.json", TEST_APP_TOKEN);
+        PubnativeFrequencyManager.logImpression(this.applicationContext);
+
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = TEST_PLACEMENT_ID;
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
+        verify(listenerMock, never()).onRequestLoaded(eq(requestSpy), any(List.class));
+    }
+
+    @Test
+    public void requestWithFrequencyLimitsOpen()
+    {
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "delivery_freq_hour.json", TEST_APP_TOKEN);
+
+        final PubnativeNetworkAdapter adapterMock = mock(PubnativeNetworkAdapter.class);
+        doAnswer(new Answer()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                return null;
+            }
+        }).when(adapterMock).doRequest(any(Context.class), anyInt(), any(PubnativeNetworkAdapterListener.class));
+
+        PowerMockito.mockStatic(PubnativeNetworkAdapterFactory.class);
+        // Stub Factory create to return my adapter mock
+        when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
+        // Stub Adapter doRequest to callback the listener directly
+
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = TEST_APP_TOKEN;
+        parameters.placement_id = TEST_PLACEMENT_ID;
+
+        // First request should work
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+        PubnativeFrequencyManager.logImpression(applicationContext);
+        // Second request should fail with frequency_cap before creating the adapter
+        requestSpy.request(this.applicationContext, parameters, this.listenerMock);
+
+        verify(listenerMock, times(2)).onRequestStarted(eq(requestSpy));
+        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
     }
 
     // TODO: Test for null getConfig path

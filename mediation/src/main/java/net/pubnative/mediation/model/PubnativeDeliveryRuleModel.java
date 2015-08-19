@@ -1,51 +1,38 @@
 package net.pubnative.mediation.model;
 
-import java.util.Calendar;
-
 /**
  * Created by davidmartin on 14/08/15.
  */
 public class PubnativeDeliveryRuleModel
 {
-    int imp_cap_day;
-    int imp_cap_hour;
-    int pacing_cap_hour;
-    int pacing_cap_minute;
-    boolean no_ads;
+    public int imp_cap_day;
+    public int imp_cap_hour;
+    public int pacing_cap_hour;
+    public int pacing_cap_minute;
+    public boolean no_ads;
 
     public boolean isActive()
     {
         return !this.no_ads;
     }
 
-    public Calendar getOverdueImpressionDay()
+    public boolean isDayImpressionCapActive()
     {
-        return getOverdueCalendar(Calendar.DAY_OF_MONTH, this.imp_cap_day);
+        return imp_cap_day > 0;
     }
 
-    public Calendar getOverdueImpressionHour()
+    public boolean isHourImpressionCapActive()
     {
-        return getOverdueCalendar(Calendar.HOUR_OF_DAY, this.imp_cap_hour);
+        return imp_cap_hour > 0;
     }
 
-    public Calendar getOverduePacingHour()
+    public boolean isHourPacingCapActive()
     {
-        return getOverdueCalendar(Calendar.HOUR_OF_DAY, this.pacing_cap_hour);
+        return pacing_cap_hour > 0;
     }
 
-    public Calendar getOverduePacingMinute()
+    public boolean isMinutePacingCapActive()
     {
-        return getOverdueCalendar(Calendar.MINUTE, this.pacing_cap_minute);
-    }
-
-    private Calendar getOverdueCalendar(int field, int value)
-    {
-        Calendar result = null;
-        if (value > 0)
-        {
-            result = Calendar.getInstance();
-            result.add(field, -1 * value);
-        }
-        return result;
+        return pacing_cap_minute > 0;
     }
 }

@@ -8,6 +8,7 @@ import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
 import net.pubnative.mediation.config.PubnativeConfigManager;
+import net.pubnative.mediation.config.PubnativeFrequencyManager;
 import net.pubnative.mediation.model.PubnativeAdModel;
 import net.pubnative.mediation.model.PubnativeConfigModel;
 import net.pubnative.mediation.model.PubnativeNetworkModel;
@@ -63,7 +64,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
                 if (this.config.placements.containsKey(this.parameters.placement_id))
                 {
                     this.placement = this.config.placements.get(this.parameters.placement_id);
-                    this.doAdapterRequest();
+                    if(this.placement.delivery_rule.isActive())
+                    {
+                        this.doRequest();
+                    }
+                    else
+                    {
+                        this.invokeFail(new Exception("PubnativeNetworkRequest.request - placement_id not active"));
+                    }
                 }
                 else
                 {
@@ -88,7 +96,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         return requestedAds - foundAds;
     }
 
-    protected void doAdapterRequest()
+    protected void doRequest()
     {
         if(this.getAdsLeft() <= 0 || this.currentRankIndex >= this.placement.priority_rules.size())
         {
@@ -97,29 +105,61 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         }
         else
         {
-            String networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_code;
-            this.currentRankIndex++;
-            if (this.config.networks.containsKey(networkIDString))
+            // Frequency capping
+            int ad_count = this.getAdsLeft();
+            if(this.placement.delivery_rule.isDayImpressionCapActive())
             {
-                PubnativeNetworkModel network = this.config.networks.get(networkIDString);
-                PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
+                int leftDailyAds = this.placement.delivery_rule.imp_cap_day - PubnativeFrequencyManager.getCurrentDailyCount(this.context);
+                ad_count = Math.min(ad_count, leftDailyAds);
+            }
 
-                if (adapter == null)
-                {
-                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + network.adapter + " not found"));
-                    this.doAdapterRequest();
-                }
-                else
-                {
-                    // TODO: Implement adapter TIMEOUT
-                    adapter.doRequest(this.context, this.getAdsLeft(), this);
-                }
+            if(this.placement.delivery_rule.isHourImpressionCapActive())
+            {
+                int leftHourlyAds= this.placement.delivery_rule.imp_cap_hour - PubnativeFrequencyManager.getCurrentHourlyCount(this.context);
+                ad_count = Math.min(ad_count, leftHourlyAds);
+            }
+
+            if(ad_count > 0)
+            {
+                // TODO: Pacing
+                // TODO: Add timeout
+                this.doAdapterRequest(ad_count);
             }
             else
             {
-                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + networkIDString + " config not found"));
-                this.doAdapterRequest();
+                this.invokeFail(new Exception("Pubnative - request error: frequecy cap"));
             }
+        }
+    }
+
+    protected void doAdapterRequest(int adCount)
+    {
+        String networkIDString = null;
+        if(this.placement.priority_rules != null && this.placement.priority_rules.size() > this.currentRankIndex)
+        {
+            networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_code;
+        }
+        this.currentRankIndex++;
+        if (!TextUtils.isEmpty(networkIDString) && this.config.networks.containsKey(networkIDString))
+        {
+            PubnativeNetworkModel network = this.config.networks.get(networkIDString);
+            PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
+
+            if (adapter == null)
+            {
+                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + network.adapter + " not found"));
+                this.doRequest();
+            }
+            else
+            {
+                // TODO: Add timeout
+                adapter.doRequest(this.context, adCount, this);
+            }
+        }
+        else
+        {
+            System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + networkIDString + " config not found"));
+            this.doRequest();
         }
     }
 
@@ -159,11 +199,11 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
     public void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, List<PubnativeAdModel> ads)
     {
         // save returned ads and waterfall to the next network
-        if (ads != null)
+        if (ads != null && ads.size() > 0)
         {
             this.ads.addAll(ads);
         }
-        this.doAdapterRequest();
+        this.doRequest();
     }
 
     @Override
@@ -171,6 +211,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
     {
         System.out.println("Pubnative - adapter request error: " + exception);
         // Waterfall to the next network
-        this.doAdapterRequest();
+        this.doRequest();
     }
 }
