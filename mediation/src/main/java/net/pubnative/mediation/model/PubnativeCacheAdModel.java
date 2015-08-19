@@ -17,12 +17,15 @@ public class PubnativeCacheAdModel extends PubnativeAdModel
 
     public PubnativeCacheAdModel(PubnativeAdModel model)
     {
-        this.title = model.getTitle();
-        this.description = model.getDescription();
-        this.icon_url = model.getIconUrl();
-        this.banner_url = model.getBannerUrl();
-        this.call_to_action = model.getCallToAction();
-        this.star_rating = model.getStarRating();
+        if(model != null)
+        {
+            this.title = model.getTitle();
+            this.description = model.getDescription();
+            this.icon_url = model.getIconUrl();
+            this.banner_url = model.getBannerUrl();
+            this.call_to_action = model.getCallToAction();
+            this.star_rating = model.getStarRating();
+        }
     }
 
     @Override
