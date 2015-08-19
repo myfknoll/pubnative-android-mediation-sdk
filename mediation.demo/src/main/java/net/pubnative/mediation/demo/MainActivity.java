@@ -56,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
     {
         InputStream configStream = MainActivity.class.getResourceAsStream("/configs/test_config.json");
         String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
-        PubnativeConfigManager.updateConfigString(this.getApplicationContext(), configString, "app_token");
+        PubnativeConfigManager.updateConfigString(this.getApplicationContext(), "app_token", configString);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
         PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
         parameters.ad_count = 5;
         parameters.app_token = "app_token";
-        parameters.placement_id = "placement_id";
+        parameters.placement_id = "1";
 
         PubnativeNetworkRequest request = new PubnativeNetworkRequest();
         request.request(this.getApplicationContext(), parameters, this);

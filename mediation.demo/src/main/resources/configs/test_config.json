@@ -13,7 +13,7 @@
       "timeout": 1000
     },
     "pubnative": {
-      "auth": {
+      "params": {
         "app_token": "af117147db28ef258bfd6d042c718b537bc6a2b0760aca3d073a1c80865545f9"
       },
       "adapter": "PubnativeLibraryNetworkAdapter",
