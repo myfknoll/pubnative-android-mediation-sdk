@@ -1,28 +1,30 @@
 package net.pubnative.library.predefined;
 
-import java.lang.ref.WeakReference;
-import java.util.UUID;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
+import java.lang.ref.WeakReference;
+import java.util.UUID;
+
 public abstract class PubnativeActivityDelegate extends BroadcastReceiver
 {
-    public String                                      identifier = UUID.randomUUID().toString();
+    public String identifier = UUID.randomUUID()
+                                   .toString();
     protected WeakReference<PubnativeActivityListener> listener;
     protected Context                                  context;
     protected String                                   app_token;
-    protected boolean                                  registered = false;
+    protected boolean registered = false;
 
     public static void Create(Context context, String app_token, PubnativeActivityListener listener)
     {
         // Do nothing
     }
 
-    public PubnativeActivityDelegate(Context context, String app_token, PubnativeActivityListener listener)
+    public PubnativeActivityDelegate(Context context, String app_token,
+                                     PubnativeActivityListener listener)
     {
         this.listener = new WeakReference<PubnativeActivityListener>(listener);
         this.context = context;
@@ -33,7 +35,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
     public boolean equals(Object obj)
     {
         boolean result = false;
-        if (obj.getClass().isInstance(PubnativeActivityDelegate.class))
+        if (obj.getClass()
+               .isInstance(PubnativeActivityDelegate.class))
         {
             PubnativeActivityDelegate delegate = (PubnativeActivityDelegate) obj;
             result = this.identifier == delegate.identifier;
@@ -44,7 +47,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
     private void unregisterBroadcastReceiver()
     {
         this.registered = false;
-        LocalBroadcastManager.getInstance(this.context).unregisterReceiver(this);
+        LocalBroadcastManager.getInstance(this.context)
+                             .unregisterReceiver(this);
     }
 
     private void registerBroadcastReceiver()
@@ -52,7 +56,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
         if (!this.registered)
         {
             this.registered = true;
-            LocalBroadcastManager.getInstance(this.context).registerReceiver(this, new IntentFilter(this.identifier));
+            LocalBroadcastManager.getInstance(this.context)
+                                 .registerReceiver(this, new IntentFilter(this.identifier));
         }
     }
 
@@ -60,7 +65,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
     {
         if (this.listener.get() != null)
         {
-            this.listener.get().onPubnativeActivityStarted(this.identifier);
+            this.listener.get()
+                         .onPubnativeActivityStarted(this.identifier);
         }
     }
 
@@ -68,7 +74,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
     {
         if (this.listener.get() != null)
         {
-            this.listener.get().onPubnativeActivityOpened(this.identifier);
+            this.listener.get()
+                         .onPubnativeActivityOpened(this.identifier);
         }
     }
 
@@ -77,7 +84,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
         PubnativeActivityDelegateManager.removeDelegate(this);
         if (this.listener.get() != null)
         {
-            this.listener.get().onPubnativeActivityFailed(this.identifier, exception);
+            this.listener.get()
+                         .onPubnativeActivityFailed(this.identifier, exception);
         }
     }
 
@@ -86,7 +94,8 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
         PubnativeActivityDelegateManager.removeDelegate(this);
         if (this.listener.get() != null)
         {
-            this.listener.get().onPubnativeActivityClosed(this.identifier);
+            this.listener.get()
+                         .onPubnativeActivityClosed(this.identifier);
         }
     }
 
@@ -94,43 +103,37 @@ public abstract class PubnativeActivityDelegate extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
         String message = intent.getStringExtra(PubnativeActivity.EVENT);
-        switch (message)
+        if (PubnativeActivity.EVENT_ACTIVITY_CREATE.equals(message))
         {
-            case PubnativeActivity.EVENT_ACTIVITY_CREATE:
-                break;
-            case PubnativeActivity.EVENT_ACTIVITY_PAUSE:
-            case PubnativeActivity.EVENT_ACTIVITY_STOP:
-            case PubnativeActivity.EVENT_ACTIVITY_DESTROY:
-            {
-                this.unregisterBroadcastReceiver();
-            }
-                break;
-            case PubnativeActivity.EVENT_ACTIVITY_RESUME:
-            {
-                this.registerBroadcastReceiver();
-            }
-                break;
-            case PubnativeActivity.EVENT_LISTENER_START:
-            {
-                this.invokeListenerStart();
-            }
-                break;
-            case PubnativeActivity.EVENT_LISTENER_OPENED:
-            {
-                this.invokeListenerOpened();
-            }
-                break;
-            case PubnativeActivity.EVENT_LISTENER_FAILED:
-            {
-                Exception error = (Exception) intent.getExtras().getSerializable(PubnativeActivity.DATA);
-                this.invokeListenerFailed(error);
-            }
-                break;
-            case PubnativeActivity.EVENT_LISTENER_CLOSED:
-            {
-                this.invokeListenerClosed();
-            }
-                break;
+            // Do nothing
+        }
+        else if (PubnativeActivity.EVENT_ACTIVITY_PAUSE.equals(message) ||
+                PubnativeActivity.EVENT_ACTIVITY_STOP.equals(message) ||
+                PubnativeActivity.EVENT_ACTIVITY_DESTROY.equals(message))
+        {
+            this.unregisterBroadcastReceiver();
+        }
+        else if (PubnativeActivity.EVENT_ACTIVITY_RESUME.equals(message))
+        {
+            this.registerBroadcastReceiver();
+        }
+        else if (PubnativeActivity.EVENT_LISTENER_START.equals(message))
+        {
+            this.invokeListenerStart();
+        }
+        else if (PubnativeActivity.EVENT_LISTENER_OPENED.equals(message))
+        {
+            this.invokeListenerOpened();
+        }
+        else if (PubnativeActivity.EVENT_LISTENER_FAILED.equals(message))
+        {
+            Exception error = (Exception) intent.getExtras()
+                                                .getSerializable(PubnativeActivity.DATA);
+            this.invokeListenerFailed(error);
+        }
+        else if (PubnativeActivity.EVENT_LISTENER_CLOSED.equals(message))
+        {
+            this.invokeListenerClosed();
         }
     }
 }

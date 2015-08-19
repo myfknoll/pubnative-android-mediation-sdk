@@ -29,9 +29,9 @@ import net.pubnative.library.PubnativeContract.Response;
 import net.pubnative.library.PubnativeContract.Response.NativeAd;
 import net.pubnative.library.managers.TaskManager;
 import net.pubnative.library.managers.TrackingManager;
-import net.pubnative.library.managers.task.ConfirmImpressionTask;
 import net.pubnative.library.managers.task.TaskItem;
 import net.pubnative.library.managers.task.TaskItem.TaskItemListener;
+import net.pubnative.library.managers.task.TrackViewImpressionTask;
 
 import org.droidparts.annotation.serialize.JSON;
 import org.droidparts.model.Model;
@@ -98,7 +98,7 @@ public class NativeAdModel extends Model implements NativeAd, TaskItemListener
     public void confirmImpressionAutomatically(Context context, View view)
     {
         this.context = context;
-        ConfirmImpressionTask task = new ConfirmImpressionTask(this, view);
+        TrackViewImpressionTask task = new TrackViewImpressionTask(this, view);
         TaskManager.addLooperTask(task);
     }
 

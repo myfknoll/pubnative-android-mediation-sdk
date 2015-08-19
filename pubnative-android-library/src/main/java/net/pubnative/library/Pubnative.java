@@ -1,6 +1,5 @@
 package net.pubnative.library;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,9 +36,9 @@ public class Pubnative
         TaskManager.onDestroy();
     }
 
-    public static void showInPlayStoreViaBrowser(Activity act, NativeAdModel ad)
+    public static void showInPlayStoreViaBrowser(Context context, NativeAdModel ad)
     {
-        new WebRedirector(act, ad.app_details.store_id, ad.click_url).doBrowserRedirect();
+        new WebRedirector(context, ad.app_details.store_id, ad.click_url).doBrowserRedirect();
     }
 
     public static void showInPlayStoreViaDialog(Context act, NativeAdModel ad)
@@ -62,17 +61,13 @@ public class Pubnative
         }
         else
         {
-            switch (type)
+            if(FullScreen.INTERSTITIAL.equals(type))
             {
-                case FullScreen.INTERSTITIAL:
-                    PubnativeInterstitialDelegate.Create(context, app_token, listener);
-                    break;
-                case FullScreen.GAME_LIST:
-                    PubnativeGameListDelegate.Create(context, app_token, listener);
-                    break;
-                default:
-                    // Nothing to do
-                    break;
+                PubnativeInterstitialDelegate.Create(context, app_token, listener);
+            }
+            else if(FullScreen.GAME_LIST.equals(type))
+            {
+                PubnativeGameListDelegate.Create(context, app_token, listener);
             }
         }
     }

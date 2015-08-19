@@ -1,16 +1,16 @@
 /**
  * Copyright 2014 PubNative GmbH
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,30 +21,34 @@
  */
 package net.pubnative.library.request;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-
-import net.pubnative.library.PubnativeContract;
-import net.pubnative.library.model.NativeAdModel;
-import net.pubnative.library.request.task.GetAdsTask;
-import net.pubnative.library.util.Crypto;
-import net.pubnative.library.util.IdUtil;
-
-import org.droidparts.concurrent.task.AsyncTaskResultListener;
-
 import android.content.Context;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
-public class AdRequest implements
-        Serializable,
-        AsyncTaskResultListener<ArrayList<? extends NativeAdModel>>
+import net.pubnative.library.PubnativeContract;
+import net.pubnative.library.model.NativeAdModel;
+import net.pubnative.library.task.AsyncHttpTask;
+import net.pubnative.library.util.Crypto;
+import net.pubnative.library.util.IdUtil;
+
+import org.droidparts.concurrent.task.AsyncTaskResultListener;
+import org.droidparts.persist.serializer.JSONSerializer;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+public class AdRequest implements Serializable,
+                                  AsyncTaskResultListener<ArrayList<? extends NativeAdModel>>
 {
     String BASE_URL            = "http://api.pubnative.net/api/partner/v2/promotions";
     String NATIVE_ENDPOINT_URL = "native";
@@ -55,11 +59,11 @@ public class AdRequest implements
         NATIVE, VIDEO
     }
 
-    private static final long             serialVersionUID  = 1L;
-    private final HashMap<String, String> requestParameters = new HashMap<String, String>();
-    private AdRequestListener             listener          = null;
-    private Endpoint                      endpoint          = null;
-    private Context                       context           = null;
+    private static final long                    serialVersionUID  = 1L;
+    private final        HashMap<String, String> requestParameters = new HashMap<String, String>();
+    private              AdRequestListener       listener          = null;
+    private              Endpoint                endpoint          = null;
+    private              Context                 context           = null;
 
     // Public methods
     public AdRequest(Context context)
@@ -116,18 +120,49 @@ public class AdRequest implements
                             this.request.requestParameters.put(PubnativeContract.Request.ANDROID_ADVERTISER_ID_SHA1, Crypto.sha1(android_advertiser_id));
                             this.request.requestParameters.put(PubnativeContract.Request.ANDROID_ADVERTISER_ID_MD5, Crypto.md5(android_advertiser_id));
                         }
+                        else
+                        {
+                            this.request.requestParameters.put(PubnativeContract.Request.NO_USER_ID, "1");
+                        }
                     }
-                    // UI THREAD
-                    new Handler(Looper.getMainLooper()).post(new AdRequestRunnable(this.request)
+
+                    List<NativeAdModel> ads = null;
+                    Exception ex = null;
+                    try
+                    {
+                        String json = new AsyncHttpTask(this.request.context).execute(this.request.toString())
+                                                                             .get();
+                        if (!TextUtils.isEmpty(json))
+                        {
+                            JSONObject jsonObject = new JSONObject(json);
+                            JSONArray arr = jsonObject.getJSONArray(PubnativeContract.Response.ADS);
+                            JSONSerializer jsonSerializer = new JSONSerializer(NativeAdModel.class, this.request.context);
+                            ads = (ArrayList<NativeAdModel>) jsonSerializer.deserializeAll(arr);
+                        }
+                        else
+                        {
+                            ex = new Exception("Pubnative - server error");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ex = e;
+                    }
+
+                    //                     UI THREAD
+                    new Handler(Looper.getMainLooper()).post(new AdRequestRunnable(this.request, ads, ex)
                     {
                         @Override
                         public void run()
                         {
-                            if (!this.request.requestParameters.containsKey(PubnativeContract.Request.NO_USER_ID))
+                            if (this.exception == null)
                             {
-                                this.request.requestParameters.put(PubnativeContract.Request.NO_USER_ID, this.request.requestParameters.containsKey(PubnativeContract.Request.ANDROID_ADVERTISER_ID) ? "0" : "1");
+                                this.request.invokeOnAdRequestFinished((ArrayList<? extends NativeAdModel>) this.ads);
                             }
-                            new GetAdsTask(this.request.context, this.request, this.request).execute();
+                            else
+                            {
+                                this.request.invokeOnAdRequestFailed(this.exception);
+                            }
                         }
                     });
                 }
@@ -135,14 +170,24 @@ public class AdRequest implements
         }
     }
 
+
     // Private helpers
     private class AdRequestRunnable implements Runnable
     {
-        public AdRequest request;
+        public AdRequest           request   = null;
+        public List<NativeAdModel> ads      = null;
+        public Exception           exception = null;
 
         public AdRequestRunnable(AdRequest request)
         {
+            this(request, null, null);
+        }
+
+        public AdRequestRunnable(AdRequest request, List<NativeAdModel> ads, Exception e)
+        {
             this.request = request;
+            this.ads = ads;
+            this.exception = e;
         }
 
         @Override
@@ -150,6 +195,7 @@ public class AdRequest implements
         {
             // Do nothing
         }
+
     }
 
     private void fillInDefaultls()
@@ -172,7 +218,8 @@ public class AdRequest implements
         }
         if (!this.requestParameters.containsKey(PubnativeContract.Request.DEVICE_RESOLUTION))
         {
-            DisplayMetrics dm = this.context.getResources().getDisplayMetrics();
+            DisplayMetrics dm = this.context.getResources()
+                                            .getDisplayMetrics();
             this.requestParameters.put(PubnativeContract.Request.DEVICE_RESOLUTION, dm.widthPixels + "x" + dm.heightPixels);
         }
         if (!this.requestParameters.containsKey(PubnativeContract.Request.DEVICE_TYPE))
@@ -181,7 +228,8 @@ public class AdRequest implements
         }
         if (!this.requestParameters.containsKey(PubnativeContract.Request.LOCALE))
         {
-            this.requestParameters.put(PubnativeContract.Request.LOCALE, Locale.getDefault().getLanguage());
+            this.requestParameters.put(PubnativeContract.Request.LOCALE, Locale.getDefault()
+                                                                               .getLanguage());
         }
         Location location = IdUtil.getLastLocation(this.context);
         if (location != null)
@@ -200,7 +248,8 @@ public class AdRequest implements
     @Override
     public String toString()
     {
-        Uri.Builder uriBuilder = Uri.parse(this.BASE_URL).buildUpon();
+        Uri.Builder uriBuilder = Uri.parse(this.BASE_URL)
+                                    .buildUpon();
         switch (endpoint)
         {
             case NATIVE:
@@ -221,7 +270,8 @@ public class AdRequest implements
                 uriBuilder.appendQueryParameter(key, value);
             }
         }
-        return uriBuilder.build().toString();
+        return uriBuilder.build()
+                         .toString();
     }
 
     @Override
