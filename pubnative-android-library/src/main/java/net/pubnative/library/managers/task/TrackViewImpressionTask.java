@@ -1,12 +1,12 @@
 package net.pubnative.library.managers.task;
 
+import android.view.View;
+
 import net.pubnative.library.util.ViewUtil;
 
 import org.apache.http.HttpResponse;
 
-import android.view.View;
-
-public class ConfirmImpressionTask extends TaskItem
+public class TrackViewImpressionTask extends TaskItem
 {
     private final int   VIEW_MIN_SHOWN_TIME      = 1000;
     private final int   VIEW_MIN_VISIBLE_PERCENT = 50;
@@ -14,7 +14,7 @@ public class ConfirmImpressionTask extends TaskItem
     private long        firstAppeared            = -1;
     public HttpResponse response;
 
-    public ConfirmImpressionTask(TaskItemListener listener, View view)
+    public TrackViewImpressionTask(TaskItemListener listener, View view)
     {
         super(listener);
         this.checkedView = view;

@@ -21,13 +21,6 @@
  */
 package net.pubnative.library.renderer;
 
-import static org.droidparts.util.Strings.isEmpty;
-import static org.droidparts.util.ui.ViewUtils.setInvisible;
-import net.pubnative.library.model.NativeAdModel;
-
-import org.droidparts.net.image.ImageFetchListener;
-import org.droidparts.net.image.ImageReshaper;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.animation.AccelerateInterpolator;
@@ -35,6 +28,14 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import net.pubnative.library.model.NativeAdModel;
+
+import org.droidparts.net.image.ImageFetchListener;
+import org.droidparts.net.image.ImageReshaper;
+
+import static org.droidparts.util.Strings.isEmpty;
+import static org.droidparts.util.ui.ViewUtils.setInvisible;
 
 public class NativeAdRenderer extends AdRenderer<NativeAdModel> implements
         ImageFetchListener

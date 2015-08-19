@@ -1,11 +1,5 @@
 package net.pubnative.library.predefined;
 
-import java.util.ArrayList;
-
-import net.pubnative.library.Pubnative;
-import net.pubnative.library.model.NativeAdModel;
-import net.pubnative.library.predefined.game_list.PubnativeGameListView;
-import net.pubnative.library.predefined.interstitial.PubnativeInterstitialView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +7,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import net.pubnative.library.Pubnative;
+import net.pubnative.library.model.NativeAdModel;
+import net.pubnative.library.predefined.game_list.PubnativeGameListView;
+import net.pubnative.library.predefined.interstitial.PubnativeInterstitialView;
+
+import java.util.ArrayList;
 
 public class PubnativeActivity extends Activity
 {
@@ -46,15 +47,15 @@ public class PubnativeActivity extends Activity
         {
             this.ads = serializedAds;
             String type = getIntent().getStringExtra(EXTRA_TYPE);
-            switch (type)
+            if(Pubnative.FullScreen.INTERSTITIAL.equals(type))
             {
-                case Pubnative.FullScreen.INTERSTITIAL:
-                    this.contentView = new PubnativeInterstitialView(this, (ArrayList<NativeAdModel>) this.ads);
-                    break;
-                case Pubnative.FullScreen.GAME_LIST:
-                    this.contentView = new PubnativeGameListView(this, (ArrayList<NativeAdModel>) this.ads);
-                    break;
+                this.contentView = new PubnativeInterstitialView(this, (ArrayList<NativeAdModel>) this.ads);
             }
+            else if(Pubnative.FullScreen.GAME_LIST.equals(type))
+            {
+                this.contentView = new PubnativeGameListView(this, (ArrayList<NativeAdModel>) this.ads);
+            }
+
             if (this.contentView != null)
             {
                 this.setContentView(this.contentView);

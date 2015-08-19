@@ -26,7 +26,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
-import android.os.Build;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -53,15 +52,8 @@ public class ScreenUtil
         WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
         Display d = wm.getDefaultDisplay();
         Point p = new Point();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
-        {
-            d.getRealSize(p);
-        }
-        else
-        {
-            p.x = getScreenWidth(ctx);
-            p.y = getScreenHeight(ctx);
-        }
+        p.x = getScreenWidth(ctx);
+        p.y = getScreenHeight(ctx);
         return p;
     }
 
