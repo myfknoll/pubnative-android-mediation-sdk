@@ -3,10 +3,9 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
-import com.facebook.ads.AdListener;
 import com.facebook.ads.NativeAd;
+import com.facebook.ads.NativeAdsManager;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.model.PubnativeAdModel;
@@ -16,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener
+public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements NativeAdsManager.Listener
 {
     protected static final String KEY_PLACEMENT_ID = "placement_id";
 
-    protected  NativeAd nativeAd;
+    protected  NativeAdsManager nativeAdsManager;
 
     public FacebookNetworkAdapter(Map data)
     {
@@ -35,7 +34,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             String placementId = (String) data.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId))
             {
-                this.createRequest(context, placementId);
+                this.createRequest(context, placementId, ad_count);
             }
             else
             {
@@ -48,15 +47,38 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         }
     }
 
-    protected void createRequest(Context context, String placementId)
+    protected void createRequest(Context context, String placementId, int adCount)
     {
-        nativeAd = new NativeAd(context, placementId);
-        nativeAd.setAdListener(this);
-        nativeAd.loadAd();
+        this.nativeAdsManager = new NativeAdsManager(context, placementId, adCount);
+        this.nativeAdsManager.setListener(this);
+        this.nativeAdsManager.loadAds();
     }
 
     @Override
-    public void onError(Ad ad, AdError adError)
+    public void onAdsLoaded()
+    {
+        List<PubnativeAdModel> adModelList = new ArrayList();
+        if (this.nativeAdsManager != null)
+        {
+            for (int count = 0; count < ad_count; count++)
+            {
+                NativeAd nativeAd = this.nativeAdsManager.nextNativeAd();
+                if (nativeAd != null)
+                {
+                    adModelList.add(new FacebookNativeAdModel(nativeAd));
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        this.invokeLoaded(adModelList);
+    }
+
+    @Override
+    public void onAdError(AdError adError)
     {
         String errorMessage = "Pubnative - Facebook adapter error: Unknown error";
         if (adError != null)
@@ -65,30 +87,5 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         }
 
         this.invokeFailed(new Exception(errorMessage));
-    }
-
-    @Override
-    public void onAdLoaded(Ad ad)
-    {
-        if (ad != nativeAd)
-        {
-            this.invokeFailed(new Exception("Found mismatching ad object"));
-            return;
-        }
-
-        PubnativeAdModel adModel = new FacebookNativeAdModel(nativeAd);
-
-        // adding the PubnativeAdModel object to the list.
-        List<PubnativeAdModel> adModelList = new ArrayList();
-        adModelList.add(adModel);
-
-        // calling the invokeLoaded() callback in adapter.
-        this.invokeLoaded(adModelList);
-    }
-
-    @Override
-    public void onAdClicked(Ad ad)
-    {
-        // TODO:
     }
 }

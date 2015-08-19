@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
@@ -57,10 +58,10 @@ public class FacebookNetworkAdapterTest
             public Object answer(InvocationOnMock invocation) throws Throwable
             {
                 FacebookNetworkAdapter adapter = (FacebookNetworkAdapter) invocation.getMock();
-                adapter.onError(null, null);
+                adapter.onAdError(null);
                 return null;
             }
-        }).when(adapterSpy).createRequest(any(Context.class), anyString());
+        }).when(adapterSpy).createRequest(any(Context.class), anyString(), anyInt());
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
         verifyCallbacksForFailureCase(adapterSpy, listenerMock);
@@ -152,10 +153,10 @@ public class FacebookNetworkAdapterTest
             public Object answer(InvocationOnMock invocation) throws Throwable
             {
                 FacebookNetworkAdapter adapter = (FacebookNetworkAdapter) invocation.getMock();
-                adapter.onAdLoaded(null);
+                adapter.onAdsLoaded();
                 return null;
             }
-        }).when(adapterMock).createRequest(any(Context.class), anyString());
+        }).when(adapterMock).createRequest(any(Context.class), anyString(), anyInt());
     }
 }
 
