@@ -21,46 +21,125 @@
     }
   },
   "placements": {
-    "1": {
+    "facebook_only": {
       "ad_format_code": "native",
       "priority_rules": [
         {
           "priority_rule_id": 1,
           "network_code": "facebook",
           "params": {}
-        },
-        {
-          "priority_rule_id": 2,
-          "network_code": "pubnative",
-          "params": {}
         }
       ],
       "delivery_rule":{
-        "imp_cap_hour": 20,
-        "imp_cap_day": 100,
-        "pacing_cap_hour": 20,
-        "pacing_cap_minute": 1,
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
         "no_ads": false
       }
     },
-    "2": {
+    "pubnative_only": {
       "ad_format_code": "native",
       "priority_rules": [
         {
           "priority_rule_id": 1,
           "network_code": "pubnative",
           "params": {}
+        }
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
+        "no_ads": false
+      }
+    },
+    "waterfall_facebook_pubnative": {
+      "ad_format_code": "native",
+      "priority_rules": [
+
+        {
+          "priority_rule_id": 1,
+          "network_code": "facebook",
+          "params": {}
         },
         {
           "priority_rule_id": 2,
-          "network_code": "facebook",
+          "network_code": "pubnative",
           "params": {}
         }
       ],
       "delivery_rule":{
-        "imp_cap_hour": 20,
-        "imp_cap_day": 100,
-        "pacing_cap_hour": 20,
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
+        "no_ads": false
+      }
+    },
+    "disabled": {
+      "ad_format_code": "native",
+      "priority_rules": [
+        {
+          "priority_rule_id": 1,
+          "network_code": "facebook",
+          "params": {}
+        },
+        {
+          "priority_rule_id": 2,
+          "network_code": "pubnative",
+          "params": {}
+        }
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
+        "no_ads": true
+      }
+    },
+    "1_imp_cap": {
+      "ad_format_code": "native",
+      "priority_rules": [
+        {
+          "priority_rule_id": 1,
+          "network_code": "facebook",
+          "params": {}
+        },
+        {
+          "priority_rule_id": 2,
+          "network_code": "pubnative",
+          "params": {}
+        }
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 1,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
+        "no_ads": false
+      }
+    },
+    "1_min_pacing_cap": {
+      "ad_format_code": "native",
+      "priority_rules": [
+        {
+          "priority_rule_id": 1,
+          "network_code": "facebook",
+          "params": {}
+        },
+        {
+          "priority_rule_id": 2,
+          "network_code": "pubnative",
+          "params": {}
+        }
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
         "pacing_cap_minute": 1,
         "no_ads": false
       }

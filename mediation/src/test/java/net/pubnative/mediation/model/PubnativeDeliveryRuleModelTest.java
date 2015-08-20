@@ -28,6 +28,7 @@ public class PubnativeDeliveryRuleModelTest
         assertThat(modelSpy.isActive()).isFalse();
     }
 
+    @Test
     public void isDayImpressionCapActiveWithValues()
     {
         modelSpy.imp_cap_day = -1;
@@ -38,6 +39,7 @@ public class PubnativeDeliveryRuleModelTest
         assertThat(modelSpy.isDayImpressionCapActive()).isTrue();
     }
 
+    @Test
     public void isHourImpressionCapActiveWithValues()
     {
         modelSpy.imp_cap_hour = -1;
@@ -48,23 +50,35 @@ public class PubnativeDeliveryRuleModelTest
         assertThat(modelSpy.isHourImpressionCapActive()).isTrue();
     }
 
-    public void isHourPacingCapActiveWithValues()
-    {
-        modelSpy.pacing_cap_hour = -1;
-        assertThat(modelSpy.isHourPacingCapActive()).isFalse();
-        modelSpy.pacing_cap_hour = 0;
-        assertThat(modelSpy.isHourPacingCapActive()).isFalse();
-        modelSpy.pacing_cap_hour = 1;
-        assertThat(modelSpy.isHourPacingCapActive()).isTrue();
-    }
-
-    public void isMinutePacingCapActiveWithValues()
+    @Test
+    public void isPacingCapActiveWithValues()
     {
         modelSpy.pacing_cap_minute = -1;
-        assertThat(modelSpy.isMinutePacingCapActive()).isFalse();
+        modelSpy.pacing_cap_hour = -1;
+        assertThat(modelSpy.isPacingCapActive()).isFalse();
+
+        modelSpy.pacing_cap_minute = -1;
+        modelSpy.pacing_cap_hour = 0;
+        assertThat(modelSpy.isPacingCapActive()).isFalse();
+
         modelSpy.pacing_cap_minute = 0;
-        assertThat(modelSpy.isMinutePacingCapActive()).isFalse();
+        modelSpy.pacing_cap_hour = -1;
+        assertThat(modelSpy.isPacingCapActive()).isFalse();
+
+        modelSpy.pacing_cap_minute = 0;
+        modelSpy.pacing_cap_hour = 0;
+        assertThat(modelSpy.isPacingCapActive()).isFalse();
+
         modelSpy.pacing_cap_minute = 1;
-        assertThat(modelSpy.isMinutePacingCapActive()).isTrue();
+        modelSpy.pacing_cap_hour = 0;
+        assertThat(modelSpy.isPacingCapActive()).isTrue();
+
+        modelSpy.pacing_cap_minute = 0;
+        modelSpy.pacing_cap_hour = 1;
+        assertThat(modelSpy.isPacingCapActive()).isTrue();
+
+        modelSpy.pacing_cap_minute = 1;
+        modelSpy.pacing_cap_hour = 1;
+        assertThat(modelSpy.isPacingCapActive()).isTrue();
     }
 }

@@ -18,21 +18,16 @@ public class PubnativeDeliveryRuleModel
 
     public boolean isDayImpressionCapActive()
     {
-        return imp_cap_day > 0;
+        return this.imp_cap_day > 0;
     }
 
     public boolean isHourImpressionCapActive()
     {
-        return imp_cap_hour > 0;
+        return this.imp_cap_hour > 0;
     }
 
-    public boolean isHourPacingCapActive()
+    public boolean isPacingCapActive()
     {
-        return pacing_cap_hour > 0;
-    }
-
-    public boolean isMinutePacingCapActive()
-    {
-        return pacing_cap_minute > 0;
+        return this.pacing_cap_hour > 0 || this.pacing_cap_minute > 0;
     }
 }

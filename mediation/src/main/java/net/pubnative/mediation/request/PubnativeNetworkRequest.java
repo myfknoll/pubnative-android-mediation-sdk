@@ -7,10 +7,13 @@ import android.text.TextUtils;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
+import net.pubnative.mediation.config.PubnativeAdCache;
 import net.pubnative.mediation.config.PubnativeConfigManager;
 import net.pubnative.mediation.config.PubnativeFrequencyManager;
 import net.pubnative.mediation.model.PubnativeAdModel;
+import net.pubnative.mediation.model.PubnativeCacheAdModel;
 import net.pubnative.mediation.model.PubnativeConfigModel;
+import net.pubnative.mediation.model.PubnativeDeliveryRuleModel;
 import net.pubnative.mediation.model.PubnativeNetworkModel;
 import net.pubnative.mediation.model.PubnativePlacementModel;
 
@@ -32,7 +35,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         // Do some initialization here
     }
 
-    public void request(Context context, PubnativeNetworkRequestParameters parameters, PubnativeNetworkRequestListener listener)
+    public void request(Context context, PubnativeNetworkRequestParameters parameters,
+                        PubnativeNetworkRequestListener listener)
     {
         this.context = context;
         this.currentRankIndex = 0;
@@ -64,7 +68,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
                 if (this.config.placements.containsKey(this.parameters.placement_id))
                 {
                     this.placement = this.config.placements.get(this.parameters.placement_id);
-                    if(this.placement.delivery_rule.isActive())
+                    if (this.placement.delivery_rule.isActive())
                     {
                         this.doRequest();
                     }
@@ -81,53 +85,51 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         }
     }
 
-    protected int getAdsLeft()
-    {
-        int requestedAds = 0; // Default value if not included
-        int foundAds = 0;
-        if (this.parameters != null)
-        {
-            requestedAds = this.parameters.ad_count;
-        }
-        if (this.ads != null)
-        {
-            foundAds = this.ads.size();
-        }
-        return requestedAds - foundAds;
-    }
-
     protected void doRequest()
     {
-        if(this.getAdsLeft() <= 0 || this.currentRankIndex >= this.placement.priority_rules.size())
+        int adCount = this.getAdsLeft();
+        if (adCount <= 0 || this.currentRankIndex >= this.placement.priority_rules.size())
         {
             // No more needed ads or possible networks to request
             this.invokeLoad(this.ads);
         }
         else
         {
-            // Frequency capping
-            int ad_count = this.getAdsLeft();
-            if(this.placement.delivery_rule.isDayImpressionCapActive())
-            {
-                int leftDailyAds = this.placement.delivery_rule.imp_cap_day - PubnativeFrequencyManager.getCurrentDailyCount(this.context);
-                ad_count = Math.min(ad_count, leftDailyAds);
-            }
+            PubnativeDeliveryRuleModel deliveryRuleModel = this.placement.delivery_rule;
+            int frequencyCap = this.getFrequencyCap(this.context, adCount, deliveryRuleModel);
 
-            if(this.placement.delivery_rule.isHourImpressionCapActive())
+            if (frequencyCap > 0)
             {
-                int leftHourlyAds= this.placement.delivery_rule.imp_cap_hour - PubnativeFrequencyManager.getCurrentHourlyCount(this.context);
-                ad_count = Math.min(ad_count, leftHourlyAds);
-            }
+                int pacingCap = this.getPacingCap(this.context, adCount, deliveryRuleModel);
 
-            if(ad_count > 0)
-            {
-                // TODO: Pacing
-                // TODO: Add timeout
-                this.doAdapterRequest(ad_count);
+                // If requestable ads is less than the pacing limit
+                // fill part of the request with cached ads
+                if (adCount < pacingCap)
+                {
+                    List<PubnativeCacheAdModel> adsCache = PubnativeAdCache.getCachedAds(this.context);
+                    int requiredCacheAds = pacingCap - adCount;
+                    for (PubnativeCacheAdModel cacheModel : adsCache)
+                    {
+                        this.ads.add(cacheModel);
+                        if (--requiredCacheAds == 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                this.doAdapterRequest(adCount);
             }
             else
             {
-                this.invokeFail(new Exception("Pubnative - request error: frequecy cap"));
+                if (this.ads != null && this.ads.size() > 0)
+                {
+                    this.invokeLoad(this.ads);
+                }
+                else
+                {
+                    this.invokeFail(new Exception("Pubnative - request error: frequecy cap"));
+                }
             }
         }
     }
@@ -135,7 +137,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
     protected void doAdapterRequest(int adCount)
     {
         String networkIDString = null;
-        if(this.placement.priority_rules != null && this.placement.priority_rules.size() > this.currentRankIndex)
+        if (this.placement.priority_rules != null && this.placement.priority_rules.size() > this.currentRankIndex)
         {
             networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_code;
         }
@@ -162,6 +164,68 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
             this.doRequest();
         }
     }
+
+    protected int getAdsLeft()
+    {
+        int requestedAds = 0; // Default value if not included
+        int foundAds = 0;
+        if (this.parameters != null)
+        {
+            requestedAds = this.parameters.ad_count;
+        }
+        if (this.ads != null)
+        {
+            foundAds = this.ads.size();
+        }
+        return requestedAds - foundAds;
+    }
+
+    protected int getFrequencyCap(Context context, int adCount, PubnativeDeliveryRuleModel deliveryRuleModel)
+    {
+        int result = adCount;
+
+        if (context != null && deliveryRuleModel != null)
+        {
+            // Cap adCount value by frequency count and caps
+
+            if (deliveryRuleModel.isDayImpressionCapActive())
+            {
+                int leftDailyAds = deliveryRuleModel.imp_cap_day - PubnativeFrequencyManager.getCurrentDailyCount(context);
+                result = Math.min(result, leftDailyAds);
+            }
+
+            if (deliveryRuleModel.isHourImpressionCapActive())
+            {
+                int leftHourlyAds = deliveryRuleModel.imp_cap_hour - PubnativeFrequencyManager.getCurrentHourlyCount(context);
+                result = Math.min(result, leftHourlyAds);
+            }
+        }
+        return result;
+    }
+
+    protected int getPacingCap(Context context, int adCount, PubnativeDeliveryRuleModel deliveryRuleModel)
+    {
+        int result = adCount;
+        if (deliveryRuleModel.isPacingCapActive())
+        {
+            PubnativeAdCache.updateAdsCache(this.context, deliveryRuleModel);
+            List<PubnativeCacheAdModel> adsCache = PubnativeAdCache.getCachedAds(this.context);
+            if (adsCache != null)
+            {
+                // Set pacing cap
+                int pacingCap = deliveryRuleModel.pacing_cap_hour;
+                if (deliveryRuleModel.pacing_cap_minute > 0)
+                {
+                    pacingCap = deliveryRuleModel.pacing_cap_minute;
+                }
+
+                result = pacingCap - adsCache.size();
+            }
+        }
+        return result;
+    }
+
+    // HELPERS
 
     protected void invokeStart()
     {
