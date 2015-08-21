@@ -7,9 +7,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import net.pubnative.mediation.config.PubnativeConfigManager;
 import net.pubnative.mediation.model.PubnativeAdModel;
@@ -19,19 +19,38 @@ import net.pubnative.mediation.request.PubnativeNetworkRequestParameters;
 import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
+// List of configured placements for testing
+//-------------------------------
+// facebook_only
+// pubnative_only
+// waterfall_facebook_pubnative
+// disabled
+// 1_imp_cap
+// 1_min_pacing_cap
 
 public class MainActivity extends ActionBarActivity implements PubnativeNetworkRequestListener,
-                                                               OnClickListener,
-                                                               AdapterView.OnItemClickListener
+                                                               OnClickListener
 {
     private final static String PUBNATIVE_TAG = "Pubnative";
 
-    private Button                  requestButton = null;
-    private ListView                adsList       = null;
-    private PubnativeAdsListAdapter adapter       = null;
+    private Button requestButton = null;
+
+    View adView1 = null;
+    View adView2 = null;
+    View adView3 = null;
+
+    ImageView adImage1 = null;
+    ImageView adImage2 = null;
+    ImageView adImage3 = null;
+
+    TextView adText1 = null;
+    TextView adText2 = null;
+    TextView adText3 = null;
+
+    PubnativeNetworkRequest request1 = new PubnativeNetworkRequest();
+    PubnativeNetworkRequest request2 = new PubnativeNetworkRequest();
+    PubnativeNetworkRequest request3 = new PubnativeNetworkRequest();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,14 +60,20 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
 
         this.setFakeConfig();
 
+        this.adView1 = this.findViewById(R.id.ad1_layout);
+        this.adView2 = this.findViewById(R.id.ad2_layout);
+        this.adView3 = this.findViewById(R.id.ad3_layout);
+
+        this.adImage1 = (ImageView) this.findViewById(R.id.ad1_image);
+        this.adImage2 = (ImageView) this.findViewById(R.id.ad2_image);
+        this.adImage3 = (ImageView) this.findViewById(R.id.ad3_image);
+
+        this.adText1 = (TextView) this.findViewById(R.id.ad1_text);
+        this.adText2 = (TextView) this.findViewById(R.id.ad2_text);
+        this.adText3 = (TextView) this.findViewById(R.id.ad3_text);
+
         this.requestButton = (Button) this.findViewById(R.id.requestButton);
         this.requestButton.setOnClickListener(this);
-
-        this.adapter = new PubnativeAdsListAdapter(this, R.layout.list_item, new ArrayList<PubnativeAdModel>());
-
-        this.adsList = (ListView) this.findViewById(R.id.adsList);
-        this.adsList.setAdapter(this.adapter);
-        this.adsList.setOnItemClickListener(this);
     }
 
     // TODO: Remove this method
@@ -84,6 +109,40 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
         return super.onOptionsItemSelected(item);
     }
 
+    protected void requestAds()
+    {
+        this.requestAd(this.request1, "facebook_only");
+        this.requestAd(this.request2, "1_imp_cap");
+        this.requestAd(this.request3, "1_min_pacing_cap");
+    }
+
+    protected void updateAd(PubnativeAdModel ad, ImageView imageView, TextView textView, View adView)
+    {
+        textView.setText(ad.getClass().getSimpleName());
+        new LoadImageAsyncTask().execute(ad.getIconUrl(), imageView);
+        ad.registerAdView(this, adView);
+    }
+
+    protected void requestAd(PubnativeNetworkRequest request, String placementID)
+    {
+        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
+        parameters.app_token = "app_token";
+        parameters.placement_id = placementID;
+        request.start(this.getApplicationContext(), parameters, this);
+    }
+
+    // OnClickListener
+    @Override
+    public void onClick(View v)
+    {
+        if (this.requestButton == v)
+        {
+            // Request new ads
+            this.requestAds();
+        }
+    }
+
+    // PubnativeNetworkRequestListener
     @Override
     public void onRequestStarted(PubnativeNetworkRequest request)
     {
@@ -91,53 +150,26 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
     }
 
     @Override
-    public void onRequestLoaded(PubnativeNetworkRequest request, List<PubnativeAdModel> ads)
+    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad)
     {
-        Log.d(PUBNATIVE_TAG, "MainActivity.onRequestLoaded: " + ads.size());
-        this.adapter.setAds(ads);
+        Log.d(PUBNATIVE_TAG, "MainActivity.onRequestLoaded");
+        if (this.request1.equals(request))
+        {
+            this.updateAd(ad, this.adImage1, this.adText1, this.adView1);
+        }
+        else if (this.request2.equals(request))
+        {
+            this.updateAd(ad, this.adImage2, this.adText2, this.adView2);
+        }
+        else if (this.request3.equals(request))
+        {
+            this.updateAd(ad, this.adImage3, this.adText3, this.adView3);
+        }
     }
 
     @Override
     public void onRequestFailed(PubnativeNetworkRequest request, Exception exception)
     {
         Log.d(PUBNATIVE_TAG, "MainActivity.onRequestFailed: " + exception);
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        if (this.requestButton == v)
-        {
-            // Clean the list
-            this.adapter.clean();
-
-            // Request new ads
-            this.requestAds();
-        }
-    }
-
-    protected void requestAds()
-    {
-        PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
-        parameters.ad_count = 2;
-        parameters.app_token = "app_token";
-        parameters.placement_id = "facebook_only";
-        // List of configured placements for testing
-        //-------------------------------
-        // facebook_only
-        // pubnative_only
-        // waterfall_facebook_pubnative
-        // disabled
-        // 1_imp_cap
-        // 1_min_pacing_cap
-
-        PubnativeNetworkRequest request = new PubnativeNetworkRequest();
-        request.request(this.getApplicationContext(), parameters, this);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-    {
-        Log.d(PUBNATIVE_TAG, "Item clicked at position: " + position);
     }
 }

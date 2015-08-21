@@ -6,7 +6,6 @@ package net.pubnative.mediation.request;
 public class PubnativeNetworkRequestParameters
 {
     // Mandatory data
-    public int    ad_count = 1;
     public String app_token;
     public String placement_id;
 

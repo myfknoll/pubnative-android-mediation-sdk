@@ -6,7 +6,6 @@ import net.pubnative.mediation.model.PubnativeAdModel;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.mockito.Matchers.eq;
@@ -44,9 +43,9 @@ public class PubnativeNetworkAdapterTest
         verify(listenerSpy, times(1)).onAdapterRequestStarted(adapterInstance);
 
         // onRequestLoaded
-        ArrayList<PubnativeAdModel> adsMock = mock(ArrayList.class);
-        adapterInstance.invokeLoaded(adsMock);
-        verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterInstance), eq(adsMock));
+        PubnativeAdModel adMock = mock(PubnativeAdModel.class);
+        adapterInstance.invokeLoaded(adMock);
+        verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterInstance), eq(adMock));
 
         // onRequestFailed
         Exception exceptionMock = mock(Exception.class);
@@ -70,7 +69,7 @@ public class PubnativeNetworkAdapterTest
 
         adapterSpy.listener = null;
         adapterSpy.invokeStart();
-        adapterSpy.invokeLoaded(mock(ArrayList.class));
+        adapterSpy.invokeLoaded(mock(PubnativeAdModel.class));
         adapterSpy.invokeFailed(mock(Exception.class));
     }
 }

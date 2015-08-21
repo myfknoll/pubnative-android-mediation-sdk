@@ -5,6 +5,7 @@ import android.content.Context;
 import net.pubnative.library.request.AdRequest;
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
+import net.pubnative.mediation.model.PubnativeAdModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,6 @@ import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Matchers.anyString;
@@ -66,7 +66,7 @@ public class PubnativeLibraryNetworkAdapterTest
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
 
-        adapterSpy.doRequest(this.applicationContext, 1, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, listenerMock);
         failCallbacksWhenInvalidDataProvided(adapterSpy, listenerMock);
     }
 
@@ -80,10 +80,10 @@ public class PubnativeLibraryNetworkAdapterTest
         stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        adapterSpy.doRequest(this.applicationContext, 1, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, listenerMock);
 
         verify(listenerMock, times(1)).onAdapterRequestStarted(eq(adapterSpy));
-        verify(listenerMock, times(1)).onAdapterRequestLoaded(eq(adapterSpy), any(List.class));
+        verify(listenerMock, times(1)).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
         verify(listenerMock, never()).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
     }
 
@@ -98,7 +98,7 @@ public class PubnativeLibraryNetworkAdapterTest
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
 
-        adapterSpy.doRequest(this.applicationContext, 1, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, listenerMock);
         failCallbacksWhenInvalidDataProvided(adapterSpy, listenerMock);
     }
 
@@ -113,7 +113,7 @@ public class PubnativeLibraryNetworkAdapterTest
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
 
-        adapterSpy.doRequest(this.applicationContext, 1, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, listenerMock);
         failCallbacksWhenInvalidDataProvided(adapterSpy, listenerMock);
     }
 
@@ -127,7 +127,7 @@ public class PubnativeLibraryNetworkAdapterTest
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
 
-        adapterSpy.doRequest(this.applicationContext, 1, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, listenerMock);
         failCallbacksWhenInvalidDataProvided(adapterSpy, listenerMock);
     }
 
@@ -139,7 +139,7 @@ public class PubnativeLibraryNetworkAdapterTest
 
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
 
-        adapterSpy.doRequest(this.applicationContext, 1, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, listenerMock);
         failCallbacksWhenInvalidDataProvided(adapterSpy, listenerMock);
     }
 
@@ -147,7 +147,7 @@ public class PubnativeLibraryNetworkAdapterTest
     {
         verify(listener, times(1)).onAdapterRequestStarted(eq(adapter));
         verify(listener, times(1)).onAdapterRequestFailed(eq(adapter), any(Exception.class));
-        verify(listener, never()).onAdapterRequestLoaded(eq(adapter), any(List.class));
+        verify(listener, never()).onAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
     private void stubCreateRequestMethodWithRequestFinishedCallback(PubnativeLibraryNetworkAdapter adapterMock)
