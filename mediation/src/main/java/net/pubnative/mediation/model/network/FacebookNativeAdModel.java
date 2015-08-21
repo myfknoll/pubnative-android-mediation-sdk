@@ -3,6 +3,10 @@ package net.pubnative.mediation.model.network;
 import android.content.Context;
 import android.view.View;
 
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.AdListener;
+import com.facebook.ads.ImpressionListener;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
@@ -10,13 +14,18 @@ import net.pubnative.mediation.model.PubnativeAdModel;
 /**
  * Created by rahul on 6/8/15.
  */
-public class FacebookNativeAdModel extends PubnativeAdModel
+public class FacebookNativeAdModel extends PubnativeAdModel implements ImpressionListener, AdListener
 {
     private NativeAd nativeAd;
 
     public FacebookNativeAdModel(NativeAd nativeAd)
     {
-        this.nativeAd = nativeAd;
+        if(nativeAd != null)
+        {
+            this.nativeAd = nativeAd;
+            this.nativeAd.setAdListener(this);
+            this.nativeAd.setImpressionListener(this);
+        }
     }
 
     @Override
@@ -96,8 +105,6 @@ public class FacebookNativeAdModel extends PubnativeAdModel
         {
             this.nativeAd.registerViewForInteraction(adView);
         }
-        // TODO: register view for interactions.
-        // TODO: Planning to write a method inside super class to use generally.
     }
 
     @Override
@@ -107,6 +114,31 @@ public class FacebookNativeAdModel extends PubnativeAdModel
         {
             this.nativeAd.unregisterView();
         }
-        // TODO: Method to remove callback bound with adView.
+    }
+
+    // Facebook
+
+    @Override
+    public void onLoggingImpression(Ad ad)
+    {
+        this.invokeOnAdImpressionConfirmed();
+    }
+
+    @Override
+    public void onError(Ad ad, AdError adError)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onAdLoaded(Ad ad)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onAdClicked(Ad ad)
+    {
+        this.invokeOnAdClick();
     }
 }

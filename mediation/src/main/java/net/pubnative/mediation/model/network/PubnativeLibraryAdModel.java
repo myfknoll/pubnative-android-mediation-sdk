@@ -94,6 +94,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
         {
             adView.setOnClickListener(this);
             model.confirmImpressionAutomatically(context, adView);
+            // TODO: Confirm impression
         }
     }
 
@@ -106,6 +107,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public void onClick(View view)
     {
+        this.invokeOnAdClick();
         Pubnative.showInPlayStoreViaDialog(this.context, this.model);
     }
 }
