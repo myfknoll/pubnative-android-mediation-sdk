@@ -140,8 +140,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
             }
             else
             {
-                // TODO: Add timeout
-                adapter.doRequest(this.context, this);
+                adapter.doRequest(this.context, network.timeout, this);
             }
         }
         else

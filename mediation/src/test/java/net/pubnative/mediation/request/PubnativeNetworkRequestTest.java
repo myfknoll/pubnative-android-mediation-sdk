@@ -25,6 +25,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
@@ -77,7 +78,7 @@ public class PubnativeNetworkRequestTest
         verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
 
         // onRequestLoaded
-        PubnativeAdModel adMock = mock(PubnativeAdModel.class);
+        PubnativeAdModel adMock = spy(PubnativeAdModel.class);
         requestSpy.invokeLoad(adMock);
         verify(listenerMock, times(1)).onRequestLoaded(eq(requestSpy), eq(adMock));
 
@@ -93,7 +94,7 @@ public class PubnativeNetworkRequestTest
         // invoking method with a rguments when lister is null should not crash
         requestSpy.listener = null;
         requestSpy.invokeStart();
-        requestSpy.invokeLoad(mock(PubnativeAdModel.class));
+        requestSpy.invokeLoad(spy(PubnativeAdModel.class));
         requestSpy.invokeFail(mock(Exception.class));
     }
 
@@ -102,7 +103,7 @@ public class PubnativeNetworkRequestTest
     {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", TEST_APP_TOKEN);
 
-        final PubnativeAdModel modelMock = mock(PubnativeAdModel.class);
+        final PubnativeAdModel modelMock = spy(PubnativeAdModel.class);
         final PubnativeNetworkAdapter adapterMock = mock(PubnativeNetworkAdapter.class);
         // Stub Adapter doRequest to callback the listener directly
         doAnswer(new Answer()
@@ -111,12 +112,12 @@ public class PubnativeNetworkRequestTest
             public Object answer (InvocationOnMock invocation) throws Throwable
             {
                 PubnativeNetworkAdapter adapterMock = (PubnativeNetworkAdapter) invocation.getMock();
-                PubnativeNetworkAdapterListener adapterListener = (PubnativeNetworkAdapterListener) invocation.getArgumentAt(1, PubnativeNetworkAdapterListener.class);
+                PubnativeNetworkAdapterListener adapterListener = (PubnativeNetworkAdapterListener) invocation.getArgumentAt(2, PubnativeNetworkAdapterListener.class);
                 adapterListener.onAdapterRequestStarted(adapterMock);
                 adapterListener.onAdapterRequestLoaded(adapterMock, modelMock);
                 return null;
             }
-        }).when(adapterMock).doRequest(any(Context.class), any(PubnativeNetworkAdapterListener.class));
+        }).when(adapterMock).doRequest(any(Context.class), anyInt(), any(PubnativeNetworkAdapterListener.class));
         // Stub Factory create to return my adapter mock
         PowerMockito.mockStatic(PubnativeNetworkAdapterFactory.class);
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
@@ -237,7 +238,7 @@ public class PubnativeNetworkRequestTest
             {
                 return null;
             }
-        }).when(adapterMock).doRequest(any(Context.class), any(PubnativeNetworkAdapterListener.class));
+        }).when(adapterMock).doRequest(any(Context.class), anyInt(), any(PubnativeNetworkAdapterListener.class));
         PowerMockito.mockStatic(PubnativeNetworkAdapterFactory.class);
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
 
@@ -265,7 +266,7 @@ public class PubnativeNetworkRequestTest
             {
                 return null;
             }
-        }).when(adapterMock).doRequest(any(Context.class), any(PubnativeNetworkAdapterListener.class));
+        }).when(adapterMock).doRequest(any(Context.class), anyInt(), any(PubnativeNetworkAdapterListener.class));
         PowerMockito.mockStatic(PubnativeNetworkAdapterFactory.class);
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
 
