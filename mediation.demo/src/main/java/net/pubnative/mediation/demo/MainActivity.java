@@ -121,7 +121,7 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
         PubnativeNetworkRequestParameters parameters = new PubnativeNetworkRequestParameters();
         parameters.ad_count = 2;
         parameters.app_token = "app_token";
-        parameters.placement_id = "pubnative_only";
+        parameters.placement_id = "facebook_only";
         // List of configured placements for testing
         //-------------------------------
         // facebook_only
