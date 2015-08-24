@@ -12,7 +12,6 @@ import net.pubnative.mediation.model.PubnativeAdModel;
 import net.pubnative.mediation.model.network.PubnativeLibraryAdModel;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener
@@ -48,7 +47,6 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     {
         AdRequest request = new AdRequest(context);
         request.setParameter(Request.APP_TOKEN, appToken);
-        request.setParameter(Request.AD_COUNT, this.ad_count.toString());
         request.start(AdRequest.Endpoint.NATIVE, this);
     }
 
@@ -64,20 +62,16 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
         if (request == null || ads == null)
         {
             this.invokeFailed(new Exception("Invalid request object or ads found"));
-            return;
         }
-
-        List<PubnativeAdModel> wrapAds = new ArrayList();
-        if (ads.size() > 0)
+        else
         {
-            for (NativeAdModel model : ads)
+            PubnativeAdModel wrapAd = null;
+            if (ads.size() > 0)
             {
-                wrapAds.add(new PubnativeLibraryAdModel(model));
+                wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
+            this.invokeLoaded(wrapAd);
         }
-
-        // providing empty array instead of calling the invokeFailed to complete the workflow.
-        this.invokeLoaded(wrapAds);
     }
 
     @Override

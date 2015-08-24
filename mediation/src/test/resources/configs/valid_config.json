@@ -36,10 +36,10 @@
         }
       ],
       "delivery_rule":{
-        "imp_cap_hour": 20,
-        "imp_cap_day": 100,
-        "pacing_cap_hour": 20,
-        "pacing_cap_minute": 1,
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
         "no_ads": false
       }
     },
@@ -58,10 +58,10 @@
         }
       ],
       "delivery_rule":{
-        "imp_cap_hour": 20,
-        "imp_cap_day": 100,
-        "pacing_cap_hour": 20,
-        "pacing_cap_minute": 1,
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
         "no_ads": false
       }
     }

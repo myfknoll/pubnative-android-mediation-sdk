@@ -4,28 +4,25 @@ import android.content.Context;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
 
-import java.util.List;
 import java.util.Map;
 
 public abstract class PubnativeNetworkAdapter
 {
     protected PubnativeNetworkAdapterListener listener;
     protected Map                             data;
-    protected Integer                         ad_count;
 
     public PubnativeNetworkAdapter(Map data)
     {
         this.data = data;
     }
 
-    public void doRequest(Context context, Integer ad_count, PubnativeNetworkAdapterListener listener)
+    public void doRequest(Context context, PubnativeNetworkAdapterListener listener)
     {
         if (context != null)
         {
             if (listener != null)
             {
                 this.listener = listener;
-                this.ad_count = ad_count;
                 this.invokeStart();
                 this.request(context);
             }
@@ -50,11 +47,11 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    protected void invokeLoaded(List<PubnativeAdModel> ads)
+    protected void invokeLoaded(PubnativeAdModel ad)
     {
         if (this.listener != null)
         {
-            this.listener.onAdapterRequestLoaded(this, ads);
+            this.listener.onAdapterRequestLoaded(this, ad);
         }
     }
 
