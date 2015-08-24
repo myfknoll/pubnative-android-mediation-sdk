@@ -75,8 +75,7 @@ public class PubnativeTestUtils
             }
             else if (file.getName().endsWith(".class") && !file.getName().contains("$") && !file.getName().endsWith("Test.class"))
             {
-                classes.add(file.getName().substring(0, file.getName()
-                                                            .length() - 6));
+                classes.add(file.getName().substring(0, file.getName().length() - 6));
             }
         }
         return classes;

@@ -13,15 +13,10 @@ import static org.mockito.Mockito.verify;
 public class PubnativeAdModelTest
 {
     @Test
-    public void callbackInvocationWithDifferentValues()
+    public void callbacksOnlyFiresOnce()
     {
         PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
         PubnativeAdModelListener listenerSpy = spy(PubnativeAdModelListener.class);
-
-        // Does nothing with null listener
-        modelSpy.setListener(null);
-        modelSpy.invokeOnAdImpressionConfirmed();
-        modelSpy.invokeOnAdClick();
 
         // Callbacks the setted up listener
         modelSpy.setListener(listenerSpy);
@@ -34,7 +29,17 @@ public class PubnativeAdModelTest
 
         verify(listenerSpy, times(1)).onAdImpressionConfirmed(eq(modelSpy));
         verify(listenerSpy, times(1)).onAdClick(eq(modelSpy));
-
-        // TODO: Verify that the tracking static method is called
     }
+
+    @Test
+    public void callbackWithNullListenerDoesNothing()
+    {
+        PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
+
+        // Does nothing with null listener
+        modelSpy.invokeOnAdImpressionConfirmed();
+        modelSpy.invokeOnAdClick();
+    }
+
+    // TODO: Verify that the tracking static method is called
 }

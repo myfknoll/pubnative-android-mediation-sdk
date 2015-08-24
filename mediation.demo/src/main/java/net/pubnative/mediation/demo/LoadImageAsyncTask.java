@@ -22,7 +22,7 @@ public class LoadImageAsyncTask extends AsyncTask<Object, String, Bitmap>
     {
         try
         {
-            if(args != null && args.length == 2)
+            if (args != null && args.length == 2)
             {
                 String imageURL = (String) args[0];
                 this.imageView = (ImageView) args[1];

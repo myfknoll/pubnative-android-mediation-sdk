@@ -21,9 +21,9 @@ public class PubnativeDeliveryManager
 
     protected static PubnativeDeliveryManager instance = null;
 
-    private PubnativeDeliveryManager () {}
+    private PubnativeDeliveryManager() {}
 
-    protected static synchronized PubnativeDeliveryManager getInstance ()
+    protected static synchronized PubnativeDeliveryManager getInstance()
     {
         if (PubnativeDeliveryManager.instance == null)
         {
@@ -32,7 +32,7 @@ public class PubnativeDeliveryManager
         return PubnativeDeliveryManager.instance;
     }
 
-    public static Calendar getPacingCalendar (String placementID)
+    public static Calendar getPacingCalendar(String placementID)
     {
         Calendar result = null;
         if (PubnativeDeliveryManager.getInstance().currentPacing.containsKey(placementID))
@@ -42,12 +42,12 @@ public class PubnativeDeliveryManager
         return result;
     }
 
-    public static void updatePacingCalendar (String placementID)
+    public static void updatePacingCalendar(String placementID)
     {
         PubnativeDeliveryManager.getInstance().currentPacing.put(placementID, Calendar.getInstance().getInstance());
     }
 
-    public static void logImpression (Context context, String placementID)
+    public static void logImpression(Context context, String placementID)
     {
         int dayCount = PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
         int hourCount = PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID);
@@ -56,17 +56,17 @@ public class PubnativeDeliveryManager
         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, ++hourCount);
     }
 
-    public static int getCurrentDailyCount (Context context, String placementID)
+    public static int getCurrentDailyCount(Context context, String placementID)
     {
         return PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
     }
 
-    public static int getCurrentHourlyCount (Context context, String placementID)
+    public static int getCurrentHourlyCount(Context context, String placementID)
     {
         return PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID);
     }
 
-    protected static void updateImpressionCount (Context context, String placementID)
+    protected static void updateImpressionCount(Context context, String placementID)
     {
         if (context != null && !TextUtils.isEmpty(placementID))
         {
@@ -94,7 +94,7 @@ public class PubnativeDeliveryManager
         }
     }
 
-    protected static void setImpressionCount (Context context, String impressionCapType, String placementID, int value)
+    protected static void setImpressionCount(Context context, String impressionCapType, String placementID, int value)
     {
         if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID))
         {
@@ -115,7 +115,7 @@ public class PubnativeDeliveryManager
         }
     }
 
-    protected static int getImpressionCount (Context context, String impressionCapType, String placementID)
+    protected static int getImpressionCount(Context context, String impressionCapType, String placementID)
     {
         PubnativeDeliveryManager.updateImpressionCount(context, placementID);
         int result = 0;
@@ -131,7 +131,7 @@ public class PubnativeDeliveryManager
         return result;
     }
 
-    protected static void setImpressionLastUpdate (Context context, String placementID, Calendar calendar)
+    protected static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar)
     {
         if (context != null && !TextUtils.isEmpty(placementID))
         {
@@ -152,7 +152,7 @@ public class PubnativeDeliveryManager
         }
     }
 
-    protected static Calendar getImpressionLastUpdate (Context context, String placementID)
+    protected static Calendar getImpressionLastUpdate(Context context, String placementID)
     {
         Calendar result = null;
         if (context != null && !TextUtils.isEmpty(placementID))
@@ -172,7 +172,7 @@ public class PubnativeDeliveryManager
         return result;
     }
 
-    protected static SharedPreferences.Editor getPreferencesEditor (Context context)
+    protected static SharedPreferences.Editor getPreferencesEditor(Context context)
     {
         SharedPreferences.Editor result = null;
         if (context != null)
@@ -182,7 +182,7 @@ public class PubnativeDeliveryManager
         return result;
     }
 
-    protected static SharedPreferences getPreferences (Context context)
+    protected static SharedPreferences getPreferences(Context context)
     {
         SharedPreferences result = null;
         if (context != null)

@@ -17,6 +17,7 @@ import java.util.Map;
 public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener
 {
     protected final static String APP_TOKEN_KEY = "app_token";
+
     public PubnativeLibraryNetworkAdapter(Map data)
     {
         super(data);
@@ -25,7 +26,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void request(Context context)
     {
-        if(data != null && data.containsKey(APP_TOKEN_KEY))
+        if (context != null && data != null && data.containsKey(APP_TOKEN_KEY))
         {
             String appToken = (String) data.get(APP_TOKEN_KEY);
             if (!TextUtils.isEmpty(appToken))

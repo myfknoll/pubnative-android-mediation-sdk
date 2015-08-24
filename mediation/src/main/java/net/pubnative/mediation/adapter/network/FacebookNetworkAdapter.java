@@ -17,7 +17,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 {
     protected static final String KEY_PLACEMENT_ID = "placement_id";
 
-    protected  NativeAd nativeAd;
+    protected NativeAd nativeAd;
 
     public FacebookNetworkAdapter(Map data)
     {
@@ -27,7 +27,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void request(Context context)
     {
-        if (data != null && data.containsKey(KEY_PLACEMENT_ID))
+        if (context != null && data != null && data.containsKey(KEY_PLACEMENT_ID))
         {
             String placementId = (String) data.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId))
@@ -55,7 +55,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onError(Ad ad, AdError adError)
     {
-        if(ad == this.nativeAd)
+        if (ad == this.nativeAd)
         {
             String errorMessage = "Pubnative - Facebook adapter error: Unknown error";
             if (adError != null)
@@ -69,7 +69,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onAdLoaded(Ad ad)
     {
-        if(ad == this.nativeAd)
+        if (ad == this.nativeAd)
         {
             FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
             this.invokeLoaded(wrapModel);
