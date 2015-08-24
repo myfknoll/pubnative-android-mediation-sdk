@@ -1,8 +1,9 @@
 package net.pubnative.mediation.utils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Created by davidmartin on 28/07/15.
@@ -11,23 +12,35 @@ public class PubnativeStringUtils
 {
     public static String readStringFromInputStream(InputStream inputStream)
     {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        byte buf[] = new byte[1024];
-        int len;
+        BufferedReader bufferReader = null;
+        StringBuilder stringBuilder = new StringBuilder();
         try
         {
-            while ((len = inputStream.read(buf)) != -1)
+            String line;
+            bufferReader = new BufferedReader(new InputStreamReader(inputStream));
+            while ((line = bufferReader.readLine()) != null)
             {
-                outputStream.write(buf, 0, len);
+                stringBuilder.append(line);
             }
-            outputStream.close();
-            inputStream.close();
         }
         catch (IOException e)
         {
             System.out.println("PubnativeStringUtils.readTextFile - ERROR: " + e);
         }
-        return outputStream.toString();
+        finally
+        {
+            if (bufferReader != null)
+            {
+                try
+                {
+                    bufferReader.close();
+                }
+                catch (IOException e)
+                {
+                    System.out.println("PubnativeStringUtils.readTextFile - ERROR: " + e);
+                }
+            }
+        }
+        return stringBuilder.toString();
     }
 }
