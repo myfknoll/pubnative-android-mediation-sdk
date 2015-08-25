@@ -1,6 +1,7 @@
 package net.pubnative.mediation.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 
 import net.pubnative.mediation.model.PubnativeAdModel;
 
@@ -10,13 +11,32 @@ public abstract class PubnativeNetworkAdapter
 {
     protected PubnativeNetworkAdapterListener listener;
     protected Map                             data;
+    protected Handler                         handler;
 
-    public PubnativeNetworkAdapter(Map data)
+    private class PubnativeNetworkAdapterRunnable implements Runnable
+    {
+        private PubnativeNetworkAdapter adapter;
+
+        public PubnativeNetworkAdapterRunnable (PubnativeNetworkAdapter adapter)
+        {
+            this.adapter = adapter;
+        }
+
+        @Override
+        public void run ()
+        {
+            // Invoke failed and avoid more callbacks by setting listener to null
+            this.adapter.invokeFailed(new Exception("PubnativeNetworkAdapter.doRequest - adapter timeout"));
+            this.adapter.listener = null;
+        }
+    }
+
+    public PubnativeNetworkAdapter (Map data)
     {
         this.data = data;
     }
 
-    public void doRequest(Context context, PubnativeNetworkAdapterListener listener)
+    public void doRequest (Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener)
     {
         if (context != null)
         {
@@ -24,6 +44,14 @@ public abstract class PubnativeNetworkAdapter
             {
                 this.listener = listener;
                 this.invokeStart();
+                if (this.handler == null)
+                {
+                    this.handler = new Handler();
+                }
+                if(timeoutInMillis > 0)
+                {
+                    this.handler.postDelayed(new PubnativeNetworkAdapterRunnable(this), timeoutInMillis);
+                }
                 this.request(context);
             }
             else
@@ -37,9 +65,9 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    public abstract void request(Context context);
+    public abstract void request (Context context);
 
-    protected void invokeStart()
+    protected void invokeStart ()
     {
         if (this.listener != null)
         {
@@ -47,7 +75,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    protected void invokeLoaded(PubnativeAdModel ad)
+    protected void invokeLoaded (PubnativeAdModel ad)
     {
         if (this.listener != null)
         {
@@ -55,7 +83,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    protected void invokeFailed(Exception exception)
+    protected void invokeFailed (Exception exception)
     {
         if (this.listener != null)
         {

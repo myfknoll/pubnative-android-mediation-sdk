@@ -10,14 +10,14 @@
         "placement_id": "1431803217037933_1602371133314473"
       },
       "adapter": "FacebookNetworkAdapter",
-      "timeout": 1000
+      "timeout": 10000
     },
     "pubnative": {
       "params": {
         "app_token": "af117147db28ef258bfd6d042c718b537bc6a2b0760aca3d073a1c80865545f9"
       },
       "adapter": "PubnativeLibraryNetworkAdapter",
-      "timeout": 1000
+      "timeout": 10000
     }
   },
   "placements": {
