@@ -39,18 +39,22 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
     View adView1 = null;
     View adView2 = null;
     View adView3 = null;
+    View adView4 = null;
 
     ImageView adImage1 = null;
     ImageView adImage2 = null;
     ImageView adImage3 = null;
+    ImageView adImage4 = null;
 
     TextView adText1 = null;
     TextView adText2 = null;
     TextView adText3 = null;
+    TextView adText4 = null;
 
     PubnativeNetworkRequest request1 = new PubnativeNetworkRequest();
     PubnativeNetworkRequest request2 = new PubnativeNetworkRequest();
     PubnativeNetworkRequest request3 = new PubnativeNetworkRequest();
+    PubnativeNetworkRequest request4 = new PubnativeNetworkRequest();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,14 +67,17 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
         this.adView1 = this.findViewById(R.id.ad1_layout);
         this.adView2 = this.findViewById(R.id.ad2_layout);
         this.adView3 = this.findViewById(R.id.ad3_layout);
+        this.adView4 = this.findViewById(R.id.ad4_layout);
 
         this.adImage1 = (ImageView) this.findViewById(R.id.ad1_image);
         this.adImage2 = (ImageView) this.findViewById(R.id.ad2_image);
         this.adImage3 = (ImageView) this.findViewById(R.id.ad3_image);
+        this.adImage4 = (ImageView) this.findViewById(R.id.ad4_image);
 
         this.adText1 = (TextView) this.findViewById(R.id.ad1_text);
         this.adText2 = (TextView) this.findViewById(R.id.ad2_text);
         this.adText3 = (TextView) this.findViewById(R.id.ad3_text);
+        this.adText4 = (TextView) this.findViewById(R.id.ad4_text);
 
         this.requestButton = (Button) this.findViewById(R.id.requestButton);
         this.requestButton.setOnClickListener(this);
@@ -114,6 +121,7 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
         this.requestAd(this.request1, "facebook_only");
         this.requestAd(this.request2, "1_imp_cap");
         this.requestAd(this.request3, "1_min_pacing_cap");
+        this.requestAd(this.request4, "yahoo_only");
     }
 
     protected void updateAd(PubnativeAdModel ad, ImageView imageView, TextView textView, View adView)
@@ -164,6 +172,10 @@ public class MainActivity extends ActionBarActivity implements PubnativeNetworkR
         else if (this.request3.equals(request))
         {
             this.updateAd(ad, this.adImage3, this.adText3, this.adView3);
+        }
+        else if (this.request4.equals(request))
+        {
+            this.updateAd(ad, this.adImage4, this.adText4, this.adView4);
         }
     }
 

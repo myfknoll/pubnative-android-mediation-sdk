@@ -141,31 +141,34 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void doNextNetworkRequest()
     {
-        String networkIDString = null;
         if (this.placement.priority_rules != null && this.placement.priority_rules.size() > this.currentRankIndex)
         {
-            networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_code;
-        }
-        this.currentRankIndex++;
-        if (!TextUtils.isEmpty(networkIDString) && this.config.networks.containsKey(networkIDString))
-        {
-            PubnativeNetworkModel network = this.config.networks.get(networkIDString);
-            PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
-
-            if (adapter == null)
+            String networkIDString = this.placement.priority_rules.get(this.currentRankIndex).network_code;
+            this.currentRankIndex++;
+            if (!TextUtils.isEmpty(networkIDString) && this.config.networks.containsKey(networkIDString))
             {
-                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + network.adapter + " not found"));
-                this.doNextNetworkRequest();
+                PubnativeNetworkModel network = this.config.networks.get(networkIDString);
+                PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
+
+                if (adapter == null)
+                {
+                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + network.adapter + " not found"));
+                    this.doNextNetworkRequest();
+                }
+                else
+                {
+                    adapter.doRequest(this.context, network.timeout, this);
+                }
             }
             else
             {
-                adapter.doRequest(this.context, network.timeout, this);
+                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + networkIDString + " config not found"));
+                this.doNextNetworkRequest();
             }
         }
         else
         {
-            System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + networkIDString + " config not found"));
-            this.doNextNetworkRequest();
+            this.invokeFail(new Exception("Pubnative - no fill"));
         }
     }
 

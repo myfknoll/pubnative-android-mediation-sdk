@@ -42,18 +42,14 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:id="@+id/ad1_image"
-                    android:layout_marginRight="10dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"/>
+                    android:layout_marginRight="10dp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     style="@android:style/TextAppearance.Large"
-                    android:id="@+id/ad1_text"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_toRightOf="@id/ad1_image"/>
+                    android:id="@+id/ad1_text"/>
             </LinearLayout>
 
             <LinearLayout
@@ -65,18 +61,14 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:id="@+id/ad2_image"
-                    android:layout_marginRight="10dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"/>
+                    android:layout_marginRight="10dp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     style="@android:style/TextAppearance.Large"
-                    android:id="@+id/ad2_text"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_toRightOf="@id/ad2_image"/>
+                    android:id="@+id/ad2_text"/>
             </LinearLayout>
 
             <LinearLayout
@@ -88,19 +80,35 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:id="@+id/ad3_image"
-                    android:layout_marginRight="10dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"/>
+                    android:layout_marginRight="10dp"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     style="@android:style/TextAppearance.Large"
-                    android:id="@+id/ad3_text"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_toRightOf="@id/ad3_image"/>
+                    android:id="@+id/ad3_text"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ad4_layout"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:id="@+id/ad4_image"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    style="@android:style/TextAppearance.Large"
+                    android:id="@+id/ad4_text"/>
+            </LinearLayout>
+
         </LinearLayout>
 
 
