@@ -18,6 +18,14 @@
       },
       "adapter": "PubnativeLibraryNetworkAdapter",
       "timeout": 1000
+    },
+    "yahoo": {
+      "params": {
+        "ad_space_name": "AdSpaceForNativeAd",
+        "api_key": "WMPQNDF459Y9SF43Q8VT"
+      },
+      "adapter": "YahooNetworkAdapter",
+      "timeout": 2000
     }
   },
   "placements": {
@@ -44,6 +52,23 @@
         {
           "priority_rule_id": 1,
           "network_code": "pubnative",
+          "params": {}
+        }
+      ],
+      "delivery_rule":{
+        "imp_cap_hour": 0,
+        "imp_cap_day": 0,
+        "pacing_cap_hour": 0,
+        "pacing_cap_minute": 0,
+        "no_ads": false
+      }
+    },
+    "yahoo_only": {
+      "ad_format_code": "native",
+      "priority_rules": [
+        {
+          "priority_rule_id": 1,
+          "network_code": "yahoo",
           "params": {}
         }
       ],

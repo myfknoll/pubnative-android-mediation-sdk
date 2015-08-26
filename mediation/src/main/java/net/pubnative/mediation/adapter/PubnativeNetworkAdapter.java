@@ -10,13 +10,13 @@ import java.util.Map;
 public abstract class PubnativeNetworkAdapter
 {
     protected PubnativeNetworkAdapterListener listener;
+    protected PubnativeNetworkAdapterRunnable timeoutRunnable;
     protected Map                             data;
     protected Handler                         handler;
 
-    private class PubnativeNetworkAdapterRunnable implements Runnable
+    protected class PubnativeNetworkAdapterRunnable implements Runnable
     {
         private PubnativeNetworkAdapter adapter;
-
         public PubnativeNetworkAdapterRunnable (PubnativeNetworkAdapter adapter)
         {
             this.adapter = adapter;
@@ -50,7 +50,8 @@ public abstract class PubnativeNetworkAdapter
                 }
                 if(timeoutInMillis > 0)
                 {
-                    this.handler.postDelayed(new PubnativeNetworkAdapterRunnable(this), timeoutInMillis);
+                    this.timeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
+                    this.handler.postDelayed(this.timeoutRunnable, timeoutInMillis);
                 }
                 this.request(context);
             }
@@ -67,6 +68,16 @@ public abstract class PubnativeNetworkAdapter
 
     public abstract void request (Context context);
 
+    // Helpers
+
+    protected void cancelTimeout()
+    {
+        if(this.handler != null && this.timeoutRunnable != null)
+        {
+            this.handler.removeCallbacks(this.timeoutRunnable);
+        }
+    }
+
     protected void invokeStart ()
     {
         if (this.listener != null)
@@ -77,6 +88,7 @@ public abstract class PubnativeNetworkAdapter
 
     protected void invokeLoaded (PubnativeAdModel ad)
     {
+        this.cancelTimeout();
         if (this.listener != null)
         {
             this.listener.onAdapterRequestLoaded(this, ad);
@@ -85,6 +97,7 @@ public abstract class PubnativeNetworkAdapter
 
     protected void invokeFailed (Exception exception)
     {
+        this.cancelTimeout();
         if (this.listener != null)
         {
             this.listener.onAdapterRequestFailed(this, exception);
