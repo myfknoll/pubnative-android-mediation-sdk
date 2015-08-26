@@ -8,6 +8,7 @@ import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
 import net.pubnative.mediation.config.PubnativeConfigManager;
+import net.pubnative.mediation.config.PubnativeConfigManagerListener;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.model.PubnativeAdModel;
 import net.pubnative.mediation.model.PubnativeConfigModel;
@@ -17,7 +18,7 @@ import net.pubnative.mediation.model.PubnativePlacementModel;
 
 import java.util.Calendar;
 
-public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
+public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener, PubnativeConfigManagerListener
 {
     protected Context                           context;
     protected PubnativeNetworkRequestListener   listener;
@@ -53,36 +54,54 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         else
         {
             this.parameters = parameters;
-            this.config = PubnativeConfigManager.getConfig(this.context, this.parameters.app_token);
-            if (this.config == null)
+            // This method getConfig() here gets the stored/downloaded config and
+            // continues to startRequest() in it's callback "onConfigLoaded()".
+            PubnativeConfigManager.getConfig(this.context, this.parameters.app_token, this);
+        }
+    }
+
+    /**
+     * Callback method of PubnativeConfigManagerListener used in getConfig()
+     * @param configModel downloaded/stored config retrieved from config mgr.
+     */
+    @Override
+    public void onConfigLoaded(PubnativeConfigModel configModel)
+    {
+        this.startRequest(configModel);
+    }
+
+    private void startRequest(PubnativeConfigModel configModel)
+    {
+        if (configModel == null || configModel.isNullOrEmpty())
+        {
+            invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - invalid config retrieved"));
+        }
+        else
+        {
+            this.config = configModel;
+
+            if (this.config.placements.containsKey(this.parameters.placement_id))
             {
-                this.invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - invalid config retrieved"));
-            }
-            else
-            {
-                if (this.config.placements.containsKey(this.parameters.placement_id))
+                this.placement = this.config.placements.get(this.parameters.placement_id);
+                if (this.placement != null && this.placement.delivery_rule != null)
                 {
-                    this.placement = this.config.placements.get(this.parameters.placement_id);
-                    if (this.placement != null && this.placement.delivery_rule != null)
+                    if (this.placement.delivery_rule.isActive())
                     {
-                        if (this.placement.delivery_rule.isActive())
-                        {
-                            this.startRequest();
-                        }
-                        else
-                        {
-                            this.invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id not active"));
-                        }
+                        this.startRequest();
                     }
                     else
                     {
-                        this.invokeFail(new Exception("PubnativeNetworkRequest.start - config error"));
+                        this.invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id not active"));
                     }
                 }
                 else
                 {
-                    this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id not found"));
+                    this.invokeFail(new Exception("PubnativeNetworkRequest.start - config error"));
                 }
+            }
+            else
+            {
+                this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id not found"));
             }
         }
     }

@@ -1,8 +1,8 @@
-package net.pubnative.mediation.config;
+package net.pubnative.mediation.utils;
 
 import android.content.Context;
 
-import net.pubnative.mediation.utils.PubnativeStringUtils;
+import net.pubnative.mediation.config.PubnativeConfigManager;
 
 import java.io.InputStream;
 
