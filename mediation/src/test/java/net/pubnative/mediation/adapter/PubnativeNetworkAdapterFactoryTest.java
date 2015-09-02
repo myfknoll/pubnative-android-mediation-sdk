@@ -43,7 +43,7 @@ public class PubnativeNetworkAdapterFactoryTest
     public void createsAdaptersForPresentAdapters()
     {
         List<String> adapters = PubnativeTestUtils.getClassesPackages(PubnativeNetworkAdapterFactory.NETWORK_PACKAGE);
-        for(String adapterName : adapters)
+        for (String adapterName : adapters)
         {
             model = new PubnativeNetworkModel();
             model.adapter = adapterName;

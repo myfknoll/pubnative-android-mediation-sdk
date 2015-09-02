@@ -4,7 +4,6 @@ import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.model.PubnativeConfigModel;
-import net.pubnative.mediation.utils.PubnativeConfigTestUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -262,7 +261,7 @@ public class PubnativeConfigManagerTest
         PubnativeConfigManager.getConfig(this.applicationContext, null, listenerSpy);
 
         PowerMockito.verifyStatic(never());
-        PubnativeConfigManager.downloadConfig(any(Context.class), anyString());
+        PubnativeConfigManager.downloadConfig(any(Context.class), any(PubnativeConfigManagerListener.class), anyString());
     }
 
     @Test
@@ -317,7 +316,7 @@ public class PubnativeConfigManagerTest
         PubnativeConfigManager.getConfig(this.applicationContext, TEST_APP_TOKEN_VALUE, configListenerSpy);
 
         PowerMockito.verifyStatic(never());
-        PubnativeConfigManager.downloadConfig(any(Context.class), anyString());
+        PubnativeConfigManager.downloadConfig(any(Context.class), any(PubnativeConfigManagerListener.class), anyString());
     }
 
     @Test
@@ -334,7 +333,7 @@ public class PubnativeConfigManagerTest
         {
             // Stub the download method so we don't really download nothing
             // just want to verify that this is being called
-            PowerMockito.doNothing().when(PubnativeConfigManager.class, "downloadConfig", any(Context.class), anyString());
+            PowerMockito.doNothing().when(PubnativeConfigManager.class, "downloadConfig", any(Context.class), any(PubnativeConfigManagerListener.class), anyString());
         }
         catch (Exception e)
         {
@@ -343,7 +342,7 @@ public class PubnativeConfigManagerTest
         PubnativeConfigManager.getConfig(this.applicationContext, TEST_APP_TOKEN_VALUE, configListenerSpy);
 
         PowerMockito.verifyStatic(times(1));
-        PubnativeConfigManager.downloadConfig(any(Context.class), anyString());
+        PubnativeConfigManager.downloadConfig(any(Context.class), any(PubnativeConfigManagerListener.class), anyString());
     }
 
     @Test
@@ -357,7 +356,7 @@ public class PubnativeConfigManagerTest
         {
             // Stub the download method so we don't really download nothing
             // just want to verify that this is being called
-            PowerMockito.doNothing().when(PubnativeConfigManager.class, "downloadConfig", any(Context.class), anyString());
+            PowerMockito.doNothing().when(PubnativeConfigManager.class, "downloadConfig", any(Context.class), any(PubnativeConfigManagerListener.class), anyString());
         }
         catch (Exception e)
         {
@@ -366,6 +365,6 @@ public class PubnativeConfigManagerTest
         PubnativeConfigManager.getConfig(this.applicationContext, "sample_token", listenerSpy);
 
         PowerMockito.verifyStatic(times(1));
-        PubnativeConfigManager.downloadConfig(any(Context.class), anyString());
+        PubnativeConfigManager.downloadConfig(any(Context.class), any(PubnativeConfigManagerListener.class), anyString());
     }
 }

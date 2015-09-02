@@ -77,7 +77,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
          * For an ad that does not contain app specific assets, the CTA could be ‘Read More’.
          */
         String result = "Read More";
-        if (getStringValueOfAsset("appCategory")  != null || getStringValueOfAsset("appRating") != null)
+        if (getStringValueOfAsset("appCategory") != null || getStringValueOfAsset("appRating") != null)
         {
             result = "Install Now";
         }
@@ -113,7 +113,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     }
 
     @Override
-    public void registerAdView(Context context, View adView)
+    public void startTracking(Context context, View adView)
     {
         if (this.flurryAdNative != null && adView != null)
         {
@@ -123,7 +123,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     }
 
     @Override
-    public void unregisterAdView(Context context, View adView)
+    public void stopTracking(Context context, View adView)
     {
         if (this.flurryAdNative != null)
         {

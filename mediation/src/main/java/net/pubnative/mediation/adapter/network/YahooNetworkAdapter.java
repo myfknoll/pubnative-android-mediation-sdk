@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements FlurryAdNativeListener
 {
-    public static final String KEY_AD_SPACE_NAME = "ad_space_name";
+    public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
     private Context context;
 

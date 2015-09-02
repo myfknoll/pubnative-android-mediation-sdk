@@ -11,16 +11,16 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 /**
  * Created by rahul on 13/8/15.
  */
-public class PubnativeLibraryAdModelTest {
-
+public class PubnativeLibraryAdModelTest
+{
     @Test
     public void getMethodsDoNotFailWhenNullValueSetToVariables()
     {
@@ -122,19 +122,19 @@ public class PubnativeLibraryAdModelTest {
         }
 
         // check with mocked arguments.
-        adModelSpy.registerAdView(mock(Context.class), mock(View.class));
-        adModelSpy.unregisterAdView(mock(Context.class), mock(View.class));
+        adModelSpy.startTracking(mock(Context.class), mock(View.class));
+        adModelSpy.stopTracking(mock(Context.class), mock(View.class));
 
         // check with null arguments.
-        adModelSpy.registerAdView(null, null);
-        adModelSpy.unregisterAdView(null, null);
+        adModelSpy.startTracking(null, null);
+        adModelSpy.stopTracking(null, null);
 
         // check with combination of null and mocked arguments.
         // case #1
-        adModelSpy.registerAdView(null, mock(View.class));
-        adModelSpy.unregisterAdView(null, mock(View.class));
+        adModelSpy.startTracking(null, mock(View.class));
+        adModelSpy.stopTracking(null, mock(View.class));
         // case #2
-        adModelSpy.registerAdView(mock(Context.class), null);
-        adModelSpy.unregisterAdView(mock(Context.class), null);
+        adModelSpy.startTracking(mock(Context.class), null);
+        adModelSpy.stopTracking(mock(Context.class), null);
     }
 }

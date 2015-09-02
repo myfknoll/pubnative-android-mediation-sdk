@@ -10,16 +10,13 @@ public class PubnativeConfigModel
 
     public interface ConfigContract
     {
-        String REFRESH = "refresh";
+        String REFRESH           = "refresh";
         String IMPRESSION_BEACON = "impression_beacon";
-        String CLICK_BEACON = "click_beacon";
+        String CLICK_BEACON      = "click_beacon";
     }
 
     public boolean isNullOrEmpty()
     {
-        return this.networks == null ||
-               this.placements == null ||
-               this.networks.size() == 0 ||
-               this.placements.size() == 0;
+        return this.networks == null || this.placements == null || this.networks.size() == 0 || this.placements.size() == 0;
     }
 }

@@ -5,13 +5,13 @@ package net.pubnative.mediation.model;
  */
 public class PubnativeAPIResponseModel
 {
-    public String status;
+    public String               status;
     public PubnativeConfigModel config;
-    public String error_message;
+    public String               error_message;
 
     public interface Status
     {
-        String OK = "ok";
+        String OK    = "ok";
         String ERROR = "error";
     }
 }

@@ -171,9 +171,10 @@ public class YahooNetworkAdapterTest
 
     /**
      * Method to check failure callbacks when invalid data passed in.
+     *
      * @param data Map of adapter config items. This data should never be valid
      */
-    private void invokeFailureCallbacksWithInvalidData(Map<String,String> data)
+    private void invokeFailureCallbacksWithInvalidData(Map<String, String> data)
     {
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
         YahooNetworkAdapter adapterSpy = spy(new YahooNetworkAdapter(data));

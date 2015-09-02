@@ -12,8 +12,7 @@ import net.pubnative.mediation.model.PubnativeAdModel;
  */
 public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener
 {
-    protected NativeAdModel model   = null;
-    protected Context       context = null;
+    protected NativeAdModel model = null;
 
     public PubnativeLibraryAdModel(NativeAdModel model)
     {
@@ -86,20 +85,19 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
         return starRating;
     }
 
-    public void registerAdView(Context context, View adView)
+    @Override
+    public void startTracking(Context context, View adView)
     {
-        this.context = context;
-
-        if (model != null && context != null && adView != null)
+        if (this.model != null && context != null && adView != null)
         {
+            this.context = context;
             adView.setOnClickListener(this);
-            model.confirmImpressionAutomatically(context, adView);
-            // TODO: Confirm impression
+            this.model.confirmImpressionAutomatically(context, adView);
         }
     }
 
     @Override
-    public void unregisterAdView(Context context, View adView)
+    public void stopTracking(Context context, View adView)
     {
         // Do nothing
     }

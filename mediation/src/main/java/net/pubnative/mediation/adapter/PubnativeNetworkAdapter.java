@@ -17,13 +17,14 @@ public abstract class PubnativeNetworkAdapter
     protected class PubnativeNetworkAdapterRunnable implements Runnable
     {
         private PubnativeNetworkAdapter adapter;
-        public PubnativeNetworkAdapterRunnable (PubnativeNetworkAdapter adapter)
+
+        public PubnativeNetworkAdapterRunnable(PubnativeNetworkAdapter adapter)
         {
             this.adapter = adapter;
         }
 
         @Override
-        public void run ()
+        public void run()
         {
             // Invoke failed and avoid more callbacks by setting listener to null
             this.adapter.invokeFailed(new Exception("PubnativeNetworkAdapter.doRequest - adapter timeout"));
@@ -31,12 +32,12 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    public PubnativeNetworkAdapter (Map data)
+    public PubnativeNetworkAdapter(Map data)
     {
         this.data = data;
     }
 
-    public void doRequest (Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener)
+    public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener)
     {
         if (context != null)
         {
@@ -48,7 +49,7 @@ public abstract class PubnativeNetworkAdapter
                 {
                     this.handler = new Handler();
                 }
-                if(timeoutInMillis > 0)
+                if (timeoutInMillis > 0)
                 {
                     this.timeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
                     this.handler.postDelayed(this.timeoutRunnable, timeoutInMillis);
@@ -66,19 +67,19 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    public abstract void request (Context context);
+    public abstract void request(Context context);
 
     // Helpers
 
     protected void cancelTimeout()
     {
-        if(this.handler != null && this.timeoutRunnable != null)
+        if (this.handler != null && this.timeoutRunnable != null)
         {
             this.handler.removeCallbacks(this.timeoutRunnable);
         }
     }
 
-    protected void invokeStart ()
+    protected void invokeStart()
     {
         if (this.listener != null)
         {
@@ -86,7 +87,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    protected void invokeLoaded (PubnativeAdModel ad)
+    protected void invokeLoaded(PubnativeAdModel ad)
     {
         this.cancelTimeout();
         if (this.listener != null)
@@ -95,7 +96,7 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
-    protected void invokeFailed (Exception exception)
+    protected void invokeFailed(Exception exception)
     {
         this.cancelTimeout();
         if (this.listener != null)

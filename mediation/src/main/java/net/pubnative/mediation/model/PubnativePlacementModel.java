@@ -10,4 +10,11 @@ public class PubnativePlacementModel
     public String                            ad_format_code;
     public List<PubnativePriorityRulesModel> priority_rules;
     public PubnativeDeliveryRuleModel        delivery_rule;
+
+    public interface AdFormatCode
+    {
+        String NATIVE_ICON   = "native_icon";
+        String NATIVE_BANNER = "native_banner";
+        String VIDEO         = "video";
+    }
 }

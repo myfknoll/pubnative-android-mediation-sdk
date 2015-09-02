@@ -90,7 +90,7 @@ public class PubnativeNetworkAdapterTest
         PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(null)
         {
             @Override
-            public void request (Context context)
+            public void request(Context context)
             {
                 // Do nothing, doRequest should timeout
             }
@@ -100,7 +100,9 @@ public class PubnativeNetworkAdapterTest
         Robolectric.flushForegroundThreadScheduler();
 
         verify(listenerSpy, times(1)).onAdapterRequestStarted(eq(adapterSpy));
-        verify(listenerSpy, after(2*TIMEOUT_HALF_SECOND).times(1)).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
-        verify(listenerSpy, after(2*TIMEOUT_HALF_SECOND).never()).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
+        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).times(1)).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
+        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).never()).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
     }
+
+    // TODO: Ensure no more callbacks after fail or load
 }
