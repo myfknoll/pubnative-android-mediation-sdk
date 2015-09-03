@@ -6,11 +6,11 @@ import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
-import net.pubnative.mediation.config.PubnativeConfigManagerListener;
+import net.pubnative.mediation.config.PubnativeConfigRequestListener;
 import net.pubnative.mediation.config.PubnativeConfigTestUtils;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
-import net.pubnative.mediation.model.PubnativeAdModel;
-import net.pubnative.mediation.model.PubnativeNetworkModel;
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,6 +28,7 @@ import org.robolectric.annotation.Config;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.after;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
@@ -36,7 +37,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.after;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -131,7 +131,7 @@ public class PubnativeNetworkRequestTest
                 listenerMock.onRequestLoaded(networkRequest, modelMock);
                 return null;
             }
-        }).when(networkRequest).getConfig(any(Context.class), anyString(), any(PubnativeConfigManagerListener.class));
+        }).when(networkRequest).getConfig(any(Context.class), anyString(), any(PubnativeConfigRequestListener.class));
         networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_VALID, listenerMock);
 
         verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestStarted(eq(networkRequest));
@@ -275,6 +275,6 @@ public class PubnativeNetworkRequestTest
                 listenerMock.onRequestFailed(request, mock(Exception.class));
                 return null;
             }
-        }).when(request).getConfig(any(Context.class), anyString(), any(PubnativeConfigManagerListener.class));
+        }).when(request).getConfig(any(Context.class), anyString(), any(PubnativeConfigRequestListener.class));
     }
 }

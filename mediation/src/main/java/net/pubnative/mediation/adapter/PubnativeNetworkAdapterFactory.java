@@ -1,6 +1,6 @@
 package net.pubnative.mediation.adapter;
 
-import net.pubnative.mediation.model.PubnativeNetworkModel;
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;

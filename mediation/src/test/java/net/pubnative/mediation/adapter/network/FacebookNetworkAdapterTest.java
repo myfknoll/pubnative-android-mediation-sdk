@@ -4,7 +4,7 @@ import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
-import net.pubnative.mediation.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
 import org.junit.Test;

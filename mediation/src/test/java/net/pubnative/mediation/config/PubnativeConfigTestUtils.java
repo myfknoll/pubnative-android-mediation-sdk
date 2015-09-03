@@ -2,6 +2,9 @@ package net.pubnative.mediation.config;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+
+import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import java.io.InputStream;
@@ -21,6 +24,14 @@ public class PubnativeConfigTestUtils
     {
         InputStream configStream = PubnativeConfigTestUtils.class.getResourceAsStream("/configs/" + filename);
         String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
-        PubnativeConfigManager.updateConfigString(context, app_token, configString);
+        try
+        {
+            PubnativeConfigModel model = new Gson().fromJson(configString, PubnativeConfigModel.class);
+            PubnativeConfigManager.updateConfig(context, app_token, model);
+        }
+        catch(Exception e)
+        {
+            // Do nothing
+        }
     }
 }

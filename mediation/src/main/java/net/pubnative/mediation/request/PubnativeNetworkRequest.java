@@ -2,26 +2,24 @@ package net.pubnative.mediation.request;
 
 import android.accounts.NetworkErrorException;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Handler;
 import android.text.TextUtils;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
 import net.pubnative.mediation.config.PubnativeConfigManager;
-import net.pubnative.mediation.config.PubnativeConfigManagerListener;
+import net.pubnative.mediation.config.PubnativeConfigRequestListener;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
-import net.pubnative.mediation.model.PubnativeAdModel;
-import net.pubnative.mediation.model.PubnativeConfigModel;
-import net.pubnative.mediation.model.PubnativeDeliveryRuleModel;
-import net.pubnative.mediation.model.PubnativeNetworkModel;
-import net.pubnative.mediation.model.PubnativePlacementModel;
-import net.pubnative.mediation.model.PubnativeTrackingDataModel;
+import net.pubnative.mediation.config.model.PubnativeConfigModel;
+import net.pubnative.mediation.config.model.PubnativeDeliveryRuleModel;
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
+import net.pubnative.mediation.config.model.PubnativePlacementModel;
+import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Calendar;
 
-public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
+public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener, PubnativeConfigRequestListener
 {
     protected static final String APP_TOKEN_PARAMETER = "?app_token=";
 
@@ -30,20 +28,18 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
     protected PubnativeConfigModel            config;
     protected PubnativePlacementModel         placement;
     protected PubnativeAdModel                ad;
-    protected PubnativeTrackingDataModel      trackingModel;
+    protected PubnativeInsightDataModel       trackingModel;
     protected String                          appToken;
     protected String                          placementID;
     protected String                          currentNetworkID;
     protected int                             currentNetworkIndex;
-    private   Handler                         uiHandler = null;
 
     /**
      * This constructor should be called from the UI thread.
      */
     public PubnativeNetworkRequest()
     {
-        this.trackingModel = new PubnativeTrackingDataModel();
-        this.uiHandler = new Handler();
+        this.trackingModel = new PubnativeInsightDataModel();
     }
 
     // TRACKING INFO
@@ -105,38 +101,21 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
         }
         else
         {
-            new GetConfigTask().execute(this.context, this.appToken);
+            this.getConfig(context, appToken, this);
         }
     }
 
-    protected class GetConfigTask extends AsyncTask<Object, Void, Void>
-    {
-        @Override
-        protected Void doInBackground(Object... objects)
-        {
-            if (objects != null && objects.length == 2)
-            {
-                Context context  = (Context) objects[0];
-                String appToken = (String) objects[1];
-                PubnativeConfigManagerListener listener = new PubnativeConfigManagerListener()
-                {
-                    @Override
-                    public void onConfigLoaded(PubnativeConfigModel configModel)
-                    {
-                        PubnativeNetworkRequest.this.startRequest(configModel);
-                    }
-                };
-                getConfig(context, appToken, listener);
-            }
-            return null;
-        }
-    }
-
-    protected void getConfig(Context context, String appToken, PubnativeConfigManagerListener listener)
+    protected void getConfig(Context context, String appToken, PubnativeConfigRequestListener listener)
     {
         // This method getConfig() here gets the stored/downloaded config and
         // continues to startRequest() in it's callback "onConfigLoaded()".
         PubnativeConfigManager.getConfig(context, appToken, listener);
+    }
+
+    @Override
+    public void onConfigLoaded(PubnativeConfigModel configModel)
+    {
+        this.startRequest(configModel);
     }
 
     private void startRequest(PubnativeConfigModel configModel)
@@ -253,55 +232,25 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
 
     protected void invokeStart()
     {
-        if (this.uiHandler != null && this.listener != null)
+        if (PubnativeNetworkRequest.this.listener != null)
         {
-            this.uiHandler.post(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if (PubnativeNetworkRequest.this.listener != null)
-                    {
-                        PubnativeNetworkRequest.this.listener.onRequestStarted(PubnativeNetworkRequest.this);
-                    }
-                }
-            });
+            PubnativeNetworkRequest.this.listener.onRequestStarted(PubnativeNetworkRequest.this);
         }
     }
 
     protected void invokeLoad(final PubnativeAdModel ad)
     {
-        if (this.uiHandler != null && this.listener != null)
+        if (PubnativeNetworkRequest.this.listener != null)
         {
-            this.uiHandler.post(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if (PubnativeNetworkRequest.this.listener != null)
-                    {
-                        PubnativeNetworkRequest.this.listener.onRequestLoaded(PubnativeNetworkRequest.this, ad);
-                    }
-                }
-            });
+            PubnativeNetworkRequest.this.listener.onRequestLoaded(PubnativeNetworkRequest.this, ad);
         }
     }
 
     protected void invokeFail(final Exception exception)
     {
-        if (this.uiHandler != null && this.listener != null)
+        if (PubnativeNetworkRequest.this.listener != null)
         {
-            this.uiHandler.post(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if (PubnativeNetworkRequest.this.listener != null)
-                    {
-                        PubnativeNetworkRequest.this.listener.onRequestFailed(PubnativeNetworkRequest.this, exception);
-                    }
-                }
-            });
+            PubnativeNetworkRequest.this.listener.onRequestFailed(PubnativeNetworkRequest.this, exception);
         }
     }
 

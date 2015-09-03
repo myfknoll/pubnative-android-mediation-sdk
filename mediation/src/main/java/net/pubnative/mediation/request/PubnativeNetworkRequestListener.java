@@ -1,6 +1,6 @@
 package net.pubnative.mediation.request;
 
-import net.pubnative.mediation.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public interface PubnativeNetworkRequestListener
 {

@@ -3,7 +3,7 @@ package net.pubnative.mediation.adapter;
 import android.content.Context;
 import android.os.Handler;
 
-import net.pubnative.mediation.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Map;
 
