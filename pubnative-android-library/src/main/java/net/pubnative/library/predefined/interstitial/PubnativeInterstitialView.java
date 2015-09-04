@@ -1,6 +1,12 @@
 package net.pubnative.library.predefined.interstitial;
 
-import java.util.ArrayList;
+import android.content.res.Configuration;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import net.pubnative.library.Pubnative;
 import net.pubnative.library.R;
@@ -10,13 +16,8 @@ import net.pubnative.library.predefined.PubnativeView;
 import net.pubnative.library.renderer.AdRenderer;
 import net.pubnative.library.renderer.AdRendererListener;
 import net.pubnative.library.renderer.NativeAdRenderer;
-import android.content.res.Configuration;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class PubnativeInterstitialView extends PubnativeView implements
         AdRendererListener,
@@ -67,7 +68,13 @@ public class PubnativeInterstitialView extends PubnativeView implements
     public void onAdRenderFinished(AdRenderer renderer)
     {
         Log.v("PubnativeInterstitialActivity", "onAdRenderFinished");
-        this.ads.get(0).confirmImpressionAutomatically(this.getContext(), this);
+        this.ads.get(0).confirmImpressionAutomatically(this.getContext(), this, new NativeAdModel.Listener() {
+            @Override
+            public void onAdImpression(NativeAdModel model)
+            {
+                Log.v("PubnativeInterstitialActivity", "onAdImpression");
+            }
+        });
     }
 
     // OnClickListener

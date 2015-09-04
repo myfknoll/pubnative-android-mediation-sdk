@@ -8,8 +8,8 @@ import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.library.request.AdRequest;
 import net.pubnative.library.request.AdRequestListener;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.model.PubnativeAdModel;
-import net.pubnative.mediation.model.network.PubnativeLibraryAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
+import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 
 import java.util.ArrayList;
 import java.util.Map;

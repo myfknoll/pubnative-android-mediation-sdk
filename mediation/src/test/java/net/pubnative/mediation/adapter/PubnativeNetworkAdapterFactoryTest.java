@@ -1,7 +1,7 @@
 package net.pubnative.mediation.adapter;
 
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.model.PubnativeNetworkModel;
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.utils.PubnativeTestUtils;
 
 import org.junit.Before;

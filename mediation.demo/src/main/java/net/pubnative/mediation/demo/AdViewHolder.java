@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import net.pubnative.mediation.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.PubnativeNetworkRequestListener;
 

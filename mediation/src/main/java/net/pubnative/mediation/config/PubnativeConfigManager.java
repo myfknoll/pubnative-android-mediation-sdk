@@ -6,10 +6,14 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
-import net.pubnative.mediation.model.PubnativeAPIResponseModel;
-import net.pubnative.mediation.model.PubnativeConfigModel;
-import net.pubnative.mediation.task.HttpTask;
+import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
+import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
+import net.pubnative.mediation.config.model.PubnativeConfigModel;
+import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
+import net.pubnative.mediation.task.PubnativeHttpTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,12 +29,72 @@ public class PubnativeConfigManager
 
     protected static final String CONFIG_DOWNLOAD_PARTIAL_URL = "http://ml.pubnative.net/ml/v1/config?app_token=";
 
+    protected static List<PubnativeConfigRequestModel> queue = null;
+    protected static boolean                           idle  = true;
+
     private PubnativeConfigManager()
     {
         // do some initialization here may be.
     }
 
-    public synchronized static void getConfig(Context context, String appToken, PubnativeConfigManagerListener listener)
+    public synchronized static void getConfig(Context context, String appToken, PubnativeConfigRequestListener listener)
+    {
+        if (context != null && !TextUtils.isEmpty(appToken))
+        {
+            if (listener != null)
+            {
+                PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
+                item.context = context;
+                item.appToken = appToken;
+                item.listener = listener;
+                PubnativeConfigManager.enqueueRequest(item);
+                PubnativeConfigManager.doNextConfigRequest();
+            }
+        }
+        else
+        {
+            // ensuring null config is returned
+            PubnativeConfigManager.invokeLoaded(listener, null);
+        }
+    }
+
+    public static void doNextConfigRequest()
+    {
+        if (PubnativeConfigManager.idle)
+        {
+            PubnativeConfigRequestModel item = PubnativeConfigManager.dequeueRequest();
+            if (item != null)
+            {
+                PubnativeConfigManager.idle = false;
+                PubnativeConfigManager.getNextConfig(item.context, item.appToken, item.listener);
+            }
+        }
+    }
+
+    protected static void enqueueRequest(PubnativeConfigRequestModel item)
+    {
+        if (item != null)
+        {
+            if (PubnativeConfigManager.queue == null)
+            {
+                PubnativeConfigManager.queue = new ArrayList<PubnativeConfigRequestModel>();
+            }
+
+            PubnativeConfigManager.queue.add(item);
+        }
+    }
+
+    protected static PubnativeConfigRequestModel dequeueRequest()
+    {
+        PubnativeConfigRequestModel result = null;
+        if (PubnativeConfigManager.queue != null && PubnativeConfigManager.queue.size() > 0)
+        {
+            result = PubnativeConfigManager.queue.remove(0);
+        }
+        return result;
+    }
+
+    public static void getNextConfig(Context context, String appToken, PubnativeConfigRequestListener listener)
     {
         if (context != null && !TextUtils.isEmpty(appToken))
         {
@@ -51,7 +115,7 @@ public class PubnativeConfigManager
         }
     }
 
-    protected static void serveStoredConfig(Context context, PubnativeConfigManagerListener listener)
+    protected static void serveStoredConfig(Context context, PubnativeConfigRequestListener listener)
     {
         PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(context);
         PubnativeConfigManager.invokeLoaded(listener, configModel);
@@ -82,29 +146,20 @@ public class PubnativeConfigManager
         return currentConfig;
     }
 
-    protected static void invokeLoaded(PubnativeConfigManagerListener listener, PubnativeConfigModel configModel)
+    protected static void invokeLoaded(PubnativeConfigRequestListener listener, PubnativeConfigModel configModel)
     {
         if (listener != null)
         {
             listener.onConfigLoaded(configModel);
         }
+        PubnativeConfigManager.idle = true;
+        PubnativeConfigManager.doNextConfigRequest();
     }
 
-    protected static void updateConfigString(Context context, String appToken, String config)
+    protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel)
     {
-        if (context != null && !TextUtils.isEmpty(appToken) && !TextUtils.isEmpty(config))
+        if (context != null && !TextUtils.isEmpty(appToken))
         {
-            Gson gson = new Gson();
-            PubnativeConfigModel configModel = null;
-            try
-            {
-                configModel = gson.fromJson(config, PubnativeConfigModel.class);
-            }
-            catch (Exception e)
-            {
-                System.out.println("PubnativeConfigManager.updateConfigString - Error: " + e);
-            }
-
             if (configModel != null && !configModel.isNullOrEmpty())
             {
                 PubnativeConfigManager.setStoredConfig(context, configModel);
@@ -129,38 +184,35 @@ public class PubnativeConfigManager
     }
 
 
-    protected static void downloadConfig(final Context context, final PubnativeConfigManagerListener listener, final String appToken)
+    protected synchronized static void downloadConfig(final Context context, final PubnativeConfigRequestListener listener, final String appToken)
     {
         if (context != null && !TextUtils.isEmpty(appToken))
         {
             String downloadURLString = CONFIG_DOWNLOAD_PARTIAL_URL + appToken;
 
-            HttpTask http = new HttpTask(context);
-            http.setListener(new HttpTask.HttpTaskListener()
+            PubnativeHttpTask http = new PubnativeHttpTask(context);
+            http.setListener(new PubnativeHttpTask.Listener()
             {
                 @Override
-                public void onHttpTaskFinished(HttpTask task, String result)
+                public void onHttpTaskFinished(PubnativeHttpTask task, String result)
                 {
                     if (!TextUtils.isEmpty(result))
                     {
                         try
                         {
-                            PubnativeAPIResponseModel apiResponse = new Gson().fromJson(result, PubnativeAPIResponseModel.class);
-                            if (apiResponse != null)
+                            PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
+
+                            if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status))
                             {
-                                if (apiResponse.status.equals(PubnativeAPIResponseModel.Status.OK))
+                                if (response.config != null && !response.config.isNullOrEmpty())
                                 {
-                                    // doing a double check.
-                                    if (apiResponse.config != null && !apiResponse.config.isNullOrEmpty())
-                                    {
-                                        // saving config string.
-                                        PubnativeConfigManager.setStoredConfig(context, apiResponse.config);
-                                    }
+                                    // Saving config string
+                                    PubnativeConfigManager.updateConfig(context, appToken, response.config);
                                 }
-                                else
-                                {
-                                    System.out.println("PubnativeConfigManager.downloadConfig - Error:" + apiResponse.error_message);
-                                }
+                            }
+                            else
+                            {
+                                System.out.println("PubnativeConfigManager.downloadConfig - Error:" + response.error_message);
                             }
                         }
                         catch (Exception e)
@@ -172,8 +224,12 @@ public class PubnativeConfigManager
                     PubnativeConfigManager.serveStoredConfig(context, listener);
                 }
 
+                @Override
+                public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage)
+                {
+                    PubnativeConfigManager.serveStoredConfig(context, listener);
+                }
             });
-
             http.execute(downloadURLString);
         }
         else

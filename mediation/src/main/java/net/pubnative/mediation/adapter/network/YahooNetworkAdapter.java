@@ -9,7 +9,7 @@ import com.flurry.android.ads.FlurryAdNative;
 import com.flurry.android.ads.FlurryAdNativeListener;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.model.network.FlurryNativeAdModel;
+import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
 
 import java.util.Map;
 

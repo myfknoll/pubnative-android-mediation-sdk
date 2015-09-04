@@ -9,7 +9,7 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.model.network.FacebookNativeAdModel;
+import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
 
 import java.util.Map;
 

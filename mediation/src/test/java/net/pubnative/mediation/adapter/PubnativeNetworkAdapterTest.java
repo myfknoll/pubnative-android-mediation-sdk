@@ -3,7 +3,7 @@ package net.pubnative.mediation.adapter;
 import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
