@@ -27,20 +27,18 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<String> placements = new ArrayList<>();
-        placements.add(PLACEMENT_FACEBOOK_ONLY);
-        placements.add(PLACEMENT_PUBNATIVE_ONLY);
-        placements.add(PLACEMENT_YAHOO_ONLY);
-        placements.add(PLACEMENT_WATERFALL);
-        placements.add(PLACEMENT_IMP_DAY_CAP_10);
-        placements.add(PLACEMENT_IMP_HOUR_CAP_10);
-        placements.add(PLACEMENT_PACING_CAP_HOUR_1);
-        placements.add(PLACEMENT_PACING_CAP_MIN_1);
-        placements.add(PLACEMENT_DISABLED);
-
-        AdListAdapter adListAdapter = new AdListAdapter(this, R.layout.ad_list_cell, placements, APP_TOKEN);
+        List<CellRequestModel> requests = new ArrayList<>();
+        requests.add(new CellRequestModel(PLACEMENT_FACEBOOK_ONLY, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_PUBNATIVE_ONLY, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_YAHOO_ONLY, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_WATERFALL, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_IMP_DAY_CAP_10, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_IMP_HOUR_CAP_10, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_PACING_CAP_HOUR_1, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_PACING_CAP_MIN_1, APP_TOKEN));
+        requests.add(new CellRequestModel(PLACEMENT_DISABLED, APP_TOKEN));
 
         ListView listView = (ListView) findViewById(R.id.ad_list);
-        listView.setAdapter(adListAdapter);
+        listView.setAdapter(new AdListAdapter(this, R.layout.ad_list_cell, requests));
     }
 }
