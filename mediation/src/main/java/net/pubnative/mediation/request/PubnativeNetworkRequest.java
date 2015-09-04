@@ -2,6 +2,8 @@ package net.pubnative.mediation.request;
 
 import android.accounts.NetworkErrorException;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.text.TextUtils;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
@@ -19,7 +21,7 @@ import net.pubnative.mediation.model.PubnativeTrackingDataModel;
 
 import java.util.Calendar;
 
-public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener, PubnativeConfigManagerListener
+public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener
 {
     protected static final String APP_TOKEN_PARAMETER = "?app_token=";
 
@@ -33,10 +35,15 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     protected String                          placementID;
     protected String                          currentNetworkID;
     protected int                             currentNetworkIndex;
+    private   Handler                         uiHandler = null;
 
+    /**
+     * This constructor should be called from the UI thread.
+     */
     public PubnativeNetworkRequest()
     {
         this.trackingModel = new PubnativeTrackingDataModel();
+        this.uiHandler = new Handler();
     }
 
     // TRACKING INFO
@@ -98,21 +105,38 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         }
         else
         {
-            // This method getConfig() here gets the stored/downloaded config and
-            // continues to startRequest() in it's callback "onConfigLoaded()".
-            PubnativeConfigManager.getConfig(this.context, this.appToken, this);
+            new GetConfigTask().execute(this.context, this.appToken);
         }
     }
 
-    /**
-     * Callback method of PubnativeConfigManagerListener used in getConfig()
-     *
-     * @param configModel downloaded/stored config retrieved from config mgr.
-     */
-    @Override
-    public void onConfigLoaded(PubnativeConfigModel configModel)
+    protected class GetConfigTask extends AsyncTask<Object, Void, Void>
     {
-        this.startRequest(configModel);
+        @Override
+        protected Void doInBackground(Object... objects)
+        {
+            if (objects != null && objects.length == 2)
+            {
+                Context context  = (Context) objects[0];
+                String appToken = (String) objects[1];
+                PubnativeConfigManagerListener listener = new PubnativeConfigManagerListener()
+                {
+                    @Override
+                    public void onConfigLoaded(PubnativeConfigModel configModel)
+                    {
+                        PubnativeNetworkRequest.this.startRequest(configModel);
+                    }
+                };
+                getConfig(context, appToken, listener);
+            }
+            return null;
+        }
+    }
+
+    protected void getConfig(Context context, String appToken, PubnativeConfigManagerListener listener)
+    {
+        // This method getConfig() here gets the stored/downloaded config and
+        // continues to startRequest() in it's callback "onConfigLoaded()".
+        PubnativeConfigManager.getConfig(context, appToken, listener);
     }
 
     private void startRequest(PubnativeConfigModel configModel)
@@ -229,25 +253,55 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void invokeStart()
     {
-        if (this.listener != null)
+        if (this.uiHandler != null && this.listener != null)
         {
-            this.listener.onRequestStarted(this);
+            this.uiHandler.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (PubnativeNetworkRequest.this.listener != null)
+                    {
+                        PubnativeNetworkRequest.this.listener.onRequestStarted(PubnativeNetworkRequest.this);
+                    }
+                }
+            });
         }
     }
 
-    protected void invokeLoad(PubnativeAdModel ad)
+    protected void invokeLoad(final PubnativeAdModel ad)
     {
-        if (this.listener != null)
+        if (this.uiHandler != null && this.listener != null)
         {
-            this.listener.onRequestLoaded(this, ad);
+            this.uiHandler.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (PubnativeNetworkRequest.this.listener != null)
+                    {
+                        PubnativeNetworkRequest.this.listener.onRequestLoaded(PubnativeNetworkRequest.this, ad);
+                    }
+                }
+            });
         }
     }
 
-    protected void invokeFail(Exception exception)
+    protected void invokeFail(final Exception exception)
     {
-        if (this.listener != null)
+        if (this.uiHandler != null && this.listener != null)
         {
-            this.listener.onRequestFailed(this, exception);
+            this.uiHandler.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if (PubnativeNetworkRequest.this.listener != null)
+                    {
+                        PubnativeNetworkRequest.this.listener.onRequestFailed(PubnativeNetworkRequest.this, exception);
+                    }
+                }
+            });
         }
     }
 

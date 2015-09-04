@@ -6,6 +6,7 @@ import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
+import net.pubnative.mediation.config.PubnativeConfigManagerListener;
 import net.pubnative.mediation.config.PubnativeConfigTestUtils;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.model.PubnativeAdModel;
@@ -26,15 +27,16 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.after;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -48,6 +50,8 @@ public class PubnativeNetworkRequestTest
     final static String TEST_PLACEMENT_ID       = "placement";
     final static String TEST_PLACEMENT_ID_VALID = "1";
     final static String TEST_APP_TOKEN          = "app_token";
+
+    final static int TEST_TIMEOUT = 500;
 
     Context applicationContext;
 
@@ -118,11 +122,21 @@ public class PubnativeNetworkRequestTest
         PowerMockito.mockStatic(PubnativeNetworkAdapterFactory.class);
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
 
-        requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_VALID, listenerMock);
+        final PubnativeNetworkRequest networkRequest = spy(PubnativeNetworkRequest.class);
+        doAnswer(new Answer()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                listenerMock.onRequestLoaded(networkRequest, modelMock);
+                return null;
+            }
+        }).when(networkRequest).getConfig(any(Context.class), anyString(), any(PubnativeConfigManagerListener.class));
+        networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_VALID, listenerMock);
 
-        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
-        verify(listenerMock, never()).onRequestFailed(eq(requestSpy), any(Exception.class));
-        verify(listenerMock, times(1)).onRequestLoaded(eq(requestSpy), eq(modelMock));
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestStarted(eq(networkRequest));
+        verify(listenerMock, after(TEST_TIMEOUT).never()).onRequestFailed(eq(networkRequest), any(Exception.class));
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestLoaded(eq(networkRequest), eq(modelMock));
     }
 
     @Test
@@ -190,10 +204,12 @@ public class PubnativeNetworkRequestTest
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "delivery_inactive.json", TEST_APP_TOKEN);
         PubnativeDeliveryManager.logImpression(this.applicationContext, "placement_id");
 
-        requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID, this.listenerMock);
-        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
-        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
-        verify(listenerMock, never()).onRequestLoaded(eq(requestSpy), any(PubnativeAdModel.class));
+        PubnativeNetworkRequest networkRequest = spy(PubnativeNetworkRequest.class);
+        this.stubGetConfigAsyncForFail(networkRequest);
+        networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID, this.listenerMock);
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestStarted(eq(networkRequest));
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestFailed(eq(networkRequest), any(Exception.class));
+        verify(listenerMock, after(TEST_TIMEOUT).never()).onRequestLoaded(eq(networkRequest), any(PubnativeAdModel.class));
     }
 
     @Test
@@ -214,10 +230,12 @@ public class PubnativeNetworkRequestTest
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
 
         PubnativeDeliveryManager.logImpression(this.applicationContext, TEST_APP_TOKEN);
-        requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID, this.listenerMock);
-        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
-        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
-        verify(listenerMock, never()).onRequestLoaded(eq(requestSpy), any(PubnativeAdModel.class));
+        PubnativeNetworkRequest networkRequest = spy(PubnativeNetworkRequest.class);
+        this.stubGetConfigAsyncForFail(networkRequest);
+        networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID, this.listenerMock);
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestStarted(eq(networkRequest));
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestFailed(eq(networkRequest), any(Exception.class));
+        verify(listenerMock, after(TEST_TIMEOUT).never()).onRequestLoaded(eq(networkRequest), any(PubnativeAdModel.class));
     }
 
     @Test
@@ -238,10 +256,25 @@ public class PubnativeNetworkRequestTest
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
 
         PubnativeDeliveryManager.logImpression(this.applicationContext, TEST_APP_TOKEN);
-        requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID, this.listenerMock);
+        PubnativeNetworkRequest networkRequest = spy(PubnativeNetworkRequest.class);
+        this.stubGetConfigAsyncForFail(networkRequest);
+        networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID, this.listenerMock);
 
-        verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
-        verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(Exception.class));
-        verify(listenerMock, never()).onRequestLoaded(eq(requestSpy), any(PubnativeAdModel.class));
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestStarted(eq(networkRequest));
+        verify(listenerMock, after(TEST_TIMEOUT).times(1)).onRequestFailed(eq(networkRequest), any(Exception.class));
+        verify(listenerMock, after(TEST_TIMEOUT).never()).onRequestLoaded(eq(networkRequest), any(PubnativeAdModel.class));
+    }
+
+    private void stubGetConfigAsyncForFail(final PubnativeNetworkRequest request)
+    {
+        doAnswer(new Answer()
+        {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable
+            {
+                listenerMock.onRequestFailed(request, mock(Exception.class));
+                return null;
+            }
+        }).when(request).getConfig(any(Context.class), anyString(), any(PubnativeConfigManagerListener.class));
     }
 }
