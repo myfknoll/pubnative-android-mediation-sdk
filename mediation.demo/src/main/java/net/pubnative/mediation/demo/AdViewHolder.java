@@ -74,6 +74,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     {
         this.placementID = placementID;
 
+        this.cleanView();
         if (this.placement_id_text != null && !TextUtils.isEmpty(placementID))
         {
             this.placement_id_text.setText("Placement ID: " + placementID);

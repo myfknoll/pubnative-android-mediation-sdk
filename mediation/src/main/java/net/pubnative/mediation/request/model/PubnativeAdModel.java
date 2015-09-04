@@ -63,7 +63,7 @@ public abstract class PubnativeAdModel
 
     protected void invokeOnAdImpressionConfirmed()
     {
-        if (!this.impressionTracked && this.listener != null)
+        if (!this.impressionTracked)
         {
             this.impressionTracked = true;
             if (this.context != null && this.trackingInfoModel != null)
@@ -71,17 +71,23 @@ public abstract class PubnativeAdModel
                 PubnativeDeliveryManager.logImpression(this.context, this.trackingInfoModel.placement_id);
                 PubnativeInsightsManager.trackData(this.context, this.impressionTrackingURL, this.trackingInfoModel);
             }
-            this.listener.onAdImpressionConfirmed(this);
+            if(this.listener != null)
+            {
+                this.listener.onAdImpressionConfirmed(this);
+            }
         }
     }
 
     protected void invokeOnAdClick()
     {
-        if (!this.clickTracked && this.listener != null)
+        if (!this.clickTracked)
         {
             this.clickTracked = true;
             PubnativeInsightsManager.trackData(this.context, this.clickTrackingURL, this.trackingInfoModel);
-            this.listener.onAdClick(this);
+            if(this.listener != null)
+            {
+                this.listener.onAdClick(this);
+            }
         }
     }
 }
