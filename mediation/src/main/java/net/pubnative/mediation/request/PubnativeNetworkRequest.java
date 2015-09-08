@@ -160,14 +160,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     {
         PubnativeDeliveryRuleModel deliveryRuleModel = this.placement.delivery_rule;
 
-        if (deliveryRuleModel.isFrequencyCapReached(context, this.trackingModel.placement_id))
+        if (deliveryRuleModel.isFrequencyCapReached(context, this.placementID))
         {
             this.invokeFail(new Exception("Pubnative - start error: (frequecy_cap) too many ads"));
         }
         else
         {
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
-            Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(this.trackingModel.placement_id);
+            Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(this.placementID);
             if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar))
             {
                 // Pacing cap deactivated or not reached
@@ -232,25 +232,25 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void invokeStart()
     {
-        if (PubnativeNetworkRequest.this.listener != null)
+        if (this.listener != null)
         {
-            PubnativeNetworkRequest.this.listener.onRequestStarted(PubnativeNetworkRequest.this);
+            this.listener.onRequestStarted(this);
         }
     }
 
     protected void invokeLoad(final PubnativeAdModel ad)
     {
-        if (PubnativeNetworkRequest.this.listener != null)
+        if (this.listener != null)
         {
-            PubnativeNetworkRequest.this.listener.onRequestLoaded(PubnativeNetworkRequest.this, ad);
+            this.listener.onRequestLoaded(this, ad);
         }
     }
 
     protected void invokeFail(final Exception exception)
     {
-        if (PubnativeNetworkRequest.this.listener != null)
+        if (this.listener != null)
         {
-            PubnativeNetworkRequest.this.listener.onRequestFailed(PubnativeNetworkRequest.this, exception);
+            this.listener.onRequestFailed(this, exception);
         }
     }
 

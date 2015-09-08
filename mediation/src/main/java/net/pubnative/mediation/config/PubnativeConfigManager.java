@@ -121,7 +121,7 @@ public class PubnativeConfigManager
         PubnativeConfigManager.invokeLoaded(listener, configModel);
     }
 
-    protected static PubnativeConfigModel getStoredConfig(Context context)
+    public static PubnativeConfigModel getStoredConfig(Context context)
     {
         PubnativeConfigModel currentConfig = null;
         String configString = PubnativeConfigManager.getStoredConfigString(context);
