@@ -21,24 +21,34 @@ public class MainActivity extends ActionBarActivity
     private final static String PLACEMENT_PACING_CAP_MIN_1  = "12";
     private final static String PLACEMENT_DISABLED          = "7";
 
+    private static AdListAdapter adListAdapter = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        List<CellRequestModel> requests = new ArrayList<>();
-        requests.add(new CellRequestModel(PLACEMENT_FACEBOOK_ONLY, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_PUBNATIVE_ONLY, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_YAHOO_ONLY, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_WATERFALL, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_IMP_DAY_CAP_10, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_IMP_HOUR_CAP_10, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_PACING_CAP_HOUR_1, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_PACING_CAP_MIN_1, APP_TOKEN));
-        requests.add(new CellRequestModel(PLACEMENT_DISABLED, APP_TOKEN));
+        if (adListAdapter == null)
+        {
+            List<CellRequestModel> requests = new ArrayList<>();
+            requests.add(new CellRequestModel(PLACEMENT_FACEBOOK_ONLY, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_PUBNATIVE_ONLY, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_YAHOO_ONLY, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_WATERFALL, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_IMP_DAY_CAP_10, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_IMP_HOUR_CAP_10, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_PACING_CAP_HOUR_1, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_PACING_CAP_MIN_1, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_DISABLED, APP_TOKEN));
+
+            adListAdapter = new AdListAdapter(this, R.layout.ad_list_cell, requests);
+        }
 
         ListView listView = (ListView) findViewById(R.id.ad_list);
-        listView.setAdapter(new AdListAdapter(this, R.layout.ad_list_cell, requests));
+        if (listView != null)
+        {
+            listView.setAdapter(adListAdapter);
+        }
     }
 }
