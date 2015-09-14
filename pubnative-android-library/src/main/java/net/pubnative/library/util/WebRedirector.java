@@ -28,9 +28,10 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.net.Uri;
+import android.widget.Toast;
 
 import net.pubnative.library.task.AsyncHttpTask;
-import net.pubnative.library.task.AsyncHttpTask.HttpAsyncJSONTaskListener;
+import net.pubnative.library.task.AsyncHttpTask.AsyncHttpTaskListener;
 
 import org.droidparts.util.intent.IntentHelper;
 
@@ -66,17 +67,17 @@ public class WebRedirector implements OnCancelListener
         {
             loadingDialog = ProgressDialog.show(this.context, null, LOADING_TEXT, true);
             AsyncHttpTask task = new AsyncHttpTask(this.context);
-            task.setListener(new HttpAsyncJSONTaskListener()
+            task.setListener(new AsyncHttpTaskListener()
             {
                 @Override
-                public void onHttpAsyncJsonFinished(AsyncHttpTask task, String result)
+                public void onAsyncHttpTaskFinished(AsyncHttpTask task, String result)
                 {
                     loadingDialog.dismiss();
                     openInPlayStore(MARKET_PREFIX + pkgName);
                 }
 
                 @Override
-                public void onHttpAsyncJsonFailed(AsyncHttpTask task, Exception e)
+                public void onAsyncHttpTaskFailed(AsyncHttpTask task, Exception e)
                 {
                     loadingDialog.dismiss();
                     openInPlayStore(MARKET_PREFIX + pkgName);
@@ -86,6 +87,7 @@ public class WebRedirector implements OnCancelListener
         }
         catch (Exception ignored)
         {
+            Toast.makeText(context, "Couldn't open the ad", Toast.LENGTH_SHORT).show();
             if (loadingDialog != null)
             {
                 loadingDialog.dismiss();

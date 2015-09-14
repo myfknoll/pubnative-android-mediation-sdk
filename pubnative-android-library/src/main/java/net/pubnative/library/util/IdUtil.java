@@ -21,8 +21,6 @@
  */
 package net.pubnative.library.util;
 
-import org.droidparts.util.L;
-
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -30,9 +28,13 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient.Info;
+
+import org.droidparts.util.L;
 
 public class IdUtil
 {
@@ -78,23 +80,57 @@ public class IdUtil
         return (xlarge || large);
     }
 
-    public static String getAndroidAdvertisingID(Context context)
+    public static void getAndroidAdvertisingID(Context context, AndroidAdvertisingIDTask.AndroidAdvertisingIDTaskListener listener)
     {
-        Info adInfo = null;
-        try
+        new AndroidAdvertisingIDTask().setListener(listener).execute(context);
+    }
+
+    public static class AndroidAdvertisingIDTask extends AsyncTask<Context, Void, String>
+    {
+        private AndroidAdvertisingIDTaskListener listener;
+        public interface AndroidAdvertisingIDTaskListener
         {
-            adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
+            void onAndroidAdvertisingIDTaskFinished(String result);
         }
-        catch (Exception e)
+
+        public AndroidAdvertisingIDTask setListener(AndroidAdvertisingIDTaskListener listener)
         {
-            L.v(e);
+            this.listener = listener;
+            return this;
         }
-        String androidAdvertisingID = null;
-        if (adInfo != null)
+
+        @Override
+        protected String doInBackground(Context... contexts)
         {
-            androidAdvertisingID = adInfo.getId();
+            String result = null;
+            Context context = contexts[0];
+            if(context != null)
+            {
+                Info adInfo = null;
+                try
+                {
+                    adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
+                    if (adInfo != null)
+                    {
+                        result = adInfo.getId();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.e("Pubnative", "Error retrieving androidAdvertisingID: " + e.toString());
+                }
+            }
+            return result;
         }
-        return androidAdvertisingID;
+
+        @Override
+        protected void onPostExecute(String result)
+        {
+            if(this.listener != null)
+            {
+                this.listener.onAndroidAdvertisingIDTaskFinished(result);
+            }
+        }
     }
 
     public static Location getLastLocation(Context ctx)

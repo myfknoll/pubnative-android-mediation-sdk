@@ -16,22 +16,12 @@ import net.pubnative.library.util.IdUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrackingManager implements AsyncHttpTask.HttpAsyncJSONTaskListener
+public class TrackingManager
 {
-    private static TrackingManager instance;
     private static final String    SHARED_FILE        = "net.pubnative.library.managers.TrackingManager";
     private static final String    CONFIRMED_URLS_SET = "net.pubnative.library.managers.TrackingManager.confirmed_urls";
     private static final String    PENDING_URLS_SET   = "net.pubnative.library.managers.TrackingManager.pending_urls";
     private static boolean         isTracking         = false;                                                           ;
-
-    private static TrackingManager getInstance()
-    {
-        if (TrackingManager.instance == null)
-        {
-            TrackingManager.instance = new TrackingManager();
-        }
-        return TrackingManager.instance;
-    }
 
     private static List<String> getSharedList(final Context context, String set)
     {
@@ -134,7 +124,22 @@ public class TrackingManager implements AsyncHttpTask.HttpAsyncJSONTaskListener
             {
                 String trackingURL = (String) TrackingManager.getSharedList(context, PENDING_URLS_SET).toArray()[0];
                 AsyncHttpTask task = new AsyncHttpTask(context);
-                task.setListener(TrackingManager.getInstance());
+                task.setListener(new AsyncHttpTask.AsyncHttpTaskListener()
+                {
+                    @Override
+                    public void onAsyncHttpTaskFinished(AsyncHttpTask task, String result)
+                    {
+                        Log.d("Pubnative", "tracked beacon success: " + result);
+                        TrackingManager.onTrackSuccess(task.getContext(), task.getHttpUrl());
+                    }
+
+                    @Override
+                    public void onAsyncHttpTaskFailed(AsyncHttpTask task, Exception e)
+                    {
+                        Log.d("Pubnative", "tracked beacon error: " + e);
+                        TrackingManager.onTrackFailed(task.getContext(), task.getHttpUrl());
+                    }
+                });
                 task.execute(trackingURL);
             }
             else
@@ -144,33 +149,19 @@ public class TrackingManager implements AsyncHttpTask.HttpAsyncJSONTaskListener
         }
     }
 
-    private void onTrackSuccess(Context context, String url)
+    private static void onTrackSuccess(Context context, String url)
     {
         TrackingManager.putToSharedList(context, CONFIRMED_URLS_SET, url);
         TrackingManager.removeFromSharedList(context, PENDING_URLS_SET, url);
-        isTracking = false;
+        TrackingManager.isTracking = false;
         TrackingManager.trackNext(context);
     }
 
-    private void onTrackFailed(Context context, String url)
+    private static void onTrackFailed(Context context, String url)
     {
         TrackingManager.removeFromSharedList(context, PENDING_URLS_SET, url);
         TrackingManager.putToSharedList(context, PENDING_URLS_SET, url);
-        isTracking = false;
+        TrackingManager.isTracking = false;
         TrackingManager.trackNext(context);
-    }
-
-    @Override
-    public void onHttpAsyncJsonFinished(AsyncHttpTask task, String result)
-    {
-        Log.d("Pubnative", "tracked beacon success: " + result);
-        this.onTrackSuccess(task.getContext(), task.getHttpUrl());
-    }
-
-    @Override
-    public void onHttpAsyncJsonFailed(AsyncHttpTask task, Exception e)
-    {
-        Log.d("Pubnative", "tracked beacon error: " + e);
-        this.onTrackFailed(task.getContext(), task.getHttpUrl());
     }
 }
