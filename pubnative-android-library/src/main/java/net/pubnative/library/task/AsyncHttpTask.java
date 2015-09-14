@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -17,25 +16,28 @@ public class AsyncHttpTask extends AsyncTask<String, Void, String>
 {
     private Context context;
     private String  httpUrl;
+    private String  result;
+    private boolean isErrror;
 
-    public interface HttpAsyncJSONTaskListener
+    public interface AsyncHttpTaskListener
     {
-        public void onHttpAsyncJsonFinished(AsyncHttpTask task, String result);
+        void onAsyncHttpTaskFinished(AsyncHttpTask task, String result);
 
-        public void onHttpAsyncJsonFailed(AsyncHttpTask task, Exception e);
+        void onAsyncHttpTaskFailed(AsyncHttpTask task, Exception e);
     }
 
-    private WeakReference<HttpAsyncJSONTaskListener> listener;
+    private AsyncHttpTaskListener listener;
 
-    public void setListener(HttpAsyncJSONTaskListener httpAsyncJSONTask)
+    public void setListener(AsyncHttpTaskListener listener)
     {
-        this.listener = new WeakReference<HttpAsyncJSONTaskListener>(httpAsyncJSONTask);
+        this.listener = listener;
     }
 
     public Context getContext()
     {
         return this.context;
     }
+
     public String getHttpUrl()
     {
         return this.httpUrl;
@@ -44,6 +46,7 @@ public class AsyncHttpTask extends AsyncTask<String, Void, String>
     public AsyncHttpTask(Context context)
     {
         this.context = context;
+        this.isErrror = false;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class AsyncHttpTask extends AsyncTask<String, Void, String>
                     try
                     {
                         HttpURLConnection connection;
-                        connection = (HttpURLConnection) new URL(this.httpUrl ).openConnection();
+                        connection = (HttpURLConnection) new URL(this.httpUrl).openConnection();
                         connection.setConnectTimeout(3000);
                         connection.setReadTimeout(1000);
                         connection.setInstanceFollowRedirects(true);
@@ -72,46 +75,52 @@ public class AsyncHttpTask extends AsyncTask<String, Void, String>
                         if (HttpURLConnection.HTTP_OK == responseCode || HttpURLConnection.HTTP_MOVED_TEMP == responseCode)
                         {
                             result = this.getStringFromInputStream(connection.getInputStream());
-                            this.invokeFinished(result);
+                        }
+                        else
+                        {
+                            result = "Pubnative - connection error";
+                            this.isErrror = true;
                         }
                     }
                     catch (Exception e)
                     {
-                        this.invokeFailed(e);
+                        result = e.toString();
+                        this.isErrror = true;
                     }
                 }
                 else
                 {
-                    this.invokeFailed(new Exception("Pubnative - Server not reachable"));
+                    result = "Pubnative - Server not reachable";
+                    this.isErrror = true;
                 }
             }
             else
             {
-                this.invokeFailed(new Exception("Pubnative - URL not valid: " + this.httpUrl ));
+                result = "Pubnative - URL not valid: " + this.httpUrl;
+                this.isErrror = true;
             }
         }
         else
         {
-            this.invokeFailed(new Exception("Pubnative - URL not specified"));
+            result = "Pubnative - URL not specified";
+            this.isErrror = true;
         }
         return result;
     }
 
-    private void invokeFinished(String result)
+    @Override
+    protected void onPostExecute(String result)
     {
-        if (this.listener != null && this.listener.get() != null)
+        if(this.listener != null)
         {
-            this.listener.get()
-                         .onHttpAsyncJsonFinished(this, result);
-        }
-    }
-
-    private void invokeFailed(Exception exception)
-    {
-        if (this.listener != null && this.listener.get() != null)
-        {
-            this.listener.get()
-                         .onHttpAsyncJsonFailed(this, exception);
+            if (isErrror)
+            {
+                this.listener.onAsyncHttpTaskFailed(this, new Exception(result));
+            }
+            else
+            {
+                this.listener.onAsyncHttpTaskFinished(this, result);
+            }
         }
     }
 
