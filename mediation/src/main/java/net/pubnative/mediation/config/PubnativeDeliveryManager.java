@@ -74,7 +74,10 @@ public class PubnativeDeliveryManager
             if (storedCalendar != null)
             {
                 Calendar dayCalendar = Calendar.getInstance();
-                dayCalendar.add(Calendar.DAY_OF_MONTH, -1);
+                dayCalendar.set(Calendar.HOUR_OF_DAY, 0);
+                dayCalendar.set(Calendar.MINUTE, 0);
+                dayCalendar.set(Calendar.SECOND, 0);
+                dayCalendar.set(Calendar.MILLISECOND, 0);
                 if (storedCalendar.before(dayCalendar))
                 {
                     PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, 0);
@@ -83,7 +86,9 @@ public class PubnativeDeliveryManager
                 else
                 {
                     Calendar hourCalendar = Calendar.getInstance();
-                    hourCalendar.add(Calendar.HOUR_OF_DAY, -1);
+                    hourCalendar.set(Calendar.MINUTE, 0);
+                    hourCalendar.set(Calendar.SECOND, 0);
+                    hourCalendar.set(Calendar.MILLISECOND, 0);
                     if (storedCalendar.before(hourCalendar))
                     {
                         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, 0);
@@ -131,7 +136,7 @@ public class PubnativeDeliveryManager
         return result;
     }
 
-    protected static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar)
+    public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar)
     {
         if (context != null && !TextUtils.isEmpty(placementID))
         {
@@ -152,7 +157,7 @@ public class PubnativeDeliveryManager
         }
     }
 
-    protected static Calendar getImpressionLastUpdate(Context context, String placementID)
+    public static Calendar getImpressionLastUpdate(Context context, String placementID)
     {
         Calendar result = null;
         if (context != null && !TextUtils.isEmpty(placementID))
