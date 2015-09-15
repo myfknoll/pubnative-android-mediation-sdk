@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.text.TextUtils;
 
 import net.pubnative.mediation.R;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
@@ -44,22 +45,158 @@ public class PubnativeInsightDataModel
     public Boolean      iap; // In app purchase enabled, Just open it for the user to fill
     public Float        iap_total; // In app purchase total spent, just open for the user to fill
 
+    /**
+     * This method takes two Objects "first" and "second" as arguments and does a comparison.
+     * Returns true if they are equal.
+     * Returns false if they are not equal or not comparable.
+     */
+    private boolean isEqual(Object first, Object second)
+    {
+        return (first != null) ? first.equals(second) : second == null;
+    }
+
+    @Override
+    public boolean equals(Object object)
+    {
+        if (this == object)
+        {
+            // return true immediately if both objects are identical.
+            return true;
+        }
+
+        if (!(object instanceof PubnativeInsightDataModel))
+        {
+            // return immediately if the object is of another class,
+            // this is to avoid possible class cast exception in next line.
+            return false;
+        }
+
+        PubnativeInsightDataModel dataModel = (PubnativeInsightDataModel) object;
+
+        boolean result = isEqual(this.network, dataModel.network);
+
+        if (result)
+        {
+            result = isEqual(this.attempted_networks, dataModel.attempted_networks);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.placement_id, dataModel.placement_id);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.pub_app_version, dataModel.pub_app_version);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.pub_app_bundle_id, dataModel.pub_app_bundle_id);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.os_version, dataModel.os_version);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.sdk_version, dataModel.sdk_version);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.user_uid, dataModel.user_uid);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.connection_type, dataModel.connection_type);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.device_name, dataModel.device_name);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.ad_format_code, dataModel.ad_format_code);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.creative_url, dataModel.creative_url);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.video_start, dataModel.video_start);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.video_complete, dataModel.video_complete);
+        }
+
+        // user info
+
+        if (result)
+        {
+            result = isEqual(this.age, dataModel.age);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.education, dataModel.education);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.interests, dataModel.interests);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.gender, dataModel.gender);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.iap, dataModel.iap);
+        }
+
+        if (result)
+        {
+            result = isEqual(this.iap_total, dataModel.iap_total);
+        }
+
+        return result;
+    }
+
     public void addInterest(String interest)
     {
-        if (this.interests == null)
+        if (!TextUtils.isEmpty(interest))
         {
-            this.interests = new ArrayList();
+            if (this.interests == null)
+            {
+                this.interests = new ArrayList();
+            }
+            this.interests.add(interest);
         }
-        this.interests.add(interest);
     }
 
     public void addAttemptedNetwork(String network)
     {
-        if (this.attempted_networks == null)
+        if (!TextUtils.isEmpty(network))
         {
-            this.attempted_networks = new ArrayList();
+            if (this.attempted_networks == null)
+            {
+                this.attempted_networks = new ArrayList();
+            }
+            this.attempted_networks.add(network);
         }
-        this.attempted_networks.add(network);
     }
 
     public void reset()
