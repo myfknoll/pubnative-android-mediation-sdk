@@ -18,11 +18,11 @@ import java.util.List;
 
 public class PubnativeInsightsManager
 {
-    private static final String INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
-    private static final String INSIGHTS_PENDING_DATA    = "pending_data";
-    private static final String INSIGHTS_FAILED_DATA     = "failed_data";
+    protected static final String INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
+    protected static final String INSIGHTS_PENDING_DATA    = "pending_data";
+    protected static final String INSIGHTS_FAILED_DATA     = "failed_data";
 
-    private static boolean idle = true;
+    protected static boolean idle = true;
 
     public synchronized static void trackData(Context context, String baseURL, PubnativeInsightDataModel dataModel)
     {
@@ -54,10 +54,7 @@ public class PubnativeInsightsManager
                 String trackingDataString = new Gson().toJson(model.dataModel);
                 if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString))
                 {
-
-                    PubnativeHttpTask http = new PubnativeHttpTask(context);
-                    http.setPOSTData(trackingDataString);
-                    http.setListener(new PubnativeHttpTask.Listener()
+                    PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener()
                     {
 
                         @Override
@@ -96,8 +93,9 @@ public class PubnativeInsightsManager
                                 }
                             }
                         }
-                    });
-                    http.execute(model.url);
+                    };
+
+                    PubnativeInsightsManager.sendTrackingDataToServer(context, trackingDataString, model.url, listener);
                 }
                 else
                 {
@@ -106,6 +104,14 @@ public class PubnativeInsightsManager
                 }
             }
         }
+    }
+
+    protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpTask.Listener listener)
+    {
+        PubnativeHttpTask http = new PubnativeHttpTask(context);
+        http.setPOSTData(trackingDataString);
+        http.setListener(listener);
+        http.execute(url);
     }
 
     protected static void trackingFailed(Context context, PubnativeInsightRequestModel model, String message)
