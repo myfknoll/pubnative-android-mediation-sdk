@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.PubnativeNetworkRequestListener;
@@ -117,6 +118,8 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     public void onRequestFailed(PubnativeNetworkRequest request, Exception exception)
     {
         Log.d(LOG_TAG, "onRequestFailed: " + exception);
+
+        Toast.makeText(this.context, exception.getMessage(), Toast.LENGTH_LONG).show();
 
         this.ad_spinner.setVisibility(View.GONE);
         this.requestModel.adModel = null;
