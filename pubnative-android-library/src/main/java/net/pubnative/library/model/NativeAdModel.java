@@ -72,7 +72,7 @@ public class NativeAdModel extends Model implements NativeAd, TaskItemListener
     public  String                 revenue_model;
     @JSON(key = POINTS)
     public  String                 points;
-    @JSON(key = PORTRAIT_BANNER_URL)
+    @JSON(key = PORTRAIT_BANNER_URL, optional = true)
     public  String                 portraitBannerUrl;
     @JSON(key = APP_DETAILS, optional = true)
     public  AppDetailsModel        app_details;
