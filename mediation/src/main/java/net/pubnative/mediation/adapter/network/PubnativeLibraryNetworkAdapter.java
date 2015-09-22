@@ -26,7 +26,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void request(Context context)
     {
-        if (context != null && data != null && data.containsKey(APP_TOKEN_KEY))
+        if (context != null && data != null)
         {
             String appToken = (String) data.get(APP_TOKEN_KEY);
             if (!TextUtils.isEmpty(appToken))

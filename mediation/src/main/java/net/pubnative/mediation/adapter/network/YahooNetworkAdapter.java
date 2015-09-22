@@ -28,10 +28,9 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void request(Context context)
     {
-        this.context = context;
-
-        if (data != null && data.containsKey(KEY_AD_SPACE_NAME) && data.containsKey(KEY_FLURRY_API_KEY))
+        if (context != null && data != null)
         {
+            this.context = context;
             String apiKey = (String) data.get(KEY_FLURRY_API_KEY);
             if (!TextUtils.isEmpty(apiKey))
             {
@@ -52,7 +51,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
         }
         else
         {
-            invokeFailed(new Exception("No ad_space_name or api_key provided."));
+            invokeFailed(new Exception("No context or adapter data provided."));
         }
     }
 
