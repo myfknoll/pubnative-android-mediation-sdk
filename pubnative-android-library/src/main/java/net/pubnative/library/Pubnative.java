@@ -5,11 +5,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import net.pubnative.library.managers.TaskManager;
-import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.library.predefined.PubnativeActivityListener;
 import net.pubnative.library.predefined.game_list.PubnativeGameListDelegate;
 import net.pubnative.library.predefined.interstitial.PubnativeInterstitialDelegate;
-import net.pubnative.library.util.WebRedirector;
 
 import java.lang.ref.WeakReference;
 
@@ -34,21 +32,6 @@ public class Pubnative
     public static void onDestroy()
     {
         TaskManager.onDestroy();
-    }
-
-    public static void showInPlayStoreViaBrowser(Context context, NativeAdModel ad)
-    {
-        new WebRedirector(context, ad.app_details.store_id, ad.click_url).doBrowserRedirect();
-    }
-
-    public static void showInPlayStoreViaDialog(Context act, NativeAdModel ad)
-    {
-        showInPlayStoreViaDialog(act, ad, 3000);
-    }
-
-    public static void showInPlayStoreViaDialog(Context act, NativeAdModel ad, int timeout)
-    {
-        new WebRedirector(act, ad.app_details.store_id, ad.click_url).doBackgroundRedirect(timeout);
     }
 
     public static void show(Context context, String type, String app_token, PubnativeActivityListener listener)

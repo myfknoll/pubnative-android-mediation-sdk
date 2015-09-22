@@ -1,16 +1,16 @@
 /**
  * Copyright 2014 PubNative GmbH
- *
+ * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ * <p/>
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ * <p/>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -52,6 +52,7 @@ public interface PubnativeContract
         String AGE                        = "age";
         String KEYWORDS                   = "keywords";
     }
+
     interface Response
     {
         String STATUS        = "status";
@@ -69,6 +70,7 @@ public interface PubnativeContract
             String ICON_URL            = "icon_url";
             String BANNER_URL          = "banner_url";
             String CLICK_URL           = "click_url";
+            String STORE_RATING        = "store_rating";
             String BEACONS             = "beacons";
             String REVENUE_MODEL       = "revenue_model";
             String POINTS              = "points";
@@ -81,6 +83,7 @@ public interface PubnativeContract
                 String TYPE_IMPRESSION = "impression";
                 String URL             = "url";
             }
+
             interface AppDetails
             {
                 String REVIEW            = "review";
@@ -107,6 +110,7 @@ public interface PubnativeContract
                 String INSTALLS          = "installs";
             }
         }
+
         interface VideoNativeAd extends NativeAd
         {
             String VAST = "vast";
@@ -119,6 +123,7 @@ public interface PubnativeContract
                 String MUTE              = "mute";
                 String LEARN_MORE_BUTTON = "learn_more_button";
             }
+
             interface Vast
             {
                 String AD = "Ad";
@@ -161,6 +166,7 @@ public interface PubnativeContract
                                             String ATTR_EVENT = "event";
                                         }
                                     }
+
                                     interface MediaFiles
                                     {
                                         String MEDIA_FILE = "MediaFile";

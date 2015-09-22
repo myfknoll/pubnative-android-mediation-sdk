@@ -1,11 +1,7 @@
 package net.pubnative.library.predefined.interstitial;
 
-import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
-import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
-
-import java.util.ArrayList;
+import android.content.Context;
+import android.content.Intent;
 
 import net.pubnative.library.Pubnative;
 import net.pubnative.library.PubnativeContract.Request;
@@ -17,8 +13,13 @@ import net.pubnative.library.predefined.PubnativeActivityListener;
 import net.pubnative.library.request.AdRequest;
 import net.pubnative.library.request.AdRequest.Endpoint;
 import net.pubnative.library.request.AdRequestListener;
-import android.content.Context;
-import android.content.Intent;
+
+import java.util.ArrayList;
+
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 public class PubnativeInterstitialDelegate extends PubnativeActivityDelegate implements
         AdRequestListener
