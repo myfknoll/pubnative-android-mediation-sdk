@@ -5,10 +5,15 @@ import android.view.View;
 
 import net.pubnative.library.model.AppDetailsModel;
 import net.pubnative.library.model.NativeAdModel;
+import net.pubnative.mediation.BuildConfig;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -19,6 +24,8 @@ import static org.mockito.Mockito.spy;
 /**
  * Created by rahul on 13/8/15.
  */
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, sdk = 21)
 public class PubnativeLibraryAdModelTest
 {
     @Test
@@ -106,6 +113,7 @@ public class PubnativeLibraryAdModelTest
 
     public void viewRelatedMethodsDoNotFailWithGivenNativeAdModel(NativeAdModel nativeAdModel)
     {
+        Context appContext = RuntimeEnvironment.application.getApplicationContext();
         PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(nativeAdModel));
 
         if (nativeAdModel != null)
@@ -122,8 +130,8 @@ public class PubnativeLibraryAdModelTest
         }
 
         // check with mocked arguments.
-        adModelSpy.startTracking(mock(Context.class), mock(View.class));
-        adModelSpy.stopTracking(mock(Context.class), mock(View.class));
+        adModelSpy.startTracking(appContext, mock(View.class));
+        adModelSpy.stopTracking(appContext, mock(View.class));
 
         // check with null arguments.
         adModelSpy.startTracking(null, null);
