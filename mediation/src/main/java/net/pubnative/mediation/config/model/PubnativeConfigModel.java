@@ -13,6 +13,7 @@ public class PubnativeConfigModel
         String REFRESH           = "refresh";
         String IMPRESSION_BEACON = "impression_beacon";
         String CLICK_BEACON      = "click_beacon";
+        String REQUEST_BEACON    = "request_beacon";
     }
 
     public boolean isNullOrEmpty()

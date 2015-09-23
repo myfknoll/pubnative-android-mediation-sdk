@@ -2,6 +2,7 @@ package net.pubnative.mediation.request;
 
 import android.accounts.NetworkErrorException;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
@@ -14,6 +15,7 @@ import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeDeliveryRuleModel;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
+import net.pubnative.mediation.insights.PubnativeInsightsManager;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -135,9 +137,26 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                 {
                     if (this.placement.delivery_rule.isActive())
                     {
-                        this.trackingModel.reset();
-                        this.trackingModel.placement_id = placementID;
-                        this.startRequest();
+                        new AsyncTask<Void, Void, Void>()
+                        {
+                            @Override
+                            protected Void doInBackground(Void... voids)
+                            {
+                                PubnativeNetworkRequest.this.trackingModel.reset();
+                                PubnativeNetworkRequest.this.trackingModel.fillDefaults(PubnativeNetworkRequest.this.context);
+                                PubnativeNetworkRequest.this.trackingModel.placement_id = placementID;
+
+                                String adFormatCode = PubnativeNetworkRequest.this.placement.ad_format_code;
+                                PubnativeNetworkRequest.this.trackingModel.ad_format_code = adFormatCode;
+                                return null;
+                            }
+
+                            @Override
+                            protected void onPostExecute(Void obj)
+                            {
+                                PubnativeNetworkRequest.this.startRequest();
+                            }
+                        }.execute();
                     }
                     else
                     {
@@ -220,6 +239,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         }
         else
         {
+            this.trackNetworkAttempt(this.currentNetworkID);
+            this.trackRequestInsight();
             this.invokeFail(new Exception("Pubnative - no fill"));
         }
     }
@@ -240,6 +261,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void invokeLoad(final PubnativeAdModel ad)
     {
+        this.trackRequestInsight();
+
         if (this.listener != null)
         {
             this.listener.onRequestLoaded(this, ad);
@@ -254,6 +277,20 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         }
     }
 
+    protected void trackRequestInsight()
+    {
+        if (this.config != null)
+        {
+            String requestURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.REQUEST_BEACON);
+            if(!TextUtils.isEmpty(requestURL))
+            {
+                requestURL = requestURL + APP_TOKEN_PARAMETER + this.appToken;
+                PubnativeInsightsManager.trackData(this.context, requestURL, this.trackingModel);
+            }
+        }
+    }
+
+
     // CALLBACKS
     // PubnativeNetworkAdapterListener
 
@@ -266,7 +303,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     @Override
     public void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad)
     {
-        String adFormatCode = this.placement.ad_format_code;
+        this.ad = ad;
+
+        this.trackingModel.network = this.currentNetworkID;
+
         String impressionURL = null;
         if (this.config.globals.containsKey(PubnativeConfigModel.ConfigContract.IMPRESSION_BEACON))
         {
@@ -279,11 +319,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
             clickURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.CLICK_BEACON);
             clickURL = clickURL + APP_TOKEN_PARAMETER + this.appToken;
         }
-        this.trackingModel.fillDefaults(this.context);
-        this.trackingModel.ad_format_code = adFormatCode;
-        this.trackingModel.network = this.currentNetworkID;
-        this.ad = ad;
+
         this.ad.setTrackingInfo(this.trackingModel, impressionURL, clickURL);
+
         PubnativeDeliveryManager.updatePacingCalendar(this.trackingModel.placement_id);
         this.invokeLoad(ad);
     }

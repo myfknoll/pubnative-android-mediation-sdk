@@ -282,4 +282,37 @@ public class PubnativeNetworkRequestTest
 
         verify(listenerMock, never()).onRequestFailed(eq(networkRequestSpy), any(Exception.class));
     }
+
+    @Test
+    public void sendsRequestInsightOnLoaded()
+    {
+        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
+        doNothing().when(networkRequestSpy).trackRequestInsight();
+
+        networkRequestSpy.invokeLoad(null);
+
+        verify(networkRequestSpy, times(1)).trackRequestInsight();
+    }
+
+    @Test
+    public void sendsRequestInsightOnNoFill()
+    {
+        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", TEST_APP_TOKEN);
+
+        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
+        doNothing().when(networkRequestSpy).trackRequestInsight();
+
+        // Empty priority rules
+        PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(this.applicationContext);
+        networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
+        networkRequestSpy.placement.priority_rules.clear();
+        networkRequestSpy.doNextNetworkRequest();
+
+        // No more networks available
+        networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
+        networkRequestSpy.currentNetworkIndex = Integer.MAX_VALUE;
+        networkRequestSpy.doNextNetworkRequest();
+
+        verify(networkRequestSpy, times(2)).trackRequestInsight();
+    }
 }
