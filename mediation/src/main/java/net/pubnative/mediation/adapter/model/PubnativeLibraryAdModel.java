@@ -3,7 +3,6 @@ package net.pubnative.mediation.adapter.model;
 import android.content.Context;
 import android.view.View;
 
-import net.pubnative.library.Pubnative;
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -106,7 +105,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     public void onClick(View view)
     {
         this.invokeOnAdClick();
-        Pubnative.showInPlayStoreViaDialog(this.context, this.model);
+        this.model.open(this.context);
     }
 
     // Pubnative NativeAdModel.Listener

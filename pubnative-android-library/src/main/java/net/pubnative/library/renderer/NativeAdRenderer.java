@@ -78,7 +78,7 @@ public class NativeAdRenderer extends AdRenderer<NativeAdModel> implements
         }
         if (ratingView != null)
         {
-            ratingView.setRating(this.ad.app_details.store_rating);
+            ratingView.setRating(this.ad.getStoreRating());
         }
         if (descriptionView != null)
         {

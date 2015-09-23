@@ -1,18 +1,18 @@
 package net.pubnative.library.predefined.game_list;
 
-import java.util.ArrayList;
-
-import net.pubnative.library.Pubnative;
-import net.pubnative.library.R;
-import net.pubnative.library.model.NativeAdModel;
-import net.pubnative.library.predefined.PubnativeActivity;
-import net.pubnative.library.predefined.PubnativeView;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+
+import net.pubnative.library.R;
+import net.pubnative.library.model.NativeAdModel;
+import net.pubnative.library.predefined.PubnativeActivity;
+import net.pubnative.library.predefined.PubnativeView;
+
+import java.util.ArrayList;
 
 public class PubnativeGameListView extends PubnativeView implements
         OnItemClickListener
@@ -40,6 +40,6 @@ public class PubnativeGameListView extends PubnativeView implements
     {
         Log.v("PubnativeGameListView", "onItemClick: position-" + position);
         NativeAdModel clickedObjectModel = this.ads.get(position);
-        Pubnative.showInPlayStoreViaDialog(this.getActivity(), clickedObjectModel);
+        clickedObjectModel.open(this.getContext());
     }
 }

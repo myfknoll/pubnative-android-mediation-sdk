@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import net.pubnative.library.Pubnative;
 import net.pubnative.library.R;
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.library.predefined.PubnativeActivity;
@@ -83,7 +82,7 @@ public class PubnativeInterstitialView extends PubnativeView implements
     {
         if (this.ctaView == v)
         {
-            Pubnative.showInPlayStoreViaDialog(this.getActivity(), this.ads.get(0));
+            this.ads.get(0).open(this.getContext());
         }
     }
 
