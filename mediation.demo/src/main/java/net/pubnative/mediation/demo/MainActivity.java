@@ -14,6 +14,7 @@ public class MainActivity extends ActionBarActivity
     private final static String PLACEMENT_FACEBOOK_ONLY     = "4";
     private final static String PLACEMENT_PUBNATIVE_ONLY    = "5";
     private final static String PLACEMENT_YAHOO_ONLY        = "10";
+    private final static String PLACEMENT_LOOPME_ONLY       = "33";
     private final static String PLACEMENT_WATERFALL         = "6";
     private final static String PLACEMENT_IMP_DAY_CAP_10    = "11";
     private final static String PLACEMENT_IMP_HOUR_CAP_10   = "8";
@@ -35,6 +36,7 @@ public class MainActivity extends ActionBarActivity
             requests.add(new CellRequestModel(PLACEMENT_FACEBOOK_ONLY, APP_TOKEN));
             requests.add(new CellRequestModel(PLACEMENT_PUBNATIVE_ONLY, APP_TOKEN));
             requests.add(new CellRequestModel(PLACEMENT_YAHOO_ONLY, APP_TOKEN));
+            requests.add(new CellRequestModel(PLACEMENT_LOOPME_ONLY, APP_TOKEN));
             requests.add(new CellRequestModel(PLACEMENT_WATERFALL, APP_TOKEN));
             requests.add(new CellRequestModel(PLACEMENT_IMP_DAY_CAP_10, APP_TOKEN));
             requests.add(new CellRequestModel(PLACEMENT_IMP_HOUR_CAP_10, APP_TOKEN));
