@@ -144,7 +144,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                             {
                                 PubnativeNetworkRequest.this.trackingModel.reset();
                                 PubnativeNetworkRequest.this.trackingModel.fillDefaults(PubnativeNetworkRequest.this.context);
-                                PubnativeNetworkRequest.this.trackingModel.placement_id = placementID;
+                                PubnativeNetworkRequest.this.trackingModel.placement_name = placementID;
 
                                 String adFormatCode = PubnativeNetworkRequest.this.placement.ad_format_code;
                                 PubnativeNetworkRequest.this.trackingModel.ad_format_code = adFormatCode;
@@ -216,7 +216,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
             this.currentNetworkIndex++;
             if (!TextUtils.isEmpty(this.currentNetworkID) && this.config.networks.containsKey(this.currentNetworkID))
             {
-                PubnativeNetworkModel network = this.config.networks.get(this.currentNetworkID);
+                PubnativeNetworkModel network = this.config.networks.get(this.currentNetworkID.toLowerCase());
                 PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
 
                 if (adapter == null)
@@ -322,7 +322,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
         this.ad.setTrackingInfo(this.trackingModel, impressionURL, clickURL);
 
-        PubnativeDeliveryManager.updatePacingCalendar(this.trackingModel.placement_id);
+        PubnativeDeliveryManager.updatePacingCalendar(this.trackingModel.placement_name);
         this.invokeLoad(ad);
     }
 

@@ -13,7 +13,7 @@ public class CellRequestModel
     public String                  placementID;
     public String                  appToken;
 
-    public CellRequestModel(String placementID, String appToken)
+    public CellRequestModel(String appToken, String placementID)
     {
         this.request = new PubnativeNetworkRequest();
         this.appToken = appToken;
