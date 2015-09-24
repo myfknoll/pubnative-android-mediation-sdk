@@ -29,6 +29,7 @@ public class MainActivity extends ActionBarActivity
             requests.add(new CellRequestModel(APP_TOKEN, "imp_day_cap_10"));
             requests.add(new CellRequestModel(APP_TOKEN, "imp_hour_cap_10"));
             requests.add(new CellRequestModel(APP_TOKEN, "pacing_cap_hour_1"));
+            requests.add(new CellRequestModel(APP_TOKEN, "pacing_cap_min_1"));
             requests.add(new CellRequestModel(APP_TOKEN, "disabled"));
 
             adListAdapter = new AdListAdapter(this, R.layout.ad_list_cell, requests);
