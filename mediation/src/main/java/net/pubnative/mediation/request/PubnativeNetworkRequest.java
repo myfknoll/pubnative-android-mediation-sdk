@@ -239,7 +239,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         }
         else
         {
-            this.trackNetworkAttempt(this.currentNetworkID);
             this.trackRequestInsight();
             this.invokeFail(new Exception("Pubnative - no fill"));
         }
@@ -279,7 +278,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void trackRequestInsight()
     {
-        if (this.config != null)
+        if (this.config != null &&
+                ((this.trackingModel.attempted_networks != null && this.trackingModel.attempted_networks.size() > 0) ||
+                        this.trackingModel.network != null))
         {
             String requestURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.REQUEST_BEACON);
             if(!TextUtils.isEmpty(requestURL))

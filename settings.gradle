@@ -1,1 +1,1 @@
-include ':mediation', ':mediation.demo', ':pubnative-android-library'
+include ':mediation', ':mediation.demo', ':library'
