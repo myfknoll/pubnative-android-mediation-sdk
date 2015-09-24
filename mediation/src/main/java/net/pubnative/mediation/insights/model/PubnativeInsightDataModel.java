@@ -24,7 +24,7 @@ public class PubnativeInsightDataModel
     // Tracking info
     public String       network;
     public List<String> attempted_networks;
-    public String       placement_id;
+    public String       placement_name;
     public String       pub_app_version;
     public String       pub_app_bundle_id;
     public String       os_version;
@@ -82,7 +82,7 @@ public class PubnativeInsightDataModel
 
         if (result)
         {
-            result = isEqual(this.placement_id, dataModel.placement_id);
+            result = isEqual(this.placement_name, dataModel.placement_name);
         }
 
         if (result)

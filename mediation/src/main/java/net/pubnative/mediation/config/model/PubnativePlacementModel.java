@@ -13,8 +13,8 @@ public class PubnativePlacementModel
 
     public interface AdFormatCode
     {
-        String NATIVE_ICON   = "native_icon";
-        String NATIVE_BANNER = "native_banner";
+        String NATIVE_ICON   = "icon";
+        String NATIVE_BANNER = "banner";
         String VIDEO         = "video";
     }
 }

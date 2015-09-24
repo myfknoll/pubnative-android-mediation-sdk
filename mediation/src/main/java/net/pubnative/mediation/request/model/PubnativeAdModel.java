@@ -68,7 +68,7 @@ public abstract class PubnativeAdModel
             this.impressionTracked = true;
             if (this.context != null && this.trackingInfoModel != null)
             {
-                PubnativeDeliveryManager.logImpression(this.context, this.trackingInfoModel.placement_id);
+                PubnativeDeliveryManager.logImpression(this.context, this.trackingInfoModel.placement_name);
                 PubnativeInsightsManager.trackData(this.context, this.impressionTrackingURL, this.trackingInfoModel);
             }
             if(this.listener != null)
