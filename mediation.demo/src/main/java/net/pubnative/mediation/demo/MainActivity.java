@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity
 {
-    private final static String APP_TOKEN = "bed5dfea7feb694967a8755bfa7f67fdf1ceb9c291ddd7b8825983a103c8b266";
+    private final static String APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
 
     private static AdListAdapter adListAdapter = null;
 
