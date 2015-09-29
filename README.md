@@ -31,7 +31,7 @@ pubnative-android-mediation-sdk is an Open Source client mediation layer for int
 <a name="install"></a>
 # Install
 
-Clone the repository and import the project into your app.
+Clone the repository and import the `:mediation` project into your app. Allow also to import the `:library` one.
 
 <a name="usage"></a>
 # Usage
