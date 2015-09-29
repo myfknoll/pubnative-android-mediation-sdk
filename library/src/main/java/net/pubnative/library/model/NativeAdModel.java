@@ -98,7 +98,7 @@ public class NativeAdModel extends Model implements NativeAd, TaskItemListener
 
     public float getStoreRating()
     {
-        float result = 0;
+        float result = 0f;
         if (this.app_details != null)
         {
             result = this.app_details.store_rating;

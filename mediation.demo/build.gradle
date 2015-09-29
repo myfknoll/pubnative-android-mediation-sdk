@@ -8,7 +8,7 @@ android {
         applicationId "net.pubnative.mediation.demo"
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 10
+        versionCode 12
         versionName "1.0.0"
     }
     buildTypes {
@@ -22,6 +22,4 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':mediation')
-    compile 'com.android.support:support-v4:22.0.0'
-    compile 'com.android.support:appcompat-v7:22.0.0'
 }

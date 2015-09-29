@@ -1,13 +1,12 @@
 package net.pubnative.mediation.demo;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rahul on 29/9/15.
@@ -28,22 +27,22 @@ public class PubnativeTestCredentials
         return getSharedPreferences(context).edit();
     }
 
-    public static ArrayList<String> getStoredPlacements(Context context)
+    public static List<String> getStoredPlacements(Context context)
     {
-        ArrayList<String> placements = null;
+        List<String> placements = null;
         if (context != null)
         {
             SharedPreferences sharedPreferences = getSharedPreferences(context);
             String json = sharedPreferences.getString(PREF_KEY_PLACEMENTS, null);
             if (!TextUtils.isEmpty(json))
             {
-                placements = new Gson().fromJson(json, ArrayList.class);
+                placements = new Gson().fromJson(json, List.class);
             }
         }
         return placements;
     }
 
-    public static void setStoredPlacements(Context context, ArrayList<String> placements)
+    public static void setStoredPlacements(Context context, List<String> placements)
     {
         if (context != null)
         {

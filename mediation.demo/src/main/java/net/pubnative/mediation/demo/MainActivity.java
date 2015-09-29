@@ -1,22 +1,23 @@
 package net.pubnative.mediation.demo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends Activity implements View.OnClickListener
 {
     private final static String APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
 
-    private static AdListAdapter adListAdapter = null;
-    private ListView listView;
+    private Button                 settingsButton  = null;
+    private AdListAdapter          requestsAdapter = null;
+    private List<CellRequestModel> requests        = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -24,97 +25,80 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.listView = (ListView) findViewById(R.id.ad_list);
+        this.settingsButton = (Button) this.findViewById(R.id.button_settings);
+        this.settingsButton.setOnClickListener(this);
 
-        this.populateDefaultData();
+        List<String> placements = new ArrayList();
+        placements.add("facebook_only");
+        placements.add("pubnative_only");
+        placements.add("yahoo_only");
+        placements.add("waterfall");
+        placements.add("imp_day_cap_10");
+        placements.add("imp_hour_cap_10");
+        placements.add("pacing_cap_hour_1");
+        placements.add("pacing_cap_min_1");
+        placements.add("disabled");
+        PubnativeTestCredentials.setStoredAppToken(this, APP_TOKEN);
+        PubnativeTestCredentials.setStoredPlacements(this, placements);
+
+        this.requests = new ArrayList();
+        for (String placementID : placements)
+        {
+            this.requests.add(new CellRequestModel(APP_TOKEN, placementID));
+        }
+
+        this.requestsAdapter  = new AdListAdapter(this, R.layout.ad_list_cell, this.requests);
+        ListView listView = (ListView) this.findViewById(R.id.ad_list);
+        listView.setAdapter(this.requestsAdapter);
+
     }
 
     @Override
-    protected void onStart()
+    protected void onResume()
     {
-        super.onStart();
-
+        super.onResume();
         this.displayPlacementsList();
-    }
-
-    private void populateDefaultData()
-    {
-        String appToken = PubnativeTestCredentials.getStoredAppToken(this);
-        if (TextUtils.isEmpty(appToken))
-        {
-            PubnativeTestCredentials.setStoredAppToken(this, APP_TOKEN);
-        }
-
-        ArrayList<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
-        if (placements == null)
-        {
-            placements = new ArrayList<String>();
-            placements.add("facebook_only");
-            placements.add("pubnative_only");
-            placements.add("yahoo_only");
-            placements.add("waterfall");
-            placements.add("imp_day_cap_10");
-            placements.add("imp_hour_cap_10");
-            placements.add("pacing_cap_hour_1");
-            placements.add("pacing_cap_min_1");
-            placements.add("disabled");
-            PubnativeTestCredentials.setStoredPlacements(this, placements);
-        }
     }
 
     private void displayPlacementsList()
     {
-        if (adListAdapter == null)
+        // Add default data if needed
+        String appToken = PubnativeTestCredentials.getStoredAppToken(this);
+        List<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
+
+        if (!TextUtils.isEmpty(appToken) && placements != null)
         {
-            List<CellRequestModel> requests = new ArrayList<>();
-            String appToken = PubnativeTestCredentials.getStoredAppToken(this);
-            if (!TextUtils.isEmpty(appToken))
+            this.requestsAdapter.clear();
+            List<CellRequestModel> newRequests = new ArrayList();
+            for (CellRequestModel request : this.requests)
             {
-                ArrayList<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
-                if (placements != null)
+                if(placements.contains(request.placementID))
                 {
-                    for (String placementId : placements)
-                    {
-                        requests.add(new CellRequestModel(appToken, placementId));
-                    }
+                    newRequests.add(request);
+                    placements.remove(request.placementID);
                 }
             }
-            adListAdapter = new AdListAdapter(this, R.layout.ad_list_cell, requests);
-        }
+            for(String placementID : placements)
+            {
+                newRequests.add(new CellRequestModel(appToken, placementID));
+            }
+            this.requests = newRequests;
+            for (CellRequestModel request : this.requests)
+            {
+                this.requestsAdapter.add(request);
+            }
 
-        if (this.listView != null)
-        {
-            this.listView.setAdapter(adListAdapter);
+            this.requestsAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
+    public void onClick(View v)
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_setting, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        if (this.settingsButton.equals(v))
         {
             Intent settingsIntent = new Intent(this, SettingActivity.class);
             startActivity(settingsIntent);
-            // the following line clears the adapter to load next time propely
-            adListAdapter = null;
-
-            return true;
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

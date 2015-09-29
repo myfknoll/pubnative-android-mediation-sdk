@@ -54,7 +54,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     {
         // The square high-quality image of the sponsored logo.
         // Currently, it is a starburst.png, always present, size: 40 x 40px
-        return getStringValueOfAsset("secHqBrandingLogo");
+        return getStringValueOfAsset("secOrigImg");
     }
 
     @Override

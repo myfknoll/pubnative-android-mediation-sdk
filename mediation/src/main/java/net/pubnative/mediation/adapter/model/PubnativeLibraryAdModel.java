@@ -76,12 +76,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public float getStarRating()
     {
-        float starRating = 0;
-        if (this.model != null && this.model.app_details != null)
-        {
-            starRating = model.app_details.store_rating;
-        }
-        return starRating;
+        return model.getStoreRating();
     }
 
     @Override

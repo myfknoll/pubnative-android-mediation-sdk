@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,8 +37,11 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     // Ad info
     protected TextView  placement_id_text;
     protected TextView  adapter_name_text;
+    protected TextView  ad_description_text;
     protected TextView  ad_title_text;
+    protected RatingBar ad_rating;
     protected ImageView ad_icon_image;
+    protected ImageView ad_banner_image;
 
     public AdViewHolder(Context context)
     {
@@ -53,15 +57,22 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.ad_container = (RelativeLayout) convertView.findViewById(R.id.ad_container);
 
         this.ad_title_text = (TextView) convertView.findViewById(R.id.ad_title_text);
+        this.ad_description_text = (TextView) convertView.findViewById(R.id.ad_description_text);
         this.adapter_name_text = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
         this.placement_id_text = (TextView) convertView.findViewById(R.id.placement_id_text);
+        this.ad_rating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         this.ad_icon_image = (ImageView) convertView.findViewById(R.id.ad_icon_image);
+        this.ad_banner_image = (ImageView) convertView.findViewById(R.id.ad_banner_image);
     }
 
     public void cleanView()
     {
         this.ad_title_text.setText("");
+        this.ad_description_text.setText("");
         this.adapter_name_text.setText("");
+        this.ad_rating.setRating(0f);
+        this.ad_rating.setVisibility(View.GONE);
+        this.ad_banner_image.setImageDrawable(null);
         this.ad_icon_image.setImageDrawable(null);
         this.ad_spinner.setVisibility(View.GONE);
     }
@@ -81,7 +92,11 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         {
             this.adapter_name_text.setText(this.requestModel.adModel.getClass().getSimpleName());
             this.ad_title_text.setText(this.requestModel.adModel.getTitle());
+            this.ad_description_text.setText(this.requestModel.adModel.getDescription());
+            this.ad_rating.setRating(this.requestModel.adModel.getStarRating());
+            this.ad_rating.setVisibility(View.VISIBLE);
             new LoadImageAsyncTask().execute(this.requestModel.adModel.getIconUrl(), this.ad_icon_image);
+            new LoadImageAsyncTask().execute(this.requestModel.adModel.getBannerUrl(), this.ad_banner_image);
             this.requestModel.adModel.startTracking(this.context, this.ad_container);
         }
     }
