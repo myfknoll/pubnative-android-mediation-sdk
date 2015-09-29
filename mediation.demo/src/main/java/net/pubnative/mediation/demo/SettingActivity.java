@@ -1,15 +1,16 @@
 package net.pubnative.mediation.demo;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class SettingActivity extends ActionBarActivity
+public class SettingActivity extends Activity
 {
     private PlacementListAdapter adapter;
     private ListView             listView;
@@ -66,7 +67,7 @@ public class SettingActivity extends ActionBarActivity
 
         if (this.adapter != null && this.adapter.getPlacements() != null)
         {
-            ArrayList<String> placements = this.adapter.getPlacements();
+            List<String> placements = this.adapter.getPlacements();
             PubnativeTestCredentials.setStoredPlacements(this, placements);
         }
     }
@@ -84,10 +85,10 @@ public class SettingActivity extends ActionBarActivity
 
         if (this.listView != null)
         {
-            ArrayList<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
+            List<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
             if (placements == null)
             {
-                placements = new ArrayList<String>();
+                placements = new ArrayList<>();
             }
             this.adapter = new PlacementListAdapter(this, placements);
             this.listView.setAdapter(adapter);

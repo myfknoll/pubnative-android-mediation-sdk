@@ -9,16 +9,17 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rahul on 29/9/15.
  */
 public class PlacementListAdapter extends BaseAdapter
 {
-    private Context context;
-    private ArrayList<String> placements;
+    private Context      context;
+    private List<String> placements;
 
-    public PlacementListAdapter(Context context, ArrayList<String> placements)
+    public PlacementListAdapter(Context context, List<String> placements)
     {
         this.context = context;
         if (placements != null)
@@ -27,7 +28,7 @@ public class PlacementListAdapter extends BaseAdapter
         }
         else
         {
-            this.placements = new ArrayList<String>();
+            this.placements = new ArrayList();
         }
     }
 
@@ -49,7 +50,7 @@ public class PlacementListAdapter extends BaseAdapter
         }
     }
 
-    public ArrayList<String> getPlacements()
+    public List<String> getPlacements()
     {
         return this.placements;
     }

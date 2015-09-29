@@ -3,7 +3,6 @@ package net.pubnative.mediation.adapter.model;
 import android.content.Context;
 import android.view.View;
 
-import net.pubnative.library.model.AppDetailsModel;
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.mediation.BuildConfig;
 
@@ -31,14 +30,7 @@ public class PubnativeLibraryAdModelTest
     @Test
     public void getMethodsDoNotFailWhenNullValueSetToVariables()
     {
-        NativeAdModel nativeAdModelMock = mock(NativeAdModel.class);
-
-        nativeAdModelMock.title = null;
-        nativeAdModelMock.iconUrl = null;
-        nativeAdModelMock.bannerUrl = null;
-        nativeAdModelMock.description = null;
-        nativeAdModelMock.ctaText = null;
-        nativeAdModelMock.app_details = null;
+        NativeAdModel nativeAdModelMock = spy(NativeAdModel.class);
 
         PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(nativeAdModelMock));
 
@@ -53,7 +45,7 @@ public class PubnativeLibraryAdModelTest
     @Test
     public void getMethodsRetrievesContentsWhenValidValueSetToVariables()
     {
-        NativeAdModel nativeAdModelMock = mock(NativeAdModel.class);
+        NativeAdModel nativeAdModelMock = spy(NativeAdModel.class);
 
         String sampleContent = "sample_content";
         nativeAdModelMock.title = sampleContent;
@@ -61,8 +53,7 @@ public class PubnativeLibraryAdModelTest
         nativeAdModelMock.bannerUrl = sampleContent;
         nativeAdModelMock.description = sampleContent;
         nativeAdModelMock.ctaText = sampleContent;
-        nativeAdModelMock.app_details = mock(AppDetailsModel.class);
-        nativeAdModelMock.app_details.store_rating = 1;
+        nativeAdModelMock.store_rating = 1f;
 
         PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(nativeAdModelMock));
 
@@ -71,29 +62,29 @@ public class PubnativeLibraryAdModelTest
         assertThat(adModelSpy.getBannerUrl()).isEqualTo(sampleContent);
         assertThat(adModelSpy.getDescription()).isEqualTo(sampleContent);
         assertThat(adModelSpy.getCallToAction()).isEqualTo(sampleContent);
-        assertThat(adModelSpy.getStarRating()).isEqualTo(1);
+        assertThat(adModelSpy.getStarRating()).isEqualTo(1f);
     }
 
     @Test
     public void getMethodsRetrievesContentsWhenEmptyValueSetToVariables()
     {
-        NativeAdModel nativeAdModelMock = mock(NativeAdModel.class);
+        NativeAdModel nativeAdModelMock = spy(NativeAdModel.class);
 
-        String emptyContent = "";
-        nativeAdModelMock.title = emptyContent;
-        nativeAdModelMock.iconUrl = emptyContent;
-        nativeAdModelMock.bannerUrl = emptyContent;
-        nativeAdModelMock.description = emptyContent;
-        nativeAdModelMock.ctaText = emptyContent;
-        nativeAdModelMock.app_details = mock(AppDetailsModel.class);
+        String emptyString = "";
+        nativeAdModelMock.title = emptyString;
+        nativeAdModelMock.iconUrl = emptyString;
+        nativeAdModelMock.bannerUrl = emptyString;
+        nativeAdModelMock.description = emptyString;
+        nativeAdModelMock.ctaText = emptyString;
+        nativeAdModelMock.store_rating = 0f;
 
         PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(nativeAdModelMock));
 
-        assertThat(adModelSpy.getTitle()).isEqualTo(emptyContent);
-        assertThat(adModelSpy.getIconUrl()).isEqualTo(emptyContent);
-        assertThat(adModelSpy.getBannerUrl()).isEqualTo(emptyContent);
-        assertThat(adModelSpy.getDescription()).isEqualTo(emptyContent);
-        assertThat(adModelSpy.getCallToAction()).isEqualTo(emptyContent);
+        assertThat(adModelSpy.getTitle()).isEqualTo(emptyString);
+        assertThat(adModelSpy.getIconUrl()).isEqualTo(emptyString);
+        assertThat(adModelSpy.getBannerUrl()).isEqualTo(emptyString);
+        assertThat(adModelSpy.getDescription()).isEqualTo(emptyString);
+        assertThat(adModelSpy.getCallToAction()).isEqualTo(emptyString);
         assertThat(adModelSpy.getStarRating()).isZero();
     }
 
