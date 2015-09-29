@@ -3,7 +3,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5dp"
-                android:background="#484D51">
+                android:background="#F0F5F9">
 
     <Button
         android:id="@+id/request_button"
@@ -21,12 +21,18 @@
         android:gravity="center_vertical"
         android:layout_toLeftOf="@id/request_button"/>
 
+    <TextView
+        android:id="@+id/horizontal_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/placement_id_text"
+        android:background="#C9D6DF"/>
+
     <RelativeLayout
         android:id="@+id/ad_container"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_below="@id/placement_id_text"
-        android:background="#818D97">
+        android:layout_below="@id/horizontal_divider">
 
         <ProgressBar
             android:id="@+id/ad_spinner"
