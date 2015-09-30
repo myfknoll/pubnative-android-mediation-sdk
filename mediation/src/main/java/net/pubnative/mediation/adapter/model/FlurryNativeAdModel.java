@@ -1,7 +1,6 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.flurry.android.ads.FlurryAdNative;
@@ -21,15 +20,19 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
         this.flurryAdNative = flurryAdNative;
     }
 
-    protected String getStringValueOfAsset(String key)
+    protected String getStringValueOfFirstAsset(String...keys)
     {
         String result = null;
-        if (this.flurryAdNative != null && !TextUtils.isEmpty(key))
+        if (this.flurryAdNative != null)
         {
-            FlurryAdNativeAsset asset = this.flurryAdNative.getAsset(key);
-            if (asset != null && !TextUtils.isEmpty(asset.getValue()))
+            for (String key : keys)
             {
-                result = asset.getValue();
+                FlurryAdNativeAsset asset = this.flurryAdNative.getAsset(key);
+                if (asset != null)
+                {
+                    result = asset.getValue();
+                    break;
+                }
             }
         }
         return result;
@@ -39,29 +42,30 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     public String getTitle()
     {
         // The Ad headline, typically a single line. Type: STRING
-        return getStringValueOfAsset("headline");
+        return getStringValueOfFirstAsset("headline");
     }
 
     @Override
     public String getDescription()
     {
         // The call to action summary of the advertisement. Type: STRING
-        return getStringValueOfAsset("summary");
+        return getStringValueOfFirstAsset("summary");
     }
 
     @Override
     public String getIconUrl()
     {
-        // The square high-quality image of the sponsored logo.
-        // Currently, it is a starburst.png, always present, size: 40 x 40px
-        return getStringValueOfAsset("secOrigImg");
+        // secOrigImg: 	The secured original image, size: 627px x 627px. Optional asset, not present for the video ads
+        // secImage:    The secured image, size: 82px x 82px. Optional asset, not present for the video ads.
+
+        return getStringValueOfFirstAsset("secOrigImg", "secImage");
     }
 
     @Override
     public String getBannerUrl()
     {
-        // The secured high-quality image, size: 1200px x 627px
-        return getStringValueOfAsset("secHqImage");
+        // secHqImage:  The secured high quality image, size: 1200px x 627px. Optional asset, not present for the video ads
+        return getStringValueOfFirstAsset("secHqImage");
     }
 
     @Override
@@ -75,7 +79,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
          * For an ad that does not contain app specific assets, the CTA could be ‘Read More’.
          */
         String result = "Read More";
-        if (getStringValueOfAsset("appCategory") != null || getStringValueOfAsset("appRating") != null)
+        if (getStringValueOfFirstAsset("appCategory") != null || getStringValueOfFirstAsset("appRating") != null)
         {
             result = "Install Now";
         }
@@ -86,7 +90,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     public float getStarRating()
     {
         float result = 0;
-        String appRating = getStringValueOfAsset("appRating");
+        String appRating = getStringValueOfFirstAsset("appRating");
         if (appRating != null)
         {
             String[] parts = appRating.split("/");
