@@ -83,7 +83,10 @@ public abstract class PubnativeAdModel
         if (!this.clickTracked)
         {
             this.clickTracked = true;
-            PubnativeInsightsManager.trackData(this.context, this.clickTrackingURL, this.trackingInfoModel);
+            if (this.context != null && this.trackingInfoModel != null)
+            {
+                PubnativeInsightsManager.trackData(this.context, this.clickTrackingURL, this.trackingInfoModel);
+            }
             if(this.listener != null)
             {
                 this.listener.onAdClick(this);

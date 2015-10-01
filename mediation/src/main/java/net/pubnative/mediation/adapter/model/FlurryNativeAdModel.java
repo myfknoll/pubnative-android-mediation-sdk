@@ -119,6 +119,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     @Override
     public void startTracking(Context context, View adView)
     {
+        this.context = context;
         if (this.flurryAdNative != null && adView != null)
         {
             this.flurryAdNative.setListener(this);
