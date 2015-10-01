@@ -3,15 +3,17 @@ package net.pubnative.mediation.adapter.model;
 import android.content.Context;
 import android.view.View;
 
+import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdNative;
 import com.flurry.android.ads.FlurryAdNativeAsset;
+import com.flurry.android.ads.FlurryAdNativeListener;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 /**
  * Created by rahul on 26/8/15.
  */
-public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClickListener
+public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNativeListener
 {
     FlurryAdNative flurryAdNative;
 
@@ -119,7 +121,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     {
         if (this.flurryAdNative != null && adView != null)
         {
-            adView.setOnClickListener(this);
+            this.flurryAdNative.setListener(this);
             this.flurryAdNative.setTrackingView(adView);
         }
     }
@@ -135,8 +137,44 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements View.OnClic
     }
 
     @Override
-    public void onClick(View view)
+    public void onFetched(FlurryAdNative flurryAdNative)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onShowFullscreen(FlurryAdNative flurryAdNative)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onCloseFullscreen(FlurryAdNative flurryAdNative)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onAppExit(FlurryAdNative flurryAdNative)
+    {
+        // Do nothing
+    }
+
+    @Override
+    public void onClicked(FlurryAdNative flurryAdNative)
     {
         this.invokeOnAdClick();
+    }
+
+    @Override
+    public void onImpressionLogged(FlurryAdNative flurryAdNative)
+    {
+        this.invokeOnAdImpressionConfirmed();
+    }
+
+    @Override
+    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int i)
+    {
+        // Do nothing
     }
 }
