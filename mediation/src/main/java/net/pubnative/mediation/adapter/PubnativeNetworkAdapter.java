@@ -32,11 +32,23 @@ public abstract class PubnativeNetworkAdapter
         }
     }
 
+    /**
+     * Creates a new instance of PubnativeNetworkAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
     public PubnativeNetworkAdapter(Map data)
     {
         this.data = data;
     }
 
+    /**
+     * This method starts the adapter request setting up the configured timeout
+     *
+     * @param context         valid context
+     * @param timeoutInMillis timeout in milliseconds. time to wait for an adapter to respond.
+     * @param listener        lister to track the callbacks on adapter
+     */
     public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener)
     {
         if (context != null)

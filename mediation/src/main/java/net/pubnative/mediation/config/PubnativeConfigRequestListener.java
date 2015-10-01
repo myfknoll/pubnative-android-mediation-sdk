@@ -7,5 +7,9 @@ import net.pubnative.mediation.config.model.PubnativeConfigModel;
  */
 public interface PubnativeConfigRequestListener
 {
+    /**
+     * Invoked when config manager returns a config.
+     * @param configModel PubnativeConfigModel object when cached/download config is available, else null.
+     */
     void onConfigLoaded(PubnativeConfigModel configModel);
 }

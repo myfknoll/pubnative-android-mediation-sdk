@@ -205,6 +205,11 @@ public class PubnativeInsightDataModel
         this.attempted_networks = null;
     }
 
+    /**
+     * Fills insight data model with default available data.
+     *
+     * @param context valid Context object
+     */
     public void fillDefaults(Context context)
     {
         if (context != null)

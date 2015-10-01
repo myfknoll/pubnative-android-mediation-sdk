@@ -24,6 +24,13 @@ public class PubnativeInsightsManager
 
     protected static boolean idle = true;
 
+    /**
+     * Queues impression/click tracking data and sends it to pubnative server.
+     *
+     * @param context   valid Context object
+     * @param baseURL   the base URL of the tracking server
+     * @param dataModel PubnativeInsightDataModel object with values filled in.
+     */
     public synchronized static void trackData(Context context, String baseURL, PubnativeInsightDataModel dataModel)
     {
         if (context != null && !TextUtils.isEmpty(baseURL) && dataModel != null)

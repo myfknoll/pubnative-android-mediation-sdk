@@ -22,7 +22,6 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     public YahooNetworkAdapter(Map data)
     {
         super(data);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
