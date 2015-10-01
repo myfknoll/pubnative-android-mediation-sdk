@@ -9,6 +9,12 @@ public class PubnativeNetworkAdapterFactory
 {
     protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
+    /**
+     * Creates a new network adapter instance by using the values passed in using model
+     *
+     * @param model network model that contains the values needed for creating a network adapter
+     * @return instance of PubnativeNetworkAdapter if created, else null
+     */
     public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model)
     {
         PubnativeNetworkAdapter result = null;

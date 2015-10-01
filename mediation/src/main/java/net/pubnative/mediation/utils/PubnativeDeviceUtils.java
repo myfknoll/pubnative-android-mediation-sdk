@@ -10,6 +10,12 @@ import com.google.android.gms.ads.identifier.AdvertisingIdClient;
  */
 public class PubnativeDeviceUtils
 {
+    /**
+     * Gets you the PackageInfo object based on the Context object passed in.
+     *
+     * @param context valid context object.
+     * @return PackageInfo object if context is valid, else null
+     */
     public static PackageInfo getPackageInfo(Context context)
     {
         PackageInfo result = null;
@@ -24,6 +30,13 @@ public class PubnativeDeviceUtils
         return result;
     }
 
+    /**
+     * Gets you the android advertising id.
+     * Note: This method should be called from a non-UI thread.
+     *
+     * @param context valid Context object
+     * @return android advertising id if available, else null.
+     */
     public static String getAndroidAdvertisingID(Context context)
     {
         AdvertisingIdClient.Info adInfo = null;

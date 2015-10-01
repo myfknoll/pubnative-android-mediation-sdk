@@ -37,6 +37,13 @@ public class PubnativeConfigManager
         // do some initialization here may be.
     }
 
+    /**
+     * Gets a config asynchronously with listener callback, downloading a new one when outdated
+     *
+     * @param context  valid context object
+     * @param appToken unique identification key provided by Pubnative for mediation sdk
+     * @param listener listener to be used for tracking the config loaded callback
+     */
     public synchronized static void getConfig(Context context, String appToken, PubnativeConfigRequestListener listener)
     {
         if (context != null && !TextUtils.isEmpty(appToken))
@@ -58,7 +65,7 @@ public class PubnativeConfigManager
         }
     }
 
-    public static void doNextConfigRequest()
+    private static void doNextConfigRequest()
     {
         if (PubnativeConfigManager.idle)
         {
@@ -94,7 +101,7 @@ public class PubnativeConfigManager
         return result;
     }
 
-    public static void getNextConfig(Context context, String appToken, PubnativeConfigRequestListener listener)
+    private static void getNextConfig(Context context, String appToken, PubnativeConfigRequestListener listener)
     {
         if (context != null && !TextUtils.isEmpty(appToken))
         {
@@ -121,6 +128,12 @@ public class PubnativeConfigManager
         PubnativeConfigManager.invokeLoaded(listener, configModel);
     }
 
+    /**
+     * Returns the stored config object if exists in SharedPreferences. Else returns null.
+     *
+     * @param context context object used to get SharedPreferences instance
+     * @return PubnativeConfigModel object if found in SharedPreferences. Else null.
+     */
     public static PubnativeConfigModel getStoredConfig(Context context)
     {
         PubnativeConfigModel currentConfig = null;
@@ -182,7 +195,6 @@ public class PubnativeConfigManager
             PubnativeConfigManager.clean(context);
         }
     }
-
 
     protected synchronized static void downloadConfig(final Context context, final PubnativeConfigRequestListener listener, final String appToken)
     {

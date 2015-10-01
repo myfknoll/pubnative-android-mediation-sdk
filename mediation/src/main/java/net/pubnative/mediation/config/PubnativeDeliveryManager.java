@@ -44,7 +44,7 @@ public class PubnativeDeliveryManager
 
     public static void updatePacingCalendar(String placementID)
     {
-        PubnativeDeliveryManager.getInstance().currentPacing.put(placementID, Calendar.getInstance().getInstance());
+        PubnativeDeliveryManager.getInstance().currentPacing.put(placementID, Calendar.getInstance());
     }
 
     public static void logImpression(Context context, String placementID)
@@ -136,6 +136,13 @@ public class PubnativeDeliveryManager
         return result;
     }
 
+    /**
+     * Records the timestamp when the impression tracking is confirmed
+     *
+     * @param context     valid Context object
+     * @param placementID valid placement id provided by Pubnative
+     * @param calendar    calendar object with the timestamp
+     */
     public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar)
     {
         if (context != null && !TextUtils.isEmpty(placementID))

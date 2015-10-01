@@ -36,9 +36,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     protected String                          currentNetworkID;
     protected int                             currentNetworkIndex;
 
-    /**
-     * This constructor should be called from the UI thread.
-     */
     public PubnativeNetworkRequest()
     {
         this.trackingModel = new PubnativeInsightDataModel();
@@ -81,6 +78,15 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     // REQUEST
+
+    /**
+     * Starts a new ad request.
+     *
+     * @param context     valid Context object.
+     * @param appToken    valid appToken provided by Pubnative.
+     * @param placementID valid placementId provided by Pubnative.
+     * @param listener    valid listener to keep track of request callbacks.
+     */
     public void start(Context context, String appToken, String placementID, PubnativeNetworkRequestListener listener)
     {
         this.appToken = appToken;
