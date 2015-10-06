@@ -195,7 +195,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(this.placementID);
             if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar))
             {
-                // Pacing cap deactivated or not reached
+                // Pacing cap reset or deactivated or not reached
                 this.doNextNetworkRequest();
             }
             else
