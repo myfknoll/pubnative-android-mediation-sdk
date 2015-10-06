@@ -47,6 +47,11 @@ public class PubnativeDeliveryManager
         PubnativeDeliveryManager.getInstance().currentPacing.put(placementID, Calendar.getInstance());
     }
 
+    public static void resetPacingCalendar(String placementId)
+    {
+        PubnativeDeliveryManager.getInstance().currentPacing.put(placementId, null);
+    }
+
     public static void logImpression(Context context, String placementID)
     {
         int dayCount = PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
@@ -54,6 +59,16 @@ public class PubnativeDeliveryManager
 
         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, ++dayCount);
         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, ++hourCount);
+    }
+
+    public static void resetDailyImpressionCount(Context context, String placementId)
+    {
+        PubnativeDeliveryManager.setImpressionCount(context, PubnativeDeliveryManager.IMPRESSION_COUNT_DAY_APPEND, placementId, 0);
+    }
+
+    public static void resetHourlyImpressionCount(Context context, String placementId)
+    {
+        PubnativeDeliveryManager.setImpressionCount(context, PubnativeDeliveryManager.IMPRESSION_COUNT_HOUR_APPEND, placementId, 0);
     }
 
     public static int getCurrentDailyCount(Context context, String placementID)

@@ -9,11 +9,13 @@ import com.google.gson.Gson;
 import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
 import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
+import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
 import net.pubnative.mediation.task.PubnativeHttpTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -208,31 +210,7 @@ public class PubnativeConfigManager
                 @Override
                 public void onHttpTaskFinished(PubnativeHttpTask task, String result)
                 {
-                    if (!TextUtils.isEmpty(result))
-                    {
-                        try
-                        {
-                            PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
-
-                            if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status))
-                            {
-                                if (response.config != null && !response.config.isNullOrEmpty())
-                                {
-                                    // Saving config string
-                                    PubnativeConfigManager.updateConfig(context, appToken, response.config);
-                                }
-                            }
-                            else
-                            {
-                                System.out.println("PubnativeConfigManager.downloadConfig - Error:" + response.error_message);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            System.out.println("PubnativeConfigManager.downloadConfig - Error:" + e);
-                        }
-                    }
-
+                    PubnativeConfigManager.processConfigDownloadResponse(context, appToken, result);
                     PubnativeConfigManager.serveStoredConfig(context, listener);
                 }
 
@@ -247,6 +225,36 @@ public class PubnativeConfigManager
         else
         {
             PubnativeConfigManager.serveStoredConfig(context, listener);
+        }
+    }
+
+    protected static void processConfigDownloadResponse(Context context, String appToken, String result)
+    {
+        if (!TextUtils.isEmpty(result))
+        {
+            try
+            {
+                PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
+
+                if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status))
+                {
+                    if (response.config != null && !response.config.isNullOrEmpty())
+                    {
+                        // Update delivery manager's tracking data
+                        PubnativeConfigManager.updateDeliveryManagerCache(context, response.config);
+                        // Saving config string
+                        PubnativeConfigManager.updateConfig(context, appToken, response.config);
+                    }
+                }
+                else
+                {
+                    System.out.println("PubnativeConfigManager.downloadConfig - Error:" + response.error_message);
+                }
+            }
+            catch (Exception e)
+            {
+                System.out.println("PubnativeConfigManager.downloadConfig - Error:" + e);
+            }
         }
     }
 
@@ -295,6 +303,52 @@ public class PubnativeConfigManager
         }
 
         return result;
+    }
+
+    private static void updateDeliveryManagerCache(Context context, PubnativeConfigModel downloadedConfig)
+    {
+        if (downloadedConfig != null)
+        {
+            PubnativeConfigModel storedConfig = PubnativeConfigManager.getStoredConfig(context);
+            if (storedConfig != null)
+            {
+                Set<String> storePlacementIds = storedConfig.placements.keySet();
+                for (String placementId : storePlacementIds)
+                {
+                    // check if new config contains that placement.
+                    PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
+                    if (newPlacement != null)
+                    {
+                        // compare the delivery rule of the new placement with the stored one.
+                        PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
+                        if (storedPlacement != null)
+                        {
+                            if (storedPlacement.delivery_rule != null && newPlacement.delivery_rule != null)
+                            {
+                                // check if impression cap (hour) changed
+                                if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour)
+                                {
+                                    PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
+                                }
+
+                                // check if impression cap (day) changed
+                                if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day)
+                                {
+                                    PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
+                                }
+
+                                // check if pacing cap changed
+                                if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
+                                        || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour)
+                                {
+                                    PubnativeDeliveryManager.resetPacingCalendar(placementId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // CONFIG
