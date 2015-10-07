@@ -294,20 +294,6 @@ public class PubnativeDeliveryManagerTest
         assertThat(PubnativeDeliveryManager.getCurrentHourlyCount(this.applicationContext, PLACEMENT_ID_VALID)).isNotZero();
     }
 
-    // mocking the config download with local resource file
-    private String getConfigApiResponseJsonFromResource(String fileName)
-    {
-        Gson gson = new Gson();
-        InputStream configStream = PubnativeConfigTestUtils.class.getResourceAsStream("/configs/" + fileName);
-        String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
-
-        PubnativeConfigAPIResponseModel apiResponseModel = new PubnativeConfigAPIResponseModel();
-        apiResponseModel.status = PubnativeConfigAPIResponseModel.Status.OK;
-        apiResponseModel.config = gson.fromJson(configString, PubnativeConfigModel.class);
-
-        return gson.toJson(apiResponseModel);
-    }
-
     @Test
     public void resetMethodCalledWithImpHourCapChange()
     {
@@ -316,7 +302,7 @@ public class PubnativeDeliveryManagerTest
         PowerMockito.spy(PubnativeDeliveryManager.class);
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
-        String configJson = getConfigApiResponseJsonFromResource("valid_config_imp_cap_hour_changed.json");
+        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_imp_cap_hour_changed.json");
         PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, PLACEMENT_ID_VALID, configJson);
 
         PowerMockito.verifyStatic(never());
@@ -337,7 +323,7 @@ public class PubnativeDeliveryManagerTest
         PowerMockito.spy(PubnativeDeliveryManager.class);
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
-        String configJson = getConfigApiResponseJsonFromResource("valid_config_imp_cap_day_changed.json");
+        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_imp_cap_day_changed.json");
         PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, PLACEMENT_ID_VALID, configJson);
 
         PowerMockito.verifyStatic(never());
@@ -358,7 +344,7 @@ public class PubnativeDeliveryManagerTest
         PowerMockito.spy(PubnativeDeliveryManager.class);
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
-        String configJson = getConfigApiResponseJsonFromResource("valid_config_pacing_cap_hour_changed.json");
+        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_pacing_cap_hour_changed.json");
         PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, PLACEMENT_ID_VALID, configJson);
 
         PowerMockito.verifyStatic(times(1));
@@ -379,7 +365,7 @@ public class PubnativeDeliveryManagerTest
         PowerMockito.spy(PubnativeDeliveryManager.class);
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
-        String configJson = getConfigApiResponseJsonFromResource("valid_config_pacing_cap_minute_changed.json");
+        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_pacing_cap_minute_changed.json");
         PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, PLACEMENT_ID_VALID, configJson);
 
         PowerMockito.verifyStatic(times(1));
@@ -400,7 +386,7 @@ public class PubnativeDeliveryManagerTest
         PowerMockito.spy(PubnativeDeliveryManager.class);
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
-        String configJson = getConfigApiResponseJsonFromResource("valid_config.json");
+        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config.json");
         PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, PLACEMENT_ID_VALID, configJson);
 
         PowerMockito.verifyStatic(never());

@@ -2,7 +2,10 @@ package net.pubnative.mediation.config;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+
 import net.pubnative.mediation.BuildConfig;
+import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
 
 import org.junit.Before;
@@ -203,5 +206,23 @@ public class PubnativeConfigManagerTest
         PubnativeConfigManager.setStoredTimestamp(this.applicationContext, storedTime);
 
         assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
+    }
+
+    @Test
+    public void configUrlTakenFromStoredConfigAfterFirstTime()
+    {
+        String downloadUrlBeforeDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(this.applicationContext);
+        assertThat(downloadUrlBeforeDownload).isEqualTo(PubnativeConfigManager.CONFIG_DOWNLOAD_BASE_URL);
+
+        // simulate download
+        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource(VALID_CONFIG_NAME);
+        PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, "placement_id", configJson);
+
+        // get config_url from downloaded config
+        PubnativeConfigAPIResponseModel apiResponse = new Gson().fromJson(configJson, PubnativeConfigAPIResponseModel.class);
+        String configUrl = (String) apiResponse.config.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
+
+        String downloadUrlAfterDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(this.applicationContext);
+        assertThat(downloadUrlAfterDownload).isEqualTo(configUrl);
     }
 }
