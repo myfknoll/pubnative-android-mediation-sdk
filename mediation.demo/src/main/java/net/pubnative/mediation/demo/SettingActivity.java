@@ -6,6 +6,9 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import net.pubnative.mediation.config.PubnativeConfigManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,12 @@ public class SettingActivity extends Activity
         super.onBackPressed();
     }
 
+    public void onResetConfigClicked(View view)
+    {
+        PubnativeConfigManager.clean(this);
+        Toast.makeText(this, "Stored config reset!", Toast.LENGTH_SHORT).show();
+    }
+
     public void onAddPlacementClicked(View view)
     {
         if (placementIdEdit != null && placementIdEdit.getText() != null)
@@ -70,6 +79,9 @@ public class SettingActivity extends Activity
             List<String> placements = this.adapter.getPlacements();
             PubnativeTestCredentials.setStoredPlacements(this, placements);
         }
+
+        // reset the stored config when credentials are saved.
+        this.onResetConfigClicked(null);
     }
 
     private void displayStoredValues()

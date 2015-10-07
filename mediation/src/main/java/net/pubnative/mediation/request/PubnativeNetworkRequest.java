@@ -227,7 +227,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
                 if (adapter == null)
                 {
-                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + network.adapter + " not found"));
+                    String networkAdapterOrId = (network != null) ? network.adapter : this.currentNetworkID;
+                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + networkAdapterOrId + " not found"));
                     this.trackNetworkAttempt(this.currentNetworkID);
                     this.doNextNetworkRequest();
                 }
