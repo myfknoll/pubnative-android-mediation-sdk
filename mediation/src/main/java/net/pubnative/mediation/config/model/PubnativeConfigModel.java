@@ -14,6 +14,7 @@ public class PubnativeConfigModel
         String IMPRESSION_BEACON = "impression_beacon";
         String CLICK_BEACON      = "click_beacon";
         String REQUEST_BEACON    = "request_beacon";
+        String CONFIG_URL        = "config_url";
     }
 
     public boolean isNullOrEmpty()

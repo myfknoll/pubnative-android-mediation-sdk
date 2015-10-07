@@ -29,7 +29,8 @@ public class PubnativeConfigManager
     protected static final String TIMESTAMP_LONG_KEY        = "config.timestamp";
     protected static final String REFRESH_LONG_KEY          = "refresh";
 
-    protected static final String CONFIG_DOWNLOAD_PARTIAL_URL = "http://ml.pubnative.net/ml/v1/config?app_token=";
+    protected static final String CONFIG_DOWNLOAD_BASE_URL  = "http://ml.pubnative.net/ml/v1/config";
+    protected static final String APP_TOKEN_KEY             = "?app_token=";
 
     protected static List<PubnativeConfigRequestModel> queue = null;
     protected static boolean                           idle  = true;
@@ -202,7 +203,7 @@ public class PubnativeConfigManager
     {
         if (context != null && !TextUtils.isEmpty(appToken))
         {
-            String downloadURLString = CONFIG_DOWNLOAD_PARTIAL_URL + appToken;
+            String downloadURLString = PubnativeConfigManager.getConfigDownloadBaseUrl(context) + APP_TOKEN_KEY + appToken;
 
             PubnativeHttpTask http = new PubnativeHttpTask(context);
             http.setListener(new PubnativeHttpTask.Listener()
@@ -349,6 +350,22 @@ public class PubnativeConfigManager
                 }
             }
         }
+    }
+
+    // CONFIG URL
+    protected static String getConfigDownloadBaseUrl(Context context)
+    {
+        String configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
+        PubnativeConfigModel storedConfig = PubnativeConfigManager.getStoredConfig(context);
+        if (storedConfig != null && !storedConfig.isNullOrEmpty())
+        {
+            String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
+            if (!TextUtils.isEmpty(configUrl))
+            {
+                configDownloadBaseUrl = configUrl;
+            }
+        }
+        return configDownloadBaseUrl;
     }
 
     // CONFIG

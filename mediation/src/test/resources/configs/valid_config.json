@@ -1,6 +1,7 @@
 {
   "globals": {
     "refresh": 10,
+    "config_url":"http://ml.pubnative.net/ml/v2/config",
     "impression_beacon": "www.google.com",
     "click_beacon": "www.google.com"
   },
