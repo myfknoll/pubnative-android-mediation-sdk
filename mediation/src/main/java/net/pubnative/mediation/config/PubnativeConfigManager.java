@@ -381,7 +381,7 @@ public class PubnativeConfigManager
         PubnativeConfigManager.setStringSharedPreference(context, CONFIG_STRING_KEY, configString);
     }
 
-    protected static void clean(Context context)
+    public static void clean(Context context)
     {
         PubnativeConfigManager.setStoredAppToken(context, null);
         PubnativeConfigManager.setStoredTimestamp(context, null);
