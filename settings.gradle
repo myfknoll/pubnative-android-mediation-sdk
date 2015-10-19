@@ -1,1 +1,1 @@
-include ':mediation', ':mediation.demo', ':library'
+include ':mediation', ':mediation.demo'

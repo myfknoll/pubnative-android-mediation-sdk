@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 21
-        versionCode 13
+        versionCode 14
         versionName "1.0.0"
     }
     buildTypes {
@@ -24,6 +24,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.google.code.gson:gson:2.3.1'
+    compile 'net.pubnative:library:1.4.6'
     // JVM tests
     testCompile 'junit:junit:4.12'
     testCompile 'com.squareup.assertj:assertj-android:1.0.0'
@@ -33,7 +34,6 @@ dependencies {
     testCompile 'org.powermock:powermock-module-junit4-rule:1.6.2'
     testCompile 'org.powermock:powermock-api-mockito:1.6.2'
     testCompile 'org.powermock:powermock-classloading-xstream:1.6.2'
-    compile project(':library')
 }
 
 tasks.withType(Test) {
