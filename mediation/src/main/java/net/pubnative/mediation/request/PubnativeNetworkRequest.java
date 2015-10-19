@@ -222,13 +222,12 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
             this.currentNetworkIndex++;
             if (!TextUtils.isEmpty(this.currentNetworkID) && this.config.networks.containsKey(this.currentNetworkID))
             {
-                PubnativeNetworkModel network = this.config.networks.get(this.currentNetworkID.toLowerCase());
+                PubnativeNetworkModel network = this.config.networks.get(this.currentNetworkID);
                 PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(network);
 
                 if (adapter == null)
                 {
-                    String networkAdapterOrId = (network != null) ? network.adapter : this.currentNetworkID;
-                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: " + networkAdapterOrId + " not found"));
+                    System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: adapter creation failed with networkID: " + this.currentNetworkID));
                     this.trackNetworkAttempt(this.currentNetworkID);
                     this.doNextNetworkRequest();
                 }
@@ -239,7 +238,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
             }
             else
             {
-                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + currentNetworkID + " config not found"));
+                System.out.println(new Exception("PubnativeNetworkRequest.requestForPlacementRank - Error: networkID " + currentNetworkID + " not found in config"));
                 this.trackNetworkAttempt(this.currentNetworkID);
                 this.doNextNetworkRequest();
             }
