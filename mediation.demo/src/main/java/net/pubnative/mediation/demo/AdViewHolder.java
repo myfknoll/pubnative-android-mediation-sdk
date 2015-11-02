@@ -32,11 +32,11 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
 
     // Behaviour
     protected ProgressBar    ad_spinner;
-    protected RelativeLayout ad_container;
+    protected RelativeLayout ad_clickable;
     protected Button         request_button;
 
     // Ad info
-    protected ViewGroup privacy_container;
+    protected ViewGroup ad_disclosure;
     protected TextView  placement_id_text;
     protected TextView  adapter_name_text;
     protected TextView  ad_description_text;
@@ -50,17 +50,17 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     public void initialize(View convertView) {
-        this.privacy_container = (ViewGroup) convertView.findViewById(R.id.privacy_container);
+        this.ad_spinner = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
+        this.ad_clickable = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
+
+        this.ad_disclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
+        this.adapter_name_text = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
 
         this.request_button = (Button) convertView.findViewById(R.id.request_button);
         this.request_button.setOnClickListener(this);
 
-        this.ad_spinner = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        this.ad_container = (RelativeLayout) convertView.findViewById(R.id.ad_view_container);
-
         this.ad_title_text = (TextView) convertView.findViewById(R.id.ad_title_text);
         this.ad_description_text = (TextView) convertView.findViewById(R.id.ad_description_text);
-        this.adapter_name_text = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
         this.placement_id_text = (TextView) convertView.findViewById(R.id.placement_id_text);
         this.ad_rating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         this.ad_icon_image = (ImageView) convertView.findViewById(R.id.ad_icon_image);
@@ -68,7 +68,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     public void cleanView() {
-        this.privacy_container.removeAllViews();
+        this.ad_disclosure.removeAllViews();
         this.ad_title_text.setText("");
         this.ad_description_text.setText("");
         this.adapter_name_text.setText("");
@@ -89,19 +89,23 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.placement_id_text.setText("Placement ID: " + requestModel.placementID);
 
         if (this.requestModel.adModel != null) {
+
+            // Privacy container
+            String adapterNameText = this.requestModel.adModel.getClass().getSimpleName();
+            this.adapter_name_text.setText(adapterNameText);
             View sponsorView = this.requestModel.adModel.getAdvertisingDisclosureView(this.context);
             if (sponsorView != null) {
-                this.privacy_container.addView(sponsorView);
+                this.ad_disclosure.addView(sponsorView);
             }
 
-            this.adapter_name_text.setText(this.requestModel.adModel.getClass().getSimpleName());
+            // Ad content
             this.ad_title_text.setText(this.requestModel.adModel.getTitle());
             this.ad_description_text.setText(this.requestModel.adModel.getDescription());
             this.ad_rating.setRating(this.requestModel.adModel.getStarRating());
             this.ad_rating.setVisibility(View.VISIBLE);
             new LoadImageAsyncTask().execute(this.requestModel.adModel.getIconUrl(), this.ad_icon_image);
             new LoadImageAsyncTask().execute(this.requestModel.adModel.getBannerUrl(), this.ad_banner_image);
-            this.requestModel.adModel.startTracking(this.context, this.ad_container);
+            this.requestModel.adModel.startTracking(this.context, this.ad_clickable);
         }
     }
 
