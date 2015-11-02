@@ -33,24 +33,22 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class FacebookNetworkAdapterTest
-{
+public class FacebookNetworkAdapterTest {
+
     private final static int TIMEOUT_DEACTIVATED = 0;
     private Context applicationContext;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
     }
 
     @Test
-    public void verifyCallbacksWithValidData()
-    {
+    public void verifyCallbacksWithValidData() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
+        FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
         // Check that
@@ -61,18 +59,15 @@ public class FacebookNetworkAdapterTest
     }
 
     @Test
-    public void verifyCallbacksOnFacebookError()
-    {
+    public void verifyCallbacksOnFacebookError() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
+        FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         // stubbing the createRequest method to simulate facebook error.
-        doAnswer(new Answer()
-        {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 FacebookNetworkAdapter adapter = (FacebookNetworkAdapter) invocation.getMock();
                 adapter.onError(null, null);
                 return null;
@@ -84,12 +79,11 @@ public class FacebookNetworkAdapterTest
     }
 
     @Test
-    public void verifyCallbacksWithEmptyPlacementId()
-    {
+    public void verifyCallbacksWithEmptyPlacementId() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "");
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
+        FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
@@ -97,12 +91,11 @@ public class FacebookNetworkAdapterTest
     }
 
     @Test
-    public void verifyCallbacksWithNullPlacementId()
-    {
+    public void verifyCallbacksWithNullPlacementId() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, null);
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
+        FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
@@ -114,11 +107,10 @@ public class FacebookNetworkAdapterTest
      * added inside the non-null 'data' hashmap.
      */
     @Test
-    public void verifyCallbacksWithNotNullDataButNoPlacementIdKey()
-    {
-        Map<String, String> data = new HashMap();
+    public void verifyCallbacksWithNotNullDataButNoPlacementIdKey() {
+        Map<String, String>             data         = new HashMap();
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(data));
+        FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
@@ -126,8 +118,7 @@ public class FacebookNetworkAdapterTest
     }
 
     @Test
-    public void verifyCallbacksWithNullData()
-    {
+    public void verifyCallbacksWithNullData() {
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(null));
         this.stubCreateRequestMethod(adapterSpy);
 
@@ -137,20 +128,16 @@ public class FacebookNetworkAdapterTest
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 
-    private void verifyCallbacksForFailureCase(FacebookNetworkAdapter adapter, PubnativeNetworkAdapterListener listener)
-    {
+    private void verifyCallbacksForFailureCase(FacebookNetworkAdapter adapter, PubnativeNetworkAdapterListener listener) {
         verify(listener, times(1)).onAdapterRequestStarted(eq(adapter));
         verify(listener, times(1)).onAdapterRequestFailed(eq(adapter), any(Exception.class));
         verify(listener, never()).onAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
-    private void stubCreateRequestMethod(FacebookNetworkAdapter adapter)
-    {
-        doAnswer(new Answer()
-        {
+    private void stubCreateRequestMethod(FacebookNetworkAdapter adapter) {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 FacebookNetworkAdapter adapter = (FacebookNetworkAdapter) invocation.getMock();
                 adapter.onAdLoaded(null);
                 return null;

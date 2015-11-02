@@ -27,21 +27,18 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class PubnativeNetworkAdapterTest
-{
+public class PubnativeNetworkAdapterTest {
+
     private static final int TIMEOUT_HALF_SECOND = 500;
 
     @Test
-    public void invokeCallbacksWithValidListener()
-    {
-        HashMap<String, Object> adapterConfigMock = mock(HashMap.class);
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
+    public void invokeCallbacksWithValidListener() {
+        HashMap<String, Object>         adapterConfigMock = mock(HashMap.class);
+        PubnativeNetworkAdapterListener listenerSpy       = spy(PubnativeNetworkAdapterListener.class);
 
-        PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock)
-        {
+        PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
             @Override
-            public void request(Context context)
-            {
+            public void request(Context context) {
                 // Do nothing
             }
         });
@@ -65,14 +62,11 @@ public class PubnativeNetworkAdapterTest
     }
 
     @Test
-    public void invokeCallbacksWithNullListener()
-    {
+    public void invokeCallbacksWithNullListener() {
         HashMap<String, Object> adapterConfigMock = mock(HashMap.class);
-        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(adapterConfigMock)
-        {
+        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
             @Override
-            public void request(Context context)
-            {
+            public void request(Context context) {
                 // Do nothing
             }
         });
@@ -84,14 +78,11 @@ public class PubnativeNetworkAdapterTest
     }
 
     @Test
-    public void adapterRequestsTimeoutCallsInvokeFailed()
-    {
+    public void adapterRequestsTimeoutCallsInvokeFailed() {
         PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
-        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(null)
-        {
+        PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(null) {
             @Override
-            public void request(Context context)
-            {
+            public void request(Context context) {
                 // Do nothing, doRequest should timeout
             }
         });

@@ -8,13 +8,13 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
  */
 public class CellRequestModel
 {
+
     public PubnativeNetworkRequest request;
     public PubnativeAdModel        adModel;
     public String                  placementID;
     public String                  appToken;
 
-    public CellRequestModel(String appToken, String placementID)
-    {
+    public CellRequestModel(String appToken, String placementID) {
         this.request = new PubnativeNetworkRequest();
         this.appToken = appToken;
         this.placementID = placementID;

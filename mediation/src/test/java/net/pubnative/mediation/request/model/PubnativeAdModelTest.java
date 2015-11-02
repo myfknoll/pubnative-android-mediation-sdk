@@ -33,8 +33,8 @@ import static org.mockito.Mockito.anyString;
 @Config(constants = BuildConfig.class)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 @PrepareForTest({PubnativeAdModel.class, PubnativeInsightsManager.class, PubnativeDeliveryManager.class})
-public class PubnativeAdModelTest
-{
+public class PubnativeAdModelTest {
+
     private static final String SAMPLE_URL = "http://pubnative.net";
 
     private Context appContext = null;
@@ -43,14 +43,12 @@ public class PubnativeAdModelTest
     public PowerMockRule rule = new PowerMockRule();
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.appContext = RuntimeEnvironment.application.getApplicationContext();
     }
 
     @Test
-    public void callbacksOnlyFiresOnce() throws Exception
-    {
+    public void callbacksOnlyFiresOnce() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
         // stub the method trackNext to nothing.
         PowerMockito.doNothing().when(PubnativeInsightsManager.class, "trackData", any(Context.class), anyString(), any(PubnativeInsightDataModel.class));
@@ -89,8 +87,7 @@ public class PubnativeAdModelTest
     }
 
     @Test
-    public void callbackWithNullListenerDoesNothing()
-    {
+    public void callbackWithNullListenerDoesNothing() {
         PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
 
         // Does nothing with null listener

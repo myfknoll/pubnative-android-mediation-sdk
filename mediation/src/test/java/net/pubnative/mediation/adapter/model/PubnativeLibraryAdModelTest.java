@@ -25,11 +25,10 @@ import static org.mockito.Mockito.spy;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class PubnativeLibraryAdModelTest
-{
+public class PubnativeLibraryAdModelTest {
+
     @Test
-    public void getMethodsDoNotFailWhenNullValueSetToVariables()
-    {
+    public void getMethodsDoNotFailWhenNullValueSetToVariables() {
         NativeAdModel nativeAdModelMock = spy(NativeAdModel.class);
 
         PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(nativeAdModelMock));
@@ -43,8 +42,7 @@ public class PubnativeLibraryAdModelTest
     }
 
     @Test
-    public void getMethodsRetrievesContentsWhenValidValueSetToVariables()
-    {
+    public void getMethodsRetrievesContentsWhenValidValueSetToVariables() {
         NativeAdModel nativeAdModelMock = spy(NativeAdModel.class);
 
         String sampleContent = "sample_content";
@@ -66,8 +64,7 @@ public class PubnativeLibraryAdModelTest
     }
 
     @Test
-    public void getMethodsRetrievesContentsWhenEmptyValueSetToVariables()
-    {
+    public void getMethodsRetrievesContentsWhenEmptyValueSetToVariables() {
         NativeAdModel nativeAdModelMock = spy(NativeAdModel.class);
 
         String emptyString = "";
@@ -89,31 +86,25 @@ public class PubnativeLibraryAdModelTest
     }
 
     @Test
-    public void viewRelatedMethodsDoNotFailWhenNotNullNativeAdObjectGiven()
-    {
+    public void viewRelatedMethodsDoNotFailWhenNotNullNativeAdObjectGiven() {
         // check with a mocked NativeAdModel object
         viewRelatedMethodsDoNotFailWithGivenNativeAdModel(mock(NativeAdModel.class));
     }
 
     @Test
-    public void viewRelatedMethodsDoNotFailWhenNullNativeAdObjectGiven()
-    {
+    public void viewRelatedMethodsDoNotFailWhenNullNativeAdObjectGiven() {
         // check with a null NativeAdModel object
         viewRelatedMethodsDoNotFailWithGivenNativeAdModel(null);
     }
 
-    public void viewRelatedMethodsDoNotFailWithGivenNativeAdModel(NativeAdModel nativeAdModel)
-    {
-        Context appContext = RuntimeEnvironment.application.getApplicationContext();
+    public void viewRelatedMethodsDoNotFailWithGivenNativeAdModel(NativeAdModel nativeAdModel) {
+        Context                 appContext = RuntimeEnvironment.application.getApplicationContext();
         PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(nativeAdModel));
 
-        if (nativeAdModel != null)
-        {
-            doAnswer(new Answer()
-            {
+        if (nativeAdModel != null) {
+            doAnswer(new Answer() {
                 @Override
-                public Object answer(InvocationOnMock invocation) throws Throwable
-                {
+                public Object answer(InvocationOnMock invocation) throws Throwable {
                     // this mocks the api call to Pubnative SDK
                     return null;
                 }

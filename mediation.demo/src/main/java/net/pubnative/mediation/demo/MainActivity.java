@@ -11,8 +11,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener
-{
+public class MainActivity extends Activity implements View.OnClickListener {
+
     private final static String APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
 
     private Button                 settingsButton  = null;
@@ -20,8 +20,7 @@ public class MainActivity extends Activity implements View.OnClickListener
     private List<CellRequestModel> requests        = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -42,49 +41,41 @@ public class MainActivity extends Activity implements View.OnClickListener
         PubnativeTestCredentials.setStoredPlacements(this, placements);
 
         this.requests = new ArrayList();
-        for (String placementID : placements)
-        {
+        for (String placementID : placements) {
             this.requests.add(new CellRequestModel(APP_TOKEN, placementID));
         }
 
-        this.requestsAdapter  = new AdListAdapter(this, R.layout.ad_list_cell, this.requests);
+        this.requestsAdapter = new AdListAdapter(this, R.layout.ad_list_cell, this.requests);
         ListView listView = (ListView) this.findViewById(R.id.ad_list);
         listView.setAdapter(this.requestsAdapter);
 
     }
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
         this.displayPlacementsList();
     }
 
-    private void displayPlacementsList()
-    {
+    private void displayPlacementsList() {
         // Add default data if needed
-        String appToken = PubnativeTestCredentials.getStoredAppToken(this);
+        String       appToken   = PubnativeTestCredentials.getStoredAppToken(this);
         List<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
 
-        if (!TextUtils.isEmpty(appToken) && placements != null)
-        {
+        if (!TextUtils.isEmpty(appToken) && placements != null) {
             this.requestsAdapter.clear();
             List<CellRequestModel> newRequests = new ArrayList();
-            for (CellRequestModel request : this.requests)
-            {
-                if(placements.contains(request.placementID))
-                {
+            for (CellRequestModel request : this.requests) {
+                if (placements.contains(request.placementID)) {
                     newRequests.add(request);
                     placements.remove(request.placementID);
                 }
             }
-            for(String placementID : placements)
-            {
+            for (String placementID : placements) {
                 newRequests.add(new CellRequestModel(appToken, placementID));
             }
             this.requests = newRequests;
-            for (CellRequestModel request : this.requests)
-            {
+            for (CellRequestModel request : this.requests) {
                 this.requestsAdapter.add(request);
             }
 
@@ -93,10 +84,8 @@ public class MainActivity extends Activity implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View v)
-    {
-        if (this.settingsButton.equals(v))
-        {
+    public void onClick(View v) {
+        if (this.settingsButton.equals(v)) {
             Intent settingsIntent = new Intent(this, SettingActivity.class);
             startActivity(settingsIntent);
         }

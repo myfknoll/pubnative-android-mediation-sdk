@@ -9,19 +9,17 @@ import static org.mockito.Mockito.spy;
 /**
  * Created by davidmartin on 17/08/15.
  */
-public class PubnativeDeliveryRuleModelTest
-{
+public class PubnativeDeliveryRuleModelTest {
+
     PubnativeDeliveryRuleModel modelSpy;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         modelSpy = spy(PubnativeDeliveryRuleModel.class);
     }
 
     @Test
-    public void isActiveWithValues()
-    {
+    public void isActiveWithValues() {
         modelSpy.no_ads = false;
         assertThat(modelSpy.isActive()).isTrue();
         modelSpy.no_ads = true;
@@ -29,8 +27,7 @@ public class PubnativeDeliveryRuleModelTest
     }
 
     @Test
-    public void isDayImpressionCapActiveWithValues()
-    {
+    public void isDayImpressionCapActiveWithValues() {
         modelSpy.imp_cap_day = -1;
         assertThat(modelSpy.isDayImpressionCapActive()).isFalse();
         modelSpy.imp_cap_day = 0;
@@ -40,8 +37,7 @@ public class PubnativeDeliveryRuleModelTest
     }
 
     @Test
-    public void isHourImpressionCapActiveWithValues()
-    {
+    public void isHourImpressionCapActiveWithValues() {
         modelSpy.imp_cap_hour = -1;
         assertThat(modelSpy.isHourImpressionCapActive()).isFalse();
         modelSpy.imp_cap_hour = 0;
@@ -51,8 +47,7 @@ public class PubnativeDeliveryRuleModelTest
     }
 
     @Test
-    public void isPacingCapActiveWithValues()
-    {
+    public void isPacingCapActiveWithValues() {
         modelSpy.pacing_cap_minute = -1;
         modelSpy.pacing_cap_hour = -1;
         assertThat(modelSpy.isPacingCapActive()).isFalse();

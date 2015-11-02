@@ -2,12 +2,7 @@ package net.pubnative.mediation.config;
 
 import android.content.Context;
 
-import com.google.gson.Gson;
-
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
-import net.pubnative.mediation.config.model.PubnativeConfigModel;
-import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,16 +16,15 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.io.InputStream;
 import java.util.Calendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 /**
@@ -40,8 +34,8 @@ import static org.mockito.Mockito.when;
 @Config(constants = BuildConfig.class)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 @PrepareForTest(PubnativeDeliveryManager.class)
-public class PubnativeDeliveryManagerTest
-{
+public class PubnativeDeliveryManagerTest {
+
     private Context applicationContext;
     private static final String PLACEMENT_ID_VALID = "placement_id";
 
@@ -49,14 +43,12 @@ public class PubnativeDeliveryManagerTest
     public PowerMockRule rule = new PowerMockRule();
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
     }
 
     @Test
-    public void getlastUpdateWithAllValues()
-    {
+    public void getlastUpdateWithAllValues() {
         // Returns null when not setted up or bad parameters
         assertThat(PubnativeDeliveryManager.getImpressionLastUpdate(this.applicationContext, PLACEMENT_ID_VALID)).isNull();
 
@@ -71,8 +63,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void setLastUpdateWithAllValues()
-    {
+    public void setLastUpdateWithAllValues() {
         Calendar calendar = this.getMockedCalendar();
 
         PubnativeDeliveryManager.setImpressionLastUpdate(null, null, null);
@@ -105,17 +96,15 @@ public class PubnativeDeliveryManagerTest
         assertThat(PubnativeDeliveryManager.getImpressionLastUpdate(this.applicationContext, PLACEMENT_ID_VALID)).isNull();
     }
 
-    private Calendar getMockedCalendar()
-    {
-        Calendar calendar = mock(Calendar.class);
-        Long currentMillis = System.currentTimeMillis();
+    private Calendar getMockedCalendar() {
+        Calendar calendar      = mock(Calendar.class);
+        Long     currentMillis = System.currentTimeMillis();
         when(calendar.getTimeInMillis()).thenReturn(currentMillis);
         return calendar;
     }
 
     @Test
-    public void getImpressionCountWithAllValues()
-    {
+    public void getImpressionCountWithAllValues() {
         String trackingKeyString = "trackingKey";
 
         // Returns 0 when not setted up
@@ -142,8 +131,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void setImpressionCountWithAllValues()
-    {
+    public void setImpressionCountWithAllValues() {
         String trackingKeyString = "trackingKeyString";
 
         // Invalid arguments
@@ -182,8 +170,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void publicMethodsUpdatesData()
-    {
+    public void publicMethodsUpdatesData() {
         PowerMockito.spy(PubnativeDeliveryManager.class);
         // Updates once
         PubnativeDeliveryManager.getCurrentDailyCount(this.applicationContext, PLACEMENT_ID_VALID);
@@ -196,8 +183,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void getCurrentCountsReturnsZeroWithInvalidParameters()
-    {
+    public void getCurrentCountsReturnsZeroWithInvalidParameters() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
         assertThat(PubnativeDeliveryManager.getCurrentDailyCount(null, null)).isZero();
@@ -214,8 +200,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void logImpressionIncrementsCount()
-    {
+    public void logImpressionIncrementsCount() {
         assertThat(PubnativeDeliveryManager.getCurrentDailyCount(this.applicationContext, PLACEMENT_ID_VALID)).isZero();
         assertThat(PubnativeDeliveryManager.getCurrentHourlyCount(this.applicationContext, PLACEMENT_ID_VALID)).isZero();
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
@@ -224,8 +209,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void logImpressionDoesNothingWithNullParameters()
-    {
+    public void logImpressionDoesNothingWithNullParameters() {
         assertThat(PubnativeDeliveryManager.getCurrentDailyCount(this.applicationContext, PLACEMENT_ID_VALID)).isZero();
         assertThat(PubnativeDeliveryManager.getCurrentHourlyCount(this.applicationContext, PLACEMENT_ID_VALID)).isZero();
         PubnativeDeliveryManager.logImpression(null, PLACEMENT_ID_VALID);
@@ -236,8 +220,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void updateImpressionUpdatesCounts()
-    {
+    public void updateImpressionUpdatesCounts() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
         assertThat(PubnativeDeliveryManager.getCurrentDailyCount(this.applicationContext, PLACEMENT_ID_VALID)).isNotZero();
         assertThat(PubnativeDeliveryManager.getCurrentHourlyCount(this.applicationContext, PLACEMENT_ID_VALID)).isNotZero();
@@ -260,8 +243,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void updateImpressionUpdatesWithMoreThanOneDay()
-    {
+    public void updateImpressionUpdatesWithMoreThanOneDay() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -2);
@@ -272,8 +254,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void updateImpressionUpdatesWithMoreThanOneHour()
-    {
+    public void updateImpressionUpdatesWithMoreThanOneHour() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR_OF_DAY, -2);
@@ -284,8 +265,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void updateImpressionDontUpdatesWithValid()
-    {
+    public void updateImpressionDontUpdatesWithValid() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
         Calendar calendar = Calendar.getInstance();
         PubnativeDeliveryManager.setImpressionLastUpdate(this.applicationContext, PLACEMENT_ID_VALID, calendar);
@@ -295,8 +275,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void resetMethodCalledWithImpHourCapChange()
-    {
+    public void resetMethodCalledWithImpHourCapChange() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
 
         PowerMockito.spy(PubnativeDeliveryManager.class);
@@ -316,8 +295,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void resetMethodCalledWithImpDayCapChange()
-    {
+    public void resetMethodCalledWithImpDayCapChange() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
 
         PowerMockito.spy(PubnativeDeliveryManager.class);
@@ -337,8 +315,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void resetMethodCalledWhenPacingCapHourChanged()
-    {
+    public void resetMethodCalledWhenPacingCapHourChanged() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
 
         PowerMockito.spy(PubnativeDeliveryManager.class);
@@ -358,8 +335,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void resetMethodCalledWhenPacingCapMinuteChanged()
-    {
+    public void resetMethodCalledWhenPacingCapMinuteChanged() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
 
         PowerMockito.spy(PubnativeDeliveryManager.class);
@@ -379,8 +355,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void resetMethodsNotCalledForSameDeliveryRule()
-    {
+    public void resetMethodsNotCalledForSameDeliveryRule() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
 
         PowerMockito.spy(PubnativeDeliveryManager.class);
@@ -400,15 +375,14 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void resetMethodsWorksWithValidParams()
-    {
+    public void resetMethodsWorksWithValidParams() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
         PubnativeDeliveryManager.resetHourlyImpressionCount(this.applicationContext, PLACEMENT_ID_VALID);
         assertThat(PubnativeDeliveryManager.getCurrentHourlyCount(this.applicationContext, PLACEMENT_ID_VALID)).isZero();
 
         PubnativeDeliveryManager.resetDailyImpressionCount(this.applicationContext, PLACEMENT_ID_VALID);
-        assertThat(PubnativeDeliveryManager.getCurrentDailyCount(this.applicationContext,PLACEMENT_ID_VALID)).isZero();
+        assertThat(PubnativeDeliveryManager.getCurrentDailyCount(this.applicationContext, PLACEMENT_ID_VALID)).isZero();
 
         PubnativeDeliveryManager.updatePacingCalendar(PLACEMENT_ID_VALID);
 
@@ -417,8 +391,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void pacingCalendarDoNotResetWithInvalidParams()
-    {
+    public void pacingCalendarDoNotResetWithInvalidParams() {
         PubnativeDeliveryManager.updatePacingCalendar(PLACEMENT_ID_VALID);
 
         // pacing calendar
@@ -430,8 +403,7 @@ public class PubnativeDeliveryManagerTest
     }
 
     @Test
-    public void impressionCountDoNotResetWithInvalidParams()
-    {
+    public void impressionCountDoNotResetWithInvalidParams() {
         PubnativeDeliveryManager.logImpression(this.applicationContext, PLACEMENT_ID_VALID);
 
         // hourly count

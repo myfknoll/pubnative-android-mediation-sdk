@@ -3,6 +3,7 @@ package net.pubnative.mediation.demo;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -20,8 +21,8 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
  * This helps us to avoid redundant calls to "findViewById" each
  * time we load values into the cell.
  */
-public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequestListener
-{
+public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequestListener {
+
     private static final String LOG_TAG = "AdViewHolder";
 
     protected Context context;
@@ -31,10 +32,11 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
 
     // Behaviour
     protected ProgressBar    ad_spinner;
-    protected RelativeLayout ad_container;
+    protected RelativeLayout ad_clickable;
     protected Button         request_button;
 
     // Ad info
+    protected ViewGroup ad_disclosure;
     protected TextView  placement_id_text;
     protected TextView  adapter_name_text;
     protected TextView  ad_description_text;
@@ -43,30 +45,30 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     protected ImageView ad_icon_image;
     protected ImageView ad_banner_image;
 
-    public AdViewHolder(Context context)
-    {
+    public AdViewHolder(Context context) {
         this.context = context;
     }
 
-    public void initialize(View convertView)
-    {
+    public void initialize(View convertView) {
+        this.ad_spinner = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
+        this.ad_clickable = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
+
+        this.ad_disclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
+        this.adapter_name_text = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
+
         this.request_button = (Button) convertView.findViewById(R.id.request_button);
         this.request_button.setOnClickListener(this);
 
-        this.ad_spinner = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        this.ad_container = (RelativeLayout) convertView.findViewById(R.id.ad_container);
-
         this.ad_title_text = (TextView) convertView.findViewById(R.id.ad_title_text);
         this.ad_description_text = (TextView) convertView.findViewById(R.id.ad_description_text);
-        this.adapter_name_text = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
         this.placement_id_text = (TextView) convertView.findViewById(R.id.placement_id_text);
         this.ad_rating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         this.ad_icon_image = (ImageView) convertView.findViewById(R.id.ad_icon_image);
         this.ad_banner_image = (ImageView) convertView.findViewById(R.id.ad_banner_image);
     }
 
-    public void cleanView()
-    {
+    public void cleanView() {
+        this.ad_disclosure.removeAllViews();
         this.ad_title_text.setText("");
         this.ad_description_text.setText("");
         this.adapter_name_text.setText("");
@@ -77,36 +79,40 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.ad_spinner.setVisibility(View.GONE);
     }
 
-    public void setRequestModel(CellRequestModel requestModel)
-    {
+    public void setRequestModel(CellRequestModel requestModel) {
         this.requestModel = requestModel;
         this.cleanView();
         this.renderAd();
     }
 
-    public void renderAd()
-    {
+    public void renderAd() {
         this.placement_id_text.setText("Placement ID: " + requestModel.placementID);
 
-        if (this.requestModel.adModel != null)
-        {
-            this.adapter_name_text.setText(this.requestModel.adModel.getClass().getSimpleName());
+        if (this.requestModel.adModel != null) {
+
+            // Privacy container
+            String adapterNameText = this.requestModel.adModel.getClass().getSimpleName();
+            this.adapter_name_text.setText(adapterNameText);
+            View sponsorView = this.requestModel.adModel.getAdvertisingDisclosureView(this.context);
+            if (sponsorView != null) {
+                this.ad_disclosure.addView(sponsorView);
+            }
+
+            // Ad content
             this.ad_title_text.setText(this.requestModel.adModel.getTitle());
             this.ad_description_text.setText(this.requestModel.adModel.getDescription());
             this.ad_rating.setRating(this.requestModel.adModel.getStarRating());
             this.ad_rating.setVisibility(View.VISIBLE);
             new LoadImageAsyncTask().execute(this.requestModel.adModel.getIconUrl(), this.ad_icon_image);
             new LoadImageAsyncTask().execute(this.requestModel.adModel.getBannerUrl(), this.ad_banner_image);
-            this.requestModel.adModel.startTracking(this.context, this.ad_container);
+            this.requestModel.adModel.startTracking(this.context, this.ad_clickable);
         }
     }
 
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         Log.d(LOG_TAG, "onClick");
-        if (request_button.equals(v))
-        {
+        if (request_button.equals(v)) {
             this.cleanView();
             this.ad_spinner.setVisibility(View.VISIBLE);
             this.requestModel.request.start(context, this.requestModel.appToken, this.requestModel.placementID, this);
@@ -114,14 +120,12 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onRequestStarted(PubnativeNetworkRequest request)
-    {
+    public void onRequestStarted(PubnativeNetworkRequest request) {
         Log.d(LOG_TAG, "onRequestStarted");
     }
 
     @Override
-    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad)
-    {
+    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
         Log.d(LOG_TAG, "onRequestLoaded");
 
         this.ad_spinner.setVisibility(View.GONE);
@@ -130,8 +134,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception)
-    {
+    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception) {
         Log.d(LOG_TAG, "onRequestFailed: " + exception);
 
         Toast.makeText(this.context, exception.getMessage(), Toast.LENGTH_LONG).show();

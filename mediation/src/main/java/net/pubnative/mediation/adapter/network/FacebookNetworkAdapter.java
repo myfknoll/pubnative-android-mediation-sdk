@@ -13,53 +13,41 @@ import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
 
 import java.util.Map;
 
-public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener
-{
+public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener {
+
     protected static final String KEY_PLACEMENT_ID = "placement_id";
 
     protected NativeAd nativeAd;
 
-    public FacebookNetworkAdapter(Map data)
-    {
+    public FacebookNetworkAdapter(Map data) {
         super(data);
     }
 
     @Override
-    public void request(Context context)
-    {
-        if (context != null && data != null)
-        {
+    public void request(Context context) {
+        if (context != null && data != null) {
             String placementId = (String) data.get(KEY_PLACEMENT_ID);
-            if (!TextUtils.isEmpty(placementId))
-            {
+            if (!TextUtils.isEmpty(placementId)) {
                 this.createRequest(context, placementId);
-            }
-            else
-            {
+            } else {
                 invokeFailed(new Exception("Invalid placement_id provided."));
             }
-        }
-        else
-        {
+        } else {
             invokeFailed(new Exception("No placement id provided."));
         }
     }
 
-    protected void createRequest(Context context, String placementId)
-    {
+    protected void createRequest(Context context, String placementId) {
         this.nativeAd = new NativeAd(context, placementId);
         this.nativeAd.setAdListener(this);
         this.nativeAd.loadAd();
     }
 
     @Override
-    public void onError(Ad ad, AdError adError)
-    {
-        if (ad == this.nativeAd)
-        {
+    public void onError(Ad ad, AdError adError) {
+        if (ad == this.nativeAd) {
             String errorMessage = "Pubnative - Facebook adapter error: Unknown error";
-            if (adError != null)
-            {
+            if (adError != null) {
                 errorMessage = adError.getErrorMessage();
             }
             this.invokeFailed(new Exception(errorMessage));
@@ -67,18 +55,15 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     }
 
     @Override
-    public void onAdLoaded(Ad ad)
-    {
-        if (ad == this.nativeAd)
-        {
+    public void onAdLoaded(Ad ad) {
+        if (ad == this.nativeAd) {
             FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
             this.invokeLoaded(wrapModel);
         }
     }
 
     @Override
-    public void onAdClicked(Ad ad)
-    {
+    public void onAdClicked(Ad ad) {
         // Do nothing
     }
 }

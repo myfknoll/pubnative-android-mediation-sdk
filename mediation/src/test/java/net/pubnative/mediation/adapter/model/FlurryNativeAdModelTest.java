@@ -20,13 +20,12 @@ import static org.mockito.Mockito.spy;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class FlurryNativeAdModelTest
-{
+public class FlurryNativeAdModelTest {
+
     @Test
-    public void methodsDoNotFailWhenNullAdPassesIn()
-    {
-        Context appContext = RuntimeEnvironment.application.getApplicationContext();
-        FlurryNativeAdModel adModel = spy(new FlurryNativeAdModel(null));
+    public void methodsDoNotFailWhenNullAdPassesIn() {
+        Context             appContext = RuntimeEnvironment.application.getApplicationContext();
+        FlurryNativeAdModel adModel    = spy(new FlurryNativeAdModel(null));
 
         // verify getter methods returns null
         assertThat(adModel.getTitle()).isNull();

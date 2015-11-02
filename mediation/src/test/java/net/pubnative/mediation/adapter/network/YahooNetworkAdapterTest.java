@@ -33,25 +33,23 @@ import static org.mockito.Mockito.verify;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class YahooNetworkAdapterTest
-{
+public class YahooNetworkAdapterTest {
+
     private final static int TIMEOUT_DEACTIVATED = 0;
     private Context applicationContext;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
     }
 
     @Test
-    public void successCallbacksWithValidData()
-    {
+    public void successCallbacksWithValidData() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, "ad_space_name");
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, "api_key");
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        YahooNetworkAdapter adapterSpy = spy(new YahooNetworkAdapter(data));
+        YahooNetworkAdapter             adapterSpy   = spy(new YahooNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
         this.stubEndFlurrySessionMethod(adapterSpy);
 
@@ -63,18 +61,15 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksOnFlurryError()
-    {
+    public void failureCallbacksOnFlurryError() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        YahooNetworkAdapter adapterSpy = spy(new YahooNetworkAdapter(data));
+        YahooNetworkAdapter             adapterSpy   = spy(new YahooNetworkAdapter(data));
         // stubbing the createRequest method to simulate facebook error.
-        doAnswer(new Answer()
-        {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 YahooNetworkAdapter adapter = (YahooNetworkAdapter) invocation.getMock();
                 adapter.onError(null, null, 1);
                 return null;
@@ -86,14 +81,12 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithNullData()
-    {
+    public void failureCallbacksWithNullData() {
         this.invokeFailureCallbacksWithInvalidData(null);
     }
 
     @Test
-    public void failureCallbacksWithEmptyAdSpace()
-    {
+    public void failureCallbacksWithEmptyAdSpace() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, "");
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, "api_key");
@@ -102,8 +95,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithNullAdSpace()
-    {
+    public void failureCallbacksWithNullAdSpace() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, null);
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, "api_key");
@@ -112,8 +104,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithEmptyApiKey()
-    {
+    public void failureCallbacksWithEmptyApiKey() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, "ad_space_name");
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, "");
@@ -122,8 +113,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithNullApiKey()
-    {
+    public void failureCallbacksWithNullApiKey() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, "ad_space_name");
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, null);
@@ -132,8 +122,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithEmptyApiKeyAndAdSpaceName()
-    {
+    public void failureCallbacksWithEmptyApiKeyAndAdSpaceName() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, "");
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, "");
@@ -142,8 +131,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithNullApiKeyAndAdSpaceName()
-    {
+    public void failureCallbacksWithNullApiKeyAndAdSpaceName() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, null);
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, null);
@@ -152,8 +140,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithNoApiKey()
-    {
+    public void failureCallbacksWithNoApiKey() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_AD_SPACE_NAME, "ad_space_name");
 
@@ -161,8 +148,7 @@ public class YahooNetworkAdapterTest
     }
 
     @Test
-    public void failureCallbacksWithNoAdSpaceName()
-    {
+    public void failureCallbacksWithNoAdSpaceName() {
         Map<String, String> data = new HashMap();
         data.put(YahooNetworkAdapter.KEY_FLURRY_API_KEY, "api_key");
 
@@ -174,10 +160,9 @@ public class YahooNetworkAdapterTest
      *
      * @param data Map of adapter config items. This data should never be valid
      */
-    private void invokeFailureCallbacksWithInvalidData(Map<String, String> data)
-    {
+    private void invokeFailureCallbacksWithInvalidData(Map<String, String> data) {
         PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
-        YahooNetworkAdapter adapterSpy = spy(new YahooNetworkAdapter(data));
+        YahooNetworkAdapter             adapterSpy   = spy(new YahooNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
         this.stubEndFlurrySessionMethod(adapterSpy);
 
@@ -185,20 +170,16 @@ public class YahooNetworkAdapterTest
         this.callbacksRunsForFailureCase(adapterSpy, listenerMock);
     }
 
-    private void callbacksRunsForFailureCase(YahooNetworkAdapter adapter, PubnativeNetworkAdapterListener listener)
-    {
+    private void callbacksRunsForFailureCase(YahooNetworkAdapter adapter, PubnativeNetworkAdapterListener listener) {
         verify(listener, times(1)).onAdapterRequestStarted(eq(adapter));
         verify(listener, times(1)).onAdapterRequestFailed(eq(adapter), any(Exception.class));
         verify(listener, never()).onAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
-    private void stubCreateRequestMethod(YahooNetworkAdapter adapter)
-    {
-        doAnswer(new Answer()
-        {
+    private void stubCreateRequestMethod(YahooNetworkAdapter adapter) {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 YahooNetworkAdapter adapter = (YahooNetworkAdapter) invocation.getMock();
                 adapter.onFetched(null);
                 return null;
@@ -206,13 +187,10 @@ public class YahooNetworkAdapterTest
         }).when(adapter).createRequest(any(Context.class), anyString(), anyString());
     }
 
-    private void stubEndFlurrySessionMethod(YahooNetworkAdapter adapter)
-    {
-        doAnswer(new Answer()
-        {
+    private void stubEndFlurrySessionMethod(YahooNetworkAdapter adapter) {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 return null;
             }
         }).when(adapter).endFlurrySession(any(Context.class));

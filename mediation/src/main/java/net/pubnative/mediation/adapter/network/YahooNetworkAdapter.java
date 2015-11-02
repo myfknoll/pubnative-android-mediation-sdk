@@ -13,61 +13,47 @@ import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
 
 import java.util.Map;
 
-public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements FlurryAdNativeListener
-{
+public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements FlurryAdNativeListener {
+
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
     private Context context;
 
-    public YahooNetworkAdapter(Map data)
-    {
+    public YahooNetworkAdapter(Map data) {
         super(data);
     }
 
     @Override
-    public void request(Context context)
-    {
-        if (context != null && data != null)
-        {
+    public void request(Context context) {
+        if (context != null && data != null) {
             this.context = context;
             String apiKey = (String) data.get(KEY_FLURRY_API_KEY);
-            if (!TextUtils.isEmpty(apiKey))
-            {
+            if (!TextUtils.isEmpty(apiKey)) {
                 String adSpaceName = (String) data.get(KEY_AD_SPACE_NAME);
-                if (!TextUtils.isEmpty(adSpaceName))
-                {
+                if (!TextUtils.isEmpty(adSpaceName)) {
                     this.createRequest(context, adSpaceName, apiKey);
-                }
-                else
-                {
+                } else {
                     invokeFailed(new Exception("Invalid ad_space_name provided."));
                 }
-            }
-            else
-            {
+            } else {
                 invokeFailed(new Exception("Invalid api_key provided."));
             }
-        }
-        else
-        {
+        } else {
             invokeFailed(new Exception("No context or adapter data provided."));
         }
     }
 
-    protected void endFlurrySession(Context context)
-    {
+    protected void endFlurrySession(Context context) {
         FlurryAgent.onEndSession(context);
     }
 
-    protected void createRequest(Context context, String adSpaceName, String apiKey)
-    {
+    protected void createRequest(Context context, String adSpaceName, String apiKey) {
         // configure flurry
         FlurryAgent.setLogEnabled(true);
         // initialize flurry with new apiKey
         FlurryAgent.init(context, apiKey);
         // start/resume session
-        if (!FlurryAgent.isSessionActive())
-        {
+        if (!FlurryAgent.isSessionActive()) {
             FlurryAgent.onStartSession(context);
         }
         // Make request
@@ -77,54 +63,46 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     }
 
     @Override
-    public void onFetched(FlurryAdNative flurryAdNative)
-    {
+    public void onFetched(FlurryAdNative flurryAdNative) {
         this.endFlurrySession(this.context);
         FlurryNativeAdModel nativeAdModel = new FlurryNativeAdModel(flurryAdNative);
         this.invokeLoaded(nativeAdModel);
     }
 
     @Override
-    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode)
-    {
+    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
         this.endFlurrySession(this.context);
         String errorMessage = "Pubnative - Flurry adapter error: Unknown error";
-        if (flurryAdErrorType != null)
-        {
+        if (flurryAdErrorType != null) {
             errorMessage = "Pubnative - Flurry adapter Error" +
-                    " Type: " + flurryAdErrorType.name() +
-                    " Error Code: " + errCode;
+                           " Type: " + flurryAdErrorType.name() +
+                           " Error Code: " + errCode;
         }
         this.invokeFailed(new Exception(errorMessage));
     }
 
     @Override
-    public void onShowFullscreen(FlurryAdNative flurryAdNative)
-    {
+    public void onShowFullscreen(FlurryAdNative flurryAdNative) {
         // Do nothing for now.
     }
 
     @Override
-    public void onCloseFullscreen(FlurryAdNative flurryAdNative)
-    {
+    public void onCloseFullscreen(FlurryAdNative flurryAdNative) {
         // Do nothing for now.
     }
 
     @Override
-    public void onAppExit(FlurryAdNative flurryAdNative)
-    {
+    public void onAppExit(FlurryAdNative flurryAdNative) {
         // Do nothing for now.
     }
 
     @Override
-    public void onClicked(FlurryAdNative flurryAdNative)
-    {
+    public void onClicked(FlurryAdNative flurryAdNative) {
         // Do nothing for now.
     }
 
     @Override
-    public void onImpressionLogged(FlurryAdNative flurryAdNative)
-    {
+    public void onImpressionLogged(FlurryAdNative flurryAdNative) {
         // Do nothing for now.
     }
 }

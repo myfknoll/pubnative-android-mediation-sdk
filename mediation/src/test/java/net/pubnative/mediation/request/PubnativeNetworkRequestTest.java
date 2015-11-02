@@ -48,8 +48,8 @@ import static org.mockito.Mockito.when;
 @Config(constants = BuildConfig.class)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 @PrepareForTest({PubnativeNetworkRequest.class, PubnativeNetworkAdapterFactory.class, PubnativeConfigManager.class})
-public class PubnativeNetworkRequestTest
-{
+public class PubnativeNetworkRequestTest {
+
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 
@@ -66,8 +66,7 @@ public class PubnativeNetworkRequestTest
     PubnativeNetworkRequestListener listenerMock;
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
 
         this.requestSpy = spy(PubnativeNetworkRequest.class);
@@ -75,8 +74,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void invokeCallbacksWithValidListener()
-    {
+    public void invokeCallbacksWithValidListener() {
         requestSpy.listener = listenerMock;
 
         // onRequestStarted
@@ -95,8 +93,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void invokeCallbacksWithNullListener()
-    {
+    public void invokeCallbacksWithNullListener() {
         // invoking method with a rguments when lister is null should not crash
         requestSpy.listener = null;
         requestSpy.invokeStart();
@@ -105,19 +102,16 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void requestWithCorrectParameters()
-    {
+    public void requestWithCorrectParameters() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", TEST_APP_TOKEN);
 
-        final PubnativeAdModel modelMock = spy(PubnativeAdModel.class);
+        final PubnativeAdModel        modelMock   = spy(PubnativeAdModel.class);
         final PubnativeNetworkAdapter adapterMock = mock(PubnativeNetworkAdapter.class);
         // Stub Adapter doRequest to callback the listener directly
-        doAnswer(new Answer()
-        {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
-                PubnativeNetworkAdapter adapterMock = (PubnativeNetworkAdapter) invocation.getMock();
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                PubnativeNetworkAdapter         adapterMock     = (PubnativeNetworkAdapter) invocation.getMock();
                 PubnativeNetworkAdapterListener adapterListener = (PubnativeNetworkAdapterListener) invocation.getArgumentAt(2, PubnativeNetworkAdapterListener.class);
                 adapterListener.onAdapterRequestStarted(adapterMock);
                 adapterListener.onAdapterRequestLoaded(adapterMock, modelMock);
@@ -129,11 +123,9 @@ public class PubnativeNetworkRequestTest
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
 
         final PubnativeNetworkRequest networkRequest = spy(PubnativeNetworkRequest.class);
-        doAnswer(new Answer()
-        {
+        doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 listenerMock.onRequestLoaded(networkRequest, modelMock);
                 return null;
             }
@@ -146,8 +138,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void requestWithNullParameters()
-    {
+    public void requestWithNullParameters() {
         requestSpy.start(null, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, this.listenerMock);
         requestSpy.start(this.applicationContext, null, TEST_PLACEMENT_ID_INVALID, this.listenerMock);
         requestSpy.start(this.applicationContext, TEST_APP_TOKEN, null, this.listenerMock);
@@ -157,8 +148,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void requestWithInvalidAppToken()
-    {
+    public void requestWithInvalidAppToken() {
         // both null
         requestSpy.start(this.applicationContext, null, null, this.listenerMock);
 
@@ -182,15 +172,13 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void requestWithNullListenerDrops()
-    {
+    public void requestWithNullListenerDrops() {
         // This should not crash
         requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, null);
     }
 
     @Test
-    public void requestWithEmptyPlacementConfig()
-    {
+    public void requestWithEmptyPlacementConfig() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json", TEST_APP_TOKEN);
 
         requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, this.listenerMock);
@@ -205,8 +193,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void requestWithDeliverInactive()
-    {
+    public void requestWithDeliverInactive() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "delivery_inactive.json", TEST_APP_TOKEN);
         PubnativeDeliveryManager.logImpression(this.applicationContext, "placement_id");
 
@@ -218,24 +205,21 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void requestWithFrequencyDayLimitReached()
-    {
+    public void requestWithFrequencyDayLimitReached() {
         this.failsWithFrequencyReached("delivery_freq_day.json");
     }
 
     @Test
-    public void requestWithFrequencyHourLimitReached()
-    {
+    public void requestWithFrequencyHourLimitReached() {
         this.failsWithFrequencyReached("delivery_freq_hour.json");
     }
 
-    public void failsWithFrequencyReached(String configFileName)
-    {
+    public void failsWithFrequencyReached(String configFileName) {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, configFileName, TEST_APP_TOKEN);
         PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(this.applicationContext);
 
-        PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
-        PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
+        PubnativeNetworkRequestListener listenerMock      = mock(PubnativeNetworkRequestListener.class);
+        PubnativeNetworkRequest         networkRequestSpy = spy(PubnativeNetworkRequest.class);
         doNothing().when(networkRequestSpy).doNextNetworkRequest();
         networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
         networkRequestSpy.placementID = TEST_PLACEMENT_ID_VALID;
@@ -249,19 +233,16 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void freqDayLimitResets()
-    {
+    public void freqDayLimitResets() {
         this.frequencyResets(Calendar.DAY_OF_MONTH, "delivery_freq_day.json");
     }
 
     @Test
-    public void freqHourLimitResets()
-    {
+    public void freqHourLimitResets() {
         this.frequencyResets(Calendar.HOUR_OF_DAY, "delivery_freq_hour.json");
     }
 
-    public void frequencyResets(int field, String configFileName)
-    {
+    public void frequencyResets(int field, String configFileName) {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, configFileName, TEST_APP_TOKEN);
         PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(this.applicationContext);
 
@@ -284,8 +265,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void sendsRequestInsightOnLoaded()
-    {
+    public void sendsRequestInsightOnLoaded() {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         doNothing().when(networkRequestSpy).trackRequestInsight();
 
@@ -295,8 +275,7 @@ public class PubnativeNetworkRequestTest
     }
 
     @Test
-    public void sendsRequestInsightOnNoFill()
-    {
+    public void sendsRequestInsightOnNoFill() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", TEST_APP_TOKEN);
 
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);

@@ -11,8 +11,8 @@ import java.util.Map;
 /**
  * Created by davidmartin on 15/08/15.
  */
-public class PubnativeDeliveryManager
-{
+public class PubnativeDeliveryManager {
+
     protected static final String                IMPRESSION_PREFERENCES_KEY    = "net.pubnative.mediation.frequency_manager";
     protected static final String                IMPRESSION_COUNT_DAY_APPEND   = "_impression_count_day";
     protected static final String                IMPRESSION_COUNT_HOUR_APPEND  = "_impression_count_hour";
@@ -21,91 +21,74 @@ public class PubnativeDeliveryManager
 
     protected static PubnativeDeliveryManager instance = null;
 
-    private PubnativeDeliveryManager() {}
+    private PubnativeDeliveryManager() {
+    }
 
-    protected static synchronized PubnativeDeliveryManager getInstance()
-    {
-        if (PubnativeDeliveryManager.instance == null)
-        {
+    protected static synchronized PubnativeDeliveryManager getInstance() {
+        if (PubnativeDeliveryManager.instance == null) {
             PubnativeDeliveryManager.instance = new PubnativeDeliveryManager();
         }
         return PubnativeDeliveryManager.instance;
     }
 
-    public static Calendar getPacingCalendar(String placementID)
-    {
+    public static Calendar getPacingCalendar(String placementID) {
         Calendar result = null;
-        if (PubnativeDeliveryManager.getInstance().currentPacing.containsKey(placementID))
-        {
+        if (PubnativeDeliveryManager.getInstance().currentPacing.containsKey(placementID)) {
             result = PubnativeDeliveryManager.getInstance().currentPacing.get(placementID);
         }
         return result;
     }
 
-    public static void updatePacingCalendar(String placementID)
-    {
+    public static void updatePacingCalendar(String placementID) {
         PubnativeDeliveryManager.getInstance().currentPacing.put(placementID, Calendar.getInstance());
     }
 
-    public static void resetPacingCalendar(String placementId)
-    {
+    public static void resetPacingCalendar(String placementId) {
         PubnativeDeliveryManager.getInstance().currentPacing.put(placementId, null);
     }
 
-    public static void logImpression(Context context, String placementID)
-    {
-        int dayCount = PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
+    public static void logImpression(Context context, String placementID) {
+        int dayCount  = PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
         int hourCount = PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID);
 
         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, ++dayCount);
         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, ++hourCount);
     }
 
-    public static void resetDailyImpressionCount(Context context, String placementId)
-    {
+    public static void resetDailyImpressionCount(Context context, String placementId) {
         PubnativeDeliveryManager.setImpressionCount(context, PubnativeDeliveryManager.IMPRESSION_COUNT_DAY_APPEND, placementId, 0);
     }
 
-    public static void resetHourlyImpressionCount(Context context, String placementId)
-    {
+    public static void resetHourlyImpressionCount(Context context, String placementId) {
         PubnativeDeliveryManager.setImpressionCount(context, PubnativeDeliveryManager.IMPRESSION_COUNT_HOUR_APPEND, placementId, 0);
     }
 
-    public static int getCurrentDailyCount(Context context, String placementID)
-    {
+    public static int getCurrentDailyCount(Context context, String placementID) {
         return PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
     }
 
-    public static int getCurrentHourlyCount(Context context, String placementID)
-    {
+    public static int getCurrentHourlyCount(Context context, String placementID) {
         return PubnativeDeliveryManager.getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID);
     }
 
-    protected static void updateImpressionCount(Context context, String placementID)
-    {
-        if (context != null && !TextUtils.isEmpty(placementID))
-        {
+    protected static void updateImpressionCount(Context context, String placementID) {
+        if (context != null && !TextUtils.isEmpty(placementID)) {
             Calendar storedCalendar = PubnativeDeliveryManager.getImpressionLastUpdate(context, placementID);
-            if (storedCalendar != null)
-            {
+            if (storedCalendar != null) {
                 Calendar dayCalendar = Calendar.getInstance();
                 dayCalendar.set(Calendar.HOUR_OF_DAY, 0);
                 dayCalendar.set(Calendar.MINUTE, 0);
                 dayCalendar.set(Calendar.SECOND, 0);
                 dayCalendar.set(Calendar.MILLISECOND, 0);
-                if (storedCalendar.before(dayCalendar))
-                {
+                if (storedCalendar.before(dayCalendar)) {
                     PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, 0);
                     PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, 0);
-                }
-                else
-                {
+                } else {
                     Calendar hourCalendar = Calendar.getInstance();
                     hourCalendar.set(Calendar.MINUTE, 0);
                     hourCalendar.set(Calendar.SECOND, 0);
                     hourCalendar.set(Calendar.MILLISECOND, 0);
-                    if (storedCalendar.before(hourCalendar))
-                    {
+                    if (storedCalendar.before(hourCalendar)) {
                         PubnativeDeliveryManager.setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, 0);
                     }
                 }
@@ -114,20 +97,14 @@ public class PubnativeDeliveryManager
         }
     }
 
-    protected static void setImpressionCount(Context context, String impressionCapType, String placementID, int value)
-    {
-        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID))
-        {
+    protected static void setImpressionCount(Context context, String impressionCapType, String placementID, int value) {
+        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
             SharedPreferences.Editor editor = PubnativeDeliveryManager.getPreferencesEditor(context);
-            if (editor != null)
-            {
+            if (editor != null) {
                 String placementTrackingKey = placementID.concat(impressionCapType);
-                if (value == 0)
-                {
+                if (value == 0) {
                     editor.remove(placementTrackingKey);
-                }
-                else
-                {
+                } else {
                     editor.putInt(placementTrackingKey, value);
                 }
                 editor.apply();
@@ -135,15 +112,12 @@ public class PubnativeDeliveryManager
         }
     }
 
-    protected static int getImpressionCount(Context context, String impressionCapType, String placementID)
-    {
+    protected static int getImpressionCount(Context context, String impressionCapType, String placementID) {
         PubnativeDeliveryManager.updateImpressionCount(context, placementID);
         int result = 0;
-        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID))
-        {
+        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
             SharedPreferences preferences = PubnativeDeliveryManager.getPreferences(context);
-            if (preferences != null)
-            {
+            if (preferences != null) {
                 String placementTrackingKey = placementID.concat(impressionCapType);
                 result = preferences.getInt(placementTrackingKey, 0);
             }
@@ -158,20 +132,14 @@ public class PubnativeDeliveryManager
      * @param placementID valid placement id provided by Pubnative
      * @param calendar    calendar object with the timestamp
      */
-    public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar)
-    {
-        if (context != null && !TextUtils.isEmpty(placementID))
-        {
+    public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar) {
+        if (context != null && !TextUtils.isEmpty(placementID)) {
             SharedPreferences.Editor editor = PubnativeDeliveryManager.getPreferencesEditor(context);
-            if (editor != null)
-            {
+            if (editor != null) {
                 String placementLastUpdateKey = placementID.concat(IMPRESSION_LAST_UPDATE_APPEND);
-                if (calendar == null)
-                {
+                if (calendar == null) {
                     editor.remove(placementLastUpdateKey);
-                }
-                else
-                {
+                } else {
                     editor.putLong(placementLastUpdateKey, calendar.getTimeInMillis());
                 }
                 editor.apply();
@@ -179,18 +147,14 @@ public class PubnativeDeliveryManager
         }
     }
 
-    public static Calendar getImpressionLastUpdate(Context context, String placementID)
-    {
+    public static Calendar getImpressionLastUpdate(Context context, String placementID) {
         Calendar result = null;
-        if (context != null && !TextUtils.isEmpty(placementID))
-        {
+        if (context != null && !TextUtils.isEmpty(placementID)) {
             SharedPreferences preferences = PubnativeDeliveryManager.getPreferences(context);
-            if (preferences != null)
-            {
+            if (preferences != null) {
                 String placementLastUpdateKey = placementID.concat(IMPRESSION_LAST_UPDATE_APPEND);
                 long frequencyMillis = preferences.getLong(placementLastUpdateKey, 0);
-                if (frequencyMillis > 0)
-                {
+                if (frequencyMillis > 0) {
                     result = Calendar.getInstance();
                     result.setTimeInMillis(frequencyMillis);
                 }
@@ -199,21 +163,17 @@ public class PubnativeDeliveryManager
         return result;
     }
 
-    protected static SharedPreferences.Editor getPreferencesEditor(Context context)
-    {
+    protected static SharedPreferences.Editor getPreferencesEditor(Context context) {
         SharedPreferences.Editor result = null;
-        if (context != null)
-        {
+        if (context != null) {
             result = PubnativeDeliveryManager.getPreferences(context).edit();
         }
         return result;
     }
 
-    protected static SharedPreferences getPreferences(Context context)
-    {
+    protected static SharedPreferences getPreferences(Context context) {
         SharedPreferences result = null;
-        if (context != null)
-        {
+        if (context != null) {
             result = context.getSharedPreferences(IMPRESSION_PREFERENCES_KEY, Context.MODE_PRIVATE);
         }
         return result;
