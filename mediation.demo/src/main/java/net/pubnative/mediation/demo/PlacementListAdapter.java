@@ -14,72 +14,58 @@ import java.util.List;
 /**
  * Created by rahul on 29/9/15.
  */
-public class PlacementListAdapter extends BaseAdapter
-{
+public class PlacementListAdapter extends BaseAdapter {
+
     private Context      context;
     private List<String> placements;
 
-    public PlacementListAdapter(Context context, List<String> placements)
-    {
+    public PlacementListAdapter(Context context, List<String> placements) {
         this.context = context;
-        if (placements != null)
-        {
+        if (placements != null) {
             this.placements = placements;
-        }
-        else
-        {
+        } else {
             this.placements = new ArrayList();
         }
     }
 
-    public void addPlacement(String placement)
-    {
-        if (this.placements != null)
-        {
+    public void addPlacement(String placement) {
+        if (this.placements != null) {
             this.placements.add(placement);
             notifyDataSetChanged();
         }
     }
 
-    private void removePlacement(String placement)
-    {
-        if (this.placements != null)
-        {
+    private void removePlacement(String placement) {
+        if (this.placements != null) {
             this.placements.remove(placement);
             notifyDataSetChanged();
         }
     }
 
-    public List<String> getPlacements()
-    {
+    public List<String> getPlacements() {
         return this.placements;
     }
 
     @Override
-    public int getCount()
-    {
+    public int getCount() {
         return placements.size();
     }
 
     @Override
-    public String getItem(int position)
-    {
+    public String getItem(int position) {
         return placements.get(position);
     }
 
     @Override
-    public long getItemId(int position)
-    {
+    public long getItemId(int position) {
         return 0;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
-    {
+    public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
 
-        if (convertView == null)
-        {
+        if (convertView == null) {
             convertView = LayoutInflater.from(this.context).inflate(R.layout.placement_list_cell, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.placementText = (TextView) convertView.findViewById(R.id.placement_id_text);
@@ -88,15 +74,12 @@ public class PlacementListAdapter extends BaseAdapter
         }
 
         viewHolder = (ViewHolder) convertView.getTag();
-        if (viewHolder != null)
-        {
+        if (viewHolder != null) {
             final String placementId = getItem(position);
             viewHolder.placementText.setText(placementId);
-            viewHolder.removePlacementButton.setOnClickListener(new View.OnClickListener()
-            {
+            viewHolder.removePlacementButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view)
-                {
+                public void onClick(View view) {
                     removePlacement(placementId);
                 }
             });
@@ -105,8 +88,8 @@ public class PlacementListAdapter extends BaseAdapter
         return convertView;
     }
 
-    private class ViewHolder
-    {
+    private class ViewHolder {
+
         TextView    placementText;
         ImageButton removePlacementButton;
     }

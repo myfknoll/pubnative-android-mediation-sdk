@@ -13,25 +13,20 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 /**
  * Created by rahul on 26/8/15.
  */
-public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNativeListener
-{
+public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNativeListener {
+
     FlurryAdNative flurryAdNative;
 
-    public FlurryNativeAdModel(FlurryAdNative flurryAdNative)
-    {
+    public FlurryNativeAdModel(FlurryAdNative flurryAdNative) {
         this.flurryAdNative = flurryAdNative;
     }
 
-    protected String getStringValueOfFirstAsset(String...keys)
-    {
+    protected String getStringValueOfFirstAsset(String... keys) {
         String result = null;
-        if (this.flurryAdNative != null)
-        {
-            for (String key : keys)
-            {
+        if (this.flurryAdNative != null) {
+            for (String key : keys) {
                 FlurryAdNativeAsset asset = this.flurryAdNative.getAsset(key);
-                if (asset != null)
-                {
+                if (asset != null) {
                     result = asset.getValue();
                     break;
                 }
@@ -41,22 +36,19 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     @Override
-    public String getTitle()
-    {
+    public String getTitle() {
         // The Ad headline, typically a single line. Type: STRING
         return getStringValueOfFirstAsset("headline");
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         // The call to action summary of the advertisement. Type: STRING
         return getStringValueOfFirstAsset("summary");
     }
 
     @Override
-    public String getIconUrl()
-    {
+    public String getIconUrl() {
         // secOrigImg: 	The secured original image, size: 627px x 627px. Optional asset, not present for the video ads
         // secImage:    The secured image, size: 82px x 82px. Optional asset, not present for the video ads.
 
@@ -64,15 +56,13 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     @Override
-    public String getBannerUrl()
-    {
+    public String getBannerUrl() {
         // secHqImage:  The secured high quality image, size: 1200px x 627px. Optional asset, not present for the video ads
         return getStringValueOfFirstAsset("secHqImage");
     }
 
     @Override
-    public String getCallToAction()
-    {
+    public String getCallToAction() {
         /**
          * Yahoo currently does not provide the short Call To Action (CTA)
          * asset or string at this time. Instead, you can create your own
@@ -81,34 +71,26 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
          * For an ad that does not contain app specific assets, the CTA could be ‘Read More’.
          */
         String result = "Read More";
-        if (getStringValueOfFirstAsset("appCategory") != null || getStringValueOfFirstAsset("appRating") != null)
-        {
+        if (getStringValueOfFirstAsset("appCategory") != null || getStringValueOfFirstAsset("appRating") != null) {
             result = "Install Now";
         }
         return result;
     }
 
     @Override
-    public float getStarRating()
-    {
-        float result = 0;
+    public float getStarRating() {
+        float  result    = 0;
         String appRating = getStringValueOfFirstAsset("appRating");
-        if (appRating != null)
-        {
+        if (appRating != null) {
             String[] parts = appRating.split("/");
-            if (parts.length == 2)
-            {
-                try
-                {
+            if (parts.length == 2) {
+                try {
                     int ratingVal = Integer.parseInt(parts[0]);
                     int scaleVal = Integer.parseInt(parts[1]);
-                    if (scaleVal != 0)
-                    {
+                    if (scaleVal != 0) {
                         result = (ratingVal / scaleVal) * 5;
                     }
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     System.out.println("Error while parsing star rating :" + e);
                 }
             }
@@ -117,65 +99,59 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     @Override
-    public void startTracking(Context context, View adView)
-    {
+    public View getPrivacyView() {
+        return null;
+    }
+
+    @Override
+    public void startTracking(Context context, View adView) {
         this.context = context;
-        if (this.flurryAdNative != null && adView != null)
-        {
+        if (this.flurryAdNative != null && adView != null) {
             this.flurryAdNative.setListener(this);
             this.flurryAdNative.setTrackingView(adView);
         }
     }
 
     @Override
-    public void stopTracking(Context context, View adView)
-    {
-        if (this.flurryAdNative != null)
-        {
+    public void stopTracking(Context context, View adView) {
+        if (this.flurryAdNative != null) {
             this.flurryAdNative.removeTrackingView();
         }
 
     }
 
     @Override
-    public void onFetched(FlurryAdNative flurryAdNative)
-    {
+    public void onFetched(FlurryAdNative flurryAdNative) {
         // Do nothing
     }
 
     @Override
-    public void onShowFullscreen(FlurryAdNative flurryAdNative)
-    {
+    public void onShowFullscreen(FlurryAdNative flurryAdNative) {
         // Do nothing
     }
 
     @Override
-    public void onCloseFullscreen(FlurryAdNative flurryAdNative)
-    {
+    public void onCloseFullscreen(FlurryAdNative flurryAdNative) {
         // Do nothing
     }
 
     @Override
-    public void onAppExit(FlurryAdNative flurryAdNative)
-    {
+    public void onAppExit(FlurryAdNative flurryAdNative) {
         // Do nothing
     }
 
     @Override
-    public void onClicked(FlurryAdNative flurryAdNative)
-    {
+    public void onClicked(FlurryAdNative flurryAdNative) {
         this.invokeOnAdClick();
     }
 
     @Override
-    public void onImpressionLogged(FlurryAdNative flurryAdNative)
-    {
+    public void onImpressionLogged(FlurryAdNative flurryAdNative) {
         this.invokeOnAdImpressionConfirmed();
     }
 
     @Override
-    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int i)
-    {
+    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int i) {
         // Do nothing
     }
 }

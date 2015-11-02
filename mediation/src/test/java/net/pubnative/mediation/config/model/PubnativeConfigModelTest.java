@@ -12,11 +12,10 @@ import static org.mockito.Mockito.spy;
 /**
  * Created by davidmartin on 06/08/15.
  */
-public class PubnativeConfigModelTest
-{
+public class PubnativeConfigModelTest {
+
     @Test
-    public void startsWithNullValues()
-    {
+    public void startsWithNullValues() {
         PubnativeConfigModel model = spy(PubnativeConfigModel.class);
 
         assertThat(model.globals).isNull();
@@ -25,8 +24,7 @@ public class PubnativeConfigModelTest
     }
 
     @Test
-    public void isNullOrEmptyForDifferentValues()
-    {
+    public void isNullOrEmptyForDifferentValues() {
         PubnativeConfigModel model = spy(PubnativeConfigModel.class);
 
         Map notEmptyMap = mock(Map.class);

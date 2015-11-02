@@ -13,14 +13,14 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class PubnativeHttpTask extends AsyncTask<String, Void, String>
-{
+public class PubnativeHttpTask extends AsyncTask<String, Void, String> {
+
     protected final static String ERROR_CONNECTION = "conection error, internet not reacbable";
     protected final static String ERROR_URL_FORMAT = "request url not provided or is null or empty";
     protected final static String ERROR_CANCELLED  = "request cancelled";
 
-    public interface Listener
-    {
+    public interface Listener {
+
         void onHttpTaskFinished(PubnativeHttpTask task, String result);
 
         void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage);
@@ -32,59 +32,46 @@ public class PubnativeHttpTask extends AsyncTask<String, Void, String>
     protected Listener listener;
     protected boolean  success;
 
-    public PubnativeHttpTask(Context context)
-    {
+    public PubnativeHttpTask(Context context) {
         this.context = context;
         this.success = false;
     }
 
-    public void setListener(Listener listener)
-    {
+    public void setListener(Listener listener) {
         this.listener = listener;
     }
 
-    public void setPOSTData(String postString)
-    {
+    public void setPOSTData(String postString) {
         this.postString = postString;
     }
 
-    public String getPOSTData()
-    {
+    public String getPOSTData() {
         return this.postString;
     }
 
-    public String getURL()
-    {
+    public String getURL() {
         return this.url;
     }
 
     @Override
-    protected String doInBackground(String... params)
-    {
+    protected String doInBackground(String... params) {
         String result = null;
-        if (params.length > 0)
-        {
+        if (params.length > 0) {
             this.url = params[0];
 
-            if (TextUtils.isEmpty(this.url))
-            {
+            if (TextUtils.isEmpty(this.url)) {
                 result = ERROR_URL_FORMAT;
-            }
-            else
-            {
+            } else {
                 ConnectivityManager cm = (ConnectivityManager) this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-                if (isConnected)
-                {
-                    try
-                    {
+                if (isConnected) {
+                    try {
                         HttpURLConnection connection;
                         connection = (HttpURLConnection) new URL(this.url).openConnection();
                         connection.setConnectTimeout(3000);
                         connection.setReadTimeout(1000);
-                        if (!TextUtils.isEmpty(this.postString))
-                        {
+                        if (!TextUtils.isEmpty(this.postString)) {
                             connection.setRequestMethod("POST");
                             connection.setUseCaches(false);
                             connection.setDoInput(true);
@@ -99,61 +86,45 @@ public class PubnativeHttpTask extends AsyncTask<String, Void, String>
                         connection.connect();
 
                         int responseCode = connection.getResponseCode();
-                        if (HttpURLConnection.HTTP_OK == responseCode)
-                        {
+                        if (HttpURLConnection.HTTP_OK == responseCode) {
                             result = PubnativeStringUtils.readStringFromInputStream(connection.getInputStream());
                             success = true;
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         result = e.toString();
                     }
-                }
-                else
-                {
+                } else {
                     result = ERROR_CONNECTION;
                 }
             }
-        }
-        else
-        {
+        } else {
             result = ERROR_URL_FORMAT;
         }
         return result;
     }
 
     @Override
-    protected void onCancelled()
-    {
+    protected void onCancelled() {
         this.invokeFailed(ERROR_CANCELLED);
     }
 
     @Override
-    protected void onPostExecute(String result)
-    {
-        if (success)
-        {
+    protected void onPostExecute(String result) {
+        if (success) {
             this.invokeFinished(result);
-        }
-        else
-        {
+        } else {
             this.invokeFailed(result);
         }
     }
 
-    protected void invokeFinished(String result)
-    {
-        if (this.listener != null)
-        {
+    protected void invokeFinished(String result) {
+        if (this.listener != null) {
             this.listener.onHttpTaskFinished(this, result);
         }
     }
 
-    protected void invokeFailed(String errorMessage)
-    {
-        if (this.listener != null)
-        {
+    protected void invokeFailed(String errorMessage) {
+        if (this.listener != null) {
             this.listener.onHttpTaskFailed(this, errorMessage);
         }
     }

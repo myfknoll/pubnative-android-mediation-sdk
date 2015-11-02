@@ -17,13 +17,12 @@ import static org.mockito.Mockito.spy;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 @PrepareForTest(PubnativeInsightDataModel.class)
-public class PubnativeInsightDataModelTest
-{
+public class PubnativeInsightDataModelTest {
+
     private final String validString = "sampleText";
 
     @Test
-    public void resetClearsLists()
-    {
+    public void resetClearsLists() {
         PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
         dataModelSpy.network = validString;
         dataModelSpy.addAttemptedNetwork(validString);
@@ -37,8 +36,7 @@ public class PubnativeInsightDataModelTest
     }
 
     @Test
-    public void addInterestWithDifferentValues()
-    {
+    public void addInterestWithDifferentValues() {
         PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
 
         // the list is null at the beginning
@@ -62,8 +60,7 @@ public class PubnativeInsightDataModelTest
     }
 
     @Test
-    public void addAttemptedNetworkWithDifferentValues()
-    {
+    public void addAttemptedNetworkWithDifferentValues() {
         PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
 
         // the list is null at the beginning

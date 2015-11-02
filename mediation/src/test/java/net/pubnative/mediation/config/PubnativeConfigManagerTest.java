@@ -33,8 +33,8 @@ import static org.mockito.Mockito.verify;
 @Config(constants = BuildConfig.class, sdk = 21)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 @PrepareForTest(PubnativeConfigManager.class)
-public class PubnativeConfigManagerTest
-{
+public class PubnativeConfigManagerTest {
+
     protected Context applicationContext;
     protected static final String TEST_CONFIG_VALUE    = "testConfigValue";
     protected static final String TEST_APP_TOKEN_VALUE = "appTokenValue";
@@ -44,8 +44,7 @@ public class PubnativeConfigManagerTest
     public PowerMockRule rule = new PowerMockRule();
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
 
         // Clean the manager on every test
@@ -53,8 +52,7 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void configWithInvalidJSONs()
-    {
+    public void configWithInvalidJSONs() {
         // Empty getConfig  >> Should return an empty getConfig
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json", TEST_APP_TOKEN_VALUE);
         this.storedDataIsNull();
@@ -73,8 +71,7 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void callbackWithValidJSON()
-    {
+    public void callbackWithValidJSON() {
         // Valid getConfig  >> Should return an initializedConfig
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         PubnativeConfigRequestListener listenerSpy = spy(PubnativeConfigRequestListener.class);
@@ -82,8 +79,7 @@ public class PubnativeConfigManagerTest
         verify(listenerSpy, times(1)).onConfigLoaded(any(PubnativeConfigModel.class));
     }
 
-    private void storedDataIsNull()
-    {
+    private void storedDataIsNull() {
         assertThat(PubnativeConfigManager.getStoredConfigString(this.applicationContext)).isNull();
         assertThat(PubnativeConfigManager.getStoredTimestamp(this.applicationContext)).isNull();
         assertThat(PubnativeConfigManager.getStoredAppToken(this.applicationContext)).isNull();
@@ -91,47 +87,40 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void configNullOnStart()
-    {
+    public void configNullOnStart() {
         assertThat(PubnativeConfigManager.getStoredConfigString(this.applicationContext)).isNull();
     }
 
     @Test
-    public void configSetCorrectly()
-    {
+    public void configSetCorrectly() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         assertThat(PubnativeConfigManager.getStoredConfigString(this.applicationContext)).isNotNull();
     }
 
     @Test
-    public void appTokenNullOnStart()
-    {
+    public void appTokenNullOnStart() {
         assertThat(PubnativeConfigManager.getStoredAppToken(this.applicationContext)).isNull();
     }
 
     @Test
-    public void appTokenSetOnSetConfigString()
-    {
+    public void appTokenSetOnSetConfigString() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         assertThat(PubnativeConfigManager.getStoredAppToken(this.applicationContext)).isEqualTo(TEST_APP_TOKEN_VALUE);
     }
 
     @Test
-    public void timestampIsNullOnStart()
-    {
+    public void timestampIsNullOnStart() {
         assertThat(PubnativeConfigManager.getStoredTimestamp(this.applicationContext)).isNull();
     }
 
     @Test
-    public void timestampSetOnSetConfigString()
-    {
+    public void timestampSetOnSetConfigString() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         assertThat(PubnativeConfigManager.getStoredTimestamp(this.applicationContext)).isNotNull();
     }
 
     @Test
-    public void configNotSetOnEmptyFields()
-    {
+    public void configNotSetOnEmptyFields() {
         PubnativeConfigModel configMock = mock(PubnativeConfigModel.class);
 
         PubnativeConfigManager.updateConfig(null, TEST_APP_TOKEN_VALUE, configMock);
@@ -154,8 +143,7 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void configNeedsUpdateForDifferentTimestamps()
-    {
+    public void configNeedsUpdateForDifferentTimestamps() {
         // null timestamp
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         PubnativeConfigManager.setStoredTimestamp(this.applicationContext, null);
@@ -178,8 +166,7 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void configNeedsUpdateWithDifferentVales()
-    {
+    public void configNeedsUpdateWithDifferentVales() {
         // At start, it needs update
         assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
 
@@ -195,12 +182,11 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void configNeedsUpdateForTimedOutConfig()
-    {
+    public void configNeedsUpdateForTimedOutConfig() {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
 
         Long refreshTime = PubnativeConfigManager.getStoredRefresh(this.applicationContext);
-        Long storedTime = PubnativeConfigManager.getStoredTimestamp(this.applicationContext);
+        Long storedTime  = PubnativeConfigManager.getStoredTimestamp(this.applicationContext);
 
         storedTime = storedTime - TimeUnit.MINUTES.toMillis(refreshTime);
         PubnativeConfigManager.setStoredTimestamp(this.applicationContext, storedTime);
@@ -209,8 +195,7 @@ public class PubnativeConfigManagerTest
     }
 
     @Test
-    public void configUrlTakenFromStoredConfigAfterFirstTime()
-    {
+    public void configUrlTakenFromStoredConfigAfterFirstTime() {
         String downloadUrlBeforeDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(this.applicationContext);
         assertThat(downloadUrlBeforeDownload).isEqualTo(PubnativeConfigManager.CONFIG_DOWNLOAD_BASE_URL);
 
@@ -220,7 +205,7 @@ public class PubnativeConfigManagerTest
 
         // get config_url from downloaded config
         PubnativeConfigAPIResponseModel apiResponse = new Gson().fromJson(configJson, PubnativeConfigAPIResponseModel.class);
-        String configUrl = (String) apiResponse.config.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
+        String                          configUrl   = (String) apiResponse.config.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
 
         String downloadUrlAfterDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(this.applicationContext);
         assertThat(downloadUrlAfterDownload).isEqualTo(configUrl);

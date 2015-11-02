@@ -20,8 +20,8 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
  * This helps us to avoid redundant calls to "findViewById" each
  * time we load values into the cell.
  */
-public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequestListener
-{
+public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequestListener {
+
     private static final String LOG_TAG = "AdViewHolder";
 
     protected Context context;
@@ -43,13 +43,11 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     protected ImageView ad_icon_image;
     protected ImageView ad_banner_image;
 
-    public AdViewHolder(Context context)
-    {
+    public AdViewHolder(Context context) {
         this.context = context;
     }
 
-    public void initialize(View convertView)
-    {
+    public void initialize(View convertView) {
         this.request_button = (Button) convertView.findViewById(R.id.request_button);
         this.request_button.setOnClickListener(this);
 
@@ -65,8 +63,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.ad_banner_image = (ImageView) convertView.findViewById(R.id.ad_banner_image);
     }
 
-    public void cleanView()
-    {
+    public void cleanView() {
         this.ad_title_text.setText("");
         this.ad_description_text.setText("");
         this.adapter_name_text.setText("");
@@ -77,19 +74,16 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.ad_spinner.setVisibility(View.GONE);
     }
 
-    public void setRequestModel(CellRequestModel requestModel)
-    {
+    public void setRequestModel(CellRequestModel requestModel) {
         this.requestModel = requestModel;
         this.cleanView();
         this.renderAd();
     }
 
-    public void renderAd()
-    {
+    public void renderAd() {
         this.placement_id_text.setText("Placement ID: " + requestModel.placementID);
 
-        if (this.requestModel.adModel != null)
-        {
+        if (this.requestModel.adModel != null) {
             this.adapter_name_text.setText(this.requestModel.adModel.getClass().getSimpleName());
             this.ad_title_text.setText(this.requestModel.adModel.getTitle());
             this.ad_description_text.setText(this.requestModel.adModel.getDescription());
@@ -102,11 +96,9 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         Log.d(LOG_TAG, "onClick");
-        if (request_button.equals(v))
-        {
+        if (request_button.equals(v)) {
             this.cleanView();
             this.ad_spinner.setVisibility(View.VISIBLE);
             this.requestModel.request.start(context, this.requestModel.appToken, this.requestModel.placementID, this);
@@ -114,14 +106,12 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onRequestStarted(PubnativeNetworkRequest request)
-    {
+    public void onRequestStarted(PubnativeNetworkRequest request) {
         Log.d(LOG_TAG, "onRequestStarted");
     }
 
     @Override
-    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad)
-    {
+    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
         Log.d(LOG_TAG, "onRequestLoaded");
 
         this.ad_spinner.setVisibility(View.GONE);
@@ -130,8 +120,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception)
-    {
+    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception) {
         Log.d(LOG_TAG, "onRequestFailed: " + exception);
 
         Toast.makeText(this.context, exception.getMessage(), Toast.LENGTH_LONG).show();

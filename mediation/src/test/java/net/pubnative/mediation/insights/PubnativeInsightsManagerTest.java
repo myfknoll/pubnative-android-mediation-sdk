@@ -8,7 +8,6 @@ import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
 import net.pubnative.mediation.task.PubnativeHttpTask;
 
 import org.junit.Before;
@@ -28,10 +27,9 @@ import org.robolectric.annotation.Config;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 /**
  * Created by rahul on 8/9/15.
@@ -40,8 +38,8 @@ import static org.mockito.Mockito.never;
 @Config(constants = BuildConfig.class)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 @PrepareForTest(PubnativeInsightsManager.class)
-public class PubnativeInsightsManagerTest
-{
+public class PubnativeInsightsManagerTest {
+
     private PubnativeInsightDataModel insightDataModel = null;
     private Context                   appContext       = null;
     private String                    sampleURL        = "http://pubnative.net";
@@ -50,16 +48,14 @@ public class PubnativeInsightsManagerTest
     public PowerMockRule rule = new PowerMockRule();
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         this.appContext = RuntimeEnvironment.application.getApplicationContext();
         // Gson() gives error when mock/spy of PubnativeInsightDataModel
         this.insightDataModel = new PubnativeInsightDataModel();
     }
 
     @Test
-    public void trackDataWithVariousArguments() throws Exception
-    {
+    public void trackDataWithVariousArguments() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
 
         // stub the method trackNext to nothing.
@@ -81,8 +77,7 @@ public class PubnativeInsightsManagerTest
     }
 
     @Test
-    public void trackingDataIsQueued() throws Exception
-    {
+    public void trackingDataIsQueued() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
 
         // assert that the queue is empty at the beginning
@@ -100,8 +95,7 @@ public class PubnativeInsightsManagerTest
     }
 
     @Test
-    public void pendingAndFailedQueueIsEmptyAtBeginning()
-    {
+    public void pendingAndFailedQueueIsEmptyAtBeginning() {
         // assert that the failed items queue is empty at the beginning
         assertThat(PubnativeInsightsManager.dequeueInsightItem(this.appContext, PubnativeInsightsManager.INSIGHTS_FAILED_DATA)).isNull();
         // assert that the pending items queue is empty at the beginning
@@ -109,16 +103,13 @@ public class PubnativeInsightsManagerTest
     }
 
     @Test
-    public void failedTrackingRequestIsQueued() throws Exception
-    {
+    public void failedTrackingRequestIsQueued() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
 
         // stub the network call for failure case.
-        PowerMockito.doAnswer(new Answer()
-        {
+        PowerMockito.doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
+            public Object answer(InvocationOnMock invocation) throws Throwable {
                 PubnativeHttpTask.Listener listener = (PubnativeHttpTask.Listener) invocation.getArguments()[3];
                 listener.onHttpTaskFailed(mock(PubnativeHttpTask.class), "sample_error_mgs");
                 return null;
@@ -143,18 +134,15 @@ public class PubnativeInsightsManagerTest
     }
 
     @Test
-    public void trackingRequestQueuesClearedOnTrackingSuccess() throws Exception
-    {
+    public void trackingRequestQueuesClearedOnTrackingSuccess() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
 
         // stub the network call for success case.
-        PowerMockito.doAnswer(new Answer()
-        {
+        PowerMockito.doAnswer(new Answer() {
             @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable
-            {
-                PubnativeHttpTask.Listener listener = (PubnativeHttpTask.Listener) invocation.getArguments()[3];
-                PubnativeInsightsAPIResponseModel model = new PubnativeInsightsAPIResponseModel();
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                PubnativeHttpTask.Listener        listener = (PubnativeHttpTask.Listener) invocation.getArguments()[3];
+                PubnativeInsightsAPIResponseModel model    = new PubnativeInsightsAPIResponseModel();
                 model.status = PubnativeInsightsAPIResponseModel.Status.OK;
                 String result = new Gson().toJson(model);
                 listener.onHttpTaskFinished(mock(PubnativeHttpTask.class), result);
@@ -177,17 +165,16 @@ public class PubnativeInsightsManagerTest
     }
 
     @Test
-    public void networkCallNotHappeningWhenTrackerIsBusy() throws Exception
-    {
+    public void networkCallNotHappeningWhenTrackerIsBusy() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
         // marking tracker as busy
         PubnativeInsightsManager.idle = false;
 
         // skipping the network call
         PowerMockito.doNothing()
-                .when(PubnativeInsightsManager.class,
-                        "sendTrackingDataToServer",
-                        any(Context.class), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
+                    .when(PubnativeInsightsManager.class,
+                          "sendTrackingDataToServer",
+                          any(Context.class), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
 
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
         PubnativeInsightsManager.trackData(this.appContext, this.sampleURL, dataModel);

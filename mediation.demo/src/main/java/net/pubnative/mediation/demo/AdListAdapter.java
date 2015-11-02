@@ -11,23 +11,20 @@ import java.util.List;
 /**
  * Created by rahul on 3/9/15.
  */
-public class AdListAdapter extends ArrayAdapter<CellRequestModel>
-{
-    private static final String LOG_TAG     = "AdListAdapter";
+public class AdListAdapter extends ArrayAdapter<CellRequestModel> {
 
-    public AdListAdapter(Context context, int resource, List<CellRequestModel> objects)
-    {
+    private static final String LOG_TAG = "AdListAdapter";
+
+    public AdListAdapter(Context context, int resource, List<CellRequestModel> objects) {
         super(context, resource, objects);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup viewGroup)
-    {
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
         CellRequestModel requestModel = this.getItem(position);
-        AdViewHolder viewHolder;
+        AdViewHolder     viewHolder;
 
-        if (convertView == null)
-        {
+        if (convertView == null) {
             convertView = LayoutInflater.from(this.getContext()).inflate(R.layout.ad_list_cell, viewGroup, false);
             viewHolder = new AdViewHolder(this.getContext());
             viewHolder.initialize(convertView);

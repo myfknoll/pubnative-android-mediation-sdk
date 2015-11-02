@@ -16,8 +16,8 @@ import java.util.List;
 /**
  * Created by davidmartin on 24/08/15.
  */
-public class PubnativeInsightDataModel
-{
+public class PubnativeInsightDataModel {
+
     protected static final String CONNECTION_TYPE_CELLULAR = "cellular";
     protected static final String CONNECTION_TYPE_WIFI     = "wifi";
 
@@ -50,22 +50,18 @@ public class PubnativeInsightDataModel
      * Returns true if they are equal.
      * Returns false if they are not equal or not comparable.
      */
-    private boolean isEqual(Object first, Object second)
-    {
+    private boolean isEqual(Object first, Object second) {
         return (first != null) ? first.equals(second) : second == null;
     }
 
     @Override
-    public boolean equals(Object object)
-    {
-        if (this == object)
-        {
+    public boolean equals(Object object) {
+        if (this == object) {
             // return true immediately if both objects are identical.
             return true;
         }
 
-        if (!(object instanceof PubnativeInsightDataModel))
-        {
+        if (!(object instanceof PubnativeInsightDataModel)) {
             // return immediately if the object is of another class,
             // this is to avoid possible class cast exception in next line.
             return false;
@@ -75,132 +71,106 @@ public class PubnativeInsightDataModel
 
         boolean result = isEqual(this.network, dataModel.network);
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.attempted_networks, dataModel.attempted_networks);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.placement_name, dataModel.placement_name);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.pub_app_version, dataModel.pub_app_version);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.pub_app_bundle_id, dataModel.pub_app_bundle_id);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.os_version, dataModel.os_version);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.sdk_version, dataModel.sdk_version);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.user_uid, dataModel.user_uid);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.connection_type, dataModel.connection_type);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.device_name, dataModel.device_name);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.ad_format_code, dataModel.ad_format_code);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.creative_url, dataModel.creative_url);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.video_start, dataModel.video_start);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.video_complete, dataModel.video_complete);
         }
 
         // user info
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.age, dataModel.age);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.education, dataModel.education);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.interests, dataModel.interests);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.gender, dataModel.gender);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.iap, dataModel.iap);
         }
 
-        if (result)
-        {
+        if (result) {
             result = isEqual(this.iap_total, dataModel.iap_total);
         }
 
         return result;
     }
 
-    public void addInterest(String interest)
-    {
-        if (!TextUtils.isEmpty(interest))
-        {
-            if (this.interests == null)
-            {
+    public void addInterest(String interest) {
+        if (!TextUtils.isEmpty(interest)) {
+            if (this.interests == null) {
                 this.interests = new ArrayList();
             }
             this.interests.add(interest);
         }
     }
 
-    public void addAttemptedNetwork(String network)
-    {
-        if (!TextUtils.isEmpty(network))
-        {
-            if (this.attempted_networks == null)
-            {
+    public void addAttemptedNetwork(String network) {
+        if (!TextUtils.isEmpty(network)) {
+            if (this.attempted_networks == null) {
                 this.attempted_networks = new ArrayList();
             }
             this.attempted_networks.add(network);
         }
     }
 
-    public void reset()
-    {
+    public void reset() {
         this.network = null;
         this.attempted_networks = null;
     }
@@ -210,13 +180,10 @@ public class PubnativeInsightDataModel
      *
      * @param context valid Context object
      */
-    public void fillDefaults(Context context)
-    {
-        if (context != null)
-        {
+    public void fillDefaults(Context context) {
+        if (context != null) {
             PackageInfo info = PubnativeDeviceUtils.getPackageInfo(context);
-            if (info != null)
-            {
+            if (info != null) {
                 this.pub_app_version = info.versionName;
                 this.pub_app_bundle_id = info.packageName;
             }
@@ -226,21 +193,17 @@ public class PubnativeInsightDataModel
 
             // AAID
             String androidAdvertisingId = PubnativeDeviceUtils.getAndroidAdvertisingID(context);
-            if (androidAdvertisingId != null)
-            {
+            if (androidAdvertisingId != null) {
                 this.user_uid = androidAdvertisingId;
             }
 
             // Connection type
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if (connectivityManager != null)
-            {
+            if (connectivityManager != null) {
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                if (networkInfo != null && networkInfo.isConnected())
-                {
+                if (networkInfo != null && networkInfo.isConnected()) {
                     String connectionType = CONNECTION_TYPE_CELLULAR;
-                    if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI)
-                    {
+                    if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                         connectionType = CONNECTION_TYPE_WIFI;
                     }
                     this.connection_type = connectionType;

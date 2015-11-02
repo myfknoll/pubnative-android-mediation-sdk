@@ -40,64 +40,71 @@
             android:textColor="@android:color/white"
             android:textStyle="bold"/>
 
-        <ImageView
-            android:id="@+id/ad_icon_image"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/ad_adapter_name_text"/>
-
-        <TextView
-            android:id="@+id/ad_title_text"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center_vertical"
-            android:layout_toRightOf="@id/ad_icon_image"
-            android:layout_below="@+id/ad_adapter_name_text"
-            android:layout_marginLeft="5dp"/>
+            android:layout_height="match_parent"
 
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:id="@+id/ad_rating"
-            style="?android:attr/ratingBarStyleSmall"
-            android:numStars="5"
-            android:layout_alignLeft="@+id/ad_title_text"
-            android:layout_below="@+id/ad_title_text"
-            android:isIndicator="true"
-            android:visibility="gone"
-            android:layout_marginLeft="5dp"
-            android:stepSize="0.1"/>
+            android:layout_below="@+id/ad_adapter_name_text">
 
-        <ProgressBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/ad_spinner"
-            android:layout_alignBottom="@+id/ad_banner_image"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/ad_adapter_name_text"/>
+            <ImageView
+                android:id="@+id/ad_icon_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:layout_alignParentLeft="true"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:id="@+id/ad_banner_image"
-            android:layout_below="@+id/ad_icon_image"
-            android:layout_marginTop="5dp"/>
+            <TextView
+                android:id="@+id/ad_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:gravity="center_vertical"
+                android:layout_toRightOf="@id/ad_icon_image"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentRight="true" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ad_description_text"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@+id/ad_banner_image"
-            android:layout_alignParentRight="true"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_alignParentBottom="false"/>
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:id="@+id/ad_rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:numStars="5"
+                android:layout_alignLeft="@+id/ad_title_text"
+                android:layout_below="@+id/ad_title_text"
+                android:isIndicator="true"
+                android:visibility="gone"
+                android:layout_marginLeft="5dp"
+                android:stepSize="0.1"/>
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ad_spinner"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/ad_title_text"
+                android:layout_alignBottom="@+id/ad_description_text" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:id="@+id/ad_banner_image"
+                android:layout_below="@+id/ad_icon_image"
+                android:layout_marginTop="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ad_description_text"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/ad_banner_image"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentBottom="false"/>
+        </RelativeLayout>
 
     </RelativeLayout>
 

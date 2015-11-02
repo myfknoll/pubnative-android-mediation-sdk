@@ -14,61 +14,46 @@ import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener
-{
+public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener {
+
     protected final static String APP_TOKEN_KEY = "app_token";
 
-    public PubnativeLibraryNetworkAdapter(Map data)
-    {
+    public PubnativeLibraryNetworkAdapter(Map data) {
         super(data);
     }
 
     @Override
-    public void request(Context context)
-    {
-        if (context != null && data != null)
-        {
+    public void request(Context context) {
+        if (context != null && data != null) {
             String appToken = (String) data.get(APP_TOKEN_KEY);
-            if (!TextUtils.isEmpty(appToken))
-            {
+            if (!TextUtils.isEmpty(appToken)) {
                 createRequest(context, appToken);
-            }
-            else
-            {
+            } else {
                 invokeFailed(new Exception("Invalid app_token provided."));
             }
-        }
-        else
-        {
+        } else {
             invokeFailed(new Exception("No app_token provided."));
         }
     }
 
-    protected void createRequest(Context context, String appToken)
-    {
+    protected void createRequest(Context context, String appToken) {
         AdRequest request = new AdRequest(context);
         request.setParameter(Request.APP_TOKEN, appToken);
         request.start(AdRequest.Endpoint.NATIVE, this);
     }
 
     @Override
-    public void onAdRequestStarted(AdRequest request)
-    {
+    public void onAdRequestStarted(AdRequest request) {
         // Do nothing
     }
 
     @Override
-    public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads)
-    {
-        if (request == null || ads == null)
-        {
+    public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads) {
+        if (request == null || ads == null) {
             this.invokeFailed(new Exception("Invalid request object or ads found"));
-        }
-        else
-        {
+        } else {
             PubnativeAdModel wrapAd = null;
-            if (ads.size() > 0)
-            {
+            if (ads.size() > 0) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
             this.invokeLoaded(wrapAd);
@@ -76,8 +61,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     }
 
     @Override
-    public void onAdRequestFailed(AdRequest request, Exception ex)
-    {
+    public void onAdRequestFailed(AdRequest request, Exception ex) {
         this.invokeFailed(ex);
     }
 }

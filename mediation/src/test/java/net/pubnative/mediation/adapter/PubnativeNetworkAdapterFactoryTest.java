@@ -22,63 +22,53 @@ import static org.mockito.Mockito.mock;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class PubnativeNetworkAdapterFactoryTest
-{
+public class PubnativeNetworkAdapterFactoryTest {
+
     private PubnativeNetworkModel model;
 
 
     @Test
-    public void test_empty()
-    {
+    public void test_empty() {
         assertThat(true).isTrue();
     }
 
     @Before
-    public void setUp()
-    {
+    public void setUp() {
         model = new PubnativeNetworkModel();
     }
 
     @Test
-    public void createsAdaptersForPresentAdapters()
-    {
+    public void createsAdaptersForPresentAdapters() {
         List<String> adapters = PubnativeTestUtils.getClassesPackages(PubnativeNetworkAdapterFactory.NETWORK_PACKAGE);
-        for (String adapterName : adapters)
-        {
+        for (String adapterName : adapters) {
             model = new PubnativeNetworkModel();
             model.adapter = adapterName;
             model.params = mock(HashMap.class);
             PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
-            try
-            {
+            try {
                 assertThat(adapterInstance).isInstanceOf(Class.forName(PubnativeNetworkAdapterFactory.getPackageName(adapterName)));
-            }
-            catch (ClassNotFoundException e)
-            {
+            } catch (ClassNotFoundException e) {
                 fail("PubnativeNetworkAdapterFactory should be able to create all the network classes given the name");
             }
         }
     }
 
     @Test
-    public void createAdapterWithInvalidClassString()
-    {
+    public void createAdapterWithInvalidClassString() {
         model.adapter = "invalid_class_string";
         PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 
     @Test
-    public void createAdapterWithEmptyString()
-    {
+    public void createAdapterWithEmptyString() {
         model.adapter = "";
         PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 
     @Test
-    public void createAdapterWithNullString()
-    {
+    public void createAdapterWithNullString() {
         model.adapter = null;
         PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();

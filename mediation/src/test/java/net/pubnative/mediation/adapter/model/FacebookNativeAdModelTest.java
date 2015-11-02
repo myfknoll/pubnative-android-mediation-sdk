@@ -20,13 +20,12 @@ import static org.mockito.Mockito.spy;
  */
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-public class FacebookNativeAdModelTest
-{
+public class FacebookNativeAdModelTest {
+
     @Test
-    public void memberFunctionsWithNullNativeAdDoNotFail()
-    {
-        Context appContext = RuntimeEnvironment.application.getApplicationContext();
-        FacebookNativeAdModel adModel = spy(new FacebookNativeAdModel(null));
+    public void memberFunctionsWithNullNativeAdDoNotFail() {
+        Context               appContext = RuntimeEnvironment.application.getApplicationContext();
+        FacebookNativeAdModel adModel    = spy(new FacebookNativeAdModel(null));
 
         // verify getter methods returns null
         assertThat(adModel.getTitle()).isNull();
