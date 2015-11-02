@@ -99,7 +99,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     @Override
-    public View getPrivacyView() {
+    public View getAdvertisingDisclosureView(Context context) {
         return null;
     }
 

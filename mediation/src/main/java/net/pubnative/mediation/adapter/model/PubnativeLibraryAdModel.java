@@ -68,7 +68,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     }
 
     @Override
-    public View getPrivacyView() {
+    public View getAdvertisingDisclosureView(Context context) {
         return null;
     }
 

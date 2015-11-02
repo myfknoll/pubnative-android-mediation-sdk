@@ -87,8 +87,13 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     }
 
     @Override
-    public View getPrivacyView() {
-        return new AdChoicesView(this.context, this.nativeAd);
+    public View getAdvertisingDisclosureView(Context context) {
+        View result = null;
+        if (context != null && this.nativeAd != null) {
+            this.context = context;
+            return new AdChoicesView(this.context, this.nativeAd);
+        }
+        return result;
     }
 
     @Override

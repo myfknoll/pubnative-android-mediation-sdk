@@ -42,16 +42,18 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
 
-            android:layout_below="@+id/ad_adapter_name_text">
+            android:layout_below="@+id/ad_adapter_name_text"
+            android:id="@+id/ad_view_container">
 
             <ImageView
                 android:id="@+id/ad_icon_image"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:scaleType="centerCrop"
-                android:layout_alignParentLeft="true"/>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true" />
 
             <TextView
                 android:id="@+id/ad_title_text"
@@ -104,6 +106,20 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_alignParentBottom="false"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:id="@+id/privacy_container"
+            android:layout_margin="10dp"
+            android:layout_alignTop="@+id/ad_view_container"
+            android:layout_alignBottom="@+id/ad_view_container"
+            android:layout_alignLeft="@+id/ad_view_container"
+            android:layout_alignRight="@+id/ad_view_container">
+
         </RelativeLayout>
 
     </RelativeLayout>

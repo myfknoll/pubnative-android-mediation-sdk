@@ -3,6 +3,7 @@ package net.pubnative.mediation.demo;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,6 +36,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     protected Button         request_button;
 
     // Ad info
+    protected ViewGroup privacy_container;
     protected TextView  placement_id_text;
     protected TextView  adapter_name_text;
     protected TextView  ad_description_text;
@@ -48,11 +50,13 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     public void initialize(View convertView) {
+        this.privacy_container = (ViewGroup) convertView.findViewById(R.id.privacy_container);
+
         this.request_button = (Button) convertView.findViewById(R.id.request_button);
         this.request_button.setOnClickListener(this);
 
         this.ad_spinner = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        this.ad_container = (RelativeLayout) convertView.findViewById(R.id.ad_container);
+        this.ad_container = (RelativeLayout) convertView.findViewById(R.id.ad_view_container);
 
         this.ad_title_text = (TextView) convertView.findViewById(R.id.ad_title_text);
         this.ad_description_text = (TextView) convertView.findViewById(R.id.ad_description_text);
@@ -64,6 +68,7 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     public void cleanView() {
+        this.privacy_container.removeAllViews();
         this.ad_title_text.setText("");
         this.ad_description_text.setText("");
         this.adapter_name_text.setText("");
@@ -84,6 +89,11 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.placement_id_text.setText("Placement ID: " + requestModel.placementID);
 
         if (this.requestModel.adModel != null) {
+            View sponsorView = this.requestModel.adModel.getAdvertisingDisclosureView(this.context);
+            if (sponsorView != null) {
+                this.privacy_container.addView(sponsorView);
+            }
+
             this.adapter_name_text.setText(this.requestModel.adModel.getClass().getSimpleName());
             this.ad_title_text.setText(this.requestModel.adModel.getTitle());
             this.ad_description_text.setText(this.requestModel.adModel.getDescription());
