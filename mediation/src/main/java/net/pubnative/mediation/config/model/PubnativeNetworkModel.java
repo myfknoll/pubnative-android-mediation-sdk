@@ -29,5 +29,6 @@ public class PubnativeNetworkModel {
 
     public Map<String, String> params;
     public String              adapter;
+    public Boolean             crash_report;
     public Integer             timeout;
 }
