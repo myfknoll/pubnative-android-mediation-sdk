@@ -53,10 +53,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             if (!TextUtils.isEmpty(placementId)) {
                 this.createRequest(context, placementId);
             } else {
-                invokeFailed(new Exception("Invalid placement_id provided."));
+                invokeFailed(new IllegalArgumentException("Invalid placement_id provided."));
             }
         } else {
-            invokeFailed(new Exception("No placement id provided."));
+            invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
@@ -68,12 +68,17 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 
     @Override
     public void onError(Ad ad, AdError adError) {
+
         if (ad == this.nativeAd) {
-            String errorMessage = "Pubnative - Facebook adapter error: Unknown error";
             if (adError != null) {
-                errorMessage = adError.getErrorMessage();
+                if(adError == AdError.NO_FILL) {
+                    this.invokeLoaded(null);
+                } else {
+                    this.invokeFailed(new Exception("Facebook adapter error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
+                }
+            } else {
+                this.invokeFailed(new Exception("Facebook adapter error: Unknown"));
             }
-            this.invokeFailed(new Exception(errorMessage));
         }
     }
 

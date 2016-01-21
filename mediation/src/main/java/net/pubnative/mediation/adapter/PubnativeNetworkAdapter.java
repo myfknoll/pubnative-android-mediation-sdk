@@ -29,6 +29,7 @@ import android.os.Handler;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 public abstract class PubnativeNetworkAdapter {
 
@@ -42,13 +43,14 @@ public abstract class PubnativeNetworkAdapter {
         private PubnativeNetworkAdapter adapter;
 
         public PubnativeNetworkAdapterRunnable(PubnativeNetworkAdapter adapter) {
+
             this.adapter = adapter;
         }
 
         @Override
         public void run() {
             // Invoke failed and avoid more callbacks by setting listener to null
-            this.adapter.invokeFailed(new Exception("PubnativeNetworkAdapter.doRequest - adapter timeout"));
+            this.adapter.invokeFailed(new TimeoutException("PubnativeNetworkAdapter.doRequest - adapter timeout"));
             this.adapter.listener = null;
         }
     }
@@ -70,22 +72,35 @@ public abstract class PubnativeNetworkAdapter {
      * @param listener        lister to track the callbacks on adapter
      */
     public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener) {
-        if (context != null) {
-            if (listener != null) {
-                this.listener = listener;
+
+        if (listener != null) {
+
+            this.listener = listener;
+
+            if (context != null) {
+
                 this.invokeStart();
+
                 if (this.handler == null) {
+
                     this.handler = new Handler();
                 }
+
                 if (timeoutInMillis > 0) {
+
                     this.timeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
                     this.handler.postDelayed(this.timeoutRunnable, timeoutInMillis);
                 }
+
                 this.request(context);
+
             } else {
-                System.out.println("PubnativeNetworkAdapter.doRequest - listener not specified, dropping the call");
+
+                this.invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null argument provided"));
             }
+
         } else {
+
             System.out.println("PubnativeNetworkAdapter.doRequest - context not specified, dropping the call");
         }
     }
@@ -111,6 +126,7 @@ public abstract class PubnativeNetworkAdapter {
         if (this.listener != null) {
             this.listener.onAdapterRequestLoaded(this, ad);
         }
+        this.listener = null;
     }
 
     protected void invokeFailed(Exception exception) {
@@ -118,5 +134,6 @@ public abstract class PubnativeNetworkAdapter {
         if (this.listener != null) {
             this.listener.onAdapterRequestFailed(this, exception);
         }
+        this.listener = null;
     }
 }

@@ -56,13 +56,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 if (!TextUtils.isEmpty(adSpaceName)) {
                     this.createRequest(context, adSpaceName, apiKey);
                 } else {
-                    invokeFailed(new Exception("Invalid ad_space_name provided."));
+                    invokeFailed(new IllegalArgumentException("Invalid ad_space_name provided."));
                 }
             } else {
-                invokeFailed(new Exception("Invalid api_key provided."));
+                invokeFailed(new IllegalArgumentException("Invalid api_key provided."));
             }
         } else {
-            invokeFailed(new Exception("No context or adapter data provided."));
+            invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
@@ -95,13 +95,20 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
         this.endFlurrySession(this.context);
-        String errorMessage = "Pubnative - Flurry adapter error: Unknown error";
         if (flurryAdErrorType != null) {
-            errorMessage = "Pubnative - Flurry adapter Error" +
-                           " Type: " + flurryAdErrorType.name() +
-                           " Error Code: " + errCode;
+            switch (flurryAdErrorType) {
+                case FETCH: {
+                    this.invokeLoaded(null);
+                }
+                break;
+                default: {
+                    this.invokeFailed(new Exception("Flurry adapter error: " + flurryAdErrorType.name() + " - " + errCode));
+                }
+                break;
+            }
+        } else {
+            this.invokeFailed(new Exception("Flurry adapter error: Unknown"));
         }
-        this.invokeFailed(new Exception(errorMessage));
     }
 
     @Override

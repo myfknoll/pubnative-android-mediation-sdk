@@ -52,10 +52,10 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
             if (!TextUtils.isEmpty(appToken)) {
                 createRequest(context, appToken);
             } else {
-                invokeFailed(new Exception("Invalid app_token provided."));
+                invokeFailed(new IllegalArgumentException("Invalid app_token provided."));
             }
         } else {
-            invokeFailed(new Exception("No app_token provided."));
+            invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
@@ -72,11 +72,11 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
 
     @Override
     public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads) {
-        if (request == null || ads == null) {
-            this.invokeFailed(new Exception("Invalid request object or ads found"));
+        if (request == null ) {
+            this.invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
         } else {
             PubnativeAdModel wrapAd = null;
-            if (ads.size() > 0) {
+            if (ads != null && ads.size() > 0) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
             this.invokeLoaded(wrapAd);

@@ -34,7 +34,9 @@ import net.pubnative.mediation.R;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PubnativeInsightDataModel {
 
@@ -42,20 +44,21 @@ public class PubnativeInsightDataModel {
     protected static final String CONNECTION_TYPE_WIFI     = "wifi";
 
     // Tracking info
-    public String       network;
-    public List<String> attempted_networks;
-    public String       placement_name;
-    public String       pub_app_version;
-    public String       pub_app_bundle_id;
-    public String       os_version;
-    public String       sdk_version;
-    public String       user_uid; // android advertiser id
-    public String       connection_type; //typ “wifi” or “cellular"
-    public String       device_name;
-    public String       ad_format_code;
-    public String       creative_url; // Creative selected from the ad_format_code value of the config
-    public Boolean      video_start;
-    public Boolean      video_complete;
+    public String                                  network;
+    public List<String>                            attempted_networks;
+    public Map<String, PubnativeInsightCrashModel> crash_report;
+    public String                                  placement_name;
+    public String                                  pub_app_version;
+    public String                                  pub_app_bundle_id;
+    public String                                  os_version;
+    public String                                  sdk_version;
+    public String                                  user_uid; // android advertiser id
+    public String                                  connection_type; //typ “wifi” or “cellular"
+    public String                                  device_name;
+    public String                                  ad_format_code;
+    public String                                  creative_url; // Creative selected from the ad_format_code value of the config
+    public Boolean                                 video_start;
+    public Boolean                                 video_complete;
 
     // User info
     public Integer      age;
@@ -190,9 +193,27 @@ public class PubnativeInsightDataModel {
         }
     }
 
+    public void addCrashReport(String networkID, String error, String details) {
+
+        if (!TextUtils.isEmpty(error)) {
+
+            if (this.crash_report == null) {
+                this.crash_report = new HashMap<String, PubnativeInsightCrashModel>();
+            }
+
+            PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
+            crashModel.error = error;
+            crashModel.details = details;
+
+            this.crash_report.put(networkID, crashModel);
+        }
+    }
+
     public void reset() {
+
         this.network = null;
         this.attempted_networks = null;
+        this.crash_report = null;
     }
 
     /**
