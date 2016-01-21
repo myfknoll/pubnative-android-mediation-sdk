@@ -36,6 +36,7 @@ import org.robolectric.annotation.Config;
 
 import java.util.HashMap;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.after;
@@ -49,6 +50,31 @@ import static org.mockito.Mockito.verify;
 public class PubnativeNetworkAdapterTest {
 
     private static final int TIMEOUT_HALF_SECOND = 500;
+
+    @Test
+    public void invokeFinalCallbacksNullifyListener() {
+        HashMap<String, Object>         adapterConfigMock = mock(HashMap.class);
+        PubnativeNetworkAdapterListener listenerSpy       = spy(PubnativeNetworkAdapterListener.class);
+
+        PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
+            @Override
+            public void request(Context context) {
+                // Do nothing
+            }
+        });
+
+        // onRequestLoaded
+        adapterInstance.listener = listenerSpy;
+        PubnativeAdModel adMock = mock(PubnativeAdModel.class);
+        adapterInstance.invokeLoaded(adMock);
+        assertThat(adapterInstance.listener).isNull();
+
+        // onRequestFailed
+        adapterInstance.listener = listenerSpy;
+        Exception exceptionMock = mock(Exception.class);
+        adapterInstance.invokeFailed(exceptionMock);
+        assertThat(adapterInstance.listener).isNull();
+    }
 
     @Test
     public void invokeCallbacksWithValidListener() {
@@ -73,11 +99,12 @@ public class PubnativeNetworkAdapterTest {
         adapterInstance.invokeLoaded(adMock);
         verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterInstance), eq(adMock));
 
+        adapterInstance.listener = listenerSpy;
+
         // onRequestFailed
         Exception exceptionMock = mock(Exception.class);
         adapterInstance.invokeFailed(exceptionMock);
         verify(listenerSpy, times(1)).onAdapterRequestFailed(eq(adapterInstance), eq(exceptionMock));
-
     }
 
     @Test
