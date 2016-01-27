@@ -74,7 +74,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         verify(listenerSpy, times(1)).onAdapterRequestStarted(eq(adapterSpy));
         verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
         verify(listenerSpy, never()).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
@@ -94,9 +94,9 @@ public class PubnativeLibraryNetworkAdapterTest {
                 adapter.onAdRequestFailed(mock(AdRequest.class), mock(Exception.class));
                 return null;
             }
-        }).when(adapterSpy).createRequest(any(Context.class), anyString());
+        }).when(adapterSpy).createRequest(any(Context.class), anyString(), any(Map.class));
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -108,7 +108,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -120,7 +120,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -130,7 +130,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -140,7 +140,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -158,6 +158,6 @@ public class PubnativeLibraryNetworkAdapterTest {
                 adapter.onAdRequestFinished(mock(AdRequest.class), mock(ArrayList.class));
                 return null;
             }
-        }).when(adapterMock).createRequest(any(Context.class), anyString());
+        }).when(adapterMock).createRequest(any(Context.class), anyString(), any(Map.class));
     }
 }

@@ -43,11 +43,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     private Context context;
 
     public YahooNetworkAdapter(Map data) {
+
         super(data);
     }
 
     @Override
-    public void request(Context context) {
+    public void request(Context context, Map extras) {
+
         if (context != null && data != null) {
             this.context = context;
             String apiKey = (String) data.get(KEY_FLURRY_API_KEY);
@@ -67,6 +69,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     }
 
     protected void endFlurrySession(Context context) {
+
         FlurryAgent.onEndSession(context);
     }
 
@@ -87,6 +90,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
+
         this.endFlurrySession(this.context);
         FlurryNativeAdModel nativeAdModel = new FlurryNativeAdModel(flurryAdNative);
         this.invokeLoaded(nativeAdModel);
@@ -94,6 +98,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
+
         this.endFlurrySession(this.context);
         if (flurryAdErrorType != null) {
             switch (flurryAdErrorType) {

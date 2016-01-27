@@ -36,6 +36,7 @@ public abstract class PubnativeNetworkAdapter {
     protected PubnativeNetworkAdapterListener listener;
     protected PubnativeNetworkAdapterRunnable timeoutRunnable;
     protected Map                             data;
+    protected Map                             extras;
     protected Handler                         handler;
 
     protected class PubnativeNetworkAdapterRunnable implements Runnable {
@@ -71,7 +72,7 @@ public abstract class PubnativeNetworkAdapter {
      * @param timeoutInMillis timeout in milliseconds. time to wait for an adapter to respond.
      * @param listener        lister to track the callbacks on adapter
      */
-    public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener) {
+    public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapterListener listener, Map extras) {
 
         if (listener != null) {
 
@@ -92,7 +93,7 @@ public abstract class PubnativeNetworkAdapter {
                     this.handler.postDelayed(this.timeoutRunnable, timeoutInMillis);
                 }
 
-                this.request(context);
+                this.request(context, extras);
 
             } else {
 
@@ -105,7 +106,7 @@ public abstract class PubnativeNetworkAdapter {
         }
     }
 
-    public abstract void request(Context context);
+    public abstract void request(Context context, Map extras);
 
     // Helpers
 
