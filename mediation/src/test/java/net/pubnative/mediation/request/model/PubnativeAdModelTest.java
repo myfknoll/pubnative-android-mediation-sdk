@@ -84,8 +84,10 @@ public class PubnativeAdModelTest {
         modelSpy.context = this.appContext;
 
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
-        modelSpy.setTrackingInfo(dataModel, SAMPLE_URL, SAMPLE_URL, parametersMock);
-
+        modelSpy.setTrackingInfo(dataModel);
+        modelSpy.setTrackingClickData(SAMPLE_URL, parametersMock);
+        modelSpy.setTrackingImpressionData(SAMPLE_URL, parametersMock);
+        
         // Callbacks the setted up listener
         PubnativeAdModelListener listenerSpy = spy(PubnativeAdModelListener.class);
         modelSpy.setListener(listenerSpy);
