@@ -301,11 +301,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     // HELPERS
     protected void trackNetworkAttempt(String networkID, String error, String details) {
 
-        this.trackingModel.addAttemptedNetwork(networkID);
+        if(!TextUtils.isEmpty(networkID)) {
 
-        if (this.currentNetwork.crash_report) {
+            this.trackingModel.addAttemptedNetwork(networkID);
 
-            this.trackingModel.addCrashReport(networkID, error, details, this.adapterRequestStart, this.requestEnd);
+            if (this.currentNetwork.crash_report) {
+
+                this.trackingModel.addCrashReport(networkID, error, details, this.adapterRequestStart, this.requestEnd);
+            }
         }
     }
 
