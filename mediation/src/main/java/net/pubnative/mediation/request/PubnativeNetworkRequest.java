@@ -44,12 +44,16 @@ import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                                                 PubnativeConfigRequestListener {
 
-    protected static final String APP_TOKEN_PARAMETER = "?app_token=";
+    private static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
+    private static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
 
     protected Context                         context;
     protected PubnativeNetworkRequestListener listener;
@@ -62,6 +66,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     protected String                          currentNetworkID;
     protected PubnativeNetworkModel           currentNetwork;
     protected int                             currentNetworkIndex;
+    protected UUID                            requestID;
+    protected long                            placementRequestStart;
+    protected long                            adapterRequestStart;
+    protected long                            requestEnd;
 
     public PubnativeNetworkRequest() {
 
@@ -119,19 +127,29 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         this.appToken = appToken;
         this.placementID = placementID;
         this.context = context;
+        this.requestID = UUID.randomUUID();
+        this.placementRequestStart = 0;
+        this.adapterRequestStart = 0;
+        this.requestEnd = 0;
         this.currentNetworkIndex = 0;
 
         if (listener == null) {
+
             // Just drop the call
             System.out.println("PubnativeNetworkRequest.start - listener not specified, dropping the call");
             return;
         }
+
         this.listener = listener;
 
         this.invokeStart();
+
         if (this.context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
+
             this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - invalid start parameters"));
+
         } else {
+
             this.getConfig(context, appToken, this);
         }
     }
@@ -153,12 +171,19 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         this.config = configModel;
 
         if (this.config == null || this.config.isNullOrEmpty()) {
+
             this.invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - invalid config retrieved"));
+
         } else {
+
             if (this.config.placements.containsKey(placementID)) {
+
                 this.placement = this.config.placements.get(placementID);
+
                 if (this.placement != null && this.placement.delivery_rule != null) {
+
                     if (this.placement.delivery_rule.isActive()) {
+
                         new AsyncTask<Void, Void, Void>() {
 
                             @Override
@@ -178,14 +203,21 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
                                 PubnativeNetworkRequest.this.startRequest();
                             }
+
                         }.execute();
+
                     } else {
+
                         this.invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id not active"));
                     }
+
                 } else {
+
                     this.invokeFail(new Exception("PubnativeNetworkRequest.start - config error"));
                 }
+
             } else {
+
                 this.invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id not found"));
             }
         }
@@ -196,19 +228,30 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         PubnativeDeliveryRuleModel deliveryRuleModel = this.placement.delivery_rule;
 
         if (deliveryRuleModel.isFrequencyCapReached(context, this.placementID)) {
+
             this.invokeFail(new Exception("Pubnative - start error: (frequecy_cap) too many ads"));
+
         } else {
+
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(this.placementID);
+
             if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar)) {
+
                 // Pacing cap reset or deactivated or not reached
+                this.placementRequestStart = System.currentTimeMillis();
                 this.doNextNetworkRequest();
+
             } else {
+
                 // Pacing cap active and limit reached
                 // return the same ad during the pacing cap amount of time
                 if (this.ad == null) {
+
                     this.invokeFail(new Exception("Pubnative - start error: (pacing_cap) too many ads"));
+
                 } else {
+
                     this.invokeLoad(this.ad);
                 }
             }
@@ -235,7 +278,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
                 } else {
 
-                    adapter.doRequest(this.context, this.currentNetwork.timeout, this);
+                    // Add ML extras for adapter
+                    Map extras = new HashMap();
+                    extras.put(TRACKING_PARAMETER_REQUEST_ID, this.requestID.toString());
+                    adapter.doRequest(this.context, this.currentNetwork.timeout, this, extras);
                 }
 
             } else {
@@ -259,13 +305,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
         if (this.currentNetwork.crash_report) {
 
-            this.trackingModel.addCrashReport(networkID, error, details);
+            this.trackingModel.addCrashReport(networkID, error, details, this.adapterRequestStart, this.requestEnd);
         }
     }
 
     protected void invokeStart() {
 
         if (this.listener != null) {
+
             this.listener.onRequestStarted(this);
         }
     }
@@ -275,6 +322,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         this.trackRequestInsight();
 
         if (this.listener != null) {
+
             this.listener.onRequestLoaded(this, ad);
         }
     }
@@ -282,6 +330,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     protected void invokeFail(final Exception exception) {
 
         if (this.listener != null) {
+
             this.listener.onRequestFailed(this, exception);
         }
     }
@@ -289,12 +338,22 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     protected void trackRequestInsight() {
 
         if (this.config != null && ((this.trackingModel.attempted_networks != null && this.trackingModel.attempted_networks.size() > 0) || this.trackingModel.network != null)) {
+
             String requestURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.REQUEST_BEACON);
+
             if (!TextUtils.isEmpty(requestURL)) {
-                requestURL = requestURL + APP_TOKEN_PARAMETER + this.appToken;
-                PubnativeInsightsManager.trackData(this.context, requestURL, this.trackingModel);
+
+                PubnativeInsightsManager.trackData(this.context, requestURL, getTrackingParameters(), this.trackingModel);
             }
         }
+    }
+
+    protected Map<String, String> getTrackingParameters() {
+
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(TRACKING_PARAMETER_APP_TOKEN, this.appToken);
+        parameters.put(TRACKING_PARAMETER_REQUEST_ID, this.requestID.toString());
+        return parameters;
     }
 
     // CALLBACKS
@@ -302,36 +361,58 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     @Override
     public void onAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
-        // Do nothing
+
+        this.adapterRequestStart = System.currentTimeMillis();
     }
 
     @Override
     public void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad) {
 
-        if(ad == null) {
+        this.requestEnd = System.currentTimeMillis();
+
+        if (ad == null) {
 
             this.trackNetworkAttempt(this.currentNetworkID, PubnativeInsightCrashModel.ERROR_NO_FILL, "");
             this.doNextNetworkRequest();
 
         } else {
 
-
             this.ad = ad;
 
             this.trackingModel.network = this.currentNetworkID;
 
-            String impressionURL = null;
-            if (this.config.globals.containsKey(PubnativeConfigModel.ConfigContract.IMPRESSION_BEACON)) {
-                impressionURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.IMPRESSION_BEACON);
-                impressionURL = impressionURL + APP_TOKEN_PARAMETER + this.appToken;
-            }
-            String clickURL = null;
-            if (this.config.globals.containsKey(PubnativeConfigModel.ConfigContract.CLICK_BEACON)) {
-                clickURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.CLICK_BEACON);
-                clickURL = clickURL + APP_TOKEN_PARAMETER + this.appToken;
+            if(this.requestEnd > 0) {
+
+                if (this.placementRequestStart > 0) {
+
+                    this.trackingModel.placement_response_time = this.requestEnd - this.placementRequestStart;
+                }
+
+                if (this.adapterRequestStart > 0) {
+
+                    this.trackingModel.network_response_time = this.requestEnd - this.adapterRequestStart;
+                }
             }
 
-            this.ad.setTrackingInfo(this.trackingModel, impressionURL, clickURL);
+            this.ad.setTrackingInfo(this.trackingModel);
+
+            String impressionURL = null;
+
+            if (this.config.globals.containsKey(PubnativeConfigModel.ConfigContract.IMPRESSION_BEACON)) {
+
+                impressionURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.IMPRESSION_BEACON);
+            }
+
+            this.ad.setTrackingImpressionData(impressionURL, getTrackingParameters());
+
+            String clickURL = null;
+
+            if (this.config.globals.containsKey(PubnativeConfigModel.ConfigContract.CLICK_BEACON)) {
+
+                clickURL = (String) this.config.globals.get(PubnativeConfigModel.ConfigContract.CLICK_BEACON);
+            }
+
+            this.ad.setTrackingClickData(clickURL, getTrackingParameters());
 
             PubnativeDeliveryManager.updatePacingCalendar(this.trackingModel.placement_name);
             this.invokeLoad(ad);
@@ -341,21 +422,23 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     @Override
     public void onAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception) {
 
+        this.requestEnd = System.currentTimeMillis();
+
         System.out.println("Pubnative - adapter error: " + exception);
         // Waterfall to the next network
 
-        if(IllegalArgumentException.class.isAssignableFrom(exception.getClass())) {
+        String errorString = PubnativeInsightCrashModel.ERROR_ADAPTER;
 
-            this.trackNetworkAttempt(this.currentNetworkID, PubnativeInsightCrashModel.ERROR_CONFIG, exception.toString());
+        if (IllegalArgumentException.class.isAssignableFrom(exception.getClass())) {
 
-        } else if(TimeoutException.class.isAssignableFrom(exception.getClass())) {
+            errorString = PubnativeInsightCrashModel.ERROR_CONFIG;
 
-            this.trackNetworkAttempt(this.currentNetworkID, PubnativeInsightCrashModel.ERROR_TIMEOUT, exception.toString());
+        } else if (TimeoutException.class.isAssignableFrom(exception.getClass())) {
 
-        } else {
-
-            this.trackNetworkAttempt(this.currentNetworkID, PubnativeInsightCrashModel.ERROR_ADAPTER, exception.toString());
+            errorString = PubnativeInsightCrashModel.ERROR_TIMEOUT;
         }
+
+        this.trackNetworkAttempt(this.currentNetworkID, errorString, exception.toString());
 
         this.doNextNetworkRequest();
     }

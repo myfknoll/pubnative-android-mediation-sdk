@@ -46,22 +46,39 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     }
 
     @Override
-    public void request(Context context) {
+    public void request(Context context, Map extras) {
+
         if (context != null && data != null) {
+
             String appToken = (String) data.get(APP_TOKEN_KEY);
+
             if (!TextUtils.isEmpty(appToken)) {
-                createRequest(context, appToken);
+
+                createRequest(context, appToken, extras);
+
             } else {
+
                 invokeFailed(new IllegalArgumentException("Invalid app_token provided."));
             }
+
         } else {
             invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
-    protected void createRequest(Context context, String appToken) {
+    protected void createRequest(Context context, String appToken, Map<String, String> extras) {
         AdRequest request = new AdRequest(context);
         request.setParameter(Request.APP_TOKEN, appToken);
+
+        // Add extras
+        if(extras != null) {
+
+            for (String key : extras.keySet()) {
+
+                request.setParameter(key, extras.get(key));
+            }
+        }
+
         request.start(AdRequest.Endpoint.NATIVE, this);
     }
 

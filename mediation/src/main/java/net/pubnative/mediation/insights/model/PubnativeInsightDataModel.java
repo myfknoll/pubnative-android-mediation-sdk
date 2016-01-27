@@ -47,6 +47,8 @@ public class PubnativeInsightDataModel {
     public String                                  network;
     public List<String>                            attempted_networks;
     public Map<String, PubnativeInsightCrashModel> crash_report;
+    public Long                                    placement_response_time;
+    public Long                                    network_response_time;
     public String                                  placement_name;
     public String                                  pub_app_version;
     public String                                  pub_app_bundle_id;
@@ -74,11 +76,13 @@ public class PubnativeInsightDataModel {
      * Returns false if they are not equal or not comparable.
      */
     private boolean isEqual(Object first, Object second) {
+
         return (first != null) ? first.equals(second) : second == null;
     }
 
     @Override
     public boolean equals(Object object) {
+
         if (this == object) {
             // return true immediately if both objects are identical.
             return true;
@@ -96,6 +100,10 @@ public class PubnativeInsightDataModel {
 
         if (result) {
             result = isEqual(this.attempted_networks, dataModel.attempted_networks);
+        }
+
+        if (result) {
+            result = isEqual(this.crash_report, dataModel.crash_report);
         }
 
         if (result) {
@@ -147,7 +155,6 @@ public class PubnativeInsightDataModel {
         }
 
         // user info
-
         if (result) {
             result = isEqual(this.age, dataModel.age);
         }
@@ -176,26 +183,34 @@ public class PubnativeInsightDataModel {
     }
 
     public void addInterest(String interest) {
+
         if (!TextUtils.isEmpty(interest)) {
+
             if (this.interests == null) {
+
                 this.interests = new ArrayList();
             }
+
             this.interests.add(interest);
         }
     }
 
     public void addAttemptedNetwork(String network) {
+
         if (!TextUtils.isEmpty(network)) {
+
             if (this.attempted_networks == null) {
+
                 this.attempted_networks = new ArrayList();
             }
+
             this.attempted_networks.add(network);
         }
     }
 
-    public void addCrashReport(String networkID, String error, String details) {
+    public void addCrashReport(String networkID, String error, String details, long start, long end) {
 
-        if (!TextUtils.isEmpty(error)) {
+        if (!TextUtils.isEmpty(networkID) && !TextUtils.isEmpty(error)) {
 
             if (this.crash_report == null) {
                 this.crash_report = new HashMap<String, PubnativeInsightCrashModel>();
@@ -204,6 +219,8 @@ public class PubnativeInsightDataModel {
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
             crashModel.error = error;
             crashModel.details = details;
+            crashModel.start = start;
+            crashModel.end = end;
 
             this.crash_report.put(networkID, crashModel);
         }
@@ -222,29 +239,42 @@ public class PubnativeInsightDataModel {
      * @param context valid Context object
      */
     public void fillDefaults(Context context) {
+
         if (context != null) {
+
             PackageInfo info = PubnativeDeviceUtils.getPackageInfo(context);
+
             if (info != null) {
+
                 this.pub_app_version = info.versionName;
                 this.pub_app_bundle_id = info.packageName;
             }
+
             this.os_version = Build.VERSION.RELEASE;
             this.device_name = Build.MODEL;
             this.sdk_version = context.getResources().getString(R.string.version);
 
             // AAID
             String androidAdvertisingId = PubnativeDeviceUtils.getAndroidAdvertisingID(context);
+
             if (androidAdvertisingId != null) {
+
                 this.user_uid = androidAdvertisingId;
             }
 
             // Connection type
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
             if (connectivityManager != null) {
+
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
                 if (networkInfo != null && networkInfo.isConnected()) {
+
                     String connectionType = CONNECTION_TYPE_CELLULAR;
+
                     if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+
                         connectionType = CONNECTION_TYPE_WIFI;
                     }
                     this.connection_type = connectionType;

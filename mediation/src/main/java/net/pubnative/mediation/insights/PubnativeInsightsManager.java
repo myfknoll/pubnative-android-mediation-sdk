@@ -25,6 +25,7 @@ package net.pubnative.mediation.insights;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -38,12 +39,14 @@ import net.pubnative.mediation.task.PubnativeHttpTask;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class PubnativeInsightsManager {
 
     protected static final String INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
     protected static final String INSIGHTS_PENDING_DATA    = "pending_data";
     protected static final String INSIGHTS_FAILED_DATA     = "failed_data";
+    protected static final String PARAMETER_APP_TOKEN_KEY  = "app_token";
 
     protected static boolean idle = true;
 
@@ -54,9 +57,22 @@ public class PubnativeInsightsManager {
      * @param baseURL   the base URL of the tracking server
      * @param dataModel PubnativeInsightDataModel object with values filled in.
      */
-    public synchronized static void trackData(Context context, String baseURL, PubnativeInsightDataModel dataModel) {
+    public synchronized static void trackData(Context context, String baseURL, Map<String, String> parameters, PubnativeInsightDataModel dataModel) {
+
         if (context != null && !TextUtils.isEmpty(baseURL) && dataModel != null) {
-            PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(baseURL, dataModel);
+
+            Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
+
+            // Fill with passed parameters
+            if(parameters != null) {
+
+                for (String key : parameters.keySet()) {
+
+                    uriBuilder.appendQueryParameter(key, parameters.get(key));
+                }
+            }
+
+            PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
 
             // Enqueue failed
             List<PubnativeInsightRequestModel> failedList = PubnativeInsightsManager.getTrackingList(context, INSIGHTS_FAILED_DATA);
@@ -72,6 +88,7 @@ public class PubnativeInsightsManager {
     }
 
     protected synchronized static void trackNext(final Context context) {
+
         if (context != null && PubnativeInsightsManager.idle) {
             final PubnativeInsightRequestModel model = PubnativeInsightsManager.dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
             if (model != null) {
@@ -82,11 +99,13 @@ public class PubnativeInsightsManager {
 
                         @Override
                         public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
+
                             PubnativeInsightsManager.trackingFailed(context, model, errorMessage);
                         }
 
                         @Override
                         public void onHttpTaskFinished(PubnativeHttpTask task, String result) {
+
                             System.out.println("Pubnative result: " + result);
 
                             if (TextUtils.isEmpty(result)) {
@@ -117,6 +136,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpTask.Listener listener) {
+
         PubnativeHttpTask http = new PubnativeHttpTask(context);
         http.setPOSTData(trackingDataString);
         http.setListener(listener);
@@ -124,17 +144,20 @@ public class PubnativeInsightsManager {
     }
 
     protected static void trackingFailed(Context context, PubnativeInsightRequestModel model, String message) {
+
         PubnativeInsightsManager.enqueueInsightItem(context, INSIGHTS_FAILED_DATA, model);
         PubnativeInsightsManager.idle = true;
         PubnativeInsightsManager.trackNext(context);
     }
 
     protected static void trackingFinished(Context context, PubnativeInsightRequestModel model) {
+
         PubnativeInsightsManager.idle = true;
         PubnativeInsightsManager.trackNext(context);
     }
 
     protected static void enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model) {
+
         if (context != null && model != null) {
             List<PubnativeInsightRequestModel> pendingList = PubnativeInsightsManager.getTrackingList(context, listKey);
             if (pendingList == null) {
@@ -146,6 +169,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static void enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list) {
+
         if (context != null && list != null) {
             List<PubnativeInsightRequestModel> insightList = PubnativeInsightsManager.getTrackingList(context, listKey);
             if (insightList == null) {
@@ -157,6 +181,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static PubnativeInsightRequestModel dequeueInsightItem(Context context, String listKey) {
+
         PubnativeInsightRequestModel result = null;
         if (context != null) {
             List<PubnativeInsightRequestModel> pendingList = PubnativeInsightsManager.getTrackingList(context, listKey);
@@ -170,6 +195,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static List<PubnativeInsightRequestModel> getTrackingList(Context context, String listKey) {
+
         List<PubnativeInsightRequestModel> result = null;
         if (context != null) {
             SharedPreferences preferences = PubnativeInsightsManager.getSharedPreferences(context);
@@ -191,6 +217,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static void setTrackingList(Context context, String listKey, List<PubnativeInsightRequestModel> pendingList) {
+
         if (context != null) {
             SharedPreferences.Editor editor = PubnativeInsightsManager.getSharedPreferencesEditor(context);
             if (editor != null) {
@@ -208,6 +235,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
+
         SharedPreferences.Editor result      = null;
         SharedPreferences        preferences = PubnativeInsightsManager.getSharedPreferences(context);
         if (preferences != null) {
@@ -217,6 +245,7 @@ public class PubnativeInsightsManager {
     }
 
     protected static SharedPreferences getSharedPreferences(Context context) {
+
         SharedPreferences result = null;
         if (context != null) {
             result = context.getSharedPreferences(INSIGHTS_PREFERENCES_KEY, Context.MODE_PRIVATE);

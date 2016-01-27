@@ -42,12 +42,15 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.Map;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.anyString;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -71,16 +74,17 @@ public class PubnativeAdModelTest {
     public void callbacksOnlyFiresOnce() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
         // stub the method trackNext to nothing.
-        PowerMockito.doNothing().when(PubnativeInsightsManager.class, "trackData", any(Context.class), anyString(), any(PubnativeInsightDataModel.class));
+        PowerMockito.doNothing().when(PubnativeInsightsManager.class, "trackData", any(Context.class), anyString(), any(Map.class), any(PubnativeInsightDataModel.class));
 
         PowerMockito.spy(PubnativeDeliveryManager.class);
         PowerMockito.doNothing().when(PubnativeDeliveryManager.class, "logImpression", any(Context.class), anyString());
 
+        Map parametersMock = mock(Map.class);
         PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
         modelSpy.context = this.appContext;
 
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
-        modelSpy.setTrackingInfo(dataModel, SAMPLE_URL, SAMPLE_URL);
+        modelSpy.setTrackingInfo(dataModel, SAMPLE_URL, SAMPLE_URL, parametersMock);
 
         // Callbacks the setted up listener
         PubnativeAdModelListener listenerSpy = spy(PubnativeAdModelListener.class);
@@ -99,7 +103,7 @@ public class PubnativeAdModelTest {
 
         // track data called twice. once for each impression and click.
         PowerMockito.verifyStatic(times(2));
-        PubnativeInsightsManager.trackData(eq(appContext), eq(SAMPLE_URL), eq(dataModel));
+        PubnativeInsightsManager.trackData(eq(appContext), eq(SAMPLE_URL), eq(parametersMock), eq(dataModel));
 
         // log impression called only once.
         PowerMockito.verifyStatic(times(1));
