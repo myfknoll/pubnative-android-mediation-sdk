@@ -20,14 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-
 package net.pubnative.mediation.config.model;
 
+import java.util.List;
 import java.util.Map;
 
-public class PubnativePriorityRulesModel {
+public class PubnativePriorityRuleModel {
 
-    public int                 priority_rule_id;
+    public int                 id;
     public String              network_code;
     public Map<String, Object> params;
+    public List<Integer>       segment_ids;
 }

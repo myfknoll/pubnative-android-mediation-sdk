@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
@@ -68,8 +67,7 @@ public class PubnativeLibraryNetworkAdapterTest {
 
     @Test
     public void verifyCallbacksWithValidParams() {
-        Map<String, String> data = new HashMap();
-        data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, "test_app_token");
+        Map<String, String> data = mock(HashMap.class);
         PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
@@ -82,8 +80,7 @@ public class PubnativeLibraryNetworkAdapterTest {
 
     @Test
     public void verifyCallbacksOnPubnativeLibraryFailure() {
-        Map<String, String> data = new HashMap();
-        data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, "test_placement_id");
+        Map<String, String> data = mock(HashMap.class);
         PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         // stubbing the createRequest method to simulate facebook error.
@@ -94,31 +91,7 @@ public class PubnativeLibraryNetworkAdapterTest {
                 adapter.onAdRequestFailed(mock(AdRequest.class), mock(Exception.class));
                 return null;
             }
-        }).when(adapterSpy).createRequest(any(Context.class), anyString(), any(Map.class));
-
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
-        this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
-    }
-
-    @Test
-    public void verifyCallbacksWithEmptyAppTocken() {
-        Map<String, String> data = new HashMap();
-        data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, "");
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
-        PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
-        this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
-
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
-        this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
-    }
-
-    @Test
-    public void verifyCallbacksWithNullAppToken() {
-        Map<String, String> data = new HashMap();
-        data.put(PubnativeLibraryNetworkAdapter.APP_TOKEN_KEY, null);
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
-        PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
-        this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
+        }).when(adapterSpy).createRequest(any(Context.class), any(Map.class));
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy, null);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
@@ -158,6 +131,6 @@ public class PubnativeLibraryNetworkAdapterTest {
                 adapter.onAdRequestFinished(mock(AdRequest.class), mock(ArrayList.class));
                 return null;
             }
-        }).when(adapterMock).createRequest(any(Context.class), anyString(), any(Map.class));
+        }).when(adapterMock).createRequest(any(Context.class), any(Map.class));
     }
 }
