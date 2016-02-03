@@ -57,6 +57,7 @@ public class PubnativeInsightDataModel {
     public String                             creative_url; // Creative selected from the ad_format_code value of the config
     public Boolean                            video_start;
     public Boolean                            video_complete;
+    public Integer                            retry;
     // User info
     public Integer                            age;
     public String                             education;
@@ -162,23 +163,18 @@ public class PubnativeInsightDataModel {
 
     public void addNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime, PubnativeInsightCrashModel crashModel) {
 
-        if(priorityRuleModel != null) {
-
+        if (priorityRuleModel != null) {
             if (this.networks == null) {
                 this.networks = new ArrayList();
             }
-
             PubnativeInsightNetworkModel networkModel = new PubnativeInsightNetworkModel();
             networkModel.id = priorityRuleModel.network_code;
             networkModel.priority_rule_id = priorityRuleModel.id;
             networkModel.priority_segment_ids = priorityRuleModel.segment_ids;
             networkModel.response_time = responseTime;
-
-            if(crashModel != null) {
-
+            if (crashModel != null) {
                 networkModel.crash_report = crashModel;
             }
-
             this.networks.add(networkModel);
         }
     }
@@ -186,18 +182,16 @@ public class PubnativeInsightDataModel {
     public void addAttemptedNetwork(String network) {
 
         if (!TextUtils.isEmpty(network)) {
-
             if (this.attempted_networks == null) {
-
                 this.attempted_networks = new ArrayList();
             }
-
             this.attempted_networks.add(network);
         }
     }
 
     public void reset() {
 
+        this.retry = 0;
         this.network = null;
         this.networks = null;
         this.delivery_segment_ids = null;
@@ -217,6 +211,7 @@ public class PubnativeInsightDataModel {
                 this.pub_app_version = info.versionName;
                 this.pub_app_bundle_id = info.packageName;
             }
+            this.retry = 0;
             this.os_version = Build.VERSION.RELEASE;
             this.device_name = Build.MODEL;
             this.sdk_version = context.getResources().getString(R.string.version);
