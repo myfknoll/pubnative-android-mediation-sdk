@@ -137,36 +137,7 @@ public class PubnativeInsightsManagerTest {
         assertThat(PubnativeInsightsManager.dequeueInsightItem(this.appContext, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
     }
 
-    @Test
-    public void failedTrackingRequestIsQueued() throws Exception {
-        PowerMockito.spy(PubnativeInsightsManager.class);
-
-        // stub the network call for failure case.
-        PowerMockito.doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                PubnativeHttpTask.Listener listener = (PubnativeHttpTask.Listener) invocation.getArguments()[3];
-                listener.onHttpTaskFailed(mock(PubnativeHttpTask.class), "sample_error_mgs");
-                return null;
-            }
-        }).when(PubnativeInsightsManager.class,
-                "sendTrackingDataToServer",
-                any(Context.class), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
-
-        // call trackData
-        PubnativeInsightDataModel dataModel = this.insightDataModel;
-        PubnativeInsightsManager.trackData(this.appContext, this.sampleURL, mock(Map.class), dataModel);
-
-        // verify the trackingFinished is called
-        PowerMockito.verifyStatic(times(1));
-        PubnativeInsightsManager.trackingFailed(eq(this.appContext), any(PubnativeInsightRequestModel.class), any(String.class));
-
-        // assert that the failed items queue is not empty at the end
-        PubnativeInsightRequestModel requestModel = PubnativeInsightsManager.dequeueInsightItem(this.appContext, PubnativeInsightsManager.INSIGHTS_FAILED_DATA);
-        assertThat(requestModel).isNotNull();
-        // check is the dataModels are equal
-        assertThat(requestModel.dataModel.equals(dataModel)).isTrue();
-    }
+    // TODO: Test that ensures that a failing request is re-queued
 
     @Test
     public void trackingRequestQueuesClearedOnTrackingSuccess() throws Exception {

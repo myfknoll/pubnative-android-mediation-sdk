@@ -145,6 +145,8 @@ public class PubnativeInsightsManager {
 
     protected static void trackingFailed(Context context, PubnativeInsightRequestModel model, String message) {
 
+        // Add a retry
+        model.dataModel.retry = model.dataModel.retry + 1;
         PubnativeInsightsManager.enqueueInsightItem(context, INSIGHTS_FAILED_DATA, model);
         PubnativeInsightsManager.idle = true;
         PubnativeInsightsManager.trackNext(context);

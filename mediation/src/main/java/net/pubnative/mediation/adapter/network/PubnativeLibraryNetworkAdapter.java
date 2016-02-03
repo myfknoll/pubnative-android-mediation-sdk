@@ -24,22 +24,18 @@
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
-import android.text.TextUtils;
 
-import net.pubnative.library.PubnativeContract.Request;
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.library.request.AdRequest;
 import net.pubnative.library.request.AdRequestListener;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener {
-
-    protected final static String APP_TOKEN_KEY = "app_token";
 
     public PubnativeLibraryNetworkAdapter(Map data) {
         super(data);
@@ -48,27 +44,23 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void request(Context context, Map extras) {
 
-        if (context != null && data != null) {
+        if (context != null && this.data != null) {
 
-            String appToken = (String) data.get(APP_TOKEN_KEY);
-
-            if (!TextUtils.isEmpty(appToken)) {
-
-                createRequest(context, appToken, extras);
-
-            } else {
-
-                invokeFailed(new IllegalArgumentException("Invalid app_token provided."));
-            }
+            createRequest(context, extras);
 
         } else {
             invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
-    protected void createRequest(Context context, String appToken, Map<String, String> extras) {
+    protected void createRequest(Context context, Map<String, String> extras) {
         AdRequest request = new AdRequest(context);
-        request.setParameter(Request.APP_TOKEN, appToken);
+
+        // We add all params
+        for (Object key : this.data.keySet()) {
+            Object value = this.data.get(key);
+            request.setParameter((String)key, value.toString());
+        }
 
         // Add extras
         if(extras != null) {

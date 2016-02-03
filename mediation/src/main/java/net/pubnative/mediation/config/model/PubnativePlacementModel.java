@@ -27,9 +27,9 @@ import java.util.List;
 
 public class PubnativePlacementModel {
 
-    public String                            ad_format_code;
-    public List<PubnativePriorityRulesModel> priority_rules;
-    public PubnativeDeliveryRuleModel        delivery_rule;
+    public String                           ad_format_code;
+    public List<PubnativePriorityRuleModel> priority_rules;
+    public PubnativeDeliveryRuleModel       delivery_rule;
 
     public interface AdFormatCode {
 

@@ -12,6 +12,4 @@ public class PubnativeInsightCrashModel {
 
     public String error;
     public String details;
-    public long   start;
-    public long   end;
 }
