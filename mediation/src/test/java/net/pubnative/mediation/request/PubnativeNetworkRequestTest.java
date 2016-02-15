@@ -107,7 +107,8 @@ public class PubnativeNetworkRequestTest {
 
         // onRequestLoaded
         PubnativeAdModel adMock = spy(PubnativeAdModel.class);
-        requestSpy.invokeLoad(adMock);
+
+        requestSpy.invokeLoad(adMock, null);
         verify(listenerMock, times(1)).onRequestLoaded(eq(requestSpy), eq(adMock));
 
         // onRequestFailed
@@ -121,7 +122,7 @@ public class PubnativeNetworkRequestTest {
         // invoking method with a rguments when lister is null should not crash
         requestSpy.listener = null;
         requestSpy.invokeStart();
-        requestSpy.invokeLoad(spy(PubnativeAdModel.class));
+        requestSpy.invokeLoad(spy(PubnativeAdModel.class), null);
         requestSpy.invokeFail(mock(Exception.class));
     }
 
@@ -141,7 +142,7 @@ public class PubnativeNetworkRequestTest {
                 adapterListener.onAdapterRequestLoaded(adapterMock, modelMock);
                 return null;
             }
-        }).when(adapterMock).doRequest(any(Context.class), anyInt(), any(PubnativeNetworkAdapterListener.class), any(Map.class));
+        }).when(adapterMock).doRequest(any(Context.class), anyInt(), any(Map.class), any(PubnativeNetworkAdapterListener.class));
         // Stub Factory create to return my adapter mock
         PowerMockito.mockStatic(PubnativeNetworkAdapterFactory.class);
         when(PubnativeNetworkAdapterFactory.createAdapter(any(PubnativeNetworkModel.class))).thenReturn(adapterMock);
@@ -244,7 +245,7 @@ public class PubnativeNetworkRequestTest {
 
         PubnativeNetworkRequestListener listenerMock      = mock(PubnativeNetworkRequestListener.class);
         PubnativeNetworkRequest         networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        doNothing().when(networkRequestSpy).doNextNetworkRequest();
+        doNothing().when(networkRequestSpy).doNextNetworkRequest("test_string");
         networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
         networkRequestSpy.placementID = TEST_PLACEMENT_ID_VALID;
         networkRequestSpy.context = this.applicationContext;
@@ -273,7 +274,7 @@ public class PubnativeNetworkRequestTest {
         PubnativeNetworkRequestListener listenerMock = mock(PubnativeNetworkRequestListener.class);
 
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        doNothing().when(networkRequestSpy).doNextNetworkRequest();
+        doNothing().when(networkRequestSpy).doNextNetworkRequest(anyString());
         networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
         networkRequestSpy.placementID = TEST_PLACEMENT_ID_VALID;
         networkRequestSpy.context = this.applicationContext;
@@ -291,11 +292,13 @@ public class PubnativeNetworkRequestTest {
     @Test
     public void sendsRequestInsightOnLoaded() {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        doNothing().when(networkRequestSpy).trackRequestInsight();
+        doNothing().when(networkRequestSpy).trackRequestInsight(anyString());
 
-        networkRequestSpy.invokeLoad(null);
+        String testString = "test_string";
 
-        verify(networkRequestSpy, times(1)).trackRequestInsight();
+        networkRequestSpy.invokeLoad(null, testString);
+
+        verify(networkRequestSpy, times(1)).trackRequestInsight(eq(testString));
     }
 
     @Test
@@ -303,19 +306,20 @@ public class PubnativeNetworkRequestTest {
         PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", TEST_APP_TOKEN);
 
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        doNothing().when(networkRequestSpy).trackRequestInsight();
+        String testString = "test_string";
+        doNothing().when(networkRequestSpy).trackRequestInsight(anyString());
 
         // Empty priority rules
         PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(this.applicationContext);
         networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
         networkRequestSpy.placement.priority_rules.clear();
-        networkRequestSpy.doNextNetworkRequest();
+        networkRequestSpy.doNextNetworkRequest(testString);
 
         // No more networks available
         networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
         networkRequestSpy.currentNetworkIndex = Integer.MAX_VALUE;
-        networkRequestSpy.doNextNetworkRequest();
+        networkRequestSpy.doNextNetworkRequest(testString);
 
-        verify(networkRequestSpy, times(2)).trackRequestInsight();
+        verify(networkRequestSpy, times(2)).trackRequestInsight(eq(testString));
     }
 }

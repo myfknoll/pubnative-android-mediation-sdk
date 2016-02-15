@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class PubnativeInsightNetworkModel {
 
-    public String                     id;
+    public String                     code;
     public int                        priority_rule_id;
     public List<Integer>              priority_segment_ids;
     public long                       response_time;

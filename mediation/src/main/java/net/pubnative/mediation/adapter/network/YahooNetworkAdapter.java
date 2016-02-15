@@ -48,7 +48,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     }
 
     @Override
-    public void request(Context context, Map extras) {
+    public void request(Context context) {
 
         if (context != null && data != null) {
             this.context = context;

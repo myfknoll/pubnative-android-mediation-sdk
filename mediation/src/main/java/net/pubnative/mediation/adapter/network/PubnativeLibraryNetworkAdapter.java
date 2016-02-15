@@ -42,18 +42,18 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     }
 
     @Override
-    public void request(Context context, Map extras) {
+    public void request(Context context) {
 
         if (context != null && this.data != null) {
 
-            createRequest(context, extras);
+            createRequest(context);
 
         } else {
             invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
-    protected void createRequest(Context context, Map<String, String> extras) {
+    protected void createRequest(Context context) {
         AdRequest request = new AdRequest(context);
 
         // We add all params
@@ -62,12 +62,14 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
             request.setParameter((String)key, value.toString());
         }
 
+        Map<String, String> extraMap = getExtras();
+
         // Add extras
-        if(extras != null) {
+        if(extraMap != null) {
 
-            for (String key : extras.keySet()) {
+            for (String key : extraMap.keySet()) {
 
-                request.setParameter(key, extras.get(key));
+                request.setParameter(key, extraMap.get(key));
             }
         }
 

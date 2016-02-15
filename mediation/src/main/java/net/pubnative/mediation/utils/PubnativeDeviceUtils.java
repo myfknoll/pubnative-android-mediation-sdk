@@ -25,6 +25,7 @@ package net.pubnative.mediation.utils;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.net.ConnectivityManager;
 
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 
@@ -67,4 +68,15 @@ public class PubnativeDeviceUtils {
         }
         return androidAdvertisingID;
     }
+
+    /**
+     * Checks if the current network is available and connected to ineternet
+     * @param context
+     * @return true if it's available and connected
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
 }

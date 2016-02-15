@@ -35,7 +35,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -59,7 +58,7 @@ public class PubnativeNetworkAdapterTest {
 
         PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
             @Override
-            public void request(Context context, Map extras) {
+            public void request(Context context) {
                 // Do nothing
             }
         });
@@ -84,7 +83,7 @@ public class PubnativeNetworkAdapterTest {
 
         PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
             @Override
-            public void request(Context context, Map extras) {
+            public void request(Context context) {
                 // Do nothing
             }
         });
@@ -114,7 +113,7 @@ public class PubnativeNetworkAdapterTest {
         PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
 
             @Override
-            public void request(Context context, Map extras) {
+            public void request(Context context) {
 
             }
         });
@@ -130,12 +129,12 @@ public class PubnativeNetworkAdapterTest {
         PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
         PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(null) {
             @Override
-            public void request(Context context, Map extras) {
+            public void request(Context context) {
                 // Do nothing, doRequest should timeout
             }
         });
 
-        adapterSpy.doRequest(mock(Context.class), TIMEOUT_HALF_SECOND, listenerSpy, null);
+        adapterSpy.doRequest(mock(Context.class), TIMEOUT_HALF_SECOND, null, listenerSpy);
         Robolectric.flushForegroundThreadScheduler();
 
         verify(listenerSpy, times(1)).onAdapterRequestStarted(eq(adapterSpy));
