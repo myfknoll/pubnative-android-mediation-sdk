@@ -43,6 +43,7 @@ public class PubnativeInsightDataModel {
     // Tracking info
     public String                             network;
     public List<String>                       attempted_networks;
+    public List<String>                       unreachable_networks;
     public List<Integer>                      delivery_segment_ids;
     public List<PubnativeInsightNetworkModel> networks;
     public String                             placement_name;
@@ -168,7 +169,7 @@ public class PubnativeInsightDataModel {
                 this.networks = new ArrayList();
             }
             PubnativeInsightNetworkModel networkModel = new PubnativeInsightNetworkModel();
-            networkModel.id = priorityRuleModel.network_code;
+            networkModel.code = priorityRuleModel.network_code;
             networkModel.priority_rule_id = priorityRuleModel.id;
             networkModel.priority_segment_ids = priorityRuleModel.segment_ids;
             networkModel.response_time = responseTime;
@@ -189,6 +190,16 @@ public class PubnativeInsightDataModel {
         }
     }
 
+    public void addUnreachableNetwork(String network) {
+
+        if (!TextUtils.isEmpty(network)) {
+            if (this.unreachable_networks == null) {
+                this.unreachable_networks = new ArrayList();
+            }
+            this.unreachable_networks.add(network);
+        }
+    }
+
     public void reset() {
 
         this.retry = 0;
@@ -196,6 +207,7 @@ public class PubnativeInsightDataModel {
         this.networks = null;
         this.delivery_segment_ids = null;
         this.attempted_networks = null;
+        this.unreachable_networks = null;
     }
 
     /**
