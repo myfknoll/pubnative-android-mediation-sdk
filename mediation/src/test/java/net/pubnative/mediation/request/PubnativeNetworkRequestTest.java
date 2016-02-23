@@ -77,7 +77,7 @@ public class PubnativeNetworkRequestTest {
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 
-    final static String TEST_PLACEMENT_ID_INVALID = "placement";
+    final static String TEST_PLACEMENT_ID_INVALID = "mPlacement";
     final static String TEST_PLACEMENT_ID_VALID   = "1";
     final static String TEST_APP_TOKEN            = "app_token";
 
@@ -99,7 +99,7 @@ public class PubnativeNetworkRequestTest {
 
     @Test
     public void invokeCallbacksWithValidListener() {
-        requestSpy.listener = listenerMock;
+        requestSpy.mListener = listenerMock;
 
         // onRequestStarted
         requestSpy.invokeStart();
@@ -120,7 +120,7 @@ public class PubnativeNetworkRequestTest {
     @Test
     public void invokeCallbacksWithNullListener() {
         // invoking method with a rguments when lister is null should not crash
-        requestSpy.listener = null;
+        requestSpy.mListener = null;
         requestSpy.invokeStart();
         requestSpy.invokeLoad(spy(PubnativeAdModel.class), null);
         requestSpy.invokeFail(mock(Exception.class));
@@ -132,7 +132,7 @@ public class PubnativeNetworkRequestTest {
 
         final PubnativeAdModel        modelMock   = spy(PubnativeAdModel.class);
         final PubnativeNetworkAdapter adapterMock = mock(PubnativeNetworkAdapter.class);
-        // Stub Adapter doRequest to callback the listener directly
+        // Stub Adapter doRequest to callback the mListener directly
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -209,9 +209,9 @@ public class PubnativeNetworkRequestTest {
         requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, this.listenerMock);
         verify(listenerMock, times(1)).onRequestStarted(eq(requestSpy));
         /**
-         * Request with empty config need not fail all the time.
-         * When a config is nullOrEmpty, the config in disc gets cleared.
-         * This leads to a config download next time. If the download fails,
+         * Request with empty mConfig need not fail all the time.
+         * When a mConfig is nullOrEmpty, the mConfig in disc gets cleared.
+         * This leads to a mConfig download next time. If the download fails,
          * then the onRequestFailed will get called.
          * // verify(listenerMock, times(1)).onRequestFailed(eq(requestSpy), any(IllegalArgumentException.class));
          */
@@ -246,10 +246,10 @@ public class PubnativeNetworkRequestTest {
         PubnativeNetworkRequestListener listenerMock      = mock(PubnativeNetworkRequestListener.class);
         PubnativeNetworkRequest         networkRequestSpy = spy(PubnativeNetworkRequest.class);
         doNothing().when(networkRequestSpy).doNextNetworkRequest("test_string");
-        networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
-        networkRequestSpy.placementID = TEST_PLACEMENT_ID_VALID;
-        networkRequestSpy.context = this.applicationContext;
-        networkRequestSpy.listener = listenerMock;
+        networkRequestSpy.mPlacement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
+        networkRequestSpy.mPlacementID = TEST_PLACEMENT_ID_VALID;
+        networkRequestSpy.mContext = this.applicationContext;
+        networkRequestSpy.mListener = listenerMock;
 
         PubnativeDeliveryManager.logImpression(this.applicationContext, TEST_PLACEMENT_ID_VALID);
         networkRequestSpy.startRequest();
@@ -275,10 +275,10 @@ public class PubnativeNetworkRequestTest {
 
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         doNothing().when(networkRequestSpy).doNextNetworkRequest(anyString());
-        networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
-        networkRequestSpy.placementID = TEST_PLACEMENT_ID_VALID;
-        networkRequestSpy.context = this.applicationContext;
-        networkRequestSpy.listener = listenerMock;
+        networkRequestSpy.mPlacement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
+        networkRequestSpy.mPlacementID = TEST_PLACEMENT_ID_VALID;
+        networkRequestSpy.mContext = this.applicationContext;
+        networkRequestSpy.mListener = listenerMock;
 
         PubnativeDeliveryManager.logImpression(this.applicationContext, TEST_PLACEMENT_ID_VALID);
         Calendar currentCalendar = Calendar.getInstance();
@@ -311,13 +311,13 @@ public class PubnativeNetworkRequestTest {
 
         // Empty priority rules
         PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(this.applicationContext);
-        networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
-        networkRequestSpy.placement.priority_rules.clear();
+        networkRequestSpy.mPlacement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
+        networkRequestSpy.mPlacement.priority_rules.clear();
         networkRequestSpy.doNextNetworkRequest(testString);
 
         // No more networks available
-        networkRequestSpy.placement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
-        networkRequestSpy.currentNetworkIndex = Integer.MAX_VALUE;
+        networkRequestSpy.mPlacement = configModel.placements.get(TEST_PLACEMENT_ID_VALID);
+        networkRequestSpy.mCurrentNetworkIndex = Integer.MAX_VALUE;
         networkRequestSpy.doNextNetworkRequest(testString);
 
         verify(networkRequestSpy, times(2)).trackRequestInsight(eq(testString));

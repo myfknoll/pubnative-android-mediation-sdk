@@ -37,4 +37,13 @@ public class PubnativePlacementModel {
         String NATIVE_BANNER = "banner";
         String VIDEO         = "video";
     }
+
+    public PubnativePriorityRuleModel getPriorityRule(int index) {
+
+        PubnativePriorityRuleModel result = null;
+        if (this.priority_rules != null && this.priority_rules.size() > index) {
+            result = this.priority_rules.get(index);
+        }
+        return result;
+    }
 }
