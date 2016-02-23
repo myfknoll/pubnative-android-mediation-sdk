@@ -24,6 +24,7 @@ package net.pubnative.mediation.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
