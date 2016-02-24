@@ -77,9 +77,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
      * Starts a new mAd request.
      *
      * @param context     valid Context object.
-     * @param appToken    valid mAppToken provided by Pubnative.
+     * @param appToken    valid AppToken provided by Pubnative.
      * @param placementID valid placementId provided by Pubnative.
-     * @param listener    valid mListener to keep track of request callbacks.
+     * @param listener    valid Listener to keep track of request callbacks.
      */
     public void start(Context context, String appToken, String placementID, PubnativeNetworkRequestListener listener) {
 
