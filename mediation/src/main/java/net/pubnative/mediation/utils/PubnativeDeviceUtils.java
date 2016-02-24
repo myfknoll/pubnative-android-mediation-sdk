@@ -27,8 +27,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
 
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-
 public class PubnativeDeviceUtils {
 
     /**
@@ -55,7 +53,7 @@ public class PubnativeDeviceUtils {
      * @return android advertising id if available, else null.
      */
     public static String getAndroidAdvertisingID(Context context) {
-        AdvertisingIdClient.Info adInfo = null;
+        AdvertisingIdClient.AdInfo adInfo = null;
         try {
             adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
         } catch (Exception e) {
