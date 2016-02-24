@@ -41,6 +41,44 @@ public class PubnativeConfigModel {
     }
 
     public boolean isNullOrEmpty() {
+
         return this.networks == null || this.placements == null || this.networks.size() == 0 || this.placements.size() == 0;
+    }
+
+    public Object getGlobal(String globalKey) {
+
+        Object result = null;
+        if(this.globals != null) {
+            result = this.globals.get(globalKey);
+        }
+        return result;
+    }
+
+    public PubnativePlacementModel getPlacement(String placementID) {
+
+        PubnativePlacementModel result = null;
+        if (this.placements != null) {
+            result = this.placements.get(placementID);
+        }
+        return result;
+    }
+
+    public PubnativeNetworkModel getNetwork(String networkID) {
+
+        PubnativeNetworkModel result = null;
+        if (this.networks != null) {
+            result = this.networks.get(networkID);
+        }
+        return result;
+    }
+
+    public PubnativePriorityRuleModel getPriorityRule(String placementID, int index) {
+
+        PubnativePriorityRuleModel result    = null;
+        PubnativePlacementModel    placement = getPlacement(placementID);
+        if (placement != null) {
+            result = placement.getPriorityRule(index);
+        }
+        return result;
     }
 }

@@ -70,7 +70,7 @@ public class PubnativeDeviceUtils {
     }
 
     /**
-     * Checks if the current network is available and connected to ineternet
+     * Checks if the current network is available and connected to internet
      * @param context
      * @return true if it's available and connected
      */
