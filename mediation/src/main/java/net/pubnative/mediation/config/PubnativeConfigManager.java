@@ -26,12 +26,13 @@ package net.pubnative.mediation.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
 import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
-import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
+import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
 import net.pubnative.mediation.task.PubnativeHttpTask;
@@ -42,6 +43,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class PubnativeConfigManager {
+
+    private static String TAG = PubnativeConfigManager.class.getSimpleName();
 
     protected static final String SHARED_PREFERENCES_CONFIG = "net.pubnative.mediation";
     protected static final String CONFIG_STRING_KEY         = "config";
@@ -67,6 +70,9 @@ public class PubnativeConfigManager {
      * @param listener listener to be used for tracking the config loaded callback
      */
     public synchronized static void getConfig(Context context, String appToken, PubnativeConfigRequestListener listener) {
+
+        Log.v(TAG, "getConfig(Context context, String appToken = " + appToken + ", PubnativeConfigRequestListener listener)");
+
         if (context != null && !TextUtils.isEmpty(appToken)) {
             if (listener != null) {
                 PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
@@ -83,6 +89,9 @@ public class PubnativeConfigManager {
     }
 
     private static void doNextConfigRequest() {
+
+        Log.v(TAG, "doNextConfigRequest()");
+
         if (PubnativeConfigManager.sIdle) {
             PubnativeConfigRequestModel item = PubnativeConfigManager.dequeueRequest();
             if (item != null) {
@@ -93,6 +102,9 @@ public class PubnativeConfigManager {
     }
 
     protected static void enqueueRequest(PubnativeConfigRequestModel item) {
+
+        Log.v(TAG, "enqueueRequest(PubnativeConfigRequestModel item)");
+
         if (item != null) {
             if (PubnativeConfigManager.sQueue == null) {
                 PubnativeConfigManager.sQueue = new ArrayList<PubnativeConfigRequestModel>();
@@ -103,6 +115,9 @@ public class PubnativeConfigManager {
     }
 
     protected static PubnativeConfigRequestModel dequeueRequest() {
+
+        Log.v(TAG, "dequeueRequest()");
+
         PubnativeConfigRequestModel result = null;
         if (PubnativeConfigManager.sQueue != null && PubnativeConfigManager.sQueue.size() > 0) {
             result = PubnativeConfigManager.sQueue.remove(0);
@@ -111,6 +126,9 @@ public class PubnativeConfigManager {
     }
 
     private static void getNextConfig(Context context, String appToken, PubnativeConfigRequestListener listener) {
+
+        Log.v(TAG, "getNextConfig(Context context, String appToken = " + appToken + ", PubnativeConfigRequestListener listener)");
+
         if (context != null && !TextUtils.isEmpty(appToken)) {
             // Downloads if needed
             if (PubnativeConfigManager.configNeedsUpdate(context, appToken)) {
@@ -142,7 +160,7 @@ public class PubnativeConfigManager {
             try {
                 currentConfig = new Gson().fromJson(configString, PubnativeConfigModel.class);
             } catch (Exception e) {
-                System.out.println("PubnativeConfigManager.getConfig - Error:" + e);
+                Log.e(TAG, "getStoredConfig - Error: " + e);
             }
         }
 
@@ -163,6 +181,9 @@ public class PubnativeConfigManager {
     }
 
     protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel) {
+
+        Log.v(TAG, "updateConfig(Context context, String appToken = " + appToken + ", PubnativeConfigModel configModel)");
+
         if (context != null && !TextUtils.isEmpty(appToken)) {
             if (configModel != null && !configModel.isNullOrEmpty()) {
                 PubnativeConfigManager.setStoredConfig(context, configModel);
@@ -182,6 +203,9 @@ public class PubnativeConfigManager {
     }
 
     protected synchronized static void downloadConfig(final Context context, final PubnativeConfigRequestListener listener, final String appToken) {
+
+        Log.v(TAG, "downloadConfig(final Context context, final PubnativeConfigRequestListener listener, final String appToken = " + appToken + ")");
+
         if (context != null && !TextUtils.isEmpty(appToken)) {
             String downloadURLString = PubnativeConfigManager.getConfigDownloadBaseUrl(context) + APP_TOKEN_KEY + appToken;
 
@@ -205,6 +229,9 @@ public class PubnativeConfigManager {
     }
 
     protected static void processConfigDownloadResponse(Context context, String appToken, String result) {
+
+        Log.v(TAG, "processConfigDownloadResponse(Context context, String appToken = " + appToken + ", String result = " + result + ")");
+
         if (!TextUtils.isEmpty(result)) {
             try {
                 PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
@@ -217,15 +244,18 @@ public class PubnativeConfigManager {
                         PubnativeConfigManager.updateConfig(context, appToken, response.config);
                     }
                 } else {
-                    System.out.println("PubnativeConfigManager.downloadConfig - Error:" + response.error_message);
+                    Log.e(TAG, "downloadConfig - Error: " + response.error_message);
                 }
             } catch (Exception e) {
-                System.out.println("PubnativeConfigManager.downloadConfig - Error:" + e);
+                Log.e(TAG, "downloadConfig - Error: " + e);
             }
         }
     }
 
     protected static boolean configNeedsUpdate(Context context, String appToken) {
+
+        Log.v(TAG, "configNeedsUpdate(Context context, String appToken = " + appToken + ")");
+
         boolean result = false;
 
         if (context != null) {
@@ -261,16 +291,23 @@ public class PubnativeConfigManager {
     }
 
     private static void updateDeliveryManagerCache(Context context, PubnativeConfigModel downloadedConfig) {
+
+        Log.v(TAG, "updateDeliveryManagerCache(Context context, PubnativeConfigModel downloadedConfig)");
+
         if (downloadedConfig != null) {
             PubnativeConfigModel storedConfig = PubnativeConfigManager.getStoredConfig(context);
+
             if (storedConfig != null) {
                 Set<String> storePlacementIds = storedConfig.placements.keySet();
+
                 for (String placementId : storePlacementIds) {
                     // check if new config contains that placement.
                     PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
+
                     if (newPlacement != null) {
                         // compare the delivery rule of the new placement with the stored one.
                         PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
+
                         if (storedPlacement != null) {
                             if (storedPlacement.delivery_rule != null && newPlacement.delivery_rule != null) {
                                 // check if impression cap (hour) changed

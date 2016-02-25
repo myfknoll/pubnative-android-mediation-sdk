@@ -25,6 +25,7 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.flurry.android.ads.FlurryAdErrorType;
@@ -38,6 +39,8 @@ import java.util.Map;
 
 public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements FlurryAdNativeListener {
 
+    private static String TAG = YahooNetworkAdapter.class.getSimpleName();
+
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
     private Context mContext;
@@ -49,6 +52,8 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     @Override
     public void request(Context context) {
+
+        Log.v(TAG, "request(Context context)");
 
         if (context != null && mData != null) {
             mContext = context;
@@ -70,10 +75,15 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     protected void endFlurrySession(Context context) {
 
+        Log.v(TAG, "endFlurrySession(Context context)");
+
         FlurryAgent.onEndSession(context);
     }
 
     protected void createRequest(Context context, String adSpaceName, String apiKey) {
+
+        Log.v(TAG, "createRequest(Context context, String adSpaceName = " + adSpaceName + ", String apiKey = " + apiKey + ")");
+
         // configure flurry
         FlurryAgent.setLogEnabled(true);
         // initialize flurry with new apiKey
@@ -91,28 +101,28 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
 
-        this.endFlurrySession(mContext);
+        endFlurrySession(mContext);
         FlurryNativeAdModel nativeAdModel = new FlurryNativeAdModel(flurryAdNative);
-        this.invokeLoaded(nativeAdModel);
+        invokeLoaded(nativeAdModel);
     }
 
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
 
-        this.endFlurrySession(mContext);
+        endFlurrySession(mContext);
         if (flurryAdErrorType != null) {
             switch (flurryAdErrorType) {
                 case FETCH: {
-                    this.invokeLoaded(null);
+                    invokeLoaded(null);
                 }
                 break;
                 default: {
-                    this.invokeFailed(new Exception("Flurry adapter error: " + flurryAdErrorType.name() + " - " + errCode));
+                    invokeFailed(new Exception("Flurry adapter error: " + flurryAdErrorType.name() + " - " + errCode));
                 }
                 break;
             }
         } else {
-            this.invokeFailed(new Exception("Flurry adapter error: Unknown"));
+            invokeFailed(new Exception("Flurry adapter error: Unknown"));
         }
     }
 

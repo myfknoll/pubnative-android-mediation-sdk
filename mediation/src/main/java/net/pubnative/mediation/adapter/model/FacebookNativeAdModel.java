@@ -23,6 +23,7 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import com.facebook.ads.Ad;
@@ -36,9 +37,14 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class FacebookNativeAdModel extends PubnativeAdModel implements ImpressionListener, AdListener {
 
+    private static String TAG = FacebookNativeAdModel.class.getSimpleName();
+
     protected NativeAd mNativeAd;
 
     public FacebookNativeAdModel(NativeAd nativeAd) {
+
+        Log.v(TAG, "FacebookNativeAdModel(nativeAd)");
+
         if (mNativeAd != null) {
             mNativeAd = nativeAd;
             mNativeAd.setAdListener(this);
@@ -49,6 +55,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getTitle() {
         String result = null;
+
         if (mNativeAd != null) {
             result = mNativeAd.getAdTitle();
         }
@@ -58,6 +65,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getDescription() {
         String result = null;
+
         if (mNativeAd != null) {
             result = mNativeAd.getAdBody();
         }
@@ -67,6 +75,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getIconUrl() {
         String iconUrl = null;
+
         if (mNativeAd != null && mNativeAd.getAdIcon() != null) {
             iconUrl = mNativeAd.getAdIcon().getUrl();
         }
@@ -76,6 +85,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getBannerUrl() {
         String bannerUrl = null;
+
         if (mNativeAd != null && mNativeAd.getAdCoverImage() != null) {
             bannerUrl = mNativeAd.getAdCoverImage().getUrl();
         }
@@ -85,6 +95,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getCallToAction() {
         String result = null;
+
         if (mNativeAd != null) {
             result = mNativeAd.getAdCallToAction();
         }
@@ -94,8 +105,10 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public float getStarRating() {
         float starRating = 0;
+
         if (mNativeAd != null) {
             NativeAd.Rating rating = mNativeAd.getAdStarRating();
+
             if (rating != null) {
                 double ratingScale = rating.getScale();
                 double ratingValue = rating.getValue();
@@ -108,6 +121,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public View getAdvertisingDisclosureView(Context context) {
         View result = null;
+
         if (context != null && mNativeAd != null) {
             this.mContext = context;
             return new AdChoicesView(this.mContext, mNativeAd);
@@ -117,6 +131,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public void startTracking(Context context, View adView) {
+
+        Log.v(TAG, "startTracking(Context context, View adView)");
+
         if (context != null && mNativeAd != null && adView != null) {
             this.mContext = context;
             mNativeAd.registerViewForInteraction(adView);
@@ -125,6 +142,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public void stopTracking(Context context, View adView) {
+
+        Log.v(TAG, "stopTracking(Context context, View adView)");
+
         if (mNativeAd != null) {
             mNativeAd.unregisterView();
         }

@@ -24,6 +24,7 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import com.flurry.android.ads.FlurryAdErrorType;
@@ -35,6 +36,8 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNativeListener {
 
+    private static String TAG = FlurryNativeAdModel.class.getSimpleName();
+
     FlurryAdNative mFlurryAdNative;
 
     public FlurryNativeAdModel(FlurryAdNative flurryAdNative) {
@@ -43,6 +46,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     protected String getStringValueOfFirstAsset(String... keys) {
         String result = null;
+
         if (mFlurryAdNative != null) {
             for (String key : keys) {
                 FlurryAdNativeAsset asset = mFlurryAdNative.getAsset(key);
@@ -91,6 +95,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
          * For an ad that does not contain app specific assets, the CTA could be ‘Read More’.
          */
         String result = "Read More";
+
         if (getStringValueOfFirstAsset("appCategory") != null || getStringValueOfFirstAsset("appRating") != null) {
             result = "Install Now";
         }
@@ -101,6 +106,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     public float getStarRating() {
         float  result    = 0;
         String appRating = getStringValueOfFirstAsset("appRating");
+
         if (appRating != null) {
             String[] parts = appRating.split("/");
             if (parts.length == 2) {
@@ -111,7 +117,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
                         result = (ratingVal / scaleVal) * 5;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error while parsing star rating :" + e);
+                    Log.e(TAG, "getStarRating - Error while parsing star rating :" + e);
                 }
             }
         }
@@ -125,7 +131,11 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public void startTracking(Context context, View adView) {
-        this.mContext = context;
+
+        Log.v(TAG, "startTracking(Context context, View adView)");
+
+        mContext = context;
+        
         if (mFlurryAdNative != null && adView != null) {
             mFlurryAdNative.setListener(this);
             mFlurryAdNative.setTrackingView(adView);
@@ -134,10 +144,12 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public void stopTracking(Context context, View adView) {
+
+        Log.v(TAG, "stopTracking(Context context, View adView)");
+
         if (mFlurryAdNative != null) {
             mFlurryAdNative.removeTrackingView();
         }
-
     }
 
     @Override
@@ -162,12 +174,12 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public void onClicked(FlurryAdNative flurryAdNative) {
-        this.invokeOnAdClick();
+        invokeOnAdClick();
     }
 
     @Override
     public void onImpressionLogged(FlurryAdNative flurryAdNative) {
-        this.invokeOnAdImpressionConfirmed();
+        invokeOnAdImpressionConfirmed();
     }
 
     @Override

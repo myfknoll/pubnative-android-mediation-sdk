@@ -23,12 +23,15 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener, NativeAdModel.Listener {
+
+    private static String TAG = PubnativeLibraryAdModel.class.getSimpleName();
 
     protected NativeAdModel mNativeAdModel = null;
 
@@ -39,6 +42,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getTitle() {
         String result = null;
+
         if (mNativeAdModel != null) {
             result = mNativeAdModel.title;
         }
@@ -48,6 +52,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getDescription() {
         String result = null;
+
         if (mNativeAdModel != null) {
             result = mNativeAdModel.description;
         }
@@ -57,6 +62,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getIconUrl() {
         String result = null;
+
         if (mNativeAdModel != null) {
             result = mNativeAdModel.iconUrl;
         }
@@ -66,6 +72,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getBannerUrl() {
         String result = null;
+
         if (mNativeAdModel != null) {
             result = mNativeAdModel.bannerUrl;
         }
@@ -75,6 +82,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getCallToAction() {
         String result = null;
+
         if (mNativeAdModel != null) {
             result = mNativeAdModel.ctaText;
         }
@@ -93,6 +101,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public void startTracking(Context context, View adView) {
+
+        Log.v(TAG, "startTracking(Context context, View adView)");
+
         if (mNativeAdModel != null && context != null && adView != null) {
             mContext = context;
             adView.setOnClickListener(this);
@@ -102,6 +113,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public void stopTracking(Context context, View adView) {
+
+        Log.v(TAG, "stopTracking(Context context, View adView)");
+
         // Do nothing
     }
 

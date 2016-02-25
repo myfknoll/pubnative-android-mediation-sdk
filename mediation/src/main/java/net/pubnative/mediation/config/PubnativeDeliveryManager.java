@@ -26,12 +26,15 @@ package net.pubnative.mediation.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class PubnativeDeliveryManager {
+
+    private static String TAG = PubnativeDeliveryManager.class.getSimpleName();
 
     protected static final String                IMPRESSION_PREFERENCES_KEY    = "net.pubnative.mediation.frequency_manager";
     protected static final String                IMPRESSION_COUNT_DAY_APPEND   = "_impression_count_day";
@@ -53,6 +56,7 @@ public class PubnativeDeliveryManager {
 
     public static Calendar getPacingCalendar(String placementID) {
         Calendar result = null;
+
         if (getInstance().mCurrentPacing.containsKey(placementID)) {
             result = getInstance().mCurrentPacing.get(placementID);
         }
@@ -92,8 +96,12 @@ public class PubnativeDeliveryManager {
     }
 
     protected static void updateImpressionCount(Context context, String placementID) {
+
+        Log.v(TAG, "updateImpressionCount(Context context, String placementID = " + placementID + ")");
+
         if (context != null && !TextUtils.isEmpty(placementID)) {
             Calendar storedCalendar = getImpressionLastUpdate(context, placementID);
+
             if (storedCalendar != null) {
                 Calendar dayCalendar = Calendar.getInstance();
                 dayCalendar.set(Calendar.HOUR_OF_DAY, 0);

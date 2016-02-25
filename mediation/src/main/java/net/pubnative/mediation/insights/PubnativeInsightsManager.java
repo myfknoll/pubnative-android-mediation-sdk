@@ -27,12 +27,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
+import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
 import net.pubnative.mediation.task.PubnativeHttpTask;
 
@@ -42,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 public class PubnativeInsightsManager {
+
+    private static String TAG = PubnativeInsightsManager.class.getSimpleName();
 
     protected static final String INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
     protected static final String INSIGHTS_PENDING_DATA    = "pending_data";
@@ -58,6 +61,8 @@ public class PubnativeInsightsManager {
      * @param dataModel PubnativeInsightDataModel object with values filled in.
      */
     public synchronized static void trackData(Context context, String baseURL, Map<String, String> parameters, PubnativeInsightDataModel dataModel) {
+
+        Log.v(TAG, "trackData(Context context, String baseURL, Map<String, String> parameters = " + parameters + ", PubnativeInsightDataModel dataModel)");
 
         if (context != null && !TextUtils.isEmpty(baseURL) && dataModel != null) {
 
@@ -89,6 +94,8 @@ public class PubnativeInsightsManager {
 
     protected synchronized static void trackNext(final Context context) {
 
+        Log.v(TAG, "trackNext(Context context)");
+
         if (context != null && sIdle) {
             final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
             if (model != null) {
@@ -106,7 +113,7 @@ public class PubnativeInsightsManager {
                         @Override
                         public void onHttpTaskFinished(PubnativeHttpTask task, String result) {
 
-                            System.out.println("Pubnative result: " + result);
+                            Log.v(TAG, "onHttpTaskFinished(PubnativeHttpTask task, String result = " + result + ")");
 
                             if (TextUtils.isEmpty(result)) {
                                 trackingFailed(context, model, "invalid insight response (empty or null)");
@@ -121,6 +128,7 @@ public class PubnativeInsightsManager {
                                     }
                                 } catch (Exception e) {
                                     trackingFailed(context, model, e.toString());
+                                    Log.v(TAG, "trackNext, trackingFailed: " + e.toString());
                                 }
                             }
                         }

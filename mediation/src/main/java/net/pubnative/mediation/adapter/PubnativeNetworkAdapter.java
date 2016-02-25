@@ -24,6 +24,7 @@ package net.pubnative.mediation.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -31,6 +32,8 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 public abstract class PubnativeNetworkAdapter {
+
+    private static String TAG = PubnativeNetworkAdapter.class.getSimpleName();
 
     protected PubnativeNetworkAdapterListener mListener;
     protected PubnativeNetworkAdapterRunnable mTimeoutRunnable;
@@ -79,6 +82,8 @@ public abstract class PubnativeNetworkAdapter {
      */
     public void doRequest(Context context, int timeoutInMillis, Map extras, PubnativeNetworkAdapterListener listener) {
 
+        Log.v(TAG, "doRequest(Context context, int timeoutInMillis = " + timeoutInMillis + ", Map extras = " + extras + ", PubnativeNetworkAdapterListener listener)");
+
         if (listener != null) {
             mListener = listener;
             if (context != null) {
@@ -94,9 +99,10 @@ public abstract class PubnativeNetworkAdapter {
                 request(context);
             } else {
                 invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null argument provided"));
+                Log.e(TAG, "doRequest - null argument provided");
             }
         } else {
-            System.out.println("PubnativeNetworkAdapter.doRequest - context not specified, dropping the call");
+            Log.e(TAG, "doRequest - context not specified, dropping the call");
         }
     }
 
@@ -105,6 +111,8 @@ public abstract class PubnativeNetworkAdapter {
 
     protected void cancelTimeout() {
 
+        Log.v(TAG, "cancelTimeout()");
+
         if (mHandler != null && mTimeoutRunnable != null) {
             mHandler.removeCallbacks(mTimeoutRunnable);
         }
@@ -112,12 +120,16 @@ public abstract class PubnativeNetworkAdapter {
 
     protected void invokeStart() {
 
+        Log.v(TAG, "invokeStart()");
+
         if (mListener != null) {
             mListener.onAdapterRequestStarted(this);
         }
     }
 
     protected void invokeLoaded(PubnativeAdModel ad) {
+
+        Log.v(TAG, "invokeLoaded(PubnativeAdModel ad)");
 
         cancelTimeout();
         if (mListener != null) {
@@ -127,6 +139,8 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     protected void invokeFailed(Exception exception) {
+
+        Log.e(TAG, "invokeFailed(Exception exception) with exception:" + (exception != null ? exception.getMessage() : null));
 
         cancelTimeout();
         if (mListener != null) {

@@ -24,6 +24,7 @@
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.library.request.AdRequest;
@@ -37,6 +38,8 @@ import java.util.Map;
 
 public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener {
 
+    private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
+
     public PubnativeLibraryNetworkAdapter(Map data) {
         super(data);
     }
@@ -44,16 +47,19 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void request(Context context) {
 
+        Log.v(TAG, "request(Context context)");
+
         if (context != null && mData != null) {
-
             createRequest(context);
-
         } else {
             invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
     protected void createRequest(Context context) {
+
+        Log.v(TAG, "createRequest(Context context)");
+
         AdRequest request = new AdRequest(context);
 
         // We add all params
@@ -78,11 +84,16 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
 
     @Override
     public void onAdRequestStarted(AdRequest request) {
+
+        Log.v(TAG, "onAdRequestStarted(AdRequest request)");
         // Do nothing
     }
 
     @Override
     public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads) {
+
+        Log.v(TAG, "onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads)");
+
         if (request == null ) {
             invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
         } else {
@@ -96,6 +107,9 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
 
     @Override
     public void onAdRequestFailed(AdRequest request, Exception ex) {
+
+        Log.v(TAG, "onAdRequestFailed(AdRequest request, Exception ex)");
+
         invokeFailed(ex);
     }
 }

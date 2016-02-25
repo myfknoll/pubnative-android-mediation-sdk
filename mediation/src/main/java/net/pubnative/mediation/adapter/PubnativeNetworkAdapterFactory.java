@@ -23,12 +23,16 @@
 
 package net.pubnative.mediation.adapter;
 
+import android.util.Log;
+
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
 public class PubnativeNetworkAdapterFactory {
+
+    private static String TAG = PubnativeNetworkAdapterFactory.class.getSimpleName();
 
     protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
@@ -39,6 +43,9 @@ public class PubnativeNetworkAdapterFactory {
      * @return instance of PubnativeNetworkAdapter if created, else null
      */
     public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model) {
+
+        Log.e(TAG, "createAdapter(PubnativeNetworkModel model)");
+
         PubnativeNetworkAdapter result = null;
 
         try {
@@ -47,7 +54,7 @@ public class PubnativeNetworkAdapterFactory {
             result = (PubnativeNetworkAdapter) constructor.newInstance(model.params);
         } catch (Exception e) {
             // Don't crash, just return null, log error and return null
-            System.out.println("Pubnative - Error creating adapter: " + e);
+            Log.e(TAG, "Pubnative - Error creating adapter: " + e);
         }
 
         return result;
