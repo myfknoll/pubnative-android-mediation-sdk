@@ -50,13 +50,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void request(Context context) {
 
-        if (context != null && data != null) {
+        if (context != null && mData != null) {
             mContext = context;
-            String apiKey = (String) data.get(KEY_FLURRY_API_KEY);
+            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
             if (!TextUtils.isEmpty(apiKey)) {
-                String adSpaceName = (String) data.get(KEY_AD_SPACE_NAME);
+                String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
                 if (!TextUtils.isEmpty(adSpaceName)) {
-                    this.createRequest(context, adSpaceName, apiKey);
+                    createRequest(context, adSpaceName, apiKey);
                 } else {
                     invokeFailed(new IllegalArgumentException("Invalid ad_space_name provided."));
                 }

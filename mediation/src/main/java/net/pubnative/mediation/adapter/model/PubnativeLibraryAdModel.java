@@ -94,7 +94,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public void startTracking(Context context, View adView) {
         if (this.mNativeAdModel != null && context != null && adView != null) {
-            this.context = context;
+            this.mContext = context;
             adView.setOnClickListener(this);
             this.mNativeAdModel.confirmImpressionAutomatically(context, adView, this);
         }
@@ -108,7 +108,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public void onClick(View view) {
         this.invokeOnAdClick();
-        this.mNativeAdModel.open(this.context);
+        this.mNativeAdModel.open(this.mContext);
     }
 
     // Pubnative NativeAdModel.Listener

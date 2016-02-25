@@ -44,7 +44,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void request(Context context) {
 
-        if (context != null && this.data != null) {
+        if (context != null && mData != null) {
 
             createRequest(context);
 
@@ -57,8 +57,8 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
         AdRequest request = new AdRequest(context);
 
         // We add all params
-        for (Object key : this.data.keySet()) {
-            Object value = this.data.get(key);
+        for (Object key : mData.keySet()) {
+            Object value = mData.get(key);
             request.setParameter((String)key, value.toString());
         }
 
@@ -84,18 +84,18 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads) {
         if (request == null ) {
-            this.invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
+            invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
         } else {
             PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
-            this.invokeLoaded(wrapAd);
+            invokeLoaded(wrapAd);
         }
     }
 
     @Override
     public void onAdRequestFailed(AdRequest request, Exception ex) {
-        this.invokeFailed(ex);
+        invokeFailed(ex);
     }
 }

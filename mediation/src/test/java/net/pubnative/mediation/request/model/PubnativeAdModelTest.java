@@ -81,7 +81,7 @@ public class PubnativeAdModelTest {
 
         Map parametersMock = mock(Map.class);
         PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
-        modelSpy.context = this.appContext;
+        modelSpy.mContext = this.appContext;
 
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
         modelSpy.setTrackingInfo(dataModel);

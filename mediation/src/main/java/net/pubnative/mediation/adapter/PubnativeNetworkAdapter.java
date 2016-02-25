@@ -24,7 +24,6 @@ package net.pubnative.mediation.adapter;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -33,32 +32,32 @@ import java.util.concurrent.TimeoutException;
 
 public abstract class PubnativeNetworkAdapter {
 
-    protected PubnativeNetworkAdapterListener listener;
-    protected PubnativeNetworkAdapterRunnable timeoutRunnable;
-    protected Map                             data;
-    protected Map<String, String>             extras;
-    protected Handler                         handler;
+    protected PubnativeNetworkAdapterListener mListener;
+    protected PubnativeNetworkAdapterRunnable mTimeoutRunnable;
+    protected Map                             mData;
+    protected Map<String, String>             mExtras;
+    protected Handler                         mHandler;
 
     protected class PubnativeNetworkAdapterRunnable implements Runnable {
 
-        private PubnativeNetworkAdapter adapter;
+        private PubnativeNetworkAdapter mAdapter;
 
         public PubnativeNetworkAdapterRunnable(PubnativeNetworkAdapter adapter) {
 
-            this.adapter = adapter;
+            mAdapter = adapter;
         }
 
         @Override
         public void run() {
             // Invoke failed and avoid more callbacks by setting listener to null
-            this.adapter.invokeFailed(new TimeoutException("PubnativeNetworkAdapter.doRequest - adapter timeout"));
-            this.adapter.listener = null;
+            mAdapter.invokeFailed(new TimeoutException("PubnativeNetworkAdapter.doRequest - adapter timeout"));
+            mAdapter.mListener = null;
         }
     }
 
     public Map<String, String> getExtras() {
 
-        return this.extras;
+        return mExtras;
     }
 
     /**
@@ -68,7 +67,7 @@ public abstract class PubnativeNetworkAdapter {
      */
     public PubnativeNetworkAdapter(Map data) {
 
-        this.data = data;
+        mData = data;
     }
 
     /**
@@ -81,20 +80,20 @@ public abstract class PubnativeNetworkAdapter {
     public void doRequest(Context context, int timeoutInMillis, Map extras, PubnativeNetworkAdapterListener listener) {
 
         if (listener != null) {
-            this.listener = listener;
+            mListener = listener;
             if (context != null) {
-                this.invokeStart();
-                if (this.handler == null) {
-                    this.handler = new Handler();
+                invokeStart();
+                if (mHandler == null) {
+                    mHandler = new Handler();
                 }
                 if (timeoutInMillis > 0) {
-                    this.timeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
-                    this.handler.postDelayed(this.timeoutRunnable, timeoutInMillis);
+                    mTimeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
+                    mHandler.postDelayed(mTimeoutRunnable, timeoutInMillis);
                 }
-                this.extras = extras;
-                this.request(context);
+                mExtras = extras;
+                request(context);
             } else {
-                this.invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null argument provided"));
+                invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null argument provided"));
             }
         } else {
             System.out.println("PubnativeNetworkAdapter.doRequest - context not specified, dropping the call");
@@ -106,33 +105,33 @@ public abstract class PubnativeNetworkAdapter {
 
     protected void cancelTimeout() {
 
-        if (this.handler != null && this.timeoutRunnable != null) {
-            this.handler.removeCallbacks(this.timeoutRunnable);
+        if (mHandler != null && mTimeoutRunnable != null) {
+            mHandler.removeCallbacks(mTimeoutRunnable);
         }
     }
 
     protected void invokeStart() {
 
-        if (this.listener != null) {
-            this.listener.onAdapterRequestStarted(this);
+        if (mListener != null) {
+            mListener.onAdapterRequestStarted(this);
         }
     }
 
     protected void invokeLoaded(PubnativeAdModel ad) {
 
-        this.cancelTimeout();
-        if (this.listener != null) {
-            this.listener.onAdapterRequestLoaded(this, ad);
+        cancelTimeout();
+        if (mListener != null) {
+            mListener.onAdapterRequestLoaded(this, ad);
         }
-        this.listener = null;
+        mListener = null;
     }
 
     protected void invokeFailed(Exception exception) {
 
-        this.cancelTimeout();
-        if (this.listener != null) {
-            this.listener.onAdapterRequestFailed(this, exception);
+        cancelTimeout();
+        if (mListener != null) {
+            mListener.onAdapterRequestFailed(this, exception);
         }
-        this.listener = null;
+        mListener = null;
     }
 }

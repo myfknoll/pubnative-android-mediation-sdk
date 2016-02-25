@@ -64,16 +64,16 @@ public class PubnativeNetworkAdapterTest {
         });
 
         // onRequestLoaded
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
         PubnativeAdModel adMock = mock(PubnativeAdModel.class);
         adapterInstance.invokeLoaded(adMock);
-        assertThat(adapterInstance.listener).isNull();
+        assertThat(adapterInstance.mListener).isNull();
 
         // onRequestFailed
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
         Exception exceptionMock = mock(Exception.class);
         adapterInstance.invokeFailed(exceptionMock);
-        assertThat(adapterInstance.listener).isNull();
+        assertThat(adapterInstance.mListener).isNull();
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PubnativeNetworkAdapterTest {
             }
         });
 
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
 
         // onRequestStarted
         adapterInstance.invokeStart();
@@ -99,7 +99,7 @@ public class PubnativeNetworkAdapterTest {
         adapterInstance.invokeLoaded(adMock);
         verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterInstance), eq(adMock));
 
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
 
         // onRequestFailed
         Exception exceptionMock = mock(Exception.class);
@@ -118,7 +118,7 @@ public class PubnativeNetworkAdapterTest {
             }
         });
 
-        adapterSpy.listener = null;
+        adapterSpy.mListener = null;
         adapterSpy.invokeStart();
         adapterSpy.invokeLoaded(mock(PubnativeAdModel.class));
         adapterSpy.invokeFailed(mock(Exception.class));

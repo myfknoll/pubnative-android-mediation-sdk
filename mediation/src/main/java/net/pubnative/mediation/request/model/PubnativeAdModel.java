@@ -36,27 +36,27 @@ import java.util.Map;
 public abstract class PubnativeAdModel {
 
     // Model
-    protected Context                  context  = null;
-    protected PubnativeAdModelListener listener = null;
+    protected Context                  mContext = null;
+    protected PubnativeAdModelListener mListener = null;
 
     // Tracking
-    protected PubnativeInsightDataModel trackingInfoModel     = null;
-    protected String                    impressionTrackingURL = null;
-    protected String                    clickTrackingURL      = null;
-    protected String                    appToken              = null;
-    protected String                    requestID             = null;
-    protected Long                      placementResponseTime = null;
-    protected Long                      networkResponseTime   = null;
-    protected Map<String, String>       impressionParameters  = null;
-    protected Map<String, String>       clickParameters       = null;
+    protected PubnativeInsightDataModel mTrackingInfoModel      = null;
+    protected String                    mImpressionTrackingURL  = null;
+    protected String                    mClickTrackingURL       = null;
+    protected String                    mAppToken               = null;
+    protected String                    mRequestID              = null;
+    protected Long                      mPlacementResponseTime  = null;
+    protected Long                      mNetworkResponseTime    = null;
+    protected Map<String, String>       mImpressionParameters   = null;
+    protected Map<String, String>       mClickParameters        = null;
 
     // Private
-    protected boolean impressionTracked = false;
-    protected boolean clickTracked      = false;
+    protected boolean mImpressionTracked = false;
+    protected boolean mClickTracked      = false;
 
     public void setListener(PubnativeAdModelListener listener) {
 
-        this.listener = listener;
+        mListener = listener;
     }
 
     /**
@@ -134,8 +134,8 @@ public abstract class PubnativeAdModel {
      */
     public void setTrackingImpressionData(String impressionURL, Map parameters) {
 
-        this.impressionParameters = parameters;
-        this.impressionTrackingURL = impressionURL;
+        mImpressionParameters = parameters;
+        mImpressionTrackingURL = impressionURL;
     }
 
     /**
@@ -146,8 +146,8 @@ public abstract class PubnativeAdModel {
      */
     public void setTrackingClickData(String clickURL, Map parameters) {
 
-        this.clickParameters = parameters;
-        this.clickTrackingURL = clickURL;
+        mClickParameters = parameters;
+        mClickTrackingURL = clickURL;
     }
 
     /**
@@ -157,56 +157,56 @@ public abstract class PubnativeAdModel {
      */
     public void setTrackingInfo(PubnativeInsightDataModel trackingInfoModel) {
 
-        this.trackingInfoModel = trackingInfoModel;
-        this.setTrackingCreative();
+        mTrackingInfoModel = trackingInfoModel;
+        setTrackingCreative();
     }
 
     protected void setTrackingCreative() {
 
-        if (this.trackingInfoModel != null) {
+        if (mTrackingInfoModel != null) {
 
-            this.trackingInfoModel.creative_url = this.getBannerUrl();
+            mTrackingInfoModel.creative_url = getBannerUrl();
 
-            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(this.trackingInfoModel.ad_format_code)) {
+            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mTrackingInfoModel.ad_format_code)) {
 
-                this.trackingInfoModel.creative_url = this.getIconUrl();
+                mTrackingInfoModel.creative_url = getIconUrl();
             }
         }
     }
 
     protected void invokeOnAdImpressionConfirmed() {
 
-        if (!this.impressionTracked) {
+        if (!mImpressionTracked) {
 
-            this.impressionTracked = true;
+            mImpressionTracked = true;
 
-            if (this.context != null && this.trackingInfoModel != null) {
+            if (mContext != null && mTrackingInfoModel != null) {
 
-                PubnativeDeliveryManager.logImpression(this.context, this.trackingInfoModel.placement_name);
-                PubnativeInsightsManager.trackData(this.context, this.impressionTrackingURL, this.impressionParameters, this.trackingInfoModel);
+                PubnativeDeliveryManager.logImpression(mContext, mTrackingInfoModel.placement_name);
+                PubnativeInsightsManager.trackData(mContext, mImpressionTrackingURL, mImpressionParameters, mTrackingInfoModel);
             }
 
-            if (this.listener != null) {
+            if (mListener != null) {
 
-                this.listener.onAdImpressionConfirmed(this);
+                mListener.onAdImpressionConfirmed(this);
             }
         }
     }
 
     protected void invokeOnAdClick() {
 
-        if (!this.clickTracked) {
+        if (!mClickTracked) {
 
-            this.clickTracked = true;
+            mClickTracked = true;
 
-            if (this.context != null && this.trackingInfoModel != null) {
+            if (mContext != null && mTrackingInfoModel != null) {
 
-                PubnativeInsightsManager.trackData(this.context, this.clickTrackingURL, this.clickParameters, this.trackingInfoModel);
+                PubnativeInsightsManager.trackData(mContext, mClickTrackingURL, mClickParameters, mTrackingInfoModel);
             }
 
-            if (this.listener != null) {
+            if (mListener != null) {
 
-                this.listener.onAdClick(this);
+                mListener.onAdClick(this);
             }
         }
     }

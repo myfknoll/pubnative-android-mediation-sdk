@@ -50,8 +50,8 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void request(Context context) {
 
-        if (context != null && data != null) {
-            String placementId = (String) data.get(KEY_PLACEMENT_ID);
+        if (context != null && mData != null) {
+            String placementId = (String) mData.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
                 this.createRequest(context, placementId);
             } else {

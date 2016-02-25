@@ -48,7 +48,7 @@ public class PubnativeInsightsManager {
     protected static final String INSIGHTS_FAILED_DATA     = "failed_data";
     protected static final String PARAMETER_APP_TOKEN_KEY  = "app_token";
 
-    protected static boolean idle = true;
+    protected static boolean sIdle = true;
 
     /**
      * Queues impression/click tracking data and sends it to pubnative server.
@@ -75,24 +75,24 @@ public class PubnativeInsightsManager {
             PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
 
             // Enqueue failed
-            List<PubnativeInsightRequestModel> failedList = PubnativeInsightsManager.getTrackingList(context, INSIGHTS_FAILED_DATA);
-            PubnativeInsightsManager.enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
-            PubnativeInsightsManager.setTrackingList(context, INSIGHTS_FAILED_DATA, null);
+            List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
+            enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
+            setTrackingList(context, INSIGHTS_FAILED_DATA, null);
 
             // Enqueue current
-            PubnativeInsightsManager.enqueueInsightItem(context, INSIGHTS_PENDING_DATA, model);
+            enqueueInsightItem(context, INSIGHTS_PENDING_DATA, model);
 
             // Start tracking
-            PubnativeInsightsManager.trackNext(context);
+            trackNext(context);
         }
     }
 
     protected synchronized static void trackNext(final Context context) {
 
-        if (context != null && PubnativeInsightsManager.idle) {
-            final PubnativeInsightRequestModel model = PubnativeInsightsManager.dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
+        if (context != null && sIdle) {
+            final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
             if (model != null) {
-                PubnativeInsightsManager.idle = false;
+                sIdle = false;
                 String trackingDataString = new Gson().toJson(model.dataModel);
                 if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString)) {
                     PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener() {
@@ -100,7 +100,7 @@ public class PubnativeInsightsManager {
                         @Override
                         public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
 
-                            PubnativeInsightsManager.trackingFailed(context, model, errorMessage);
+                            trackingFailed(context, model, errorMessage);
                         }
 
                         @Override
@@ -109,27 +109,27 @@ public class PubnativeInsightsManager {
                             System.out.println("Pubnative result: " + result);
 
                             if (TextUtils.isEmpty(result)) {
-                                PubnativeInsightsManager.trackingFailed(context, model, "invalid insight response (empty or null)");
+                                trackingFailed(context, model, "invalid insight response (empty or null)");
                             } else {
                                 try {
                                     PubnativeInsightsAPIResponseModel response = new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
 
                                     if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
-                                        PubnativeInsightsManager.trackingFinished(context, model);
+                                        trackingFinished(context, model);
                                     } else {
-                                        PubnativeInsightsManager.trackingFailed(context, model, response.error_message);
+                                        trackingFailed(context, model, response.error_message);
                                     }
                                 } catch (Exception e) {
-                                    PubnativeInsightsManager.trackingFailed(context, model, e.toString());
+                                    trackingFailed(context, model, e.toString());
                                 }
                             }
                         }
                     };
 
-                    PubnativeInsightsManager.sendTrackingDataToServer(context, trackingDataString, model.url, listener);
+                    sendTrackingDataToServer(context, trackingDataString, model.url, listener);
                 } else {
                     // Drop the call, tracking data is errored
-                    PubnativeInsightsManager.trackingFinished(context, model);
+                    trackingFinished(context, model);
                 }
             }
         }
@@ -147,38 +147,38 @@ public class PubnativeInsightsManager {
 
         // Add a retry
         model.dataModel.retry = model.dataModel.retry + 1;
-        PubnativeInsightsManager.enqueueInsightItem(context, INSIGHTS_FAILED_DATA, model);
-        PubnativeInsightsManager.idle = true;
-        PubnativeInsightsManager.trackNext(context);
+        enqueueInsightItem(context, INSIGHTS_FAILED_DATA, model);
+        sIdle = true;
+        trackNext(context);
     }
 
     protected static void trackingFinished(Context context, PubnativeInsightRequestModel model) {
 
-        PubnativeInsightsManager.idle = true;
-        PubnativeInsightsManager.trackNext(context);
+        sIdle = true;
+        trackNext(context);
     }
 
     protected static void enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model) {
 
         if (context != null && model != null) {
-            List<PubnativeInsightRequestModel> pendingList = PubnativeInsightsManager.getTrackingList(context, listKey);
+            List<PubnativeInsightRequestModel> pendingList = getTrackingList(context, listKey);
             if (pendingList == null) {
                 pendingList = new ArrayList<PubnativeInsightRequestModel>();
             }
             pendingList.add(model);
-            PubnativeInsightsManager.setTrackingList(context, listKey, pendingList);
+            setTrackingList(context, listKey, pendingList);
         }
     }
 
     protected static void enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list) {
 
         if (context != null && list != null) {
-            List<PubnativeInsightRequestModel> insightList = PubnativeInsightsManager.getTrackingList(context, listKey);
+            List<PubnativeInsightRequestModel> insightList = getTrackingList(context, listKey);
             if (insightList == null) {
                 insightList = new ArrayList<PubnativeInsightRequestModel>();
             }
             insightList.addAll(list);
-            PubnativeInsightsManager.setTrackingList(context, listKey, insightList);
+            setTrackingList(context, listKey, insightList);
         }
     }
 
@@ -186,11 +186,11 @@ public class PubnativeInsightsManager {
 
         PubnativeInsightRequestModel result = null;
         if (context != null) {
-            List<PubnativeInsightRequestModel> pendingList = PubnativeInsightsManager.getTrackingList(context, listKey);
+            List<PubnativeInsightRequestModel> pendingList = getTrackingList(context, listKey);
             if (pendingList != null && pendingList.size() > 0) {
                 result = pendingList.get(0);
                 pendingList.remove(0);
-                PubnativeInsightsManager.setTrackingList(context, listKey, pendingList);
+                setTrackingList(context, listKey, pendingList);
             }
         }
         return result;
@@ -200,7 +200,7 @@ public class PubnativeInsightsManager {
 
         List<PubnativeInsightRequestModel> result = null;
         if (context != null) {
-            SharedPreferences preferences = PubnativeInsightsManager.getSharedPreferences(context);
+            SharedPreferences preferences = getSharedPreferences(context);
             if (preferences != null) {
                 String pendingListString = preferences.getString(listKey, null);
                 if (!TextUtils.isEmpty(pendingListString)) {
@@ -221,7 +221,7 @@ public class PubnativeInsightsManager {
     protected static void setTrackingList(Context context, String listKey, List<PubnativeInsightRequestModel> pendingList) {
 
         if (context != null) {
-            SharedPreferences.Editor editor = PubnativeInsightsManager.getSharedPreferencesEditor(context);
+            SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
             if (editor != null) {
                 if (pendingList == null || pendingList.size() == 0) {
                     editor.remove(listKey);
@@ -239,7 +239,7 @@ public class PubnativeInsightsManager {
     protected static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
 
         SharedPreferences.Editor result      = null;
-        SharedPreferences        preferences = PubnativeInsightsManager.getSharedPreferences(context);
+        SharedPreferences        preferences = getSharedPreferences(context);
         if (preferences != null) {
             result = preferences.edit();
         }

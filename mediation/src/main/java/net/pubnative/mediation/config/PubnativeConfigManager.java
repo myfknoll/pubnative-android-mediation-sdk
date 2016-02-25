@@ -52,8 +52,8 @@ public class PubnativeConfigManager {
     protected static final String CONFIG_DOWNLOAD_BASE_URL = "http://ml.pubnative.net/ml/v1/config";
     protected static final String APP_TOKEN_KEY            = "?app_token=";
 
-    protected static List<PubnativeConfigRequestModel> queue = null;
-    protected static boolean                           idle  = true;
+    protected static List<PubnativeConfigRequestModel> sQueue = null;
+    protected static boolean                           sIdle  = true;
 
     private PubnativeConfigManager() {
         // do some initialization here may be.
@@ -83,10 +83,10 @@ public class PubnativeConfigManager {
     }
 
     private static void doNextConfigRequest() {
-        if (PubnativeConfigManager.idle) {
+        if (PubnativeConfigManager.sIdle) {
             PubnativeConfigRequestModel item = PubnativeConfigManager.dequeueRequest();
             if (item != null) {
-                PubnativeConfigManager.idle = false;
+                PubnativeConfigManager.sIdle = false;
                 PubnativeConfigManager.getNextConfig(item.context, item.appToken, item.listener);
             }
         }
@@ -94,18 +94,18 @@ public class PubnativeConfigManager {
 
     protected static void enqueueRequest(PubnativeConfigRequestModel item) {
         if (item != null) {
-            if (PubnativeConfigManager.queue == null) {
-                PubnativeConfigManager.queue = new ArrayList<PubnativeConfigRequestModel>();
+            if (PubnativeConfigManager.sQueue == null) {
+                PubnativeConfigManager.sQueue = new ArrayList<PubnativeConfigRequestModel>();
             }
 
-            PubnativeConfigManager.queue.add(item);
+            PubnativeConfigManager.sQueue.add(item);
         }
     }
 
     protected static PubnativeConfigRequestModel dequeueRequest() {
         PubnativeConfigRequestModel result = null;
-        if (PubnativeConfigManager.queue != null && PubnativeConfigManager.queue.size() > 0) {
-            result = PubnativeConfigManager.queue.remove(0);
+        if (PubnativeConfigManager.sQueue != null && PubnativeConfigManager.sQueue.size() > 0) {
+            result = PubnativeConfigManager.sQueue.remove(0);
         }
         return result;
     }
@@ -158,7 +158,7 @@ public class PubnativeConfigManager {
         if (listener != null) {
             listener.onConfigLoaded(configModel);
         }
-        PubnativeConfigManager.idle = true;
+        PubnativeConfigManager.sIdle = true;
         PubnativeConfigManager.doNextConfigRequest();
     }
 
