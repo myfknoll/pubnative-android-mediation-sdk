@@ -30,17 +30,17 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener, NativeAdModel.Listener {
 
-    protected NativeAdModel model = null;
+    protected NativeAdModel mNativeAdModel = null;
 
     public PubnativeLibraryAdModel(NativeAdModel model) {
-        this.model = model;
+        this.mNativeAdModel = model;
     }
 
     @Override
     public String getTitle() {
         String result = null;
-        if (model != null) {
-            result = model.title;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.title;
         }
         return result;
     }
@@ -48,8 +48,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getDescription() {
         String result = null;
-        if (model != null) {
-            result = model.description;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.description;
         }
         return result;
     }
@@ -57,8 +57,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getIconUrl() {
         String result = null;
-        if (model != null) {
-            result = model.iconUrl;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.iconUrl;
         }
         return result;
     }
@@ -66,8 +66,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getBannerUrl() {
         String result = null;
-        if (model != null) {
-            result = model.bannerUrl;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.bannerUrl;
         }
         return result;
     }
@@ -75,15 +75,15 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getCallToAction() {
         String result = null;
-        if (model != null) {
-            result = model.ctaText;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.ctaText;
         }
         return result;
     }
 
     @Override
     public float getStarRating() {
-        return model.getStoreRating();
+        return mNativeAdModel.getStoreRating();
     }
 
     @Override
@@ -93,10 +93,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public void startTracking(Context context, View adView) {
-        if (this.model != null && context != null && adView != null) {
+        if (this.mNativeAdModel != null && context != null && adView != null) {
             this.context = context;
             adView.setOnClickListener(this);
-            this.model.confirmImpressionAutomatically(context, adView, this);
+            this.mNativeAdModel.confirmImpressionAutomatically(context, adView, this);
         }
     }
 
@@ -108,7 +108,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public void onClick(View view) {
         this.invokeOnAdClick();
-        this.model.open(this.context);
+        this.mNativeAdModel.open(this.context);
     }
 
     // Pubnative NativeAdModel.Listener

@@ -36,21 +36,21 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class FacebookNativeAdModel extends PubnativeAdModel implements ImpressionListener, AdListener {
 
-    protected NativeAd nativeAd;
+    protected NativeAd mNativeAd;
 
     public FacebookNativeAdModel(NativeAd nativeAd) {
-        if (nativeAd != null) {
-            this.nativeAd = nativeAd;
-            this.nativeAd.setAdListener(this);
-            this.nativeAd.setImpressionListener(this);
+        if (mNativeAd != null) {
+            mNativeAd = nativeAd;
+            mNativeAd.setAdListener(this);
+            mNativeAd.setImpressionListener(this);
         }
     }
 
     @Override
     public String getTitle() {
         String result = null;
-        if (this.nativeAd != null) {
-            result = this.nativeAd.getAdTitle();
+        if (mNativeAd != null) {
+            result = mNativeAd.getAdTitle();
         }
         return result;
     }
@@ -58,8 +58,8 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getDescription() {
         String result = null;
-        if (this.nativeAd != null) {
-            result = this.nativeAd.getAdBody();
+        if (mNativeAd != null) {
+            result = mNativeAd.getAdBody();
         }
         return result;
     }
@@ -67,8 +67,8 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getIconUrl() {
         String iconUrl = null;
-        if (this.nativeAd != null && this.nativeAd.getAdIcon() != null) {
-            iconUrl = this.nativeAd.getAdIcon().getUrl();
+        if (mNativeAd != null && mNativeAd.getAdIcon() != null) {
+            iconUrl = mNativeAd.getAdIcon().getUrl();
         }
         return iconUrl;
     }
@@ -76,8 +76,8 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getBannerUrl() {
         String bannerUrl = null;
-        if (this.nativeAd != null && this.nativeAd.getAdCoverImage() != null) {
-            bannerUrl = this.nativeAd.getAdCoverImage().getUrl();
+        if (mNativeAd != null && mNativeAd.getAdCoverImage() != null) {
+            bannerUrl = mNativeAd.getAdCoverImage().getUrl();
         }
         return bannerUrl;
     }
@@ -85,8 +85,8 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public String getCallToAction() {
         String result = null;
-        if (this.nativeAd != null) {
-            result = this.nativeAd.getAdCallToAction();
+        if (mNativeAd != null) {
+            result = mNativeAd.getAdCallToAction();
         }
         return result;
     }
@@ -94,8 +94,8 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public float getStarRating() {
         float starRating = 0;
-        if (this.nativeAd != null) {
-            NativeAd.Rating rating = this.nativeAd.getAdStarRating();
+        if (mNativeAd != null) {
+            NativeAd.Rating rating = mNativeAd.getAdStarRating();
             if (rating != null) {
                 double ratingScale = rating.getScale();
                 double ratingValue = rating.getValue();
@@ -108,25 +108,25 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     @Override
     public View getAdvertisingDisclosureView(Context context) {
         View result = null;
-        if (context != null && this.nativeAd != null) {
+        if (context != null && mNativeAd != null) {
             this.context = context;
-            return new AdChoicesView(this.context, this.nativeAd);
+            return new AdChoicesView(this.context, mNativeAd);
         }
         return result;
     }
 
     @Override
     public void startTracking(Context context, View adView) {
-        if (context != null && this.nativeAd != null && adView != null) {
+        if (context != null && mNativeAd != null && adView != null) {
             this.context = context;
-            this.nativeAd.registerViewForInteraction(adView);
+            mNativeAd.registerViewForInteraction(adView);
         }
     }
 
     @Override
     public void stopTracking(Context context, View adView) {
-        if (this.nativeAd != null) {
-            this.nativeAd.unregisterView();
+        if (mNativeAd != null) {
+            mNativeAd.unregisterView();
         }
     }
 

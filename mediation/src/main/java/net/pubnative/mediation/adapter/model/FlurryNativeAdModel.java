@@ -35,17 +35,17 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNativeListener {
 
-    FlurryAdNative flurryAdNative;
+    FlurryAdNative mFlurryAdNative;
 
     public FlurryNativeAdModel(FlurryAdNative flurryAdNative) {
-        this.flurryAdNative = flurryAdNative;
+        mFlurryAdNative = flurryAdNative;
     }
 
     protected String getStringValueOfFirstAsset(String... keys) {
         String result = null;
-        if (this.flurryAdNative != null) {
+        if (mFlurryAdNative != null) {
             for (String key : keys) {
-                FlurryAdNativeAsset asset = this.flurryAdNative.getAsset(key);
+                FlurryAdNativeAsset asset = mFlurryAdNative.getAsset(key);
                 if (asset != null) {
                     result = asset.getValue();
                     break;
@@ -126,16 +126,16 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     @Override
     public void startTracking(Context context, View adView) {
         this.context = context;
-        if (this.flurryAdNative != null && adView != null) {
-            this.flurryAdNative.setListener(this);
-            this.flurryAdNative.setTrackingView(adView);
+        if (mFlurryAdNative != null && adView != null) {
+            mFlurryAdNative.setListener(this);
+            mFlurryAdNative.setTrackingView(adView);
         }
     }
 
     @Override
     public void stopTracking(Context context, View adView) {
-        if (this.flurryAdNative != null) {
-            this.flurryAdNative.removeTrackingView();
+        if (mFlurryAdNative != null) {
+            mFlurryAdNative.removeTrackingView();
         }
 
     }
