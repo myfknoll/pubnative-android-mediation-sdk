@@ -40,7 +40,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
-    private Context context;
+    private Context mContext;
 
     public YahooNetworkAdapter(Map data) {
 
@@ -51,7 +51,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     public void request(Context context) {
 
         if (context != null && data != null) {
-            this.context = context;
+            mContext = context;
             String apiKey = (String) data.get(KEY_FLURRY_API_KEY);
             if (!TextUtils.isEmpty(apiKey)) {
                 String adSpaceName = (String) data.get(KEY_AD_SPACE_NAME);
@@ -91,7 +91,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
 
-        this.endFlurrySession(this.context);
+        this.endFlurrySession(mContext);
         FlurryNativeAdModel nativeAdModel = new FlurryNativeAdModel(flurryAdNative);
         this.invokeLoaded(nativeAdModel);
     }
@@ -99,7 +99,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
 
-        this.endFlurrySession(this.context);
+        this.endFlurrySession(mContext);
         if (flurryAdErrorType != null) {
             switch (flurryAdErrorType) {
                 case FETCH: {

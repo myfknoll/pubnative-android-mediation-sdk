@@ -40,7 +40,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 
     protected static final String KEY_PLACEMENT_ID = "placement_id";
 
-    protected NativeAd nativeAd;
+    protected NativeAd mNativeAd;
 
     public FacebookNetworkAdapter(Map data) {
 
@@ -64,15 +64,15 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 
     protected void createRequest(Context context, String placementId) {
 
-        this.nativeAd = new NativeAd(context, placementId);
-        this.nativeAd.setAdListener(this);
-        this.nativeAd.loadAd();
+        mNativeAd = new NativeAd(context, placementId);
+        mNativeAd.setAdListener(this);
+        mNativeAd.loadAd();
     }
 
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        if (ad == this.nativeAd) {
+        if (ad == mNativeAd) {
             if (adError != null) {
                 if (adError == AdError.NO_FILL) {
                     this.invokeLoaded(null);
@@ -88,7 +88,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onAdLoaded(Ad ad) {
 
-        if (ad == this.nativeAd) {
+        if (ad == mNativeAd) {
             FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
             this.invokeLoaded(wrapModel);
         }
