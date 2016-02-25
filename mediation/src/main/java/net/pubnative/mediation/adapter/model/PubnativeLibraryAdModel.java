@@ -33,7 +33,7 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     protected NativeAdModel mNativeAdModel = null;
 
     public PubnativeLibraryAdModel(NativeAdModel model) {
-        this.mNativeAdModel = model;
+        mNativeAdModel = model;
     }
 
     @Override
@@ -93,10 +93,10 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public void startTracking(Context context, View adView) {
-        if (this.mNativeAdModel != null && context != null && adView != null) {
-            this.mContext = context;
+        if (mNativeAdModel != null && context != null && adView != null) {
+            mContext = context;
             adView.setOnClickListener(this);
-            this.mNativeAdModel.confirmImpressionAutomatically(context, adView, this);
+            mNativeAdModel.confirmImpressionAutomatically(context, adView, this);
         }
     }
 
@@ -107,13 +107,13 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public void onClick(View view) {
-        this.invokeOnAdClick();
-        this.mNativeAdModel.open(this.mContext);
+        invokeOnAdClick();
+        mNativeAdModel.open(mContext);
     }
 
     // Pubnative NativeAdModel.Listener
     @Override
     public void onAdImpression(NativeAdModel model) {
-        this.invokeOnAdImpressionConfirmed();
+        invokeOnAdImpressionConfirmed();
     }
 }
