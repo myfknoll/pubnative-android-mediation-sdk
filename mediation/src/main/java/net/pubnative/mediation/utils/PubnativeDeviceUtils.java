@@ -26,8 +26,11 @@ package net.pubnative.mediation.utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.net.ConnectivityManager;
+import android.util.Log;
 
 public class PubnativeDeviceUtils {
+
+    private static String TAG = PubnativeDeviceUtils.class.getSimpleName();
 
     /**
      * Gets you the PackageInfo object based on the Context object passed in.
@@ -36,11 +39,14 @@ public class PubnativeDeviceUtils {
      * @return PackageInfo object if context is valid, else null
      */
     public static PackageInfo getPackageInfo(Context context) {
+
+        Log.v(TAG, "getPackageInfo(Context context)");
+
         PackageInfo result = null;
         try {
             result = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
         } catch (Exception e) {
-            System.out.println("PubnativeDeviceUtils.getPackageInfo - Error:" + e);
+            Log.e(TAG, "getPackageInfo - Error:" + e);
         }
         return result;
     }
@@ -53,11 +59,14 @@ public class PubnativeDeviceUtils {
      * @return android advertising id if available, else null.
      */
     public static String getAndroidAdvertisingID(Context context) {
+
+        Log.v(TAG, "getAndroidAdvertisingID(Context context)");
+
         AdvertisingIdClient.AdInfo adInfo = null;
         try {
             adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
         } catch (Exception e) {
-            System.out.println("PubnativeDeviceUtils.getAndroidAdvertisingID - Error:" + e);
+            Log.e(TAG, "getAndroidAdvertisingID - Error:" + e);
         }
 
         String androidAdvertisingID = null;
@@ -73,6 +82,9 @@ public class PubnativeDeviceUtils {
      * @return true if it's available and connected
      */
     public static boolean isNetworkAvailable(Context context) {
+
+        Log.v(TAG, "isNetworkAvailable(Context context)");
+
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }

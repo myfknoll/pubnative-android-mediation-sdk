@@ -26,7 +26,7 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
+import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
@@ -67,22 +67,22 @@ public class FacebookNetworkAdapterTest {
     public void verifyCallbacksWithValidData() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
-        PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
         // Check that
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
-        verify(listenerMock, times(1)).onAdapterRequestStarted(eq(adapterSpy));
-        verify(listenerMock, times(1)).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
-        verify(listenerMock, never()).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
+        verify(listenerMock, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
+        verify(listenerMock, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
+        verify(listenerMock, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
     }
 
     @Test
     public void verifyCallbacksOnFacebookError() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "test_placement_id");
-        PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         // stubbing the createRequest method to simulate facebook error.
         doAnswer(new Answer() {
@@ -102,7 +102,7 @@ public class FacebookNetworkAdapterTest {
     public void verifyCallbacksWithEmptyPlacementId() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, "");
-        PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
@@ -114,7 +114,7 @@ public class FacebookNetworkAdapterTest {
     public void verifyCallbacksWithNullPlacementId() {
         Map<String, String> data = new HashMap();
         data.put(FacebookNetworkAdapter.KEY_PLACEMENT_ID, null);
-        PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
@@ -129,7 +129,7 @@ public class FacebookNetworkAdapterTest {
     @Test
     public void verifyCallbacksWithNotNullDataButNoPlacementIdKey() {
         Map<String, String>             data         = new HashMap();
-        PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
@@ -142,16 +142,16 @@ public class FacebookNetworkAdapterTest {
         FacebookNetworkAdapter adapterSpy = spy(new FacebookNetworkAdapter(null));
         this.stubCreateRequestMethod(adapterSpy);
 
-        PubnativeNetworkAdapterListener listenerMock = mock(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 
-    private void verifyCallbacksForFailureCase(FacebookNetworkAdapter adapter, PubnativeNetworkAdapterListener listener) {
-        verify(listener, times(1)).onAdapterRequestStarted(eq(adapter));
-        verify(listener, times(1)).onAdapterRequestFailed(eq(adapter), any(Exception.class));
-        verify(listener, never()).onAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
+    private void verifyCallbacksForFailureCase(FacebookNetworkAdapter adapter, PubnativeNetworkAdapter.Listener listener) {
+        verify(listener, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapter));
+        verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(Exception.class));
+        verify(listener, never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
     private void stubCreateRequestMethod(FacebookNetworkAdapter adapter) {

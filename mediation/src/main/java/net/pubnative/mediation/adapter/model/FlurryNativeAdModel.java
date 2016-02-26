@@ -24,6 +24,7 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import com.flurry.android.ads.FlurryAdErrorType;
@@ -35,54 +36,57 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNativeListener {
 
-    FlurryAdNative flurryAdNative;
+    private static String TAG = FlurryNativeAdModel.class.getSimpleName();
+    FlurryAdNative mFlurryAdNative;
 
     public FlurryNativeAdModel(FlurryAdNative flurryAdNative) {
-        this.flurryAdNative = flurryAdNative;
+
+        mFlurryAdNative = flurryAdNative;
     }
 
-    protected String getStringValueOfFirstAsset(String... keys) {
-        String result = null;
-        if (this.flurryAdNative != null) {
-            for (String key : keys) {
-                FlurryAdNativeAsset asset = this.flurryAdNative.getAsset(key);
-                if (asset != null) {
-                    result = asset.getValue();
-                    break;
-                }
-            }
-        }
-        return result;
-    }
+    //==============================================================================================
+    // PubnativeAdModel methods
+    //==============================================================================================
+    // Fields
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public String getTitle() {
+
+        Log.v(TAG, "getTitle");
         // The Ad headline, typically a single line. Type: STRING
         return getStringValueOfFirstAsset("headline");
     }
 
     @Override
     public String getDescription() {
+
+        Log.v(TAG, "getDescription");
         // The call to action summary of the advertisement. Type: STRING
         return getStringValueOfFirstAsset("summary");
     }
 
     @Override
     public String getIconUrl() {
+
+        Log.v(TAG, "getIconUrl");
         // secOrigImg: 	The secured original image, size: 627px x 627px. Optional asset, not present for the video ads
         // secImage:    The secured image, size: 82px x 82px. Optional asset, not present for the video ads.
-
         return getStringValueOfFirstAsset("secOrigImg", "secImage");
     }
 
     @Override
     public String getBannerUrl() {
+
+        Log.v(TAG, "getBannerUrl");
         // secHqImage:  The secured high quality image, size: 1200px x 627px. Optional asset, not present for the video ads
         return getStringValueOfFirstAsset("secHqImage");
     }
 
     @Override
     public String getCallToAction() {
+
+        Log.v(TAG, "getCallToAction");
         /**
          * Yahoo currently does not provide the short Call To Action (CTA)
          * asset or string at this time. Instead, you can create your own
@@ -99,7 +103,9 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public float getStarRating() {
-        float  result    = 0;
+
+        Log.v(TAG, "getStarRating");
+        float result = 0;
         String appRating = getStringValueOfFirstAsset("appRating");
         if (appRating != null) {
             String[] parts = appRating.split("/");
@@ -111,7 +117,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
                         result = (ratingVal / scaleVal) * 5;
                     }
                 } catch (Exception e) {
-                    System.out.println("Error while parsing star rating :" + e);
+                    Log.e(TAG, "getStarRating - Error while parsing star rating :" + e);
                 }
             }
         }
@@ -120,58 +126,103 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public View getAdvertisingDisclosureView(Context context) {
+
         return null;
     }
+    // Tracking
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void startTracking(Context context, View adView) {
-        this.context = context;
-        if (this.flurryAdNative != null && adView != null) {
-            this.flurryAdNative.setListener(this);
-            this.flurryAdNative.setTrackingView(adView);
+
+        Log.v(TAG, "startTracking");
+        mContext = context;
+        if (mFlurryAdNative != null && adView != null) {
+            mFlurryAdNative.setListener(this);
+            mFlurryAdNative.setTrackingView(adView);
         }
     }
 
     @Override
     public void stopTracking(Context context, View adView) {
-        if (this.flurryAdNative != null) {
-            this.flurryAdNative.removeTrackingView();
-        }
 
+        Log.v(TAG, "stopTracking");
+        if (mFlurryAdNative != null) {
+            mFlurryAdNative.removeTrackingView();
+        }
     }
+
+    //==============================================================================================
+    // FlurryNativeAdModel methods
+    //==============================================================================================
+    protected String getStringValueOfFirstAsset(String... keys) {
+
+        Log.v(TAG, "getStringValueOfFirstAsset");
+        String result = null;
+        if (mFlurryAdNative != null) {
+            for (String key : keys) {
+                FlurryAdNativeAsset asset = mFlurryAdNative.getAsset(key);
+                if (asset != null) {
+                    result = asset.getValue();
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    //==============================================================================================
+    // Callbacks
+    //==============================================================================================
+    // FlurryAdNativeListener
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onFetched");
         // Do nothing
     }
 
     @Override
     public void onShowFullscreen(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onShowFullscreen");
         // Do nothing
     }
 
     @Override
     public void onCloseFullscreen(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onCloseFullscreen");
         // Do nothing
     }
 
     @Override
     public void onAppExit(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onAppExit");
         // Do nothing
     }
 
     @Override
     public void onClicked(FlurryAdNative flurryAdNative) {
-        this.invokeOnAdClick();
+
+        Log.v(TAG, "onClicked");
+        invokeOnAdClick();
     }
 
     @Override
     public void onImpressionLogged(FlurryAdNative flurryAdNative) {
-        this.invokeOnAdImpressionConfirmed();
+
+        Log.v(TAG, "onImpressionLogged");
+        invokeOnAdImpressionConfirmed();
     }
 
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int i) {
+
+        Log.v(TAG, "onError: " + flurryAdErrorType.name());
         // Do nothing
     }
 }

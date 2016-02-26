@@ -23,12 +23,16 @@
 
 package net.pubnative.mediation.utils;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class PubnativeStringUtils {
+
+    private static String TAG = PubnativeStringUtils.class.getSimpleName();
 
     /**
      * Reads string from given InputStream object
@@ -37,6 +41,9 @@ public class PubnativeStringUtils {
      * @return The string read from the inputStream object. Null if input stream is null or read fails.
      */
     public static String readStringFromInputStream(InputStream inputStream) {
+
+        Log.v(TAG, "readStringFromInputStream(InputStream)");
+
         BufferedReader bufferReader  = null;
         StringBuilder  stringBuilder = new StringBuilder();
         try {
@@ -46,13 +53,13 @@ public class PubnativeStringUtils {
                 stringBuilder.append(line);
             }
         } catch (IOException e) {
-            System.out.println("PubnativeStringUtils.readTextFile - ERROR: " + e);
+            Log.e(TAG, "readStringFromInputStream - Error:" + e);
         } finally {
             if (bufferReader != null) {
                 try {
                     bufferReader.close();
                 } catch (IOException e) {
-                    System.out.println("PubnativeStringUtils.readTextFile - ERROR: " + e);
+                    Log.e(TAG, "readStringFromInputStream - Error:" + e);
                 }
             }
         }

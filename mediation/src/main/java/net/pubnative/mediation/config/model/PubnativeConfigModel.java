@@ -23,14 +23,20 @@
 
 package net.pubnative.mediation.config.model;
 
+import android.util.Log;
+
 import java.util.Map;
 
 public class PubnativeConfigModel {
 
+    private static final String TAG = PubnativeConfigModel.class.getSimpleName();
     public Map<String, Object>                  globals;
     public Map<String, PubnativeNetworkModel>   networks;
     public Map<String, PubnativePlacementModel> placements;
 
+    //==============================================================================================
+    // PubnativeConfigModel.ConfigContract
+    //==============================================================================================
     public interface ConfigContract {
 
         String REFRESH           = "refresh";
@@ -40,15 +46,20 @@ public class PubnativeConfigModel {
         String CONFIG_URL        = "config_url";
     }
 
+    //==============================================================================================
+    // PubnativeConfigModel
+    //==============================================================================================
     public boolean isNullOrEmpty() {
 
+        Log.v(TAG, "isNullOrEmpty");
         return this.networks == null || this.placements == null || this.networks.size() == 0 || this.placements.size() == 0;
     }
 
     public Object getGlobal(String globalKey) {
 
+        Log.v(TAG, "getGlobal: " + globalKey);
         Object result = null;
-        if(this.globals != null) {
+        if (this.globals != null) {
             result = this.globals.get(globalKey);
         }
         return result;
@@ -56,6 +67,7 @@ public class PubnativeConfigModel {
 
     public PubnativePlacementModel getPlacement(String placementID) {
 
+        Log.v(TAG, "getPlacement: " + placementID);
         PubnativePlacementModel result = null;
         if (this.placements != null) {
             result = this.placements.get(placementID);
@@ -65,6 +77,7 @@ public class PubnativeConfigModel {
 
     public PubnativeNetworkModel getNetwork(String networkID) {
 
+        Log.v(TAG, "getNetwork: " + networkID);
         PubnativeNetworkModel result = null;
         if (this.networks != null) {
             result = this.networks.get(networkID);
@@ -74,8 +87,9 @@ public class PubnativeConfigModel {
 
     public PubnativePriorityRuleModel getPriorityRule(String placementID, int index) {
 
-        PubnativePriorityRuleModel result    = null;
-        PubnativePlacementModel    placement = getPlacement(placementID);
+        Log.v(TAG, "getPriorityRule: " + placementID);
+        PubnativePriorityRuleModel result = null;
+        PubnativePlacementModel placement = getPlacement(placementID);
         if (placement != null) {
             result = placement.getPriorityRule(index);
         }

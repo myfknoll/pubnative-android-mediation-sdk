@@ -25,6 +25,7 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
@@ -38,22 +39,26 @@ import java.util.Map;
 
 public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener {
 
+    private static         String TAG              = FacebookNetworkAdapter.class.getSimpleName();
     protected static final String KEY_PLACEMENT_ID = "placement_id";
-
-    protected NativeAd nativeAd;
+    protected NativeAd mNativeAd;
 
     public FacebookNetworkAdapter(Map data) {
 
         super(data);
     }
 
+    //==============================================================================================
+    // PubnativeNetworkAdapter methods
+    //==============================================================================================
     @Override
     public void request(Context context) {
 
-        if (context != null && data != null) {
-            String placementId = (String) data.get(KEY_PLACEMENT_ID);
+        Log.v(TAG, "request");
+        if (context != null && mData != null) {
+            String placementId = (String) mData.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
-                this.createRequest(context, placementId);
+                createRequest(context, placementId);
             } else {
                 invokeFailed(new IllegalArgumentException("Invalid placement_id provided."));
             }
@@ -62,25 +67,35 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         }
     }
 
+    //==============================================================================================
+    // FacebookNetworkAdapter methods
+    //==============================================================================================
     protected void createRequest(Context context, String placementId) {
 
-        this.nativeAd = new NativeAd(context, placementId);
-        this.nativeAd.setAdListener(this);
-        this.nativeAd.loadAd();
+        Log.v(TAG, "createRequest");
+        mNativeAd = new NativeAd(context, placementId);
+        mNativeAd.setAdListener(this);
+        mNativeAd.loadAd();
     }
 
+    //==============================================================================================
+    // Callback
+    //==============================================================================================
+    // AdListener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        if (ad == this.nativeAd) {
+        Log.v(TAG, "onError: " + (adError != null?(adError.getErrorCode() + " - " + adError.getErrorMessage()):""));
+        if (ad == mNativeAd) {
             if (adError != null) {
                 if (adError == AdError.NO_FILL) {
-                    this.invokeLoaded(null);
+                    invokeLoaded(null);
                 } else {
-                    this.invokeFailed(new Exception("Facebook adapter error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
+                    invokeFailed(new Exception("Facebook adapter error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
                 }
             } else {
-                this.invokeFailed(new Exception("Facebook adapter error: Unknown"));
+                invokeFailed(new Exception("Facebook adapter error: Unknown"));
             }
         }
     }
@@ -88,14 +103,17 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onAdLoaded(Ad ad) {
 
-        if (ad == this.nativeAd) {
+        Log.v(TAG, "onAdLoaded");
+        if (ad == mNativeAd) {
             FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
-            this.invokeLoaded(wrapModel);
+            invokeLoaded(wrapModel);
         }
     }
 
     @Override
     public void onAdClicked(Ad ad) {
+
+        Log.v(TAG, "onAdClicked");
         // Do nothing
     }
 }

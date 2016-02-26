@@ -29,9 +29,15 @@ public class PubnativeConfigAPIResponseModel {
     public PubnativeConfigModel config;
     public String               error_message;
 
+    //==============================================================================================
+    // PubnativeConfigAPIResponseModel.Status
+    //==============================================================================================
     public interface Status {
 
         String OK    = "ok";
         String ERROR = "error";
     }
+    //==============================================================================================
+    // PubnativeConfigAPIResponseModel
+    //==============================================================================================
 }

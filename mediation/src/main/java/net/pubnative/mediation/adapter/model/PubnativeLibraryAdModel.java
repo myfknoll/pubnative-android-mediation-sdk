@@ -23,97 +23,137 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener, NativeAdModel.Listener {
+public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener,
+                                                                         NativeAdModel.Listener {
 
-    protected NativeAdModel model = null;
+    private static String        TAG            = PubnativeLibraryAdModel.class.getSimpleName();
+    protected      NativeAdModel mNativeAdModel = null;
 
     public PubnativeLibraryAdModel(NativeAdModel model) {
-        this.model = model;
+
+        mNativeAdModel = model;
     }
 
+    //==============================================================================================
+    // PubnativeAdModel methods
+    //==============================================================================================
+
+    // Fields
+    //----------------------------------------------------------------------------------------------
     @Override
     public String getTitle() {
+
+        Log.v(TAG, "getTitle");
         String result = null;
-        if (model != null) {
-            result = model.title;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.title;
         }
         return result;
     }
 
     @Override
     public String getDescription() {
+
+        Log.v(TAG, "getDescription");
         String result = null;
-        if (model != null) {
-            result = model.description;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.description;
         }
         return result;
     }
 
     @Override
     public String getIconUrl() {
+
+        Log.v(TAG, "getIconUrl");
         String result = null;
-        if (model != null) {
-            result = model.iconUrl;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.iconUrl;
         }
         return result;
     }
 
     @Override
     public String getBannerUrl() {
+
+        Log.v(TAG, "getBannerUrl");
         String result = null;
-        if (model != null) {
-            result = model.bannerUrl;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.bannerUrl;
         }
         return result;
     }
 
     @Override
     public String getCallToAction() {
+
+        Log.v(TAG, "getCallToAction");
         String result = null;
-        if (model != null) {
-            result = model.ctaText;
+        if (mNativeAdModel != null) {
+            result = mNativeAdModel.ctaText;
         }
         return result;
     }
 
     @Override
     public float getStarRating() {
-        return model.getStoreRating();
+
+        Log.v(TAG, "getStarRating");
+        return mNativeAdModel.getStoreRating();
     }
 
     @Override
     public View getAdvertisingDisclosureView(Context context) {
+
+        Log.v(TAG, "getAdvertisingDisclosureView");
         return null;
     }
+    // Tracking
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void startTracking(Context context, View adView) {
-        if (this.model != null && context != null && adView != null) {
-            this.context = context;
+
+        Log.v(TAG, "startTracking");
+        if (mNativeAdModel != null && context != null && adView != null) {
+            mContext = context;
             adView.setOnClickListener(this);
-            this.model.confirmImpressionAutomatically(context, adView, this);
+            mNativeAdModel.confirmImpressionAutomatically(context, adView, this);
         }
     }
 
     @Override
     public void stopTracking(Context context, View adView) {
+
+        Log.v(TAG, "stopTracking");
         // Do nothing
     }
+    //==============================================================================================
+    // Callbacks
+    //==============================================================================================
 
+    // View.OnClickListener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onClick(View view) {
-        this.invokeOnAdClick();
-        this.model.open(this.context);
+
+        Log.v(TAG, "onClick");
+        invokeOnAdClick();
+        mNativeAdModel.open(mContext);
     }
 
-    // Pubnative NativeAdModel.Listener
+    // NativeAdModel.Listener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onAdImpression(NativeAdModel model) {
-        this.invokeOnAdImpressionConfirmed();
+
+        Log.v(TAG, "onAdImpression");
+        invokeOnAdImpressionConfirmed();
     }
 }

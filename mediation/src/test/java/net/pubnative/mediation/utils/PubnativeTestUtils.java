@@ -23,6 +23,8 @@
 
 package net.pubnative.mediation.utils;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -31,6 +33,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class PubnativeTestUtils {
+
+    private static String TAG = PubnativeDeviceUtils.class.getSimpleName();
 
     /**
      * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
@@ -58,7 +62,7 @@ public class PubnativeTestUtils {
                 result.addAll(PubnativeTestUtils.findClasses(directory, packageName));
             }
         } catch (Exception e) {
-            System.out.println("Error: " + e);
+            Log.e(TAG, "Error: " + e);
         }
 
         return result;

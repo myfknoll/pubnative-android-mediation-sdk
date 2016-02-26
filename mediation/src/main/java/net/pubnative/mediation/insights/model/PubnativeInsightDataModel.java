@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+
 package net.pubnative.mediation.insights.model;
 
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.text.TextUtils;
+import android.util.Log;
 
 import net.pubnative.mediation.R;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
@@ -37,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PubnativeInsightDataModel {
+
+    private static final String TAG = PubnativeInsightDataModel.class.getName();
 
     protected static final String CONNECTION_TYPE_CELLULAR = "cellular";
     protected static final String CONNECTION_TYPE_WIFI     = "wifi";
@@ -66,20 +70,14 @@ public class PubnativeInsightDataModel {
     public String                             gender;
     public Boolean                            iap; // In app purchase enabled, Just open it for the user to fill
     public Float                              iap_total; // In app purchase total spent, just open for the user to fill
-
-    /**
-     * This method takes two Objects "first" and "second" as arguments and does a comparison.
-     * Returns true if they are equal.
-     * Returns false if they are not equal or not comparable.
-     */
-    private boolean isEqual(Object first, Object second) {
-
-        return (first != null) ? first.equals(second) : second == null;
-    }
+    //==============================================================================================
+    // Object
+    //==============================================================================================
 
     @Override
     public boolean equals(Object object) {
 
+        Log.v(TAG, "equals");
         if (this == object) {
             // return true immediately if both objects are identical.
             return true;
@@ -90,7 +88,7 @@ public class PubnativeInsightDataModel {
             return false;
         }
         PubnativeInsightDataModel dataModel = (PubnativeInsightDataModel) object;
-        boolean                   result    = isEqual(this.network, dataModel.network);
+        boolean result = isEqual(this.network, dataModel.network);
         if (result) {
             result = isEqual(this.attempted_networks, dataModel.attempted_networks);
         }
@@ -151,22 +149,53 @@ public class PubnativeInsightDataModel {
         }
         return result;
     }
+    //==============================================================================================
+    // PubnativeInsightDataModel
+    //==============================================================================================
+    // Private
+    //----------------------------------------------------------------------------------------------
+    /**
+     * This method takes two Objects "first" and "second" as arguments and does a comparison.
+     * Returns true if they are equal.
+     * Returns false if they are not equal or not comparable.
+     */
+    private boolean isEqual(Object first, Object second) {
 
+        Log.v(TAG, "isEqual");
+        return (first != null) ? first.equals(second) : second == null;
+    }
+    // Public
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Adds interest to the insight data mode
+     *
+     * @param interest String
+     */
     public void addInterest(String interest) {
 
+        Log.v(TAG, "addInterest: " + interest);
         if (!TextUtils.isEmpty(interest)) {
             if (this.interests == null) {
-                this.interests = new ArrayList();
+                this.interests = new ArrayList<String>();
             }
             this.interests.add(interest);
         }
     }
 
+    /**
+     * Adds network insight data to the insight
+     *
+     * @param priorityRuleModel valid PubnativePriorityRuleModel object
+     * @param responseTime      valid long in milliseconds
+     * @param crashModel        valid PubnativeInsightCrashModel or null
+     */
     public void addNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime, PubnativeInsightCrashModel crashModel) {
 
+        Log.v(TAG, "addNetwork");
         if (priorityRuleModel != null) {
             if (this.networks == null) {
-                this.networks = new ArrayList();
+                this.networks = new ArrayList<PubnativeInsightNetworkModel>();
             }
             PubnativeInsightNetworkModel networkModel = new PubnativeInsightNetworkModel();
             networkModel.code = priorityRuleModel.network_code;
@@ -180,28 +209,44 @@ public class PubnativeInsightDataModel {
         }
     }
 
+    /**
+     * Adds a network code to the attempted_networks list
+     *
+     * @param network valid String
+     */
     public void addAttemptedNetwork(String network) {
 
+        Log.v(TAG, "addAttemptedNetwork: " + network);
         if (!TextUtils.isEmpty(network)) {
             if (this.attempted_networks == null) {
-                this.attempted_networks = new ArrayList();
+                this.attempted_networks = new ArrayList<String>();
             }
             this.attempted_networks.add(network);
         }
     }
 
+    /**
+     * Adds a network code to the unreachable_networks list
+     *
+     * @param network valid String
+     */
     public void addUnreachableNetwork(String network) {
 
+        Log.v(TAG, "addUnreachableNetwork: " + network);
         if (!TextUtils.isEmpty(network)) {
             if (this.unreachable_networks == null) {
-                this.unreachable_networks = new ArrayList();
+                this.unreachable_networks = new ArrayList<String>();
             }
             this.unreachable_networks.add(network);
         }
     }
 
+    /**
+     * Clear all related request tracking insight data
+     */
     public void reset() {
 
+        Log.v(TAG, "reset");
         this.retry = 0;
         this.network = null;
         this.networks = null;
@@ -217,6 +262,7 @@ public class PubnativeInsightDataModel {
      */
     public void fillDefaults(Context context) {
 
+        Log.v(TAG, "fillDefaults");
         if (context != null) {
             PackageInfo info = PubnativeDeviceUtils.getPackageInfo(context);
             if (info != null) {

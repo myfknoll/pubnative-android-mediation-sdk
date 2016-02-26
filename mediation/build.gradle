@@ -10,6 +10,9 @@ android {
         versionCode 20
         versionName "1.0.0"
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     buildTypes {
         debug {
             testCoverageEnabled true

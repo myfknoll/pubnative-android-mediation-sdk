@@ -28,9 +28,15 @@ public class PubnativeInsightsAPIResponseModel {
     public String status;
     public String error_message;
 
+    //==============================================================================================
+    // PubnativeInsightsAPIResponseModel.Status
+    //==============================================================================================
     public interface Status {
 
         String OK    = "ok";
         String ERROR = "error";
     }
+    //==============================================================================================
+    // PubnativeInsightsAPIResponseModel
+    //==============================================================================================
 }

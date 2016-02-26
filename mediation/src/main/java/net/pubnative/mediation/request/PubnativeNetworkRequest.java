@@ -28,12 +28,11 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
 import net.pubnative.mediation.config.PubnativeConfigManager;
-import net.pubnative.mediation.config.PubnativeConfigRequestListener;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeDeliveryRuleModel;
@@ -52,23 +51,56 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
-public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
-                                                PubnativeConfigRequestListener {
+public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener,
+                                                PubnativeConfigManager.Listener {
 
+    private static       String TAG                           = PubnativeNetworkRequest.class.getSimpleName();
     private static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
     private static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
+    protected Context                          mContext;
+    protected PubnativeNetworkRequest.Listener mListener;
+    protected PubnativeConfigModel             mConfig;
+    protected PubnativeAdModel                 mAd;
+    protected PubnativeInsightDataModel        mTrackingModel;
+    protected String                           mAppToken;
+    protected String                           mPlacementID;
+    protected int                              mCurrentNetworkIndex;
+    protected long                             mRequestStartTimestamp;
+    protected boolean                          mIsRunning;
+    protected Handler                          mHandler;
 
-    protected Context                         mContext;
-    protected PubnativeNetworkRequestListener mListener;
-    protected PubnativeConfigModel            mConfig;
-    protected PubnativeAdModel                mAd;
-    protected PubnativeInsightDataModel       mTrackingModel;
-    protected String                          mAppToken;
-    protected String                          mPlacementID;
-    protected int                             mCurrentNetworkIndex;
-    protected long                            mRequestStartTimestamp;
-    protected boolean                         mIsRunning;
-    protected Handler                         mHandler;
+    //==============================================================================================
+    // Listener
+    //==============================================================================================
+
+    /**
+     * Interface for request callbacks that will inform about the request status
+     */
+    public interface Listener {
+
+        /**
+         * Invoked when ad request starts with valid params
+         *
+         * @param request Object used to make the ad request.
+         */
+        void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request);
+
+        /**
+         * Invoked when ad request returns valid ads.
+         *
+         * @param request Object used to make the ad request.
+         * @param ad      Loaded ad model.
+         */
+        void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad);
+
+        /**
+         * Invoked when ad request fails or when no ad is retrieved.
+         *
+         * @param request   Object used to make the ad request.
+         * @param exception Exception with proper message of request failure.
+         */
+        void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception);
+    }
     //==============================================================================================
     // Pubic methods
     //==============================================================================================
@@ -81,16 +113,17 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
      * @param placementID valid placementId provided by Pubnative.
      * @param listener    valid Listener to keep track of request callbacks.
      */
-    public void start(Context context, String appToken, String placementID, PubnativeNetworkRequestListener listener) {
+    public void start(Context context, String appToken, String placementID, PubnativeNetworkRequest.Listener listener) {
 
+        Log.v(TAG, "start: -placement: " + placementID + " -appToken:" + appToken);
         if (listener == null) {
             // Just drop the call
-            System.out.println("PubnativeNetworkRequest.start - mListener not specified, dropping the call");
+            Log.e(TAG, "start - listener not specified, dropping the call");
         } else {
             mHandler = new Handler();
             mListener = listener;
             if (mIsRunning) {
-                System.out.println("PubnativeNetworkRequest.start - Request already running, dropping the call");
+                Log.e(TAG, "start - request already running, dropping the call");
             } else {
                 if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
                     invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - invalid start parameters"));
@@ -112,14 +145,17 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         }
     }
 
-    protected void getConfig(String appToken, PubnativeConfigRequestListener listener) {
+    protected void getConfig(String appToken, PubnativeConfigManager.Listener listener) {
+
+        Log.v(TAG, "getConfig");
         // This method getConfig() here gets the stored/downloaded mConfig and
         // continues to startRequest() in it's callback "onConfigLoaded()".
         PubnativeConfigManager.getConfig(mContext, appToken, listener);
     }
 
-    private void startRequest(PubnativeConfigModel configModel) {
+    protected void startRequest(PubnativeConfigModel configModel) {
 
+        Log.v(TAG, "startRequest");
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
             invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - null or invalid config retrieved"));
@@ -139,11 +175,11 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void startTracking() {
 
+        Log.v(TAG, "startTracking");
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-
                 // Prepare looper for further handlers
                 Looper.prepare();
                 // Reset tracking
@@ -162,15 +198,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void startRequest() {
 
+        Log.v(TAG, "startRequest");
         PubnativeDeliveryRuleModel deliveryRuleModel = mConfig.getPlacement(mPlacementID).delivery_rule;
         if (deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementID)) {
             invokeFail(new Exception("Pubnative - start error: (frequecy_cap) too many ads"));
         } else {
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementID);
-
             if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar)) {
-
                 // Pacing cap reset or deactivated or not reached, start adapter request with new request ID
                 String requestID = UUID.randomUUID().toString();
                 doNextNetworkRequest(requestID);
@@ -188,6 +223,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void doNextNetworkRequest(String requestID) {
 
+        Log.v(TAG, "doNextNetworkRequest");
         mCurrentNetworkIndex++;
         PubnativePriorityRuleModel currentPriorityRule = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (currentPriorityRule == null) {
@@ -205,7 +241,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                     doNextNetworkRequest(requestID);
                 } else {
                     // Add ML extras for adapter
-                    Map extras = new HashMap();
+                    Map<String, String> extras = new HashMap<String, String>();
                     extras.put(TRACKING_PARAMETER_REQUEST_ID, requestID);
                     adapter.doRequest(mContext, networkModel.timeout, extras, this);
                 }
@@ -213,7 +249,12 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         }
     }
 
+    //==============================================================================================
+    // Callback helpers
+    //==============================================================================================
     protected void invokeStart() {
+
+        Log.v(TAG, "invokeStart");
         // Ensure returning callbacks on same thread than where we started the call
         mHandler.post(new Runnable() {
 
@@ -221,7 +262,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onRequestStarted(PubnativeNetworkRequest.this);
+                    mListener.onPubnativeNetworkRequestStarted(PubnativeNetworkRequest.this);
                 }
             }
         });
@@ -229,6 +270,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void invokeLoad(final PubnativeAdModel ad) {
 
+        Log.v(TAG, "invokeLoad");
         mHandler.post(new Runnable() {
 
             @Override
@@ -236,7 +278,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
                 mIsRunning = false;
                 if (mListener != null) {
-                    mListener.onRequestLoaded(PubnativeNetworkRequest.this, ad);
+                    mListener.onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest.this, ad);
                 }
             }
         });
@@ -244,6 +286,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void invokeFail(final Exception exception) {
 
+        Log.v(TAG, "invokeFail: " + exception);
         mHandler.post(new Runnable() {
 
             @Override
@@ -251,7 +294,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
                 mIsRunning = false;
                 if (mListener != null) {
-                    mListener.onRequestFailed(PubnativeNetworkRequest.this, exception);
+                    mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this, exception);
                 }
             }
         });
@@ -262,9 +305,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void trackRequestInsight(String requestID) {
 
+        Log.v(TAG, "trackRequestInsight");
         String requestURL = (String) mConfig.getGlobal(PubnativeConfigModel.ConfigContract.REQUEST_BEACON);
         if (TextUtils.isEmpty(requestURL)) {
-            System.out.println("Pubnative - Error: Tracking request aborted, requestURL not found");
+            Log.e(TAG, "trackRequestInsight - Error: Tracking request aborted, requestURL not found");
         } else {
             PubnativeInsightsManager.trackData(mContext, requestURL, getTrackingParameters(requestID), mTrackingModel);
         }
@@ -272,9 +316,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     private void trackUnreachableNetwork(String error, String details) {
 
+        Log.v(TAG, "trackUnreachableNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (priorityRuleModel == null) {
-            System.out.println("Pubnative - Error: Tracking unreachable network, priorityRuleModel not found");
+            Log.e(TAG, "trackUnreachableNetwork - Error: Tracking unreachable network, priorityRuleModel not found");
         } else {
             long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
@@ -287,9 +332,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     private void trackAttemptedNetwork(String error, String details) {
 
+        Log.v(TAG, "trackAttemptedNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (priorityRuleModel == null) {
-            System.out.println("Pubnative - Error: Tracking attempted network, priorityRuleModel not found");
+            Log.e(TAG, "trackAttemptedNetwork - Error: Tracking attempted network, priorityRuleModel not found");
         } else {
             long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
@@ -302,24 +348,31 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected Map<String, String> getTrackingParameters(String requestID) {
 
+        Log.v(TAG, "getTrackingParameters");
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
         parameters.put(TRACKING_PARAMETER_REQUEST_ID, requestID);
         return parameters;
     }
 
+    //==============================================================================================
+    // Tracking data
+    //==============================================================================================
     public void setAge(int age) {
 
+        Log.v(TAG, "setAge: " + age);
         mTrackingModel.age = age;
     }
 
     public void setEducation(String education) {
 
+        Log.v(TAG, "setEducation: " + education);
         mTrackingModel.education = education;
     }
 
     public void addInterest(String interest) {
 
+        Log.v(TAG, "addInterest: " + interest);
         mTrackingModel.addInterest(interest);
     }
 
@@ -330,16 +383,19 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     public void setGender(Gender gender) {
 
+        Log.v(TAG, "setGender: " + gender.name());
         mTrackingModel.gender = gender.name().toLowerCase();
     }
 
     public void setInAppPurchasesEnabled(boolean iap) {
 
+        Log.v(TAG, "setInAppPurchasesEnabled: " + iap);
         mTrackingModel.iap = iap;
     }
 
     public void setInAppPurchasesTotal(float iapTotal) {
 
+        Log.v(TAG, "setInAppPurchasesTotal: " + iapTotal);
         mTrackingModel.iap_total = iapTotal;
     }
     //==============================================================================================
@@ -351,20 +407,23 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     @Override
     public void onConfigLoaded(PubnativeConfigModel configModel) {
 
+        Log.v(TAG, "onConfigLoaded");
         startRequest(configModel);
     }
 
     // PubnativeNetworkAdapterListener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
+    public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
 
+        Log.v(TAG, "onAdapterRequestStarted");
         mRequestStartTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad) {
+    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad) {
 
+        Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
         Map<String, String> extras = adapter.getExtras();
         String requestID = extras.get(TRACKING_PARAMETER_REQUEST_ID);
@@ -395,9 +454,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     @Override
-    public void onAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception) {
+    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception) {
 
-        System.out.println("Pubnative - adapter error: " + exception);
+        Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network
         if (IllegalArgumentException.class.isAssignableFrom(exception.getClass())) {
             trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, exception.toString());

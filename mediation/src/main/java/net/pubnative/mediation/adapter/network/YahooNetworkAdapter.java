@@ -25,6 +25,7 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
 import com.flurry.android.ads.FlurryAdErrorType;
@@ -38,25 +39,30 @@ import java.util.Map;
 
 public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements FlurryAdNativeListener {
 
+    private static      String TAG                = YahooNetworkAdapter.class.getSimpleName();
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
-    private Context context;
+    private Context mContext;
 
     public YahooNetworkAdapter(Map data) {
 
         super(data);
     }
 
+    //==============================================================================================
+    // PubnativeNetworkAdapter
+    //==============================================================================================
     @Override
     public void request(Context context) {
 
-        if (context != null && data != null) {
-            this.context = context;
-            String apiKey = (String) data.get(KEY_FLURRY_API_KEY);
+        Log.v(TAG, "request");
+        if (context != null && mData != null) {
+            mContext = context;
+            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
             if (!TextUtils.isEmpty(apiKey)) {
-                String adSpaceName = (String) data.get(KEY_AD_SPACE_NAME);
+                String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
                 if (!TextUtils.isEmpty(adSpaceName)) {
-                    this.createRequest(context, adSpaceName, apiKey);
+                    createRequest(context, adSpaceName, apiKey);
                 } else {
                     invokeFailed(new IllegalArgumentException("Invalid ad_space_name provided."));
                 }
@@ -68,12 +74,12 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
         }
     }
 
-    protected void endFlurrySession(Context context) {
-
-        FlurryAgent.onEndSession(context);
-    }
-
+    //==============================================================================================
+    // YahooNetworkAdapter
+    //==============================================================================================
     protected void createRequest(Context context, String adSpaceName, String apiKey) {
+
+        Log.v(TAG, "createRequest");
         // configure flurry
         FlurryAgent.setLogEnabled(true);
         // initialize flurry with new apiKey
@@ -87,57 +93,80 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
         flurryAdNative.setListener(this);
         flurryAdNative.fetchAd();
     }
+    //==============================================================================================
+    // Callbacks
+    //==============================================================================================
+
+    // FlurryAdNativeListener
+    //----------------------------------------------------------------------------------------------
+    protected void endFlurrySession(Context context) {
+
+        Log.v(TAG, "endFlurrySession");
+        FlurryAgent.onEndSession(context);
+    }
 
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
 
-        this.endFlurrySession(this.context);
+        Log.v(TAG, "onFetched");
+        endFlurrySession(mContext);
         FlurryNativeAdModel nativeAdModel = new FlurryNativeAdModel(flurryAdNative);
-        this.invokeLoaded(nativeAdModel);
+        invokeLoaded(nativeAdModel);
     }
 
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
 
-        this.endFlurrySession(this.context);
+        Log.v(TAG, "onError: " + flurryAdErrorType.name() + " - " + errCode);
+        endFlurrySession(mContext);
         if (flurryAdErrorType != null) {
             switch (flurryAdErrorType) {
                 case FETCH: {
-                    this.invokeLoaded(null);
+                    invokeLoaded(null);
                 }
                 break;
                 default: {
-                    this.invokeFailed(new Exception("Flurry adapter error: " + flurryAdErrorType.name() + " - " + errCode));
+                    invokeFailed(new Exception("Flurry adapter error: " + flurryAdErrorType.name() + " - " + errCode));
                 }
                 break;
             }
         } else {
-            this.invokeFailed(new Exception("Flurry adapter error: Unknown"));
+            invokeFailed(new Exception("Flurry adapter error: Unknown"));
         }
     }
 
     @Override
     public void onShowFullscreen(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onShowFullscreen");
         // Do nothing for now.
     }
 
     @Override
     public void onCloseFullscreen(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onCloseFullscreen");
         // Do nothing for now.
     }
 
     @Override
     public void onAppExit(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onAppExit");
         // Do nothing for now.
     }
 
     @Override
     public void onClicked(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onClicked");
         // Do nothing for now.
     }
 
     @Override
     public void onImpressionLogged(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onImpressionLogged");
         // Do nothing for now.
     }
 }

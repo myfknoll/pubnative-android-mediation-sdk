@@ -81,7 +81,7 @@ public class PubnativeAdModelTest {
 
         Map parametersMock = mock(Map.class);
         PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
-        modelSpy.context = this.appContext;
+        modelSpy.mContext = this.appContext;
 
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
         modelSpy.setTrackingInfo(dataModel);
@@ -89,7 +89,7 @@ public class PubnativeAdModelTest {
         modelSpy.setTrackingImpressionData(SAMPLE_URL, parametersMock);
         
         // Callbacks the setted up listener
-        PubnativeAdModelListener listenerSpy = spy(PubnativeAdModelListener.class);
+        PubnativeAdModel.Listener listenerSpy = spy(PubnativeAdModel.Listener.class);
         modelSpy.setListener(listenerSpy);
 
         // Calling invoke methods

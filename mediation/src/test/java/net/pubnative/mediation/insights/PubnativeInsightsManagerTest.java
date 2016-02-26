@@ -151,7 +151,7 @@ public class PubnativeInsightsManagerTest {
                 PubnativeInsightsAPIResponseModel model    = new PubnativeInsightsAPIResponseModel();
                 model.status = PubnativeInsightsAPIResponseModel.Status.OK;
                 String result = new Gson().toJson(model);
-                listener.onHttpTaskFinished(mock(PubnativeHttpTask.class), result);
+                listener.onHttpTaskSuccess(mock(PubnativeHttpTask.class), result);
                 return null;
             }
         }).when(PubnativeInsightsManager.class,
@@ -174,7 +174,7 @@ public class PubnativeInsightsManagerTest {
     public void networkCallNotHappeningWhenTrackerIsBusy() throws Exception {
         PowerMockito.spy(PubnativeInsightsManager.class);
         // marking tracker as busy
-        PubnativeInsightsManager.idle = false;
+        PubnativeInsightsManager.sIdle = false;
 
         // skipping the network call
         PowerMockito.doNothing()
@@ -190,6 +190,6 @@ public class PubnativeInsightsManagerTest {
         PubnativeInsightsManager.sendTrackingDataToServer(any(Context.class), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
 
         // marking tracker as available (avoiding issue caused with static variable)
-        PubnativeInsightsManager.idle = true;
+        PubnativeInsightsManager.sIdle = true;
     }
 }

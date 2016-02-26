@@ -54,7 +54,7 @@ public class PubnativeNetworkAdapterTest {
     @Test
     public void invokeFinalCallbacksNullifyListener() {
         HashMap<String, Object>         adapterConfigMock = mock(HashMap.class);
-        PubnativeNetworkAdapterListener listenerSpy       = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy       = spy(PubnativeNetworkAdapter.Listener.class);
 
         PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
             @Override
@@ -64,22 +64,22 @@ public class PubnativeNetworkAdapterTest {
         });
 
         // onRequestLoaded
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
         PubnativeAdModel adMock = mock(PubnativeAdModel.class);
         adapterInstance.invokeLoaded(adMock);
-        assertThat(adapterInstance.listener).isNull();
+        assertThat(adapterInstance.mListener).isNull();
 
         // onRequestFailed
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
         Exception exceptionMock = mock(Exception.class);
         adapterInstance.invokeFailed(exceptionMock);
-        assertThat(adapterInstance.listener).isNull();
+        assertThat(adapterInstance.mListener).isNull();
     }
 
     @Test
     public void invokeCallbacksWithValidListener() {
         HashMap<String, Object>         adapterConfigMock = mock(HashMap.class);
-        PubnativeNetworkAdapterListener listenerSpy       = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy       = spy(PubnativeNetworkAdapter.Listener.class);
 
         PubnativeNetworkAdapter adapterInstance = spy(new PubnativeNetworkAdapter(adapterConfigMock) {
             @Override
@@ -88,23 +88,23 @@ public class PubnativeNetworkAdapterTest {
             }
         });
 
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
 
         // onRequestStarted
         adapterInstance.invokeStart();
-        verify(listenerSpy, times(1)).onAdapterRequestStarted(adapterInstance);
+        verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(adapterInstance);
 
         // onRequestLoaded
         PubnativeAdModel adMock = mock(PubnativeAdModel.class);
         adapterInstance.invokeLoaded(adMock);
-        verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterInstance), eq(adMock));
+        verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterInstance), eq(adMock));
 
-        adapterInstance.listener = listenerSpy;
+        adapterInstance.mListener = listenerSpy;
 
         // onRequestFailed
         Exception exceptionMock = mock(Exception.class);
         adapterInstance.invokeFailed(exceptionMock);
-        verify(listenerSpy, times(1)).onAdapterRequestFailed(eq(adapterInstance), eq(exceptionMock));
+        verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapterInstance), eq(exceptionMock));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class PubnativeNetworkAdapterTest {
             }
         });
 
-        adapterSpy.listener = null;
+        adapterSpy.mListener = null;
         adapterSpy.invokeStart();
         adapterSpy.invokeLoaded(mock(PubnativeAdModel.class));
         adapterSpy.invokeFailed(mock(Exception.class));
@@ -126,7 +126,7 @@ public class PubnativeNetworkAdapterTest {
 
     @Test
     public void adapterRequestsTimeoutCallsInvokeFailed() {
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
         PubnativeNetworkAdapter adapterSpy = spy(new PubnativeNetworkAdapter(null) {
             @Override
             public void request(Context context) {
@@ -137,9 +137,9 @@ public class PubnativeNetworkAdapterTest {
         adapterSpy.doRequest(mock(Context.class), TIMEOUT_HALF_SECOND, null, listenerSpy);
         Robolectric.flushForegroundThreadScheduler();
 
-        verify(listenerSpy, times(1)).onAdapterRequestStarted(eq(adapterSpy));
-        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).times(1)).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
-        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).never()).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
+        verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
+        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
+        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
     }
 
     // TODO: Ensure no more callbacks after fail or load

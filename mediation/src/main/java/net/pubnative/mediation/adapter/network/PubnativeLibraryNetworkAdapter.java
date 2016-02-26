@@ -24,6 +24,7 @@
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.library.request.AdRequest;
@@ -35,67 +36,83 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements AdRequestListener {
+public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter
+        implements AdRequestListener {
+
+    private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
 
     public PubnativeLibraryNetworkAdapter(Map data) {
+
         super(data);
     }
 
+    //==============================================================================================
+    // PubnativeNetworkAdapter methods
+    //==============================================================================================
     @Override
     public void request(Context context) {
 
-        if (context != null && this.data != null) {
-
+        Log.v(TAG, "request");
+        if (context != null && mData != null) {
             createRequest(context);
-
         } else {
             invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
         }
     }
 
+    //==============================================================================================
+    // PubnativeLibraryNetworkAdapter methods
+    //==============================================================================================
     protected void createRequest(Context context) {
+
+        Log.v(TAG, "createRequest");
         AdRequest request = new AdRequest(context);
-
         // We add all params
-        for (Object key : this.data.keySet()) {
-            Object value = this.data.get(key);
-            request.setParameter((String)key, value.toString());
+        for (Object key : mData.keySet()) {
+            Object value = mData.get(key);
+            request.setParameter((String) key, value.toString());
         }
-
         Map<String, String> extraMap = getExtras();
-
         // Add extras
-        if(extraMap != null) {
-
+        if (extraMap != null) {
             for (String key : extraMap.keySet()) {
-
                 request.setParameter(key, extraMap.get(key));
             }
         }
-
         request.start(AdRequest.Endpoint.NATIVE, this);
     }
 
+    //==============================================================================================
+    // Callbacks
+    //==============================================================================================
+    // AdRequestListener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onAdRequestStarted(AdRequest request) {
+
+        Log.v(TAG, "onAdRequestStarted");
         // Do nothing
     }
 
     @Override
     public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads) {
-        if (request == null ) {
-            this.invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
+
+        Log.v(TAG, "onAdRequestFinished");
+        if (request == null) {
+            invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
         } else {
             PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
-            this.invokeLoaded(wrapAd);
+            invokeLoaded(wrapAd);
         }
     }
 
     @Override
     public void onAdRequestFailed(AdRequest request, Exception ex) {
-        this.invokeFailed(ex);
+
+        Log.v(TAG, "onAdRequestFailed: " + ex);
+        invokeFailed(ex);
     }
 }
