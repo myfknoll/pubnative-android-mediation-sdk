@@ -44,23 +44,43 @@ import java.util.concurrent.TimeUnit;
 
 public class PubnativeConfigManager {
 
-    private static String TAG = PubnativeConfigManager.class.getSimpleName();
+    private static         String                            TAG                       = PubnativeConfigManager.class.getSimpleName();
+    protected static final String                            SHARED_PREFERENCES_CONFIG = "net.pubnative.mediation";
+    protected static final String                            CONFIG_STRING_KEY         = "config";
+    protected static final String                            APP_TOKEN_STRING_KEY      = "appToken";
+    protected static final String                            TIMESTAMP_LONG_KEY        = "config.timestamp";
+    protected static final String                            REFRESH_LONG_KEY          = "refresh";
+    protected static final String                            CONFIG_DOWNLOAD_BASE_URL  = "http://ml.pubnative.net/ml/v1/config";
+    protected static final String                            APP_TOKEN_KEY             = "?app_token=";
+    protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
+    protected static       boolean                           sIdle                     = true;
+    //==============================================================================================
+    // Listener
+    //==============================================================================================
 
-    protected static final String SHARED_PREFERENCES_CONFIG = "net.pubnative.mediation";
-    protected static final String CONFIG_STRING_KEY         = "config";
-    protected static final String APP_TOKEN_STRING_KEY      = "appToken";
-    protected static final String TIMESTAMP_LONG_KEY        = "config.timestamp";
-    protected static final String REFRESH_LONG_KEY          = "refresh";
+    /**
+     * Interface for callbacks when the requested config gets downloaded
+     */
+    public interface Listener {
 
-    protected static final String CONFIG_DOWNLOAD_BASE_URL = "http://ml.pubnative.net/ml/v1/config";
-    protected static final String APP_TOKEN_KEY            = "?app_token=";
+        /**
+         * Invoked when config manager returns a config.
+         *
+         * @param configModel PubnativeConfigModel object when cached/download config is available, else null.
+         */
+        void onConfigLoaded(PubnativeConfigModel configModel);
+    }
+    //==============================================================================================
+    // PubnativeConfigManager
+    //==============================================================================================
 
-    protected static List<PubnativeConfigRequestModel> sQueue = null;
-    protected static boolean                           sIdle  = true;
-
+    // Singleton
+    //----------------------------------------------------------------------------------------------
     private PubnativeConfigManager() {
         // do some initialization here may be.
     }
+    // Public
+    //----------------------------------------------------------------------------------------------
 
     /**
      * Gets a config asynchronously with listener callback, downloading a new one when outdated
@@ -69,10 +89,9 @@ public class PubnativeConfigManager {
      * @param appToken unique identification key provided by Pubnative for mediation sdk
      * @param listener listener to be used for tracking the config loaded callback
      */
-    public synchronized static void getConfig(Context context, String appToken, PubnativeConfigRequestListener listener) {
+    public synchronized static void getConfig(Context context, String appToken, PubnativeConfigManager.Listener listener) {
 
-        Log.v(TAG, "getConfig(Context context, String appToken = " + appToken + ", PubnativeConfigRequestListener listener)");
-
+        Log.v(TAG, "getConfig: " + appToken);
         if (context != null && !TextUtils.isEmpty(appToken)) {
             if (listener != null) {
                 PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
@@ -88,10 +107,25 @@ public class PubnativeConfigManager {
         }
     }
 
-    private static void doNextConfigRequest() {
+    /**
+     * Completely resets all stored config data
+     *
+     * @param context valid context object
+     */
+    public static void clean(Context context) {
 
-        Log.v(TAG, "doNextConfigRequest()");
+        Log.v(TAG, "clean");
+        setStoredAppToken(context, null);
+        setStoredTimestamp(context, null);
+        setStoredRefresh(context, null);
+        setStoredConfig(context, null);
+    }
 
+    // Private
+    //----------------------------------------------------------------------------------------------
+    protected static void doNextConfigRequest() {
+
+        Log.v(TAG, "doNextConfigRequest");
         if (sIdle) {
             PubnativeConfigRequestModel item = dequeueRequest();
             if (item != null) {
@@ -101,34 +135,9 @@ public class PubnativeConfigManager {
         }
     }
 
-    protected static void enqueueRequest(PubnativeConfigRequestModel item) {
+    private static void getNextConfig(Context context, String appToken, PubnativeConfigManager.Listener listener) {
 
-        Log.v(TAG, "enqueueRequest(PubnativeConfigRequestModel item)");
-
-        if (item != null) {
-            if (sQueue == null) {
-                sQueue = new ArrayList<PubnativeConfigRequestModel>();
-            }
-
-            sQueue.add(item);
-        }
-    }
-
-    protected static PubnativeConfigRequestModel dequeueRequest() {
-
-        Log.v(TAG, "dequeueRequest()");
-
-        PubnativeConfigRequestModel result = null;
-        if (sQueue != null && sQueue.size() > 0) {
-            result = sQueue.remove(0);
-        }
-        return result;
-    }
-
-    private static void getNextConfig(Context context, String appToken, PubnativeConfigRequestListener listener) {
-
-        Log.v(TAG, "getNextConfig(Context context, String appToken = " + appToken + ", PubnativeConfigRequestListener listener)");
-
+        Log.v(TAG, "getNextConfig: " + appToken);
         if (context != null && !TextUtils.isEmpty(appToken)) {
             // Downloads if needed
             if (configNeedsUpdate(context, appToken)) {
@@ -142,26 +151,18 @@ public class PubnativeConfigManager {
         }
     }
 
-    protected static void serveStoredConfig(Context context, PubnativeConfigRequestListener listener) {
+    protected static void serveStoredConfig(Context context, PubnativeConfigManager.Listener listener) {
 
-        Log.v(TAG, "serveStoredConfig(Context context, PubnativeConfigRequestListener listener)");
-
+        Log.v(TAG, "serveStoredConfig");
         PubnativeConfigModel configModel = getStoredConfig(context);
         invokeLoaded(listener, configModel);
     }
 
-    /**
-     * Returns the stored config object if exists in SharedPreferences. Else returns null.
-     *
-     * @param context context object used to get SharedPreferences instance
-     * @return PubnativeConfigModel object if found in SharedPreferences. Else null.
-     */
     public static PubnativeConfigModel getStoredConfig(Context context) {
 
-        Log.v(TAG, "getStoredConfig(Context context)");
-
+        Log.v(TAG, "getStoredConfig");
         PubnativeConfigModel currentConfig = null;
-        String               configString  = getStoredConfigString(context);
+        String configString = getStoredConfigString(context);
         if (!TextUtils.isEmpty(configString)) {
             try {
                 currentConfig = new Gson().fromJson(configString, PubnativeConfigModel.class);
@@ -169,19 +170,16 @@ public class PubnativeConfigManager {
                 Log.e(TAG, "getStoredConfig - Error: " + e);
             }
         }
-
         // Ensure not returning an invalid getConfig
         if (currentConfig != null && currentConfig.isNullOrEmpty()) {
             currentConfig = null;
         }
-
         return currentConfig;
     }
 
-    protected static void invokeLoaded(PubnativeConfigRequestListener listener, PubnativeConfigModel configModel) {
+    protected static void invokeLoaded(PubnativeConfigManager.Listener listener, PubnativeConfigModel configModel) {
 
-        Log.v(TAG, "invokeLoaded(PubnativeConfigRequestListener listener, PubnativeConfigModel configModel)");
-
+        Log.v(TAG, "invokeLoaded");
         if (listener != null) {
             listener.onConfigLoaded(configModel);
         }
@@ -191,14 +189,12 @@ public class PubnativeConfigManager {
 
     protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel) {
 
-        Log.v(TAG, "updateConfig(Context context, String appToken = " + appToken + ", PubnativeConfigModel configModel)");
-
+        Log.v(TAG, "updateConfig");
         if (context != null && !TextUtils.isEmpty(appToken)) {
             if (configModel != null && !configModel.isNullOrEmpty()) {
                 setStoredConfig(context, configModel);
                 setStoredAppToken(context, appToken);
                 setStoredTimestamp(context, System.currentTimeMillis());
-
                 if (configModel.globals.containsKey(PubnativeConfigModel.ConfigContract.REFRESH)) {
                     Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.ConfigContract.REFRESH);
                     setStoredRefresh(context, refresh.longValue());
@@ -211,23 +207,26 @@ public class PubnativeConfigManager {
         }
     }
 
-    protected synchronized static void downloadConfig(final Context context, final PubnativeConfigRequestListener listener, final String appToken) {
+    protected synchronized static void downloadConfig(final Context context, final PubnativeConfigManager.Listener listener, final String appToken) {
 
-        Log.v(TAG, "downloadConfig(final Context context, final PubnativeConfigRequestListener listener, final String appToken = " + appToken + ")");
-
+        Log.v(TAG, "downloadConfig");
         if (context != null && !TextUtils.isEmpty(appToken)) {
             String downloadURLString = getConfigDownloadBaseUrl(context) + APP_TOKEN_KEY + appToken;
-
             PubnativeHttpTask http = new PubnativeHttpTask(context);
             http.setListener(new PubnativeHttpTask.Listener() {
+
                 @Override
-                public void onHttpTaskFinished(PubnativeHttpTask task, String result) {
+                public void onHttpTaskSuccess(PubnativeHttpTask task, String result) {
+
+                    Log.v(TAG, "onHttpTaskSuccess");
                     processConfigDownloadResponse(context, appToken, result);
                     serveStoredConfig(context, listener);
                 }
 
                 @Override
                 public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
+
+                    Log.v(TAG, "onHttpTaskFailed: " + errorMessage);
                     serveStoredConfig(context, listener);
                 }
             });
@@ -239,12 +238,10 @@ public class PubnativeConfigManager {
 
     protected static void processConfigDownloadResponse(Context context, String appToken, String result) {
 
-        Log.v(TAG, "processConfigDownloadResponse(Context context, String appToken = " + appToken + ", String result = " + result + ")");
-
+        Log.v(TAG, "processConfigDownloadResponse");
         if (!TextUtils.isEmpty(result)) {
             try {
                 PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
-
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                     if (response.config != null && !response.config.isNullOrEmpty()) {
                         // Update delivery manager's tracking data
@@ -263,10 +260,8 @@ public class PubnativeConfigManager {
 
     protected static boolean configNeedsUpdate(Context context, String appToken) {
 
-        Log.v(TAG, "configNeedsUpdate(Context context, String appToken = " + appToken + ")");
-
+        Log.v(TAG, "configNeedsUpdate");
         boolean result = false;
-
         if (context != null) {
             String storedConfigString = getStoredConfigString(context);
             if (TextUtils.isEmpty(storedConfigString)) {
@@ -280,7 +275,6 @@ public class PubnativeConfigManager {
                 } else {
                     Long refresh = getStoredRefresh(context);
                     Long storedTimestamp = getStoredTimestamp(context);
-
                     if (refresh == null || storedTimestamp == null) {
                         // Invalid/unset refresh or timestamp value - Need update
                         result = true;
@@ -295,40 +289,32 @@ public class PubnativeConfigManager {
                 }
             }
         }
-
         return result;
     }
 
     private static void updateDeliveryManagerCache(Context context, PubnativeConfigModel downloadedConfig) {
 
-        Log.v(TAG, "updateDeliveryManagerCache(Context context, PubnativeConfigModel downloadedConfig)");
-
+        Log.v(TAG, "updateDeliveryManagerCache");
         if (downloadedConfig != null) {
             PubnativeConfigModel storedConfig = getStoredConfig(context);
-
             if (storedConfig != null) {
                 Set<String> storePlacementIds = storedConfig.placements.keySet();
-
                 for (String placementId : storePlacementIds) {
                     // check if new config contains that placement.
                     PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
-
                     if (newPlacement != null) {
                         // compare the delivery rule of the new placement with the stored one.
                         PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
-
                         if (storedPlacement != null) {
                             if (storedPlacement.delivery_rule != null && newPlacement.delivery_rule != null) {
                                 // check if impression cap (hour) changed
                                 if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
                                     PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
                                 }
-
                                 // check if impression cap (day) changed
                                 if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
                                     PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
                                 }
-
                                 // check if pacing cap changed
                                 if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
                                     || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
@@ -342,12 +328,39 @@ public class PubnativeConfigManager {
         }
     }
 
+    //==============================================================================================
+    // QUEUE
+    //==============================================================================================
+    protected static void enqueueRequest(PubnativeConfigRequestModel item) {
+
+        Log.v(TAG, "enqueueRequest");
+        if (item != null) {
+            if (sQueue == null) {
+                sQueue = new ArrayList<PubnativeConfigRequestModel>();
+            }
+            sQueue.add(item);
+        }
+    }
+
+    protected static PubnativeConfigRequestModel dequeueRequest() {
+
+        Log.v(TAG, "dequeueRequest");
+        PubnativeConfigRequestModel result = null;
+        if (sQueue != null && sQueue.size() > 0) {
+            result = sQueue.remove(0);
+        }
+        return result;
+    }
+    //==============================================================================================
+    // SHARED PREFERENCES
+    //==============================================================================================
+
     // CONFIG URL
+    //----------------------------------------------------------------------------------------------
     protected static String getConfigDownloadBaseUrl(Context context) {
 
-        Log.v(TAG, "getConfigDownloadBaseUrl(Context context)");
-
-        String               configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
+        Log.v(TAG, "getConfigDownloadBaseUrl");
+        String configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
         PubnativeConfigModel storedConfig = getStoredConfig(context);
         if (storedConfig != null && !storedConfig.isNullOrEmpty()) {
             String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
@@ -359,79 +372,68 @@ public class PubnativeConfigManager {
     }
 
     // CONFIG
+    //----------------------------------------------------------------------------------------------
     protected synchronized static String getStoredConfigString(Context context) {
 
-        Log.v(TAG, "getStoredConfigString(Context context)");
-
+        Log.v(TAG, "getStoredConfigString");
         return getStringSharedPreference(context, CONFIG_STRING_KEY);
     }
 
     protected synchronized static void setStoredConfig(Context context, PubnativeConfigModel config) {
 
-        Log.v(TAG, "setStoredConfig(Context context)");
-
+        Log.v(TAG, "setStoredConfig");
         // ensuring the string "null" is not getting saved.
         String configString = (config != null) ? new Gson().toJson(config) : null;
         setStringSharedPreference(context, CONFIG_STRING_KEY, configString);
     }
 
-    public static void clean(Context context) {
-
-        Log.v(TAG, "clean(Context context)");
-
-        setStoredAppToken(context, null);
-        setStoredTimestamp(context, null);
-        setStoredRefresh(context, null);
-        setStoredConfig(context, null);
-    }
-
-    // APP TOKEN
+    // APP_TOKEN
+    //----------------------------------------------------------------------------------------------
     protected static String getStoredAppToken(Context context) {
 
-        Log.v(TAG, "getStoredAppToken(Context context)");
-
+        Log.v(TAG, "getStoredAppToken");
         return getStringSharedPreference(context, APP_TOKEN_STRING_KEY);
     }
 
     protected static void setStoredAppToken(Context context, String appToken) {
 
-        Log.v(TAG, "getStoredAppToken(Context context, String appToken)");
-
+        Log.v(TAG, "getStoredAppToken");
         setStringSharedPreference(context, APP_TOKEN_STRING_KEY, appToken);
     }
 
     // TIMESTAMP
+    //----------------------------------------------------------------------------------------------
     protected static Long getStoredTimestamp(Context context) {
 
-        Log.v(TAG, "getStoredTimestamp(Context context)");
-
+        Log.v(TAG, "getStoredTimestamp");
         return getLongSharedPreference(context, TIMESTAMP_LONG_KEY);
     }
 
     protected static void setStoredTimestamp(Context context, Long timestamp) {
 
-        Log.v(TAG, "getStoredTimestamp(Context context, Long timestamp = " + timestamp + ")");
-
+        Log.v(TAG, "getStoredTimestamp");
         setLongSharedPreference(context, TIMESTAMP_LONG_KEY, timestamp);
     }
 
     // REFRESH
+    //----------------------------------------------------------------------------------------------
     protected static Long getStoredRefresh(Context context) {
 
-        Log.v(TAG, "getStoredRefresh(Context context)");
-
+        Log.v(TAG, "getStoredRefresh");
         return getLongSharedPreference(context, REFRESH_LONG_KEY);
     }
 
     protected static void setStoredRefresh(Context context, Long refresh) {
 
-        Log.v(TAG, "setStoredRefresh(Context context, Long refresh)");
-
+        Log.v(TAG, "setStoredRefresh");
         setLongSharedPreference(context, REFRESH_LONG_KEY, refresh);
     }
 
-    // STRING
+    // String
+    //----------------------------------------------------------------------------------------------
     protected static String getStringSharedPreference(Context context, String key) {
+
+        Log.v(TAG, "getStringSharedPreference");
         String result = null;
         if (context != null && !TextUtils.isEmpty(key)) {
             SharedPreferences preferences = getSharedPreferences(context);
@@ -443,8 +445,10 @@ public class PubnativeConfigManager {
     }
 
     protected static void setStringSharedPreference(Context context, String key, String value) {
+
+        Log.v(TAG, "setStringSharedPreference");
         if (context != null && !TextUtils.isEmpty(key)) {
-            SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
+            SharedPreferences.Editor editor = getSharedPreferences(context).edit();
             if (editor != null) {
                 if (TextUtils.isEmpty(value)) {
                     editor.remove(key);
@@ -456,9 +460,12 @@ public class PubnativeConfigManager {
         }
     }
 
-    // LONG
+    // Long
+    //----------------------------------------------------------------------------------------------
     protected static Long getLongSharedPreference(Context context, String key) {
-        Long              result      = null;
+
+        Log.v(TAG, "getLongSharedPreference");
+        Long result = null;
         SharedPreferences preferences = getSharedPreferences(context);
         if (context != null && preferences.contains(key)) {
             Long value = preferences.getLong(key, 0);
@@ -470,8 +477,10 @@ public class PubnativeConfigManager {
     }
 
     protected static void setLongSharedPreference(Context context, String key, Long value) {
+
+        Log.v(TAG, "setLongSharedPreference");
         if (context != null && !TextUtils.isEmpty(key)) {
-            SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
+            SharedPreferences.Editor editor = getSharedPreferences(context).edit();
             if (editor != null) {
                 if (value == null) {
                     editor.remove(key);
@@ -483,22 +492,14 @@ public class PubnativeConfigManager {
         }
     }
 
-    // SHARED PREFERENCES
+    // BASE SharedPreferences item
+    //----------------------------------------------------------------------------------------------
     protected static SharedPreferences getSharedPreferences(Context context) {
+
+        Log.v(TAG, "getSharedPreferences");
         SharedPreferences result = null;
         if (context != null) {
             result = context.getSharedPreferences(SHARED_PREFERENCES_CONFIG, Context.MODE_PRIVATE);
-        }
-        return result;
-    }
-
-    protected static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
-        SharedPreferences.Editor result = null;
-        if (context != null) {
-            SharedPreferences preferences = getSharedPreferences(context);
-            if (preferences != null) {
-                result = preferences.edit();
-            }
         }
         return result;
     }

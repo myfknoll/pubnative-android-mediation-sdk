@@ -36,7 +36,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
-import net.pubnative.mediation.request.PubnativeNetworkRequestListener;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 /**
@@ -44,7 +43,7 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
  * This helps us to avoid redundant calls to "findViewById" each
  * time we load values into the cell.
  */
-public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequestListener {
+public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequest.Listener {
 
     private static final String LOG_TAG = "AdViewHolder";
 
@@ -143,13 +142,13 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onRequestStarted(PubnativeNetworkRequest request) {
-        Log.d(LOG_TAG, "onRequestStarted");
+    public void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request) {
+        Log.d(LOG_TAG, "onPubnativeNetworkRequestStarted");
     }
 
     @Override
-    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
-        Log.d(LOG_TAG, "onRequestLoaded");
+    public void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
+        Log.d(LOG_TAG, "onPubnativeNetworkRequestLoaded");
 
         this.ad_spinner.setVisibility(View.GONE);
         this.requestModel.adModel = ad;
@@ -157,8 +156,8 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
     }
 
     @Override
-    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception) {
-        Log.d(LOG_TAG, "onRequestFailed: " + exception);
+    public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception) {
+        Log.d(LOG_TAG, "onPubnativeNetworkRequestFailed: " + exception);
 
         Toast.makeText(this.context, exception.getMessage(), Toast.LENGTH_LONG).show();
 

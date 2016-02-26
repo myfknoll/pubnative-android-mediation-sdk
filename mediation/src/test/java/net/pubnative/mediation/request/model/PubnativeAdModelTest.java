@@ -89,7 +89,7 @@ public class PubnativeAdModelTest {
         modelSpy.setTrackingImpressionData(SAMPLE_URL, parametersMock);
         
         // Callbacks the setted up listener
-        PubnativeAdModelListener listenerSpy = spy(PubnativeAdModelListener.class);
+        PubnativeAdModel.Listener listenerSpy = spy(PubnativeAdModel.Listener.class);
         modelSpy.setListener(listenerSpy);
 
         // Calling invoke methods

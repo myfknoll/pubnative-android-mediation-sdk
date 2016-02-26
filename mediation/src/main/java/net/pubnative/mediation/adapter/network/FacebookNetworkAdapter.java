@@ -39,21 +39,22 @@ import java.util.Map;
 
 public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener {
 
-    private static String TAG = FacebookNetworkAdapter.class.getSimpleName();
-
+    private static         String TAG              = FacebookNetworkAdapter.class.getSimpleName();
     protected static final String KEY_PLACEMENT_ID = "placement_id";
-
     protected NativeAd mNativeAd;
 
     public FacebookNetworkAdapter(Map data) {
+
         super(data);
     }
 
+    //==============================================================================================
+    // PubnativeNetworkAdapter methods
+    //==============================================================================================
     @Override
     public void request(Context context) {
 
-        Log.v(TAG, "request(Context context)");
-
+        Log.v(TAG, "request");
         if (context != null && mData != null) {
             String placementId = (String) mData.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
@@ -66,20 +67,26 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
         }
     }
 
+    //==============================================================================================
+    // FacebookNetworkAdapter methods
+    //==============================================================================================
     protected void createRequest(Context context, String placementId) {
 
-        Log.v(TAG, "createRequest(Context context, String placementId = " + placementId + ")");
-
+        Log.v(TAG, "createRequest");
         mNativeAd = new NativeAd(context, placementId);
         mNativeAd.setAdListener(this);
         mNativeAd.loadAd();
     }
 
+    //==============================================================================================
+    // Callback
+    //==============================================================================================
+    // AdListener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError(Ad ad, AdError adError)");
-
+        Log.v(TAG, "onError: " + adError.getErrorCode() + " - " + adError.getErrorMessage());
         if (ad == mNativeAd) {
             if (adError != null) {
                 if (adError == AdError.NO_FILL) {
@@ -96,8 +103,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onAdLoaded(Ad ad) {
 
-        Log.v(TAG, "onAdLoaded(Ad ad)");
-
+        Log.v(TAG, "onAdLoaded");
         if (ad == mNativeAd) {
             FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
             invokeLoaded(wrapModel);
@@ -106,7 +112,8 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 
     @Override
     public void onAdClicked(Ad ad) {
-        Log.v(TAG, "onAdClicked(Ad ad)");
+
+        Log.v(TAG, "onAdClicked");
         // Do nothing
     }
 }

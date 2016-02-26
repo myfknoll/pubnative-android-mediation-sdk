@@ -25,11 +25,14 @@ package net.pubnative.mediation.config.model;
 
 import android.content.Context;
 
-import net.pubnative.mediation.config.PubnativeConfigRequestListener;
+import net.pubnative.mediation.config.PubnativeConfigManager;
 
 public class PubnativeConfigRequestModel {
 
-    public Context                        context;
-    public String                         appToken;
-    public PubnativeConfigRequestListener listener;
+    public Context                         context;
+    public String                          appToken;
+    public PubnativeConfigManager.Listener listener;
+    //==============================================================================================
+    // PubnativeConfigRequestModel
+    //==============================================================================================
 }

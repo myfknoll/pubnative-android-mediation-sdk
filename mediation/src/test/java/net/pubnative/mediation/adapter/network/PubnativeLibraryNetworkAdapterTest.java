@@ -27,7 +27,7 @@ import android.content.Context;
 
 import net.pubnative.library.request.AdRequest;
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapterListener;
+import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
@@ -68,20 +68,20 @@ public class PubnativeLibraryNetworkAdapterTest {
     @Test
     public void verifyCallbacksWithValidParams() {
         Map<String, String> data = mock(HashMap.class);
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerSpy);
-        verify(listenerSpy, times(1)).onAdapterRequestStarted(eq(adapterSpy));
-        verify(listenerSpy, times(1)).onAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
-        verify(listenerSpy, never()).onAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
+        verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
+        verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
+        verify(listenerSpy, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
     }
 
     @Test
     public void verifyCallbacksOnPubnativeLibraryFailure() {
         Map<String, String> data = mock(HashMap.class);
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         // stubbing the createRequest method to simulate facebook error.
         doAnswer(new Answer() {
@@ -99,7 +99,7 @@ public class PubnativeLibraryNetworkAdapterTest {
 
     @Test
     public void verifyCallbacksWithNotNullDataButNoAppToken() {
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
@@ -109,7 +109,7 @@ public class PubnativeLibraryNetworkAdapterTest {
 
     @Test
     public void verifyCallbacksWithNullData() {
-        PubnativeNetworkAdapterListener listenerSpy = spy(PubnativeNetworkAdapterListener.class);
+        PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
@@ -117,10 +117,10 @@ public class PubnativeLibraryNetworkAdapterTest {
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
-    private void failCallbacksWhenInvalidDataProvided(PubnativeLibraryNetworkAdapter adapter, PubnativeNetworkAdapterListener listener) {
-        verify(listener, times(1)).onAdapterRequestStarted(eq(adapter));
-        verify(listener, times(1)).onAdapterRequestFailed(eq(adapter), any(Exception.class));
-        verify(listener, never()).onAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
+    private void failCallbacksWhenInvalidDataProvided(PubnativeLibraryNetworkAdapter adapter, PubnativeNetworkAdapter.Listener listener) {
+        verify(listener, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapter));
+        verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(Exception.class));
+        verify(listener, never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
     private void stubCreateRequestMethodWithRequestFinishedCallback(PubnativeLibraryNetworkAdapter adapterMock) {

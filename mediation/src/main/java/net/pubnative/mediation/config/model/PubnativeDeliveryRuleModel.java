@@ -20,9 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+
 package net.pubnative.mediation.config.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 
@@ -31,6 +33,7 @@ import java.util.List;
 
 public class PubnativeDeliveryRuleModel {
 
+    private static final String TAG = PubnativeDeliveryRuleModel.class.getSimpleName();
     public int           imp_cap_day;
     public int           imp_cap_hour;
     public int           pacing_cap_hour;
@@ -38,28 +41,36 @@ public class PubnativeDeliveryRuleModel {
     public boolean       no_ads;
     public List<Integer> segment_ids;
 
+    //==============================================================================================
+    // PubnativeDeliveryRuleModel
+    //==============================================================================================
     public boolean isActive() {
 
+        Log.v(TAG, "isActive");
         return !this.no_ads;
     }
 
     public boolean isDayImpressionCapActive() {
 
+        Log.v(TAG, "isDayImpressionCapActive");
         return this.imp_cap_day > 0;
     }
 
     public boolean isHourImpressionCapActive() {
 
+        Log.v(TAG, "isHourImpressionCapActive");
         return this.imp_cap_hour > 0;
     }
 
     public boolean isPacingCapActive() {
 
+        Log.v(TAG, "isPacingCapActive");
         return this.pacing_cap_hour > 0 || this.pacing_cap_minute > 0;
     }
 
     public Calendar getPacingOverdueCalendar() {
 
+        Log.v(TAG, "getPacingOverdueCalendar");
         Calendar result = null;
         if (this.isPacingCapActive()) {
             result = Calendar.getInstance();
@@ -74,6 +85,7 @@ public class PubnativeDeliveryRuleModel {
 
     public boolean isFrequencyCapReached(Context context, String placementID) {
 
+        Log.v(TAG, "getPacingOverdueCalendar");
         boolean frequencyCapReached = false;
         if (this.isDayImpressionCapActive()) {
             frequencyCapReached = this.imp_cap_day <= PubnativeDeliveryManager.getCurrentDailyCount(

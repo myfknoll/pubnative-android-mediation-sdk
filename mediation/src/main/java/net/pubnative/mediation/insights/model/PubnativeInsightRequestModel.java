@@ -28,7 +28,11 @@ public class PubnativeInsightRequestModel {
     public String                    url;
     public PubnativeInsightDataModel dataModel;
 
+    //==============================================================================================
+    // PubnativeInsightRequestModel
+    //==============================================================================================
     public PubnativeInsightRequestModel(String url, PubnativeInsightDataModel dataModel) {
+
         this.url = url;
         this.dataModel = dataModel;
     }

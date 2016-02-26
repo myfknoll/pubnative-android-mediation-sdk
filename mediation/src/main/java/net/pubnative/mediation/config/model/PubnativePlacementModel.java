@@ -23,14 +23,20 @@
 
 package net.pubnative.mediation.config.model;
 
+import android.util.Log;
+
 import java.util.List;
 
 public class PubnativePlacementModel {
 
+    private static final String TAG = PubnativePlacementModel.class.getSimpleName();
     public String                           ad_format_code;
     public List<PubnativePriorityRuleModel> priority_rules;
     public PubnativeDeliveryRuleModel       delivery_rule;
 
+    //==============================================================================================
+    // PubnativePlacementModel.AdFormatCode
+    //==============================================================================================
     public interface AdFormatCode {
 
         String NATIVE_ICON   = "icon";
@@ -38,8 +44,12 @@ public class PubnativePlacementModel {
         String VIDEO         = "video";
     }
 
+    //==============================================================================================
+    // PubnativePlacementModel
+    //==============================================================================================
     public PubnativePriorityRuleModel getPriorityRule(int index) {
 
+        Log.v(TAG, "getPriorityRule: " + index);
         PubnativePriorityRuleModel result = null;
         if (this.priority_rules != null && this.priority_rules.size() > index) {
             result = this.priority_rules.get(index);

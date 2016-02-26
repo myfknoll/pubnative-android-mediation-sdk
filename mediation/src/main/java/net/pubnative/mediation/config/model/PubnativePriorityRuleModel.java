@@ -1,3 +1,4 @@
+//
 // The MIT License (MIT)
 //
 // Copyright (c) 2015 PubNative GmbH
@@ -20,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
+
 package net.pubnative.mediation.config.model;
 
 import java.util.List;
@@ -31,4 +33,7 @@ public class PubnativePriorityRuleModel {
     public String              network_code;
     public Map<String, Object> params;
     public List<Integer>       segment_ids;
+    //==============================================================================================
+    // PubnativePriorityRuleModel
+    //==============================================================================================
 }

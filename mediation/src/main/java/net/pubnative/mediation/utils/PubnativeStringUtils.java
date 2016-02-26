@@ -42,7 +42,7 @@ public class PubnativeStringUtils {
      */
     public static String readStringFromInputStream(InputStream inputStream) {
 
-        Log.v(TAG, "readStringFromInputStream(InputStream inputStream)");
+        Log.v(TAG, "readStringFromInputStream(InputStream)");
 
         BufferedReader bufferReader  = null;
         StringBuilder  stringBuilder = new StringBuilder();

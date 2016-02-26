@@ -44,14 +44,15 @@ import java.util.Map;
 
 public class PubnativeInsightsManager {
 
-    private static String TAG = PubnativeInsightsManager.class.getSimpleName();
-
-    protected static final String INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
-    protected static final String INSIGHTS_PENDING_DATA    = "pending_data";
-    protected static final String INSIGHTS_FAILED_DATA     = "failed_data";
-    protected static final String PARAMETER_APP_TOKEN_KEY  = "app_token";
-
-    protected static boolean sIdle = true;
+    private static         String  TAG                      = PubnativeInsightsManager.class.getSimpleName();
+    protected static final String  INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
+    protected static final String  INSIGHTS_PENDING_DATA    = "pending_data";
+    protected static final String  INSIGHTS_FAILED_DATA     = "failed_data";
+    protected static final String  PARAMETER_APP_TOKEN_KEY  = "app_token";
+    protected static       boolean sIdle                    = true;
+    //==============================================================================================
+    // PubnativeInsightsManager
+    //==============================================================================================
 
     /**
      * Queues impression/click tracking data and sends it to pubnative server.
@@ -62,40 +63,33 @@ public class PubnativeInsightsManager {
      */
     public synchronized static void trackData(Context context, String baseURL, Map<String, String> parameters, PubnativeInsightDataModel dataModel) {
 
-        Log.v(TAG, "trackData(Context context, String baseURL, Map<String, String> parameters = " + parameters + ", PubnativeInsightDataModel dataModel)");
-
+        Log.v(TAG, "trackData");
         if (context != null && !TextUtils.isEmpty(baseURL) && dataModel != null) {
-
             Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
-
             // Fill with passed parameters
-            if(parameters != null) {
-
+            if (parameters != null) {
                 for (String key : parameters.keySet()) {
-
                     uriBuilder.appendQueryParameter(key, parameters.get(key));
                 }
             }
-
             PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
-
             // Enqueue failed
             List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
             enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
             setTrackingList(context, INSIGHTS_FAILED_DATA, null);
-
             // Enqueue current
             enqueueInsightItem(context, INSIGHTS_PENDING_DATA, model);
-
             // Start tracking
             trackNext(context);
         }
     }
 
+    //==============================================================================================
+    // WORKFLOW
+    //==============================================================================================
     protected synchronized static void trackNext(final Context context) {
 
-        Log.v(TAG, "trackNext(Context context)");
-
+        Log.v(TAG, "trackNext");
         if (context != null && sIdle) {
             final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
             if (model != null) {
@@ -105,22 +99,14 @@ public class PubnativeInsightsManager {
                     PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener() {
 
                         @Override
-                        public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
+                        public void onHttpTaskSuccess(PubnativeHttpTask task, String result) {
 
-                            trackingFailed(context, model, errorMessage);
-                        }
-
-                        @Override
-                        public void onHttpTaskFinished(PubnativeHttpTask task, String result) {
-
-                            Log.v(TAG, "onHttpTaskFinished(PubnativeHttpTask task, String result = " + result + ")");
-
+                            Log.v(TAG, "onHttpTaskSuccess");
                             if (TextUtils.isEmpty(result)) {
                                 trackingFailed(context, model, "invalid insight response (empty or null)");
                             } else {
                                 try {
                                     PubnativeInsightsAPIResponseModel response = new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
-
                                     if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                                         trackingFinished(context, model);
                                     } else {
@@ -128,12 +114,17 @@ public class PubnativeInsightsManager {
                                     }
                                 } catch (Exception e) {
                                     trackingFailed(context, model, e.toString());
-                                    Log.v(TAG, "trackNext, trackingFailed: " + e.toString());
                                 }
                             }
                         }
-                    };
 
+                        @Override
+                        public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
+
+                            Log.v(TAG, "onHttpTaskFailed: " + errorMessage);
+                            trackingFailed(context, model, errorMessage);
+                        }
+                    };
                     sendTrackingDataToServer(context, trackingDataString, model.url, listener);
                 } else {
                     // Drop the call, tracking data is errored
@@ -143,20 +134,9 @@ public class PubnativeInsightsManager {
         }
     }
 
-    protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpTask.Listener listener) {
-
-        Log.v(TAG, "sendTrackingDataToServer(Context context, String trackingDataString = " + trackingDataString + ", String url = " + url + ", PubnativeHttpTask.Listener listener)");
-
-        PubnativeHttpTask http = new PubnativeHttpTask(context);
-        http.setPOSTData(trackingDataString);
-        http.setListener(listener);
-        http.execute(url);
-    }
-
     protected static void trackingFailed(Context context, PubnativeInsightRequestModel model, String message) {
 
-        Log.v(TAG, "trackingFailed(Context context, PubnativeInsightRequestModel model, String message = " + message + ")");
-
+        Log.v(TAG, "trackingFailed");
         // Add a retry
         model.dataModel.retry = model.dataModel.retry + 1;
         enqueueInsightItem(context, INSIGHTS_FAILED_DATA, model);
@@ -166,16 +146,26 @@ public class PubnativeInsightsManager {
 
     protected static void trackingFinished(Context context, PubnativeInsightRequestModel model) {
 
-        Log.v(TAG, "trackingFinished(Context context, PubnativeInsightRequestModel model)");
-
+        Log.v(TAG, "trackingFinished");
         sIdle = true;
         trackNext(context);
     }
 
+    protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpTask.Listener listener) {
+
+        Log.v(TAG, "sendTrackingDataToServer");
+        PubnativeHttpTask http = new PubnativeHttpTask(context);
+        http.setPOSTData(trackingDataString);
+        http.setListener(listener);
+        http.execute(url);
+    }
+
+    //==============================================================================================
+    // QUEUE
+    //==============================================================================================
     protected static void enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model) {
 
-        Log.v(TAG, "enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model)");
-
+        Log.v(TAG, "enqueueInsightItem");
         if (context != null && model != null) {
             List<PubnativeInsightRequestModel> pendingList = getTrackingList(context, listKey);
             if (pendingList == null) {
@@ -188,8 +178,7 @@ public class PubnativeInsightsManager {
 
     protected static void enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list) {
 
-        Log.v(TAG, "enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list)");
-
+        Log.v(TAG, "enqueueInsightList");
         if (context != null && list != null) {
             List<PubnativeInsightRequestModel> insightList = getTrackingList(context, listKey);
             if (insightList == null) {
@@ -202,8 +191,7 @@ public class PubnativeInsightsManager {
 
     protected static PubnativeInsightRequestModel dequeueInsightItem(Context context, String listKey) {
 
-        Log.v(TAG, "dequeueInsightItem(Context context, String listKey = " + listKey + ")");
-
+        Log.v(TAG, "dequeueInsightItem");
         PubnativeInsightRequestModel result = null;
         if (context != null) {
             List<PubnativeInsightRequestModel> pendingList = getTrackingList(context, listKey);
@@ -216,10 +204,14 @@ public class PubnativeInsightsManager {
         return result;
     }
 
+    //==============================================================================================
+    // SHARED PREFERENCES
+    //==============================================================================================
+    // TRACKING LIST
+    //----------------------------------------------------------------------------------------------
     protected static List<PubnativeInsightRequestModel> getTrackingList(Context context, String listKey) {
 
-        Log.v(TAG, "getTrackingList(Context context, String listKey = " + listKey + ")");
-
+        Log.v(TAG, "getTrackingList");
         List<PubnativeInsightRequestModel> result = null;
         if (context != null) {
             SharedPreferences preferences = getSharedPreferences(context);
@@ -242,8 +234,7 @@ public class PubnativeInsightsManager {
 
     protected static void setTrackingList(Context context, String listKey, List<PubnativeInsightRequestModel> pendingList) {
 
-        Log.v(TAG, "getTrackingList(Context context, String listKey, List<PubnativeInsightRequestModel> pendingList)");
-
+        Log.v(TAG, "getTrackingList");
         if (context != null) {
             SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
             if (editor != null) {
@@ -260,10 +251,13 @@ public class PubnativeInsightsManager {
         }
     }
 
+    // Shared preferences base item
+    //----------------------------------------------------------------------------------------------
     protected static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
 
-        SharedPreferences.Editor result      = null;
-        SharedPreferences        preferences = getSharedPreferences(context);
+        Log.v(TAG, "getSharedPreferencesEditor");
+        SharedPreferences.Editor result = null;
+        SharedPreferences preferences = getSharedPreferences(context);
         if (preferences != null) {
             result = preferences.edit();
         }
@@ -272,6 +266,7 @@ public class PubnativeInsightsManager {
 
     protected static SharedPreferences getSharedPreferences(Context context) {
 
+        Log.v(TAG, "getSharedPreferences");
         SharedPreferences result = null;
         if (context != null) {
             result = context.getSharedPreferences(INSIGHTS_PREFERENCES_KEY, Context.MODE_PRIVATE);

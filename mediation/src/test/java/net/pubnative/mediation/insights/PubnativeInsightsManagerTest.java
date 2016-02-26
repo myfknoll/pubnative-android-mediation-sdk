@@ -151,7 +151,7 @@ public class PubnativeInsightsManagerTest {
                 PubnativeInsightsAPIResponseModel model    = new PubnativeInsightsAPIResponseModel();
                 model.status = PubnativeInsightsAPIResponseModel.Status.OK;
                 String result = new Gson().toJson(model);
-                listener.onHttpTaskFinished(mock(PubnativeHttpTask.class), result);
+                listener.onHttpTaskSuccess(mock(PubnativeHttpTask.class), result);
                 return null;
             }
         }).when(PubnativeInsightsManager.class,

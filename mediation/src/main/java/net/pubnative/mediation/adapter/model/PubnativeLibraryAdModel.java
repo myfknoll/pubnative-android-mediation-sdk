@@ -29,23 +29,28 @@ import android.view.View;
 import net.pubnative.library.model.NativeAdModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener, NativeAdModel.Listener {
+public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.OnClickListener,
+                                                                         NativeAdModel.Listener {
 
-    private static String TAG = PubnativeLibraryAdModel.class.getSimpleName();
-
-    protected NativeAdModel mNativeAdModel = null;
+    private static String        TAG            = PubnativeLibraryAdModel.class.getSimpleName();
+    protected      NativeAdModel mNativeAdModel = null;
 
     public PubnativeLibraryAdModel(NativeAdModel model) {
+
         mNativeAdModel = model;
     }
 
+    //==============================================================================================
+    // PubnativeAdModel methods
+    //==============================================================================================
+
+    // Fields
+    //----------------------------------------------------------------------------------------------
     @Override
     public String getTitle() {
 
-        Log.v(TAG, "getTitle()");
-
+        Log.v(TAG, "getTitle");
         String result = null;
-
         if (mNativeAdModel != null) {
             result = mNativeAdModel.title;
         }
@@ -55,10 +60,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getDescription() {
 
-        Log.v(TAG, "getDescription()");
-
+        Log.v(TAG, "getDescription");
         String result = null;
-
         if (mNativeAdModel != null) {
             result = mNativeAdModel.description;
         }
@@ -68,10 +71,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getIconUrl() {
 
-        Log.v(TAG, "getIconUrl()");
-
+        Log.v(TAG, "getIconUrl");
         String result = null;
-
         if (mNativeAdModel != null) {
             result = mNativeAdModel.iconUrl;
         }
@@ -81,10 +82,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getBannerUrl() {
 
-        Log.v(TAG, "getBannerUrl()");
-
+        Log.v(TAG, "getBannerUrl");
         String result = null;
-
         if (mNativeAdModel != null) {
             result = mNativeAdModel.bannerUrl;
         }
@@ -94,10 +93,8 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public String getCallToAction() {
 
-        Log.v(TAG, "getCallToAction()");
-
+        Log.v(TAG, "getCallToAction");
         String result = null;
-
         if (mNativeAdModel != null) {
             result = mNativeAdModel.ctaText;
         }
@@ -107,21 +104,23 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public float getStarRating() {
 
-        Log.v(TAG, "getStarRating()");
-
+        Log.v(TAG, "getStarRating");
         return mNativeAdModel.getStoreRating();
     }
 
     @Override
     public View getAdvertisingDisclosureView(Context context) {
+
+        Log.v(TAG, "getAdvertisingDisclosureView");
         return null;
     }
+    // Tracking
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void startTracking(Context context, View adView) {
 
-        Log.v(TAG, "startTracking(Context context, View adView)");
-
+        Log.v(TAG, "startTracking");
         if (mNativeAdModel != null && context != null && adView != null) {
             mContext = context;
             adView.setOnClickListener(this);
@@ -132,23 +131,29 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
     @Override
     public void stopTracking(Context context, View adView) {
 
-        Log.v(TAG, "stopTracking(Context context, View adView)");
-
+        Log.v(TAG, "stopTracking");
         // Do nothing
     }
+    //==============================================================================================
+    // Callbacks
+    //==============================================================================================
 
+    // View.OnClickListener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onClick(View view) {
 
-        Log.v(TAG, "onClick(View view)");
-
+        Log.v(TAG, "onClick");
         invokeOnAdClick();
         mNativeAdModel.open(mContext);
     }
 
-    // Pubnative NativeAdModel.Listener
+    // NativeAdModel.Listener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onAdImpression(NativeAdModel model) {
+
+        Log.v(TAG, "onAdImpression");
         invokeOnAdImpressionConfirmed();
     }
 }

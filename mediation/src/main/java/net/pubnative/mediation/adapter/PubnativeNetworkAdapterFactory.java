@@ -32,22 +32,20 @@ import java.util.Map;
 
 public class PubnativeNetworkAdapterFactory {
 
-    private static String TAG = PubnativeNetworkAdapterFactory.class.getSimpleName();
-
+    private static         String TAG             = PubnativeNetworkAdapterFactory.class.getSimpleName();
     protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
     /**
      * Creates a new network adapter instance by using the values passed in using model
      *
      * @param model network model that contains the values needed for creating a network adapter
+     *
      * @return instance of PubnativeNetworkAdapter if created, else null
      */
     public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model) {
 
-        Log.e(TAG, "createAdapter(PubnativeNetworkModel model)");
-
+        Log.e(TAG, "createAdapter");
         PubnativeNetworkAdapter result = null;
-
         try {
             Class<?> networkClass = Class.forName(getPackageName(model.adapter));
             Constructor<?> constructor = networkClass.getConstructor(Map.class);
@@ -56,14 +54,12 @@ public class PubnativeNetworkAdapterFactory {
             // Don't crash, just return null, log error and return null
             Log.e(TAG, "Pubnative - Error creating adapter: " + e);
         }
-
         return result;
     }
 
     protected static String getPackageName(String classSimpleName) {
 
-        Log.v(TAG, "getPackageName(String classSimpleName = " + classSimpleName + ")");
-
+        Log.v(TAG, "getPackageName");
         String result = null;
         if (classSimpleName != null) {
             result = NETWORK_PACKAGE + "." + classSimpleName;
