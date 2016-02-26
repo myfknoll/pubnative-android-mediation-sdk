@@ -134,25 +134,25 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
-            invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - invalid config retrieved"));
+            invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - null or invalid config retrieved"));
 
-            Log.e(TAG, "startRequest - invalid config retrieved");
+            Log.e(TAG, "startRequest - null or invalid config retrieved");
         } else {
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
-                invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id not found"));
+                invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not found"));
 
-                Log.e(TAG, "startRequest - placement_id not found");
+                Log.e(TAG, "startRequest - placement_id '\" + mPlacementID + \"' not found");
             } else if (placement.delivery_rule == null) {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - config error"));
+                invokeFail(new Exception("PubnativeNetworkRequest.start - config error, delivery rule not found"));
 
-                Log.e(TAG, "startRequest - config error");
+                Log.e(TAG, "startRequest - config error, delivery rule not found");
             } else if (placement.delivery_rule.isActive()) {
                 startTracking();
             } else {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id not active"));
+                invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not active"));
 
-                Log.e(TAG, "startRequest - placement_id not active");
+                Log.e(TAG, "startRequest - placement_id '\" + mPlacementID + \"' not active");
             }
         }
     }
@@ -436,7 +436,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         } else if (TimeoutException.class.isAssignableFrom(exception.getClass())) {
             trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, exception.toString());
         } else {
-            trackAttemptedNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, exception.toString());
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, exception.toString());
         }
         Map<String, String> extras = adapter.getExtras();
         String requestID = extras.get(TRACKING_PARAMETER_REQUEST_ID);
