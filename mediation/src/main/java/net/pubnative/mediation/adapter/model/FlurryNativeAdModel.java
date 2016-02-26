@@ -45,6 +45,9 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     protected String getStringValueOfFirstAsset(String... keys) {
+
+        Log.v(TAG, "getStringValueOfFirstAsset(String... keys)");
+
         String result = null;
 
         if (mFlurryAdNative != null) {
@@ -61,18 +64,27 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public String getTitle() {
+
+        Log.v(TAG, "getTitle()");
+
         // The Ad headline, typically a single line. Type: STRING
         return getStringValueOfFirstAsset("headline");
     }
 
     @Override
     public String getDescription() {
+
+        Log.v(TAG, "getDescription()");
+
         // The call to action summary of the advertisement. Type: STRING
         return getStringValueOfFirstAsset("summary");
     }
 
     @Override
     public String getIconUrl() {
+
+        Log.v(TAG, "getIconUrl()");
+
         // secOrigImg: 	The secured original image, size: 627px x 627px. Optional asset, not present for the video ads
         // secImage:    The secured image, size: 82px x 82px. Optional asset, not present for the video ads.
 
@@ -81,12 +93,18 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public String getBannerUrl() {
+
+        Log.v(TAG, "getBannerUrl()");
+
         // secHqImage:  The secured high quality image, size: 1200px x 627px. Optional asset, not present for the video ads
         return getStringValueOfFirstAsset("secHqImage");
     }
 
     @Override
     public String getCallToAction() {
+
+        Log.v(TAG, "getCallToAction()");
+
         /**
          * Yahoo currently does not provide the short Call To Action (CTA)
          * asset or string at this time. Instead, you can create your own
@@ -104,6 +122,9 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
     @Override
     public float getStarRating() {
+
+        Log.v(TAG, "getStarRating()");
+
         float  result    = 0;
         String appRating = getStringValueOfFirstAsset("appRating");
 

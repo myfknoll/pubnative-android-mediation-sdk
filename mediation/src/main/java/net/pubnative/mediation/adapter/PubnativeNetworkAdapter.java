@@ -99,7 +99,6 @@ public abstract class PubnativeNetworkAdapter {
                 request(context);
             } else {
                 invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null argument provided"));
-                Log.e(TAG, "doRequest - null argument provided");
             }
         } else {
             Log.e(TAG, "doRequest - context not specified, dropping the call");

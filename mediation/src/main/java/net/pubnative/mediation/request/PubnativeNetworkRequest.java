@@ -100,8 +100,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                 if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
 
                     invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - invalid start parameters"));
-
-                    Log.e(TAG, "start - invalid start parameters");
                 } else {
                     mContext = context;
                     mTrackingModel = new PubnativeInsightDataModel();
@@ -114,8 +112,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                         getConfig(appToken, this);
                     } else {
                         invokeFail(new Exception("PubnativeNetworkRequest.start - internet connection not available"));
-
-                        Log.e(TAG, "start - internet connection not available");
                     }
                 }
             }
@@ -123,6 +119,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     protected void getConfig(String appToken, PubnativeConfigRequestListener listener) {
+
+        Log.v(TAG, "getConfig(String appToken, PubnativeConfigRequestListener listener)");
         // This method getConfig() here gets the stored/downloaded mConfig and
         // continues to startRequest() in it's callback "onConfigLoaded()".
         PubnativeConfigManager.getConfig(mContext, appToken, listener);
@@ -135,24 +133,16 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
             invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - null or invalid config retrieved"));
-
-            Log.e(TAG, "startRequest - null or invalid config retrieved");
         } else {
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
                 invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not found"));
-
-                Log.e(TAG, "startRequest - placement_id '\" + mPlacementID + \"' not found");
             } else if (placement.delivery_rule == null) {
                 invokeFail(new Exception("PubnativeNetworkRequest.start - config error, delivery rule not found"));
-
-                Log.e(TAG, "startRequest - config error, delivery rule not found");
             } else if (placement.delivery_rule.isActive()) {
                 startTracking();
             } else {
                 invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not active"));
-
-                Log.e(TAG, "startRequest - placement_id '\" + mPlacementID + \"' not active");
             }
         }
     }
@@ -189,8 +179,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         PubnativeDeliveryRuleModel deliveryRuleModel = mConfig.getPlacement(mPlacementID).delivery_rule;
         if (deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementID)) {
             invokeFail(new Exception("Pubnative - start error: (frequecy_cap) too many ads"));
-
-            Log.e(TAG, "startRequest - (frequecy_cap) too many ads");
         } else {
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementID);
@@ -205,8 +193,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
                 // return the same mAd during the pacing cap amount of time
                 if (mAd == null) {
                     invokeFail(new Exception("Pubnative - start error: (pacing_cap) too many ads"));
-
-                    Log.e(TAG, "startRequest - (frequecy_cap) too many ads");
                 } else {
                     invokeLoad(mAd);
                 }
@@ -223,8 +209,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
         if (currentPriorityRule == null) {
             trackRequestInsight(requestID);
             invokeFail(new Exception("Pubnative - no fill"));
-
-            Log.e(TAG, "doNextNetworkRequest - no fill");
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {
@@ -246,6 +230,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     protected void invokeStart() {
+
+        Log.v(TAG, "invokeStart()");
+
         // Ensure returning callbacks on same thread than where we started the call
         mHandler.post(new Runnable() {
 
@@ -261,6 +248,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void invokeLoad(final PubnativeAdModel ad) {
 
+        Log.v(TAG, "invokeLoad(PubnativeAdModel ad)");
+
         mHandler.post(new Runnable() {
 
             @Override
@@ -275,6 +264,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     protected void invokeFail(final Exception exception) {
+
+        Log.v(TAG, "invokeFail(Exception exception = " + exception + ")");
 
         mHandler.post(new Runnable() {
 
@@ -294,6 +285,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     protected void trackRequestInsight(String requestID) {
 
+        Log.v(TAG, "trackRequestInsight(String requestID = " + requestID + ")");
+
         String requestURL = (String) mConfig.getGlobal(PubnativeConfigModel.ConfigContract.REQUEST_BEACON);
         if (TextUtils.isEmpty(requestURL)) {
             Log.e(TAG, "trackRequestInsight - Error: Tracking request aborted, requestURL not found");
@@ -303,6 +296,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     private void trackUnreachableNetwork(String error, String details) {
+
+        Log.v(TAG, "trackUnreachableNetwork(String error, String details)");
 
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (priorityRuleModel == null) {
@@ -319,6 +314,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
 
     private void trackAttemptedNetwork(String error, String details) {
 
+        Log.v(TAG, "trackAttemptedNetwork(String error, String details)");
+
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (priorityRuleModel == null) {
             Log.e(TAG, "trackAttemptedNetwork - Error: Tracking attempted network, priorityRuleModel not found");
@@ -333,6 +330,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     }
 
     protected Map<String, String> getTrackingParameters(String requestID) {
+
+        Log.v(TAG, "getTrackingParameters(String requestID)");
 
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
@@ -383,6 +382,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     @Override
     public void onConfigLoaded(PubnativeConfigModel configModel) {
 
+        Log.v(TAG, "onConfigLoaded(PubnativeConfigModel configModel)");
+
         startRequest(configModel);
     }
 
@@ -391,11 +392,15 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapterListener,
     @Override
     public void onAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
 
+        Log.v(TAG, "onAdapterRequestStarted(PubnativeNetworkAdapter adapter)");
+
         mRequestStartTimestamp = System.currentTimeMillis();
     }
 
     @Override
     public void onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad) {
+
+        Log.v(TAG, "onAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad)");
 
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
         Map<String, String> extras = adapter.getExtras();

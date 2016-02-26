@@ -61,6 +61,9 @@ public class PubnativeNetworkAdapterFactory {
     }
 
     protected static String getPackageName(String classSimpleName) {
+
+        Log.v(TAG, "getPackageName(String classSimpleName = " + classSimpleName + ")");
+
         String result = null;
         if (classSimpleName != null) {
             result = NETWORK_PACKAGE + "." + classSimpleName;

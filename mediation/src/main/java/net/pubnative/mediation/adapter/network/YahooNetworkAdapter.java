@@ -101,6 +101,8 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
 
+        Log.v(TAG, "onFetched(FlurryAdNative flurryAdNative)");
+
         endFlurrySession(mContext);
         FlurryNativeAdModel nativeAdModel = new FlurryNativeAdModel(flurryAdNative);
         invokeLoaded(nativeAdModel);
@@ -108,6 +110,8 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
+
+        Log.v(TAG, "onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode = " + errCode + ")");
 
         endFlurrySession(mContext);
         if (flurryAdErrorType != null) {

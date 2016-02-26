@@ -126,6 +126,9 @@ public class PubnativeDeliveryManager {
     }
 
     protected static void setImpressionCount(Context context, String impressionCapType, String placementID, int value) {
+
+        Log.v(TAG, "setImpressionCount(Context context, String impressionCapType = " + impressionCapType + ", String placementID = " + placementID + ", int value = " + value + ")");
+
         if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
             SharedPreferences.Editor editor = getPreferencesEditor(context);
             if (editor != null) {
@@ -141,6 +144,9 @@ public class PubnativeDeliveryManager {
     }
 
     protected static int getImpressionCount(Context context, String impressionCapType, String placementID) {
+
+        Log.v(TAG, "getImpressionCount(Context context, String impressionCapType = " + impressionCapType + ", String placementID = " + placementID + ")");
+
         updateImpressionCount(context, placementID);
         int result = 0;
         if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
@@ -161,6 +167,9 @@ public class PubnativeDeliveryManager {
      * @param calendar    calendar object with the timestamp
      */
     public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar) {
+
+        Log.v(TAG, "setImpressionLastUpdate(Context context, String placementID = " + placementID + ", Calendar calendar)");
+
         if (context != null && !TextUtils.isEmpty(placementID)) {
             SharedPreferences.Editor editor = getPreferencesEditor(context);
             if (editor != null) {
@@ -176,6 +185,9 @@ public class PubnativeDeliveryManager {
     }
 
     public static Calendar getImpressionLastUpdate(Context context, String placementID) {
+
+        Log.v(TAG, "getImpressionLastUpdate(Context context, String placementID = " + placementID + ")");
+
         Calendar result = null;
         if (context != null && !TextUtils.isEmpty(placementID)) {
             SharedPreferences preferences = getPreferences(context);

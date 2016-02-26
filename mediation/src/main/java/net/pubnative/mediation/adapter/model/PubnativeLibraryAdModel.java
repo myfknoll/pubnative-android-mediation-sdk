@@ -41,6 +41,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public String getTitle() {
+
+        Log.v(TAG, "getTitle()");
+
         String result = null;
 
         if (mNativeAdModel != null) {
@@ -51,6 +54,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public String getDescription() {
+
+        Log.v(TAG, "getDescription()");
+
         String result = null;
 
         if (mNativeAdModel != null) {
@@ -61,6 +67,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public String getIconUrl() {
+
+        Log.v(TAG, "getIconUrl()");
+
         String result = null;
 
         if (mNativeAdModel != null) {
@@ -71,6 +80,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public String getBannerUrl() {
+
+        Log.v(TAG, "getBannerUrl()");
+
         String result = null;
 
         if (mNativeAdModel != null) {
@@ -81,6 +93,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public String getCallToAction() {
+
+        Log.v(TAG, "getCallToAction()");
+
         String result = null;
 
         if (mNativeAdModel != null) {
@@ -91,6 +106,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public float getStarRating() {
+
+        Log.v(TAG, "getStarRating()");
+
         return mNativeAdModel.getStoreRating();
     }
 
@@ -121,6 +139,9 @@ public class PubnativeLibraryAdModel extends PubnativeAdModel implements View.On
 
     @Override
     public void onClick(View view) {
+
+        Log.v(TAG, "onClick(View view)");
+
         invokeOnAdClick();
         mNativeAdModel.open(mContext);
     }

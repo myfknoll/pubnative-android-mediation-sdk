@@ -54,6 +54,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public String getTitle() {
+
+        Log.v(TAG, "getTitle()");
+
         String result = null;
 
         if (mNativeAd != null) {
@@ -64,6 +67,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public String getDescription() {
+
+        Log.v(TAG, "getDescription()");
+
         String result = null;
 
         if (mNativeAd != null) {
@@ -74,6 +80,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public String getIconUrl() {
+
+        Log.v(TAG, "getIconUrl()");
+
         String iconUrl = null;
 
         if (mNativeAd != null && mNativeAd.getAdIcon() != null) {
@@ -84,6 +93,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public String getBannerUrl() {
+
+        Log.v(TAG, "getBannerUrl()");
+
         String bannerUrl = null;
 
         if (mNativeAd != null && mNativeAd.getAdCoverImage() != null) {
@@ -94,6 +106,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public String getCallToAction() {
+
+        Log.v(TAG, "getCallToAction()");
+
         String result = null;
 
         if (mNativeAd != null) {
@@ -104,6 +119,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public float getStarRating() {
+
+        Log.v(TAG, "getStarRating()");
+
         float starRating = 0;
 
         if (mNativeAd != null) {
@@ -120,6 +138,9 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     @Override
     public View getAdvertisingDisclosureView(Context context) {
+
+        Log.v(TAG, "getAdvertisingDisclosureView(Context context)");
+
         View result = null;
 
         if (context != null && mNativeAd != null) {

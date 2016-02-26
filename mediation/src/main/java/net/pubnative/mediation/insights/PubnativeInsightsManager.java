@@ -145,6 +145,8 @@ public class PubnativeInsightsManager {
 
     protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpTask.Listener listener) {
 
+        Log.v(TAG, "sendTrackingDataToServer(Context context, String trackingDataString = " + trackingDataString + ", String url = " + url + ", PubnativeHttpTask.Listener listener)");
+
         PubnativeHttpTask http = new PubnativeHttpTask(context);
         http.setPOSTData(trackingDataString);
         http.setListener(listener);
@@ -152,6 +154,8 @@ public class PubnativeInsightsManager {
     }
 
     protected static void trackingFailed(Context context, PubnativeInsightRequestModel model, String message) {
+
+        Log.v(TAG, "trackingFailed(Context context, PubnativeInsightRequestModel model, String message = " + message + ")");
 
         // Add a retry
         model.dataModel.retry = model.dataModel.retry + 1;
@@ -162,11 +166,15 @@ public class PubnativeInsightsManager {
 
     protected static void trackingFinished(Context context, PubnativeInsightRequestModel model) {
 
+        Log.v(TAG, "trackingFinished(Context context, PubnativeInsightRequestModel model)");
+
         sIdle = true;
         trackNext(context);
     }
 
     protected static void enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model) {
+
+        Log.v(TAG, "enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model)");
 
         if (context != null && model != null) {
             List<PubnativeInsightRequestModel> pendingList = getTrackingList(context, listKey);
@@ -180,6 +188,8 @@ public class PubnativeInsightsManager {
 
     protected static void enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list) {
 
+        Log.v(TAG, "enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list)");
+
         if (context != null && list != null) {
             List<PubnativeInsightRequestModel> insightList = getTrackingList(context, listKey);
             if (insightList == null) {
@@ -191,6 +201,8 @@ public class PubnativeInsightsManager {
     }
 
     protected static PubnativeInsightRequestModel dequeueInsightItem(Context context, String listKey) {
+
+        Log.v(TAG, "dequeueInsightItem(Context context, String listKey = " + listKey + ")");
 
         PubnativeInsightRequestModel result = null;
         if (context != null) {
@@ -205,6 +217,8 @@ public class PubnativeInsightsManager {
     }
 
     protected static List<PubnativeInsightRequestModel> getTrackingList(Context context, String listKey) {
+
+        Log.v(TAG, "getTrackingList(Context context, String listKey = " + listKey + ")");
 
         List<PubnativeInsightRequestModel> result = null;
         if (context != null) {
@@ -227,6 +241,8 @@ public class PubnativeInsightsManager {
     }
 
     protected static void setTrackingList(Context context, String listKey, List<PubnativeInsightRequestModel> pendingList) {
+
+        Log.v(TAG, "getTrackingList(Context context, String listKey, List<PubnativeInsightRequestModel> pendingList)");
 
         if (context != null) {
             SharedPreferences.Editor editor = getSharedPreferencesEditor(context);

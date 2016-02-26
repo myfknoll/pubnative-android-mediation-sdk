@@ -143,6 +143,9 @@ public class PubnativeConfigManager {
     }
 
     protected static void serveStoredConfig(Context context, PubnativeConfigRequestListener listener) {
+
+        Log.v(TAG, "serveStoredConfig(Context context, PubnativeConfigRequestListener listener)");
+
         PubnativeConfigModel configModel = getStoredConfig(context);
         invokeLoaded(listener, configModel);
     }
@@ -154,6 +157,9 @@ public class PubnativeConfigManager {
      * @return PubnativeConfigModel object if found in SharedPreferences. Else null.
      */
     public static PubnativeConfigModel getStoredConfig(Context context) {
+
+        Log.v(TAG, "getStoredConfig(Context context)");
+
         PubnativeConfigModel currentConfig = null;
         String               configString  = getStoredConfigString(context);
         if (!TextUtils.isEmpty(configString)) {
@@ -173,6 +179,9 @@ public class PubnativeConfigManager {
     }
 
     protected static void invokeLoaded(PubnativeConfigRequestListener listener, PubnativeConfigModel configModel) {
+
+        Log.v(TAG, "invokeLoaded(PubnativeConfigRequestListener listener, PubnativeConfigModel configModel)");
+
         if (listener != null) {
             listener.onConfigLoaded(configModel);
         }
@@ -335,6 +344,9 @@ public class PubnativeConfigManager {
 
     // CONFIG URL
     protected static String getConfigDownloadBaseUrl(Context context) {
+
+        Log.v(TAG, "getConfigDownloadBaseUrl(Context context)");
+
         String               configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
         PubnativeConfigModel storedConfig = getStoredConfig(context);
         if (storedConfig != null && !storedConfig.isNullOrEmpty()) {
@@ -348,16 +360,25 @@ public class PubnativeConfigManager {
 
     // CONFIG
     protected synchronized static String getStoredConfigString(Context context) {
+
+        Log.v(TAG, "getStoredConfigString(Context context)");
+
         return getStringSharedPreference(context, CONFIG_STRING_KEY);
     }
 
     protected synchronized static void setStoredConfig(Context context, PubnativeConfigModel config) {
+
+        Log.v(TAG, "setStoredConfig(Context context)");
+
         // ensuring the string "null" is not getting saved.
         String configString = (config != null) ? new Gson().toJson(config) : null;
         setStringSharedPreference(context, CONFIG_STRING_KEY, configString);
     }
 
     public static void clean(Context context) {
+
+        Log.v(TAG, "clean(Context context)");
+
         setStoredAppToken(context, null);
         setStoredTimestamp(context, null);
         setStoredRefresh(context, null);
@@ -366,28 +387,46 @@ public class PubnativeConfigManager {
 
     // APP TOKEN
     protected static String getStoredAppToken(Context context) {
+
+        Log.v(TAG, "getStoredAppToken(Context context)");
+
         return getStringSharedPreference(context, APP_TOKEN_STRING_KEY);
     }
 
     protected static void setStoredAppToken(Context context, String appToken) {
+
+        Log.v(TAG, "getStoredAppToken(Context context, String appToken)");
+
         setStringSharedPreference(context, APP_TOKEN_STRING_KEY, appToken);
     }
 
     // TIMESTAMP
     protected static Long getStoredTimestamp(Context context) {
+
+        Log.v(TAG, "getStoredTimestamp(Context context)");
+
         return getLongSharedPreference(context, TIMESTAMP_LONG_KEY);
     }
 
     protected static void setStoredTimestamp(Context context, Long timestamp) {
+
+        Log.v(TAG, "getStoredTimestamp(Context context, Long timestamp = " + timestamp + ")");
+
         setLongSharedPreference(context, TIMESTAMP_LONG_KEY, timestamp);
     }
 
     // REFRESH
     protected static Long getStoredRefresh(Context context) {
+
+        Log.v(TAG, "getStoredRefresh(Context context)");
+
         return getLongSharedPreference(context, REFRESH_LONG_KEY);
     }
 
     protected static void setStoredRefresh(Context context, Long refresh) {
+
+        Log.v(TAG, "setStoredRefresh(Context context, Long refresh)");
+
         setLongSharedPreference(context, REFRESH_LONG_KEY, refresh);
     }
 
