@@ -65,7 +65,9 @@ public class PubnativeDeviceUtils {
         AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
 
         String androidAdvertisingID = null;
-        if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
+        if (adInfo.isLimitAdTrackingEnabled()) {
+            Log.w(TAG, "getAndroidAdvertisingID  - Error: limit ad tracking is enabled, android advertising id cannot be retrieved");
+        } else {
             androidAdvertisingID = adInfo.getId();
         }
         return androidAdvertisingID;
