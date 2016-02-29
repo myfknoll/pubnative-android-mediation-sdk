@@ -23,7 +23,7 @@ public final class AdvertisingIdClient {
 
     public static AdInfo getAdvertisingIdInfo(Context context) {
 
-        AdInfo result = null;
+        AdInfo result = new AdInfo(null, true);
         Log.v(TAG, "getAdvertisingIdInfo");
         if (Looper.myLooper() == Looper.getMainLooper()) {
             Log.e(TAG, "getAdvertisingIdInfo - Cannot be called from the main thread");
@@ -48,9 +48,6 @@ public final class AdvertisingIdClient {
                 Log.e(TAG, "getAdvertisingIdInfo - Error: " + exception);
             }
         }
-        if (result == null) {
-            Log.e(TAG, "getAdvertisingIdInfo - Error: Google Play connection failed");
-        }
         return result;
     }
     //==============================================================================================
@@ -66,18 +63,18 @@ public final class AdvertisingIdClient {
 
         AdInfo(String advertisingId, boolean limitAdTrackingEnabled) {
 
-            this.mAdvertisingId = advertisingId;
-            this.mLimitAdTrackingEnabled = limitAdTrackingEnabled;
+            mAdvertisingId = advertisingId;
+            mLimitAdTrackingEnabled = limitAdTrackingEnabled;
         }
 
         public String getId() {
 
-            return this.mAdvertisingId;
+            return mAdvertisingId;
         }
 
         public boolean isLimitAdTrackingEnabled() {
 
-            return this.mLimitAdTrackingEnabled;
+            return mLimitAdTrackingEnabled;
         }
     }
 
