@@ -43,7 +43,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     public FacebookNativeAdModel(NativeAd nativeAd) {
 
-        if (mNativeAd != null) {
+        if (nativeAd != null) {
             mNativeAd = nativeAd;
             mNativeAd.setAdListener(this);
             mNativeAd.setImpressionListener(this);
