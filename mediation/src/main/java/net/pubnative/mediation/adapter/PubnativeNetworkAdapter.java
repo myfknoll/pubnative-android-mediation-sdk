@@ -88,7 +88,7 @@ public abstract class PubnativeNetworkAdapter {
 
             Log.v(TAG, "timeout");
             // Invoke failed and avoid more callbacks by setting listener to null
-            mAdapter.invokeFailed(new TimeoutException("PubnativeNetworkAdapter.doRequest - adapter timeout"));
+            mAdapter.invokeFailed(new TimeoutException(PubnativeNetworkAdapter.this.getClass().getSimpleName() + ".doRequest - adapter timeout"));
         }
     }
     //==============================================================================================

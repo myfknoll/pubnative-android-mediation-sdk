@@ -74,7 +74,7 @@ public class YahooNetworkAdapterTest {
         this.stubEndFlurrySessionMethod(adapterSpy);
 
         // Check that
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         verify(listenerMock, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
         verify(listenerMock, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
         verify(listenerMock, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
@@ -96,7 +96,7 @@ public class YahooNetworkAdapterTest {
             }
         }).when(adapterSpy).createRequest(any(Context.class), anyString(), anyString());
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.callbacksRunsForFailureCase(adapterSpy, listenerMock);
     }
 
@@ -186,7 +186,7 @@ public class YahooNetworkAdapterTest {
         this.stubCreateRequestMethod(adapterSpy);
         this.stubEndFlurrySessionMethod(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.callbacksRunsForFailureCase(adapterSpy, listenerMock);
     }
 

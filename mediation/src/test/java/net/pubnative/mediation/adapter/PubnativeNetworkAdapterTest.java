@@ -134,7 +134,7 @@ public class PubnativeNetworkAdapterTest {
             }
         });
 
-        adapterSpy.doRequest(mock(Context.class), TIMEOUT_HALF_SECOND, null, listenerSpy);
+        adapterSpy.doRequest(mock(Context.class), TIMEOUT_HALF_SECOND, listenerSpy);
         Robolectric.flushForegroundThreadScheduler();
 
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
