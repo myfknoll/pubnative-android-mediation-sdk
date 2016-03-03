@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pubnative SDK</string>
+    <string name="app_name">mediation.demo</string>
     <string name="title_activity_setting">SettingActivity</string>
 
     <string name="app_token">App Token</string>
