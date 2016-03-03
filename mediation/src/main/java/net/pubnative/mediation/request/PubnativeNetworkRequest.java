@@ -236,7 +236,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         mCurrentNetworkIndex++;
         PubnativePriorityRuleModel currentPriorityRule = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (currentPriorityRule == null) {
-            invokeFail(new Exception("Pubnative - not found priority rule for placmenet " + mPlacementID + " at index : " + mCurrentNetworkIndex));
+            trackRequestInsight();
+            invokeFail(new Exception("Pubnative - no fill");
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {
