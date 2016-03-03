@@ -72,7 +72,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
         verify(listenerSpy, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
@@ -93,7 +93,7 @@ public class PubnativeLibraryNetworkAdapterTest {
             }
         }).when(adapterSpy).createRequest(any(Context.class));
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -103,7 +103,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
@@ -113,7 +113,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerSpy);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
         this.failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 

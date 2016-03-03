@@ -191,7 +191,13 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     mTrackingModel.delivery_segment_ids = placement.delivery_rule.segment_ids;
                     mTrackingModel.ad_format_code = placement.ad_format_code;
                 }
-                startRequest();
+                mHandler.post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        startRequest();
+                    }
+                });
             }
         }).start();
     }
@@ -243,7 +249,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     // Add ML extras for adapter
                     Map<String, String> extras = new HashMap<String, String>();
                     extras.put(TRACKING_PARAMETER_REQUEST_ID, requestID);
-                    adapter.doRequest(mContext, networkModel.timeout, extras, this);
+                    adapter.setExtras(extras);
+                    adapter.doRequest(mContext, networkModel.timeout, this);
                 }
             }
         }

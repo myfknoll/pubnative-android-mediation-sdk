@@ -72,7 +72,7 @@ public class FacebookNetworkAdapterTest {
         this.stubCreateRequestMethod(adapterSpy);
 
         // Check that
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         verify(listenerMock, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
         verify(listenerMock, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
         verify(listenerMock, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
@@ -94,7 +94,7 @@ public class FacebookNetworkAdapterTest {
             }
         }).when(adapterSpy).createRequest(any(Context.class), anyString());
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 
@@ -106,7 +106,7 @@ public class FacebookNetworkAdapterTest {
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 
@@ -118,7 +118,7 @@ public class FacebookNetworkAdapterTest {
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 
@@ -133,7 +133,7 @@ public class FacebookNetworkAdapterTest {
         FacebookNetworkAdapter          adapterSpy   = spy(new FacebookNetworkAdapter(data));
         this.stubCreateRequestMethod(adapterSpy);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 
@@ -144,7 +144,7 @@ public class FacebookNetworkAdapterTest {
 
         PubnativeNetworkAdapter.Listener listenerMock = mock(PubnativeNetworkAdapter.Listener.class);
 
-        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, null, listenerMock);
+        adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerMock);
         this.verifyCallbacksForFailureCase(adapterSpy, listenerMock);
     }
 

@@ -86,10 +86,9 @@ public abstract class PubnativeNetworkAdapter {
         @Override
         public void run() {
 
-            Log.v(TAG, "run()");
+            Log.v(TAG, "timeout");
             // Invoke failed and avoid more callbacks by setting listener to null
-            mAdapter.invokeFailed(new TimeoutException("PubnativeNetworkAdapter.doRequest - adapter timeout"));
-            mAdapter.mListener = null;
+            mAdapter.invokeFailed(new TimeoutException(PubnativeNetworkAdapter.this.getClass().getSimpleName() + ".doRequest - adapter timeout"));
         }
     }
     //==============================================================================================
@@ -118,27 +117,37 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
+     * This method sets the extras for the adapter request
+     *
+     * @param extras
+     */
+    public void setExtras(Map<String, String> extras) {
+
+        Log.v(TAG, "setExtras");
+        mExtras = extras;
+    }
+
+    /**
      * This method starts the adapter request setting up the configured timeout
      *
      * @param context         valid context
      * @param timeoutInMillis timeout in milliseconds. time to wait for an adapter to respond.
      * @param listener        lister to track the callbacks on adapter
      */
-    public void doRequest(Context context, int timeoutInMillis, Map<String, String> extras, PubnativeNetworkAdapter.Listener listener) {
+    public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapter.Listener listener) {
 
         Log.v(TAG, "doRequest");
-        if (listener != null) {
+        if (listener == null) {
+            Log.e(TAG, "doRequest - context not specified, dropping the call");
+        } else {
             mListener = listener;
-            if (context != null) {
-                mExtras = extras;
+            if (context == null) {
+                invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null context provided"));
+            } else {
                 invokeStart();
                 startTimeout(timeoutInMillis);
                 request(context);
-            } else {
-                invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null argument provided"));
             }
-        } else {
-            Log.e(TAG, "doRequest - context not specified, dropping the call");
         }
     }
 
@@ -149,11 +158,9 @@ public abstract class PubnativeNetworkAdapter {
     protected void startTimeout(int timeoutInMillis) {
 
         Log.v(TAG, "startTimeout");
-        if (mHandler == null) {
-            mHandler = new Handler();
-        }
         if (timeoutInMillis > 0) {
             mTimeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
+            mHandler = new Handler();
             mHandler.postDelayed(mTimeoutRunnable, timeoutInMillis);
         }
     }
@@ -163,6 +170,7 @@ public abstract class PubnativeNetworkAdapter {
         Log.v(TAG, "cancelTimeout");
         if (mHandler != null && mTimeoutRunnable != null) {
             mHandler.removeCallbacks(mTimeoutRunnable);
+            mHandler = null;
         }
     }
     // Callback helpers
