@@ -164,14 +164,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
                 invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not found"));
-            } else if (placement.delivery_rule == null) {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - config error, delivery rule not found"));
-            } else if (placement.priority_rules == null || placement.priority_rules.size() == 0) {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - config error, priority_rules is empty or null"));
-            } else if (placement.delivery_rule.isActive()) {
-                startTracking();
+            } else if (placement.delivery_rule == null || placement.priority_rules == null) {
+                invokeFail(new Exception("PubnativeNetworkRequest.start - config error"));
+            } else if (placement.delivery_rule.isDisabled()) {
+               invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' is not active"));
+            } else if (placement.priority_rules.size() == 0) {
+                invokeFail(new Exception("PubnativeNetworkRequest.start - no networks configured for placement: " + mPlacementID));
             } else {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not active"));
+                startTracking();
             }
         }
     }

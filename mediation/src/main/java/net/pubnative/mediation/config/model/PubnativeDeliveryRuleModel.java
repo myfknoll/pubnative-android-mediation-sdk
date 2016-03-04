@@ -44,10 +44,10 @@ public class PubnativeDeliveryRuleModel {
     //==============================================================================================
     // PubnativeDeliveryRuleModel
     //==============================================================================================
-    public boolean isActive() {
+    public boolean isDisabled() {
 
-        Log.v(TAG, "isActive");
-        return !this.no_ads;
+        Log.v(TAG, "isDisabled");
+        return this.no_ads;
     }
 
     public boolean isDayImpressionCapActive() {

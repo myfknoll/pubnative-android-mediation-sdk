@@ -41,9 +41,9 @@ public class PubnativeDeliveryRuleModelTest {
     @Test
     public void isActiveWithValues() {
         modelSpy.no_ads = false;
-        assertThat(modelSpy.isActive()).isTrue();
+        assertThat(modelSpy.isDisabled()).isFalse();
         modelSpy.no_ads = true;
-        assertThat(modelSpy.isActive()).isFalse();
+        assertThat(modelSpy.isDisabled()).isTrue();
     }
 
     @Test
