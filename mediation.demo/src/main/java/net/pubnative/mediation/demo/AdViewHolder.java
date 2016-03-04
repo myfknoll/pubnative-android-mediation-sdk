@@ -35,6 +35,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -43,132 +45,135 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
  * This helps us to avoid redundant calls to "findViewById" each
  * time we load values into the cell.
  */
-public class AdViewHolder implements View.OnClickListener, PubnativeNetworkRequest.Listener {
+public class AdViewHolder implements PubnativeNetworkRequest.Listener,
+                                     View.OnClickListener {
 
-    private static final String LOG_TAG = "AdViewHolder";
-
-    protected Context context;
-
+    private static final String TAG = AdViewHolder.class.getSimpleName();
+    protected Context          mContext;
     // Data
-    protected CellRequestModel requestModel;
-
+    protected CellRequestModel mCellRequestModel;
     // Behaviour
-    protected ProgressBar    ad_spinner;
-    protected RelativeLayout ad_clickable;
-    protected Button         request_button;
-
+    protected ProgressBar      mAdLoading;
+    protected RelativeLayout   mAdContainer;
+    protected Button           mRequestButton;
     // Ad info
-    protected ViewGroup ad_disclosure;
-    protected TextView  placement_id_text;
-    protected TextView  adapter_name_text;
-    protected TextView  ad_description_text;
-    protected TextView  ad_title_text;
-    protected RatingBar ad_rating;
-    protected ImageView ad_icon_image;
-    protected ImageView ad_banner_image;
+    protected ViewGroup        mAdDisclosure;
+    protected TextView         mPlacementID;
+    protected TextView         mAdapterName;
+    protected TextView         mDescription;
+    protected TextView         mTitle;
+    protected RatingBar        mRating;
+    protected ImageView        mIcon;
+    protected ImageView        mBanner;
 
-    public AdViewHolder(Context context) {
-        this.context = context;
+    public AdViewHolder(Context context, View convertView) {
+
+        this.mContext = context;
+        mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
+        mAdContainer = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
+        mRequestButton = (Button) convertView.findViewById(R.id.request_button);
+        mRequestButton.setOnClickListener(this);
+        mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
+        mAdapterName = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
+        mTitle = (TextView) convertView.findViewById(R.id.ad_title_text);
+        mDescription = (TextView) convertView.findViewById(R.id.ad_description_text);
+        mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
+        mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
+        mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
+        mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
     }
 
-    public void initialize(View convertView) {
-        this.ad_spinner = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        this.ad_clickable = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
+    public void setCellRequestModel(CellRequestModel cellRequestModel) {
 
-        this.ad_disclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
-        this.adapter_name_text = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
-
-        this.request_button = (Button) convertView.findViewById(R.id.request_button);
-        this.request_button.setOnClickListener(this);
-
-        this.ad_title_text = (TextView) convertView.findViewById(R.id.ad_title_text);
-        this.ad_description_text = (TextView) convertView.findViewById(R.id.ad_description_text);
-        this.placement_id_text = (TextView) convertView.findViewById(R.id.placement_id_text);
-        this.ad_rating = (RatingBar) convertView.findViewById(R.id.ad_rating);
-        this.ad_icon_image = (ImageView) convertView.findViewById(R.id.ad_icon_image);
-        this.ad_banner_image = (ImageView) convertView.findViewById(R.id.ad_banner_image);
+        Log.v(TAG, "setCellRequestModel");
+        if (cellRequestModel != null && cellRequestModel.adModel != null) {
+            cellRequestModel.adModel.stopTracking();
+        }
+        mCellRequestModel = cellRequestModel;
+        cleanView();
+        renderAd();
     }
 
     public void cleanView() {
-        this.ad_disclosure.removeAllViews();
-        this.ad_title_text.setText("");
-        this.ad_description_text.setText("");
-        this.adapter_name_text.setText("");
-        this.ad_rating.setRating(0f);
-        this.ad_rating.setVisibility(View.GONE);
-        this.ad_banner_image.setImageDrawable(null);
-        this.ad_icon_image.setImageDrawable(null);
-        this.ad_spinner.setVisibility(View.GONE);
 
-
-    }
-
-    public void setRequestModel(CellRequestModel requestModel) {
-
-        if(this.requestModel != null && this.requestModel.adModel != null) {
-            this.requestModel.adModel.stopTracking();
-        }
-        this.requestModel = requestModel;
-        this.cleanView();
-        this.renderAd();
+        Log.v(TAG, "cleanView");
+        mAdDisclosure.removeAllViews();
+        mTitle.setText("");
+        mDescription.setText("");
+        mAdapterName.setText("");
+        mRating.setRating(0f);
+        mRating.setVisibility(View.GONE);
+        mBanner.setImageDrawable(null);
+        mIcon.setImageDrawable(null);
+        mAdLoading.setVisibility(View.GONE);
     }
 
     public void renderAd() {
-        this.placement_id_text.setText("Placement ID: " + requestModel.placementID);
 
-        if (this.requestModel.adModel != null) {
-
+        Log.v(TAG, "renderAd");
+        // Placement data
+        mPlacementID.setText("Placement ID: " + mCellRequestModel.placementID);
+        PubnativeAdModel model = mCellRequestModel.adModel;
+        if (model != null) {
             // Privacy container
-            String adapterNameText = this.requestModel.adModel.getClass().getSimpleName();
-            this.adapter_name_text.setText(adapterNameText);
-            View sponsorView = this.requestModel.adModel.getAdvertisingDisclosureView(this.context);
-            if (sponsorView != null) {
-                this.ad_disclosure.addView(sponsorView);
-            }
-
+            String adapterNameText = model.getClass().getSimpleName();
+            mAdapterName.setText(adapterNameText);
             // Ad content
-            this.ad_title_text.setText(this.requestModel.adModel.getTitle());
-            this.ad_description_text.setText(this.requestModel.adModel.getDescription());
-            this.ad_rating.setRating(this.requestModel.adModel.getStarRating());
-            this.ad_rating.setVisibility(View.VISIBLE);
-            new LoadImageAsyncTask().execute(this.requestModel.adModel.getIconUrl(), this.ad_icon_image);
-            new LoadImageAsyncTask().execute(this.requestModel.adModel.getBannerUrl(), this.ad_banner_image);
-            this.requestModel.adModel.startTracking(this.context, this.ad_clickable);
+            mTitle.setText(model.getTitle());
+            mDescription.setText(model.getDescription());
+            mRating.setRating(model.getStarRating());
+            mRating.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
+            Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
+            View sponsorView = model.getAdvertisingDisclosureView(this.mContext);
+            if (sponsorView != null) {
+                mAdDisclosure.addView(sponsorView);
+            }
+            // Tracking
+            model.startTracking(mContext, mAdContainer);
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        Log.d(LOG_TAG, "onClick");
-        if (request_button.equals(v)) {
-            this.cleanView();
-            this.ad_spinner.setVisibility(View.VISIBLE);
-            this.requestModel.request.start(context, this.requestModel.appToken, this.requestModel.placementID, this);
-        }
+    public void onRequestClick(View v) {
+
+        Log.v(TAG, "onRequestClick");
+        cleanView();
+        mAdLoading.setVisibility(View.VISIBLE);
+        mCellRequestModel.request.start(mContext, Settings.getAppToken(mContext), mCellRequestModel.placementID, this);
     }
 
+    //==============================================================================================
+    // CALLBACKS
+    //==============================================================================================
+    // PubnativeNetworkRequest.Listener
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request) {
-        Log.d(LOG_TAG, "onPubnativeNetworkRequestStarted");
+
+        Log.d(TAG, "onPubnativeNetworkRequestStarted");
     }
 
     @Override
     public void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
-        Log.d(LOG_TAG, "onPubnativeNetworkRequestLoaded");
 
-        this.ad_spinner.setVisibility(View.GONE);
-        this.requestModel.adModel = ad;
-        this.renderAd();
+        Log.d(TAG, "onPubnativeNetworkRequestLoaded");
+        mAdLoading.setVisibility(View.GONE);
+        mCellRequestModel.adModel = ad;
+        renderAd();
     }
 
     @Override
     public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception) {
-        Log.d(LOG_TAG, "onPubnativeNetworkRequestFailed: " + exception);
 
-        Toast.makeText(this.context, exception.getMessage(), Toast.LENGTH_LONG).show();
+        Log.d(TAG, "onPubnativeNetworkRequestFailed: " + exception);
+        Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_LONG).show();
+        mAdLoading.setVisibility(View.GONE);
+        mCellRequestModel.adModel = null;
+        cleanView();
+    }
 
-        this.ad_spinner.setVisibility(View.GONE);
-        this.requestModel.adModel = null;
-        this.cleanView();
+    @Override
+    public void onClick(View v) {
+        onRequestClick(v);
     }
 }

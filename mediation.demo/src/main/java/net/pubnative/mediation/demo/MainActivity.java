@@ -26,31 +26,75 @@ package net.pubnative.mediation.demo;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity {
 
-    private final static String APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
-
-    private Button                 settingsButton  = null;
-    private AdListAdapter          requestsAdapter = null;
-    private List<CellRequestModel> requests        = null;
+    private static final String                 TAG              = MainActivity.class.getSimpleName();
+    private static final String                 APP_TOKEN        = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
+    private              AdListAdapter          mRequestsAdapter = null;
+    private              List<CellRequestModel> mRequests        = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setDefaults();
+        mRequestsAdapter = new AdListAdapter(this, R.layout.ad_list_cell, mRequests);
+        ListView listView = (ListView) findViewById(R.id.ad_list);
+        listView.setAdapter(mRequestsAdapter);
+    }
 
-        this.settingsButton = (Button) this.findViewById(R.id.button_settings);
-        this.settingsButton.setOnClickListener(this);
+    @Override
+    protected void onResume() {
 
-        List<String> placements = new ArrayList();
+        Log.v(TAG, "onResume");
+        super.onResume();
+        mRequestsAdapter.clear();
+        List<String> placements = Settings.getPlacements(this);
+        List<CellRequestModel> requests = new ArrayList<>();
+        for (String placementID : placements) {
+
+            CellRequestModel requestModel = null;
+            for (CellRequestModel model : mRequests) {
+                if(model.placementID.equals(placementID)) {
+                    requestModel = model;
+                    break;
+                }
+            }
+            if (requestModel == null) {
+                requests.add(new CellRequestModel(placementID));
+            } else {
+                requests.add(requestModel);
+            }
+        }
+        mRequests = requests;
+        for (CellRequestModel requestModel : mRequests) {
+            mRequestsAdapter.add(requestModel);
+        }
+        mRequestsAdapter.notifyDataSetChanged();
+    }
+
+    public void onSettingsClick(View v) {
+
+        Log.v(TAG, "onSettingsClick");
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        startActivity(settingsIntent);
+    }
+
+    protected void setDefaults() {
+        Log.v(TAG, "setDefaults");
+        // App token
+        Settings.setAppToken(this, APP_TOKEN);
+        // Placements
+        List<String> placements = new ArrayList<>();
         placements.add("facebook_only");
         placements.add("pubnative_only");
         placements.add("yahoo_only");
@@ -60,57 +104,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         placements.add("pacing_cap_hour_1");
         placements.add("pacing_cap_min_1");
         placements.add("disabled");
-        PubnativeTestCredentials.setStoredAppToken(this, APP_TOKEN);
-        PubnativeTestCredentials.setStoredPlacements(this, placements);
-
-        this.requests = new ArrayList();
-        for (String placementID : placements) {
-            this.requests.add(new CellRequestModel(APP_TOKEN, placementID));
-        }
-
-        this.requestsAdapter = new AdListAdapter(this, R.layout.ad_list_cell, this.requests);
-        ListView listView = (ListView) this.findViewById(R.id.ad_list);
-        listView.setAdapter(this.requestsAdapter);
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        this.displayPlacementsList();
-    }
-
-    private void displayPlacementsList() {
-        // Add default data if needed
-        String       appToken   = PubnativeTestCredentials.getStoredAppToken(this);
-        List<String> placements = PubnativeTestCredentials.getStoredPlacements(this);
-
-        if (!TextUtils.isEmpty(appToken) && placements != null) {
-            this.requestsAdapter.clear();
-            List<CellRequestModel> newRequests = new ArrayList();
-            for (CellRequestModel request : this.requests) {
-                if (placements.contains(request.placementID)) {
-                    newRequests.add(request);
-                    placements.remove(request.placementID);
-                }
-            }
-            for (String placementID : placements) {
-                newRequests.add(new CellRequestModel(appToken, placementID));
-            }
-            this.requests = newRequests;
-            for (CellRequestModel request : this.requests) {
-                this.requestsAdapter.add(request);
-            }
-
-            this.requestsAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (this.settingsButton.equals(v)) {
-            Intent settingsIntent = new Intent(this, SettingActivity.class);
-            startActivity(settingsIntent);
-        }
+        Settings.setPlacements(this, placements);
     }
 }
