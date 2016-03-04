@@ -64,13 +64,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 if (!TextUtils.isEmpty(adSpaceName)) {
                     createRequest(context, adSpaceName, apiKey);
                 } else {
-                    invokeFailed(new IllegalArgumentException("Invalid ad_space_name provided."));
+                    invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: Invalid ad_space_name provided."));
                 }
             } else {
-                invokeFailed(new IllegalArgumentException("Invalid api_key provided."));
+                invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: Invalid api_key provided."));
             }
         } else {
-            invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
+            invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: No context or adapter data provided."));
         }
     }
 
@@ -126,12 +126,12 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 }
                 break;
                 default: {
-                    invokeFailed(new Exception("Flurry adapter error: " + flurryAdErrorType.name() + " - " + errCode));
+                    invokeFailed(new Exception("YahooNetworkAdapter - Error: " + flurryAdErrorType.name() + " - " + errCode));
                 }
                 break;
             }
         } else {
-            invokeFailed(new Exception("Flurry adapter error: Unknown"));
+            invokeFailed(new Exception("YahooNetworkAdapter - Error: Unknown"));
         }
     }
 

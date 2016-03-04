@@ -25,7 +25,6 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
@@ -54,7 +53,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
         if (context != null && mData != null) {
             createRequest(context);
         } else {
-            invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
+            invokeFailed(new IllegalArgumentException("PubnativeLibraryNetworkAdapter - Error: No context or adapter data provided."));
         }
     }
 
@@ -89,7 +88,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<net.pubnative.library.models.PubnativeAdModel> ads) {
         Log.v(TAG, "onPubnativeRequestSuccess");
         if (request == null) {
-            invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
+            invokeFailed(new Exception("PubnativeLibraryNetworkAdapter - Error: invalid request object on response"));
         } else {
             PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {

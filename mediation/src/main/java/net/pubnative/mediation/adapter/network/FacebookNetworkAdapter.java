@@ -60,10 +60,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             if (!TextUtils.isEmpty(placementId)) {
                 createRequest(context, placementId);
             } else {
-                invokeFailed(new IllegalArgumentException("Invalid placement_id provided."));
+                invokeFailed(new IllegalArgumentException("FacebookNetworkAdapter - Error: Invalid placement_id provided."));
             }
         } else {
-            invokeFailed(new IllegalArgumentException("No context or adapter data provided."));
+            invokeFailed(new IllegalArgumentException("FacebookNetworkAdapter - Error: No context or adapter data provided."));
         }
     }
 
@@ -92,10 +92,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
                 if (adError == AdError.NO_FILL) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(new Exception("Facebook adapter error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
+                    invokeFailed(new Exception("FacebookNetworkAdapter - Error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
                 }
             } else {
-                invokeFailed(new Exception("Facebook adapter error: Unknown"));
+                invokeFailed(new Exception("FacebookNetworkAdapter - Error: Unknown"));
             }
         }
     }
