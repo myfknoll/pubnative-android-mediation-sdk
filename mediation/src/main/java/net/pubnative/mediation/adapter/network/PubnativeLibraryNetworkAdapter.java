@@ -25,19 +25,17 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
-import net.pubnative.library.model.NativeAdModel;
-import net.pubnative.library.request.AdRequest;
-import net.pubnative.library.request.AdRequestListener;
+import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter
-        implements AdRequestListener {
+public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements PubnativeRequest.Listener{
 
     private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
 
@@ -66,7 +64,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter
     protected void createRequest(Context context) {
 
         Log.v(TAG, "createRequest");
-        AdRequest request = new AdRequest(context);
+        PubnativeRequest request = new PubnativeRequest();
         // We add all params
         for (Object key : mData.keySet()) {
             Object value = mData.get(key);
@@ -79,25 +77,17 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter
                 request.setParameter(key, extraMap.get(key));
             }
         }
-        request.start(AdRequest.Endpoint.NATIVE, this);
+        request.start(context, PubnativeRequest.Endpoint.NATIVE, this);
     }
 
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-    // AdRequestListener
+    // PubnativeRequest.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onAdRequestStarted(AdRequest request) {
-
-        Log.v(TAG, "onAdRequestStarted");
-        // Do nothing
-    }
-
-    @Override
-    public void onAdRequestFinished(AdRequest request, ArrayList<? extends NativeAdModel> ads) {
-
-        Log.v(TAG, "onAdRequestFinished");
+    public void onPubnativeRequestSuccess(PubnativeRequest request, List<net.pubnative.library.models.PubnativeAdModel> ads) {
+        Log.v(TAG, "onPubnativeRequestSuccess");
         if (request == null) {
             invokeFailed(new Exception("Pubnative - PubnativeLibraryNetwork error: invalid request object on response"));
         } else {
@@ -110,9 +100,8 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter
     }
 
     @Override
-    public void onAdRequestFailed(AdRequest request, Exception ex) {
-
-        Log.v(TAG, "onAdRequestFailed: " + ex);
+    public void onPubnativeRequestFailed(PubnativeRequest request, Exception ex) {
+        Log.v(TAG, "onPubnativeRequestFailed: " + ex);
         invokeFailed(ex);
     }
 }

@@ -152,11 +152,8 @@ public abstract class PubnativeAdModel {
 
     /**
      * Stop using the view for confirming impression and handle clicks
-     *
-     * @param context context
-     * @param adView  view that will be removed as tracking view.
      */
-    public abstract void stopTracking(Context context, View adView);
+    public abstract void stopTracking();
 
     //==============================================================================================
     // Tracking data

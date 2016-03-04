@@ -152,7 +152,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     }
 
     @Override
-    public void stopTracking(Context context, View adView) {
+    public void stopTracking() {
 
         Log.v(TAG, "stopTracking");
         if (mNativeAd != null) {

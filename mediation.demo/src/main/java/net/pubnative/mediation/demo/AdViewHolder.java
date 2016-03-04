@@ -99,9 +99,15 @@ public class AdViewHolder implements View.OnClickListener, PubnativeNetworkReque
         this.ad_banner_image.setImageDrawable(null);
         this.ad_icon_image.setImageDrawable(null);
         this.ad_spinner.setVisibility(View.GONE);
+
+
     }
 
     public void setRequestModel(CellRequestModel requestModel) {
+
+        if(this.requestModel != null && this.requestModel.adModel != null) {
+            this.requestModel.adModel.stopTracking();
+        }
         this.requestModel = requestModel;
         this.cleanView();
         this.renderAd();
