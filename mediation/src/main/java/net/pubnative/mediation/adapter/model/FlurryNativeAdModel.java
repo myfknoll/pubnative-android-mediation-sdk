@@ -144,10 +144,11 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     @Override
-    public void stopTracking(Context context, View adView) {
+    public void stopTracking() {
 
         Log.v(TAG, "stopTracking");
         if (mFlurryAdNative != null) {
+            mFlurryAdNative.setListener(null);
             mFlurryAdNative.removeTrackingView();
         }
     }

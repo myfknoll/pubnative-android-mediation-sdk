@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2015 PubNative GmbH
+// Copyright (c) 2016 PubNative GmbH
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,42 +21,51 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.demo;
+package net.pubnative.library.utils;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.text.TextUtils;
-import android.widget.ImageView;
 
-import java.io.InputStream;
-import java.net.URL;
+public class AndroidAdvertisingIDTask extends AsyncTask<Context, Void, String> {
 
-public class LoadImageAsyncTask extends AsyncTask<Object, String, Bitmap> {
+    private static final String TAG = AndroidAdvertisingIDTask.class.getSimpleName();
+    private Listener mListener;
 
-    private Bitmap    bitmap    = null;
-    private ImageView imageView = null;
+    public interface Listener {
 
-    @Override
-    protected Bitmap doInBackground(Object... args) {
-        try {
-            if (args != null && args.length == 2) {
-                String imageURL = (String) args[0];
-                this.imageView = (ImageView) args[1];
-                if (this.imageView != null && !TextUtils.isEmpty(imageURL)) {
-                    this.bitmap = BitmapFactory.decodeStream((InputStream) new URL(imageURL).getContent());
-                }
-            }
-        } catch (Exception e) {
-            // Bitmap exception, do nothing
-        }
-        return this.bitmap;
+        void onAndroidAdIdTaskFinished(String result);
+    }
+
+    public AndroidAdvertisingIDTask setListener(Listener listener) {
+
+        mListener = listener;
+        return this;
     }
 
     @Override
-    protected void onPostExecute(Bitmap image) {
-        if (image != null && this.imageView != null) {
-            this.imageView.setImageBitmap(image);
+    protected String doInBackground(Context... contexts) {
+
+        String result = null;
+        Context context = contexts[0];
+        if (context != null && mListener != null) {
+            AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
+            if (adInfo.isLimitAdTrackingEnabled()) {
+                result = adInfo.getId();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+
+        invokeFinish(result);
+    }
+
+    protected void invokeFinish(String result) {
+
+        if (mListener != null) {
+            mListener.onAndroidAdIdTaskFinished(result);
         }
     }
 }

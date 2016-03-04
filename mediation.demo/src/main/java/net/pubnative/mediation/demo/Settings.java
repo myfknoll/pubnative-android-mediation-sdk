@@ -29,59 +29,85 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class PubnativeTestCredentials {
+public class Settings {
 
-    public static final String PREF_FILE           = "pubnative_pref_file";
-    public static final String PREF_KEY_PLACEMENTS = "placements_key";
-    public static final String PREF_KEY_APP_TOKEN  = "app_token_key";
+    public static final String SHARED_PREFERENCES    = "pubnative_pref_file";
+    public static final String SHARED_PLACEMENTS_KEY = "placements_key";
+    public static final String SHARED_APP_TOKEN_KEY  = "app_token_key";
 
     private static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
+
+        return context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
     }
 
     private static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
+
         return getSharedPreferences(context).edit();
     }
 
-    public static List<String> getStoredPlacements(Context context) {
-        List<String> placements = null;
-        if (context != null) {
-            SharedPreferences sharedPreferences = getSharedPreferences(context);
-            String json = sharedPreferences.getString(PREF_KEY_PLACEMENTS, null);
-            if (!TextUtils.isEmpty(json)) {
-                placements = new Gson().fromJson(json, List.class);
-            }
-        }
-        return placements;
+    public static void removePlacement(Context context, String placementID) {
+
+        List<String> placements = getPlacements(context);
+        placements.remove(placementID);
+        setPlacements(context, placements);
     }
 
-    public static void setStoredPlacements(Context context, List<String> placements) {
+    public static void addPlacement(Context context, String placementID) {
+
+        List<String> placements = getPlacements(context);
+        placements.add(placementID);
+        setPlacements(context, placements);
+    }
+
+    public static List<String> getPlacements(Context context) {
+
+        List<String> result = null;
+        if (context != null) {
+            SharedPreferences sharedPreferences = getSharedPreferences(context);
+            String json = sharedPreferences.getString(SHARED_PLACEMENTS_KEY, null);
+            if (!TextUtils.isEmpty(json)) {
+                result = new Gson().fromJson(json, List.class);
+            } else {
+                result = new ArrayList<>();
+            }
+        }
+        return result;
+    }
+
+    public static void setPlacements(Context context, List<String> placements) {
+
         if (context != null) {
             SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
             if (placements == null || placements.size() == 0) {
-                editor.remove(PREF_KEY_PLACEMENTS);
+                editor.remove(SHARED_PLACEMENTS_KEY);
             } else {
-                editor.putString(PREF_KEY_PLACEMENTS, new Gson().toJson(placements));
+                editor.putString(SHARED_PLACEMENTS_KEY, new Gson().toJson(placements));
             }
             editor.apply();
         }
     }
 
-    public static String getStoredAppToken(Context context) {
-        String appToken = null;
+    public static String getAppToken(Context context) {
+
+        String result = null;
         if (context != null) {
             SharedPreferences sharedPreferences = getSharedPreferences(context);
-            appToken = sharedPreferences.getString(PREF_KEY_APP_TOKEN, null);
+            result = sharedPreferences.getString(SHARED_APP_TOKEN_KEY, "");
         }
-        return appToken;
+        return result;
     }
 
-    public static void setStoredAppToken(Context context, String appToken) {
+    public static void setAppToken(Context context, String appToken) {
         if (context != null && !TextUtils.isEmpty(appToken)) {
             SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
-            editor.putString(PREF_KEY_APP_TOKEN, appToken).apply();
+            if(TextUtils.isEmpty(appToken)) {
+                editor.remove(SHARED_APP_TOKEN_KEY);
+            } else {
+                editor.putString(SHARED_APP_TOKEN_KEY, appToken).apply();
+            }
         }
     }
 }

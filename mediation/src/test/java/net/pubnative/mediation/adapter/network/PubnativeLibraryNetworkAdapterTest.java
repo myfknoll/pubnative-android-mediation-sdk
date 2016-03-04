@@ -25,7 +25,7 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 
-import net.pubnative.library.request.AdRequest;
+import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
@@ -88,7 +88,7 @@ public class PubnativeLibraryNetworkAdapterTest {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 PubnativeLibraryNetworkAdapter adapter = (PubnativeLibraryNetworkAdapter) invocation.getMock();
-                adapter.onAdRequestFailed(mock(AdRequest.class), mock(Exception.class));
+                adapter.onPubnativeRequestFailed(mock(PubnativeRequest.class), mock(Exception.class));
                 return null;
             }
         }).when(adapterSpy).createRequest(any(Context.class));
@@ -128,7 +128,7 @@ public class PubnativeLibraryNetworkAdapterTest {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 PubnativeLibraryNetworkAdapter adapter = (PubnativeLibraryNetworkAdapter) invocation.getMock();
-                adapter.onAdRequestFinished(mock(AdRequest.class), mock(ArrayList.class));
+                adapter.onPubnativeRequestSuccess(mock(PubnativeRequest.class), mock(ArrayList.class));
                 return null;
             }
         }).when(adapterMock).createRequest(any(Context.class));

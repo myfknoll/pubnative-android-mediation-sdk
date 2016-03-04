@@ -57,19 +57,19 @@ public class FlurryNativeAdModelTest {
 
         // check with mocked arguments.
         adModel.startTracking(appContext, mock(View.class));
-        adModel.stopTracking(appContext, mock(View.class));
+        adModel.stopTracking();
 
         // check with null arguments.
         adModel.startTracking(null, null);
-        adModel.stopTracking(null, null);
+        adModel.stopTracking();
 
         // check with combination of null and mocked arguments.
         // case #1
         adModel.startTracking(null, mock(View.class));
-        adModel.stopTracking(null, mock(View.class));
+        adModel.stopTracking();
         // case #2
         adModel.startTracking(mock(Context.class), null);
-        adModel.stopTracking(mock(Context.class), null);
+        adModel.stopTracking();
     }
 
     /**

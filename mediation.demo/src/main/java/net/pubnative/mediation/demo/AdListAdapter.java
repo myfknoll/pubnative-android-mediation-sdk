@@ -24,6 +24,7 @@
 package net.pubnative.mediation.demo;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,27 +34,26 @@ import java.util.List;
 
 public class AdListAdapter extends ArrayAdapter<CellRequestModel> {
 
-    private static final String LOG_TAG = "AdListAdapter";
+    private static final String TAG = AdListAdapter.class.getSimpleName();
 
     public AdListAdapter(Context context, int resource, List<CellRequestModel> objects) {
+
         super(context, resource, objects);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
-        CellRequestModel requestModel = this.getItem(position);
-        AdViewHolder     viewHolder;
 
+        Log.v(TAG, "getView");
+        CellRequestModel requestModel = this.getItem(position);
+        AdViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(this.getContext()).inflate(R.layout.ad_list_cell, viewGroup, false);
-            viewHolder = new AdViewHolder(this.getContext());
-            viewHolder.initialize(convertView);
+            viewHolder = new AdViewHolder(this.getContext(), convertView);
             convertView.setTag(viewHolder);
         }
-
         viewHolder = (AdViewHolder) convertView.getTag();
-        viewHolder.setRequestModel(requestModel);
-
+        viewHolder.setCellRequestModel(requestModel);
         return convertView;
     }
 }

@@ -152,7 +152,7 @@ public class PubnativeNetworkRequestTest {
         PubnativeNetworkRequest.Listener listenerMock = mock(PubnativeNetworkRequest.Listener.class);
 
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
-        doNothing().when(networkRequestSpy).doNextNetworkRequest(anyString());
+        doNothing().when(networkRequestSpy).doNextNetworkRequest();
         networkRequestSpy.mConfig = configModel;
         networkRequestSpy.mPlacementID = TEST_PLACEMENT_ID_VALID;
         networkRequestSpy.mContext = this.applicationContext;

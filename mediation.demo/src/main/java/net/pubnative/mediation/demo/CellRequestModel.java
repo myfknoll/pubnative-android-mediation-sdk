@@ -23,44 +23,26 @@
 
 package net.pubnative.mediation.demo;
 
+import android.util.Log;
+
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-public class CellRequestModel
-{
+public class CellRequestModel {
 
+    private static final String TAG = CellRequestModel.class.getSimpleName();
     public PubnativeNetworkRequest request;
     public PubnativeAdModel        adModel;
     public String                  placementID;
-    public String                  appToken;
 
-    public CellRequestModel(String appToken, String placementID) {
-        this.request = new PubnativeNetworkRequest();
-        this.appToken = appToken;
+    public CellRequestModel(String placementID) {
+
+        request = new PubnativeNetworkRequest();
         this.placementID = placementID;
     }
 
     @Override
-    public boolean equals(Object object)
-    {
-        boolean same = false;
-        if(this == object)
-        {
-            same = true;
-        }
-        if(object != null)
-        {
-            if(object instanceof CellRequestModel)
-            {
-                CellRequestModel cell = (CellRequestModel) object;
-                same = cell.placementID == this.placementID;
-            }
-            else if(object instanceof String)
-            {
-                String objectPlacement = (String) object;
-                same = objectPlacement == this.placementID;
-            }
-        }
-        return same;
+    public int hashCode() {
+        return placementID.hashCode();
     }
 }

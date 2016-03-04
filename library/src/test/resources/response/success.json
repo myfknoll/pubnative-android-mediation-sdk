@@ -1,0 +1,49 @@
+{
+  "status": "ok",
+  "ads": [
+    {
+      "click_url": "http://tr.applift.com/click/native?aid=4&t=hZMsrl3MXE2a3f1rVsl3W5PGoO7clRXZHKY4st8vjVu1BsRmRlR94lRFDRfd5UMt3Xl3LGdTkTJCpfWGruASpn5U5i-bqikEcqR3Cd7yx70w48m25kRwdRibGq2dNIIm5kLte26QJ0CtACPrTR5o8yRYD_C5xH50OT_zgNSiSLCTceV-K5D379O4hQwVnNOgwHRXzZmaJIHkt8qhAplY67Nqjd-d2etKlXJiRmArrX1EJ0Xq88DeKw3zvLi-H7ywuj-m9vuGdqiv-RpILyAh1tu3qOLJHubbQWfpOqOenoH39RHwMPWhtZNu4UFygNriRG5TMZHU5-Voda-d02or6_yzmC2W81iXHM5AV9-bETHdjVUgY-feHPfyEq6mHVRYb74DaTFRIgtEC9z2dZc8HTVUn5u6b5y4aYu2hGzAlp3OA0daixpyeqrC7xWAjlKbUgfViPhZPvqDiZlenynvJ2n1IxhF_IVenQBBcmXNarZLqNl7vnpNzV9Db-6J_N3DZ-p3SbTXfxo9tyMmI5b64N-LoGx8-QH9pK4nniMRdBee_lsrtJ0QlE3227jK6D7Txal7",
+      "points": 380,
+      "revenue_model": "cpa",
+      "cta_text": "Install",
+      "type": "native",
+      "title": "AliExpress Shopping App",
+      "description": "Find just about anything you wish for among our large product selection for much lower prices!",
+      "banner_url": "http://cdn.applift.com/games/promo_images_landscape/001/004/767/dimension_1200x627.jpg?20150324180212",
+      "portrait_banner_url": "http://cdn.applift.com/games/promo_images_portrait/001/004/767/dimension_640x960.jpg?20150324180159",
+      "icon_url": "http://cdn.applift.com/games/icons/001/004/767/dimension_150x150.jpg?20151202004330",
+      "app_details": {
+        "name": "AliExpress Shopping App",
+        "publisher": "Alibaba.com Hong Kong Limited",
+        "developer": "Alibaba.com Hong Kong Limited",
+        "store_rating": 4.4,
+        "category": "Shopping",
+        "platform": "Android",
+        "review": "",
+        "review_url": null,
+        "review_pros": [],
+        "review_cons": [],
+        "version": "4.7.0",
+        "size": "N/A",
+        "age_rating": "TeenLearn more",
+        "store_description": "",
+        "store_url": null,
+        "release_date": "2015-11-30",
+        "total_ratings": 5,
+        "installs": "10,000,000 - 50,000,000",
+        "store_categories": [
+          "Shopping"
+        ],
+        "sub_category": null,
+        "store_id": "com.alibaba.aliexpresshd",
+        "url_scheme": null
+      },
+      "beacons": [
+        {
+          "type": "impression",
+          "url": "http://t.applift.com/tracking/imp?aid=4&t=vU0erC4WRsknsVdimaVe1vG_8OjUTJIpwSKsC_Gqt7yjWtjn-md4LueAkTphdpamh5wWYvFvpAwy6H12yVRIrqQSyrmx8FBmrV39V5KfFTnlizSysgpOGkJFp5lViQQJS4qzlOkaFxn9PD_JsN7Fuz3n2bUyn4YDKOlM0RNNJN-pjXZV7Y7zdpo1VdZFvygLwEUZlaUwe7Y5csMwsM4mW9jUCmD-vi0As9ORcr8oMJBIv4VRxLCopzDDVwb_HSbeTqw7_iH_8L9F9wzVnuUvUyt7RJC2u8Uin91JRu6BIhCi_BrSIP8AG-3kfJg8Ldh9axguKrpwePTuMWH35thQlvkHTXm3vWPFzTakrs3VZNvkyMPiWM-B99C48A"
+        }
+      ]
+    }
+  ]
+}
