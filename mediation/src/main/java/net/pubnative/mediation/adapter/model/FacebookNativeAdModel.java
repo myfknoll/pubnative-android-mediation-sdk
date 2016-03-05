@@ -169,7 +169,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     public void onLoggingImpression(Ad ad) {
 
         Log.v(TAG, "onLoggingImpression");
-        this.invokeOnAdImpressionConfirmed();
+        invokeOnAdImpressionConfirmed();
     }
 
     // AdListener
@@ -192,6 +192,6 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     public void onAdClicked(Ad ad) {
 
         Log.v(TAG, "onAdClicked");
-        this.invokeOnAdClick();
+        invokeOnAdClick();
     }
 }

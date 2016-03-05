@@ -126,7 +126,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 Log.e(TAG, "start - request already running, dropping the call");
             } else {
                 if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
-                    invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - invalid start parameters"));
+                    invokeFail(new IllegalArgumentException("PubnativeNetworkRequest - Error: invalid start parameters"));
                 } else {
                     mIsRunning = true;
                     mContext = context;
@@ -139,7 +139,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     if (PubnativeDeviceUtils.isNetworkAvailable(mContext)) {
                         getConfig(appToken, this);
                     } else {
-                        invokeFail(new Exception("PubnativeNetworkRequest.start - internet connection not available"));
+                        invokeFail(new Exception("PubnativeNetworkRequest - Error: internet connection not available"));
                     }
                 }
             }
@@ -159,19 +159,19 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
-            invokeFail(new NetworkErrorException("PubnativeNetworkRequest.start - null or invalid config retrieved"));
+            invokeFail(new NetworkErrorException("PubnativeNetworkRequest - Error: Retrieved config for placement " + mPlacementID + " is null or invalid"));
         } else {
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
-                invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not found"));
-            } else if (placement.delivery_rule == null) {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - config error, delivery rule not found"));
-            } else if (placement.priority_rules == null || placement.priority_rules.size() == 0) {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - config error, priority_rules is empty or null"));
-            } else if (placement.delivery_rule.isActive()) {
-                startTracking();
+                invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement \'" + mPlacementID + "\' not found"));
+            } else if (placement.delivery_rule == null || placement.priority_rules == null) {
+                invokeFail(new Exception("PubnativeNetworkRequest - Error: retrieved config contains null elements for placement " + mPlacementID));
+            } else if (placement.delivery_rule.isDisabled()) {
+               invokeFail(new Exception("PubnativeNetworkRequest - Error: placement \'" + mPlacementID + "\' is disabled"));
+            } else if (placement.priority_rules.size() == 0) {
+                invokeFail(new Exception("PubnativeNetworkRequest - Error: no networks configured for placement: " + mPlacementID));
             } else {
-                invokeFail(new Exception("PubnativeNetworkRequest.start - placement_id \'" + mPlacementID + "\' not active"));
+                startTracking();
             }
         }
     }
@@ -211,7 +211,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         PubnativeDeliveryRuleModel deliveryRuleModel = mConfig.getPlacement(mPlacementID).delivery_rule;
         if (deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementID)) {
-            invokeFail(new Exception("Pubnative - start error: (frequecy_cap) too many ads"));
+            invokeFail(new Exception("PubnativeNetworkRequest - Error: (frequecy_cap) too many ads"));
         } else {
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementID);
@@ -222,7 +222,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 // Pacing cap active and limit reached
                 // return the same mAd during the pacing cap amount of time
                 if (mAd == null) {
-                    invokeFail(new Exception("Pubnative - start error: (pacing_cap) too many ads"));
+                    invokeFail(new Exception("PubnativeNetworkRequest - Error: (pacing_cap) too many ads"));
                 } else {
                     invokeLoad(mAd);
                 }
@@ -237,7 +237,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         PubnativePriorityRuleModel currentPriorityRule = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (currentPriorityRule == null) {
             trackRequestInsight();
-            invokeFail(new Exception("Pubnative - no fill"));
+            invokeFail(new Exception("PubnativeNetworkRequest - No fill available"));
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {

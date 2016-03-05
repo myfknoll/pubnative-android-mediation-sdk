@@ -142,7 +142,7 @@ public abstract class PubnativeNetworkAdapter {
         } else {
             mListener = listener;
             if (context == null) {
-                invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter.doRequest - null context provided"));
+                invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter - Error: null context provided"));
             } else {
                 invokeStart();
                 startTimeout(timeoutInMillis);

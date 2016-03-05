@@ -86,8 +86,8 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
 
         Log.v(TAG, "setCellRequestModel");
-        if (cellRequestModel != null && cellRequestModel.adModel != null) {
-            cellRequestModel.adModel.stopTracking();
+        if (mCellRequestModel != null && mCellRequestModel.adModel != null) {
+            mCellRequestModel.adModel.stopTracking();
         }
         mCellRequestModel = cellRequestModel;
         cleanView();
@@ -158,6 +158,9 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
         Log.d(TAG, "onPubnativeNetworkRequestLoaded");
         mAdLoading.setVisibility(View.GONE);
+        if(mCellRequestModel.adModel != null) {
+            mCellRequestModel.adModel.stopTracking();;
+        }
         mCellRequestModel.adModel = ad;
         renderAd();
     }
