@@ -86,10 +86,14 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null?(adError.getErrorCode() + " - " + adError.getErrorMessage()):""));
+        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
         if (ad == mNativeAd) {
             if (adError != null) {
-                if (adError == AdError.NO_FILL) {
+                int errorCode = adError.getErrorCode();
+                // 1001 || 1002 || 1203 (No_fill)
+                if (AdError.NO_FILL_ERROR_CODE == errorCode ||
+                    AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
+                    1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
                     invokeFailed(new Exception("FacebookNetworkAdapter - Error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
