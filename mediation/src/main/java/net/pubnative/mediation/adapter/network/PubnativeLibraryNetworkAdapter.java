@@ -27,9 +27,9 @@ import android.content.Context;
 import android.util.Log;
 
 import net.pubnative.library.request.PubnativeRequest;
+import net.pubnative.library.request.model.PubnativeAdModel;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.List;
 import java.util.Map;
@@ -85,12 +85,12 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     // PubnativeRequest.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeRequestSuccess(PubnativeRequest request, List<net.pubnative.library.models.PubnativeAdModel> ads) {
+    public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
         Log.v(TAG, "onPubnativeRequestSuccess");
         if (request == null) {
             invokeFailed(new Exception("PubnativeLibraryNetworkAdapter - Error: invalid request object on response"));
         } else {
-            PubnativeAdModel wrapAd = null;
+            net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
