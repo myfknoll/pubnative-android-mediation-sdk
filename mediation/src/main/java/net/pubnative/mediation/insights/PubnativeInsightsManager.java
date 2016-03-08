@@ -64,17 +64,13 @@ public class PubnativeInsightsManager {
     public synchronized static void trackData(Context context, String baseURL, Map<String, String> parameters, PubnativeInsightDataModel dataModel) {
 
         Log.v(TAG, "trackData");
-        if(context == null) {
-
+        if (context == null) {
             Log.e(TAG, "trackData - context can't be null. Dropping call");
-        } else if(TextUtils.isEmpty(baseURL)) {
-
+        } else if (TextUtils.isEmpty(baseURL)) {
             Log.e(TAG, "trackData - baseURL can't be empty. Dropping call");
-        } else if(dataModel == null) {
-
+        } else if (dataModel == null) {
             Log.e(TAG, "trackData - dataModel can't be null. Dropping call");
         } else {
-
             Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
             // Fill with passed parameters
             if (parameters != null) {
@@ -100,23 +96,16 @@ public class PubnativeInsightsManager {
     protected synchronized static void trackNext(final Context context) {
 
         Log.v(TAG, "trackNext");
-
-        if(context == null) {
-
+        if (context == null) {
             Log.e(TAG, "trackNext - context can't be null. Dropping call");
-        } else if(!sIdle) {
-
-            Log.e(TAG, "trackNext - Already tracking one request. Dropping call");
-        } else {
-
+        } else if (sIdle) {
+            sIdle = false;
             final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
-
-            if(model == null) {
-
+            if (model == null) {
                 Log.w(TAG, "trackNext - Dequeued item is null. Dropping call");
+                sIdle = true;
             } else {
 
-                sIdle = false;
                 String trackingDataString = new Gson().toJson(model.dataModel);
                 if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString)) {
                     PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener() {
@@ -154,6 +143,8 @@ public class PubnativeInsightsManager {
                     trackingFinished(context, model);
                 }
             }
+        } else {
+            Log.e(TAG, "trackNext - Already tracking one request. Dropping call");
         }
     }
 
