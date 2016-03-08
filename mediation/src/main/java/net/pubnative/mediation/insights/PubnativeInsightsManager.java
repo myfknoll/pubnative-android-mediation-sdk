@@ -65,36 +65,33 @@ public class PubnativeInsightsManager {
 
         Log.v(TAG, "trackData");
         if(context == null) {
+
             Log.e(TAG, "trackData - context can't be null. Dropping call");
-            return;
-        }
+        } else if(TextUtils.isEmpty(baseURL)) {
 
-        if(TextUtils.isEmpty(baseURL)) {
             Log.e(TAG, "trackData - baseURL can't be empty. Dropping call");
-            return;
-        }
+        } else if(dataModel == null) {
 
-        if(dataModel == null) {
             Log.e(TAG, "trackData - dataModel can't be null. Dropping call");
-            return;
-        }
+        } else {
 
-        Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
-        // Fill with passed parameters
-        if (parameters != null) {
-            for (String key : parameters.keySet()) {
-                uriBuilder.appendQueryParameter(key, parameters.get(key));
+            Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
+            // Fill with passed parameters
+            if (parameters != null) {
+                for (String key : parameters.keySet()) {
+                    uriBuilder.appendQueryParameter(key, parameters.get(key));
+                }
             }
+            PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
+            // Enqueue failed
+            List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
+            enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
+            setTrackingList(context, INSIGHTS_FAILED_DATA, null);
+            // Enqueue current
+            enqueueInsightItem(context, INSIGHTS_PENDING_DATA, model);
+            // Start tracking
+            trackNext(context);
         }
-        PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
-        // Enqueue failed
-        List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
-        enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
-        setTrackingList(context, INSIGHTS_FAILED_DATA, null);
-        // Enqueue current
-        enqueueInsightItem(context, INSIGHTS_PENDING_DATA, model);
-        // Start tracking
-        trackNext(context);
     }
 
     //==============================================================================================
@@ -105,58 +102,58 @@ public class PubnativeInsightsManager {
         Log.v(TAG, "trackNext");
 
         if(context == null) {
+
             Log.e(TAG, "trackNext - context can't be null. Dropping call");
-            return;
-        }
+        } else if(!sIdle) {
 
-        if(!sIdle) {
             Log.e(TAG, "trackNext - Already tracking one request. Dropping call");
-            return;
-        }
-
-        final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
-
-        if(model == null) {
-            Log.w(TAG, "trackNext - Dequeued item is null. Dropping call");
-            return;
-        }
-
-        sIdle = false;
-        String trackingDataString = new Gson().toJson(model.dataModel);
-        if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString)) {
-            PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener() {
-
-                @Override
-                public void onHttpTaskSuccess(PubnativeHttpTask task, String result) {
-
-                    Log.v(TAG, "onHttpTaskSuccess");
-                    if (TextUtils.isEmpty(result)) {
-                        trackingFailed(context, model, "invalid insight response (empty or null)");
-                    } else {
-                        try {
-                            PubnativeInsightsAPIResponseModel response = new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
-                            if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
-                                trackingFinished(context, model);
-                            } else {
-                                trackingFailed(context, model, response.error_message);
-                            }
-                        } catch (Exception e) {
-                            trackingFailed(context, model, e.toString());
-                        }
-                    }
-                }
-
-                @Override
-                public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
-
-                    Log.v(TAG, "onHttpTaskFailed: " + errorMessage);
-                    trackingFailed(context, model, errorMessage);
-                }
-            };
-            sendTrackingDataToServer(context, trackingDataString, model.url, listener);
         } else {
-            // Drop the call, tracking data is errored
-            trackingFinished(context, model);
+
+            final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
+
+            if(model == null) {
+
+                Log.w(TAG, "trackNext - Dequeued item is null. Dropping call");
+            } else {
+
+                sIdle = false;
+                String trackingDataString = new Gson().toJson(model.dataModel);
+                if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString)) {
+                    PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener() {
+
+                        @Override
+                        public void onHttpTaskSuccess(PubnativeHttpTask task, String result) {
+
+                            Log.v(TAG, "onHttpTaskSuccess");
+                            if (TextUtils.isEmpty(result)) {
+                                trackingFailed(context, model, "invalid insight response (empty or null)");
+                            } else {
+                                try {
+                                    PubnativeInsightsAPIResponseModel response = new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
+                                    if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
+                                        trackingFinished(context, model);
+                                    } else {
+                                        trackingFailed(context, model, response.error_message);
+                                    }
+                                } catch (Exception e) {
+                                    trackingFailed(context, model, e.toString());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
+
+                            Log.v(TAG, "onHttpTaskFailed: " + errorMessage);
+                            trackingFailed(context, model, errorMessage);
+                        }
+                    };
+                    sendTrackingDataToServer(context, trackingDataString, model.url, listener);
+                } else {
+                    // Drop the call, tracking data is errored
+                    trackingFinished(context, model);
+                }
+            }
         }
     }
 
