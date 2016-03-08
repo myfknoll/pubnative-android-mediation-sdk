@@ -14,11 +14,9 @@ pubnative-android-mediation-sdk is an Open Source client mediation layer for int
 * [Install](#install)
 * [Usage](#usage)
   * [Request ads](#usage_request)
-  * [Confirm ads impression](#usage_predefined)
-	* [(optional) Track ads behaviour](#usage_track_model)
+  * [Track ad](#usage_track_ad)
 
 * [Misc](#misc)
-  * [Dependencies](#misc_dependencies)
   * [License](#misc_license)
   * [Contributing](#misc_contributing)
 
@@ -27,11 +25,12 @@ pubnative-android-mediation-sdk is an Open Source client mediation layer for int
 
 * Android API 10 (Gingerbread 2.3.3+)
 * An App Token provided in PubNative Dashboard.
+* A Placement ID that'
 
 <a name="install"></a>
 # Install
 
-Clone the repository and import the `:mediation` project into your app. Allow also to import the `:library` one.
+Clone the repository and import the `:mediation` project into your app.
 
 <a name="usage"></a>
 # Usage
@@ -40,85 +39,70 @@ PubNative mediation is a lean yet complete project that allow you request ads fr
 
 Basic integration steps are:
 
-1. [Request ads](#usage_request): Using `PubnativeNetworkRequest` and `PubnativeNetworkRequestListener`
-2. [Confirm ads impression](#usage_confirm_impression): Using the returned `PubnativeAdModel` callbacks with `PubnativeAdModelListener`.
-3. [(optional) Track ads behaviour](#usage_track_model): Using the returned `PubnativeAdModel` callbacks with `PubnativeAdModelListener`.
+1. [Request ads](#usage_request): Using `PubnativeNetworkRequest`
+3. [Track ad](#usage_track_ad): Using the returned `PubnativeAdModel`
 
 <a name="usage_request"></a>
 ### 1) Request Ads
 
 In order to request an Ad you need to create a request, fill it with your data and start it providing a callback for the ad response.
 
-You can set up several data before starting the request by using the helper `PubnativeNetworkRequest` methods. This is an optional usage but in the long therm will seriously improve your ad placement behaviour.
+You can set up several data before starting the request by using the helper `PubnativeNetworkRequest` methods. This is an optional usage but in the long term will seriously improve your ad placement behaviour.
 
 Here is a sample on how to use It.
 
 ```java
 PubnativeNetworkRequest request = new PubnativeNetworkRequest();
-request.start(context, "--YOUR_APP_TOKEN_HERE-", "--YOUR_PLACEMENT_ID_HERE--", new PubnativeNetworkRequestListener()
+request.start(context, "<APP_TOKEN>", "<PLACEMENT_ID>", new PubnativeNetworkRequest.Listener()
 {
 	@Override
-    public void onRequestStarted(PubnativeNetworkRequest request)
+    public void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request) {
     {
         // Request started
     }
 
     @Override
-    public void onRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad)
+    public void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
     {
         // Requested ad returned
-				// Set your ad view with `ad`
     }
 
     @Override
-    public void onRequestFailed(PubnativeNetworkRequest request, Exception exception)
+    public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception) {
     {
         // Request failed
     }
 });
 ```
 
-<a name="usage_confirm_impression"></a>
-### 2) Confirm ad impression
+<a name="usage_track_ad"></a>
+### 2) Track ad
 
-For confirming impressions, the `PubnativeadModel` has methods to track the ad view and confirm the impression automatically, just specify the view that contains the ad to the `startTracking` method.
+For confirming impressions and handling clicks, the `PubnativeadModel` has methods to automatically track the ad view and confirm the impression and to handle the click and open the offer, just specify the view that contains the ad to the `startTracking` method.
 
 ```java
-ad.startTracking(<CONTEXT>, <AD_VIEW_CONTAINER>);
+ad.startTracking(<CONTEXT>, <AD_VIEW>);
 ```
 
-<a name="usage_track_model"></a>
-### 3) (optional) Tracking ads behaviour
-
-In order to track the ad behaviour, you can set up a callback listener inside the model so you can know when has it confirmed an impression or detected a click.
-
-This step is fully optional, just in case you want to play/stop any service upon ad click or any interaction with the ad.
+Optionally, you can set up a listener on the model to listen for callbacks on the tracking process.
 
 ```java
-ad.setListener(new PubnativeAdModelListener()
-{
-	@Override
-  public void onAdImpressionConfirmed(PubnativeAdModel model)
-  {
-		// Impression of the ad was confirmed
-  }
+ad.setListener(new PubnativeAdModel.Listener() {
 
-	@Override
-  public void onAdClick(PubnativeAdModel model)
-  {
-		// The ad was clicked
-		// It will probably get out of the screen right after this.
-  }
+    @Override
+    public void onAdImpressionConfirmed(PubnativeAdModel model) {
+        // Called when the ad impression was confirmed
+    }
+    
+    @Override
+    public void onAdClick(PubnativeAdModel model) {
+        // Called when the ad was clicked
+    }
 });
 ```
 
 <a name="misc"></a>
 # Misc
-
-<a name="misc_dependencies"></a>
-### Dependencies
-
-There are no further dependencies than the networks SDK's that this mediation layer is adapting.
 
 <a name="misc_license"></a>
 ### License
