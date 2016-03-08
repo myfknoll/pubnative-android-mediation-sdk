@@ -62,7 +62,7 @@ public class PubnativeInsightDataModel {
     public String                             creative_url; // Creative selected from the ad_format_code value of the config
     public Boolean                            video_start;
     public Boolean                            video_complete;
-    public Integer                            retry;
+    public int                                retry;
     // User info
     public Integer                            age;
     public String                             education;
