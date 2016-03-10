@@ -23,7 +23,7 @@
 
 package net.pubnative.mediation.adapter;
 
-import android.content.Context;
+import  android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -119,7 +119,7 @@ public abstract class PubnativeNetworkAdapter {
     /**
      * This method sets the extras for the adapter request
      *
-     * @param extras
+     * @param extras valid extras Map
      */
     public void setExtras(Map<String, String> extras) {
 

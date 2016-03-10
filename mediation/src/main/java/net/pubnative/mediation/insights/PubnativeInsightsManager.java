@@ -59,6 +59,7 @@ public class PubnativeInsightsManager {
      *
      * @param context   valid Context object
      * @param baseURL   the base URL of the tracking server
+     * @param parameters added parameters that will be included as querystring parameters
      * @param dataModel PubnativeInsightDataModel object with values filled in.
      */
     public synchronized static void trackData(Context context, String baseURL, Map<String, String> parameters, PubnativeInsightDataModel dataModel) {
