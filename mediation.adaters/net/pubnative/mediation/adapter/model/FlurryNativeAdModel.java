@@ -177,7 +177,6 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     //==============================================================================================
     // FlurryAdNativeListener
     //----------------------------------------------------------------------------------------------
-
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
 
@@ -218,6 +217,16 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
         Log.v(TAG, "onImpressionLogged");
         invokeOnAdImpressionConfirmed();
+    }
+
+    @Override
+    public void onExpanded(FlurryAdNative flurryAdNative) {
+        Log.v(TAG, "onExpanded");
+    }
+
+    @Override
+    public void onCollapsed(FlurryAdNative flurryAdNative) {
+        Log.v(TAG, "onCollapsed");
     }
 
     @Override

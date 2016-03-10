@@ -290,6 +290,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 if (mListener != null) {
                     mListener.onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest.this, ad);
                 }
+                mListener = null;
             }
         });
     }
@@ -306,6 +307,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 if (mListener != null) {
                     mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this, exception);
                 }
+                mListener = null;
             }
         });
     }

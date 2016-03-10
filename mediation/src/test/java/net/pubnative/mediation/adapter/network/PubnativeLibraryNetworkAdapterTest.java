@@ -28,6 +28,7 @@ import android.content.Context;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeLibraryNetworkAdapter;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
@@ -69,7 +70,7 @@ public class PubnativeLibraryNetworkAdapterTest {
     public void verifyCallbacksWithValidParams() {
         Map<String, String> data = mock(HashMap.class);
         PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
-        PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
+        PubnativeLibraryNetworkAdapter adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         this.stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);

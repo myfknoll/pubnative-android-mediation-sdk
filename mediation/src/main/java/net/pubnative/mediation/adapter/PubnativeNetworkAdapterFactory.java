@@ -44,7 +44,7 @@ public class PubnativeNetworkAdapterFactory {
      */
     public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model) {
 
-        Log.e(TAG, "createAdapter");
+        Log.v(TAG, "createAdapter");
         PubnativeNetworkAdapter result = null;
         try {
             Class<?> networkClass = Class.forName(getPackageName(model.adapter));
