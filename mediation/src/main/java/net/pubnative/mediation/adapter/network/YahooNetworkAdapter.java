@@ -34,6 +34,7 @@ import com.flurry.android.ads.FlurryAdNativeListener;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
+import net.pubnative.mediation.exceptions.NetworkAdapterException;
 
 import java.util.Map;
 
@@ -64,13 +65,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 if (!TextUtils.isEmpty(adSpaceName)) {
                     createRequest(context, adSpaceName, apiKey);
                 } else {
-                    invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: Invalid ad_space_name provided."));
+                    invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "Invalid ad_space_name provided."));
                 }
             } else {
-                invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: Invalid api_key provided."));
+                invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "Invalid api_key provided."));
             }
         } else {
-            invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: No context or adapter data provided."));
+            invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "No context or adapter data provided."));
         }
     }
 
@@ -117,7 +118,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
 
-        Log.v(TAG, "onError: " + flurryAdErrorType.name() + " - " + errCode);
+        Log.v(TAG, "onError: " + errCode);
         endFlurrySession(mContext);
         if (flurryAdErrorType != null) {
             switch (flurryAdErrorType) {
@@ -126,12 +127,12 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 }
                 break;
                 default: {
-                    invokeFailed(new Exception("YahooNetworkAdapter - Error: " + flurryAdErrorType.name() + " - " + errCode));
+                    invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, errCode, flurryAdErrorType.name()));
                 }
                 break;
             }
         } else {
-            invokeFailed(new Exception("YahooNetworkAdapter - Error: Unknown"));
+            invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "Unknown error"));
         }
     }
 

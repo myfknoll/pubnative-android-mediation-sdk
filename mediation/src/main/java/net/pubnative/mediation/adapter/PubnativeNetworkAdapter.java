@@ -27,6 +27,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import net.pubnative.mediation.exceptions.NetworkAdapterException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Map;
@@ -142,7 +143,7 @@ public abstract class PubnativeNetworkAdapter {
         } else {
             mListener = listener;
             if (context == null) {
-                invokeFailed(new IllegalArgumentException("PubnativeNetworkAdapter - Error: null context provided"));
+                invokeFailed(new NetworkAdapterException(null, "null context provided."));
             } else {
                 invokeStart();
                 startTimeout(timeoutInMillis);
