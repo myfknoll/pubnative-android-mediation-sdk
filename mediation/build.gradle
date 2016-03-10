@@ -1,4 +1,11 @@
 apply plugin: 'com.android.library'
+//apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'com.github.dcendents.android-maven'
+
+version = '2.0.0'
+//group = 'net.pubnative'
+
+def sharedVersion = version
 
 android {
     compileSdkVersion 10
@@ -8,7 +15,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 21
         versionCode 25
-        versionName "1.0.0"
+        versionName sharedVersion
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -43,3 +50,82 @@ dependencies {
 tasks.withType(Test) {
     testLogging.exceptionFormat = 'full'
 }
+
+//install {
+//    repositories.mavenInstaller {
+//        // This generates POM.xml with proper parameters
+//        pom {
+//            project {
+//                packaging 'aar'
+//
+//                name "pubnative-android-library"
+//                description "Pubnative API library fro Android"
+//                url "http://www.pubnative.net"
+//
+//                // Set your license
+//                licenses {
+//                    license {
+//                        name "MIT"
+//                        url "https://opensource.org/licenses/MIT"
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id "cerberillo"
+//                        name "David Martin"
+//                        email "david@martinmacias.com"
+//                    }
+//                }
+//                scm {
+//                    connection "https://github.com/pubnative/pubnative-android-library.git"
+//                    developerConnection "https://github.com/pubnative/pubnative-android-library.git"
+//                    url "https://github.com/pubnative/pubnative-android-library"
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//Properties properties = new Properties()
+//properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//
+//task sourcesJar(type: Jar) {
+//    from android.sourceSets.main.java.srcDirs
+//    classifier = 'sources'
+//}
+//
+//task javadoc(type: Javadoc) {
+//    source = android.sourceSets.main.java.srcDirs
+//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//
+//artifacts {
+//    archives javadocJar
+//    archives sourcesJar
+//}
+//
+//bintray {
+//    user = properties.getProperty('bintray.user')
+//    key = properties.getProperty('bintray.api_key')
+//    configurations = ['archives']
+//    publish=true
+//    pkg {
+//        userOrg = 'pubnative'
+//        repo = 'maven'
+//        name = 'pubnative-android-library'
+//        websiteUrl = 'https://github.com/pubnative/pubnative-android-library'
+//        issueTrackerUrl = 'https://github.com/pubnative/pubnative-android-library/issues'
+//        vcsUrl = 'https://github.com/pubnative/pubnative-android-library.git'
+//        labels = ['pubnative', 'advertising', 'ad']
+//        licenses = ['MIT']
+//        version {
+//            name=sharedVersion
+//            vcsTag=sharedVersion
+//        }
+//    }
+//}
