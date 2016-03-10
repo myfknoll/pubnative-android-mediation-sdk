@@ -169,4 +169,14 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
         Log.v(TAG, "onImpressionLogged");
         // Do nothing for now.
     }
+
+    @Override
+    public void onExpanded(FlurryAdNative flurryAdNative) {
+        Log.v(TAG, "onExpanded");
+    }
+
+    @Override
+    public void onCollapsed(FlurryAdNative flurryAdNative) {
+        Log.v(TAG, "onCollapsed");
+    }
 }
