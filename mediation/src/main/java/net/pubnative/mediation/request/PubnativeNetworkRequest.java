@@ -23,7 +23,6 @@
 
 package net.pubnative.mediation.request;
 
-import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -39,6 +38,8 @@ import net.pubnative.mediation.config.model.PubnativeDeliveryRuleModel;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
+import net.pubnative.mediation.exceptions.NetworkRequestException;
+import net.pubnative.mediation.exceptions.NoNetworkException;
 import net.pubnative.mediation.insights.PubnativeInsightsManager;
 import net.pubnative.mediation.insights.model.PubnativeInsightCrashModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
@@ -126,7 +127,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 Log.e(TAG, "start - request already running, dropping the call");
             } else {
                 if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
-                    invokeFail(new IllegalArgumentException("PubnativeNetworkRequest - Error: invalid start parameters"));
+                    invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.INVALID_PARAMETERS));
                 } else {
                     mIsRunning = true;
                     mContext = context;
@@ -139,7 +140,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     if (PubnativeDeviceUtils.isNetworkAvailable(mContext)) {
                         getConfig(appToken, this);
                     } else {
-                        invokeFail(new Exception("PubnativeNetworkRequest - Error: internet connection not available"));
+                        invokeFail(new NoNetworkException("internet connection is not available"));
                     }
                 }
             }
@@ -159,17 +160,17 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
-            invokeFail(new NetworkErrorException("PubnativeNetworkRequest - Error: Retrieved config for placement " + mPlacementID + " is null or invalid"));
+            invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NULL_INVALID_CONFIG, mPlacementID));
         } else {
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
-                invokeFail(new IllegalArgumentException("PubnativeNetworkRequest.start - placement \'" + mPlacementID + "\' not found"));
+                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.PLACEMENT_NOT_FOUND, mPlacementID));
             } else if (placement.delivery_rule == null || placement.priority_rules == null) {
-                invokeFail(new Exception("PubnativeNetworkRequest - Error: retrieved config contains null elements for placement " + mPlacementID));
+                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NO_ELEMENT_FOR_PLACEMENT, mPlacementID));
             } else if (placement.delivery_rule.isDisabled()) {
-                invokeFail(new Exception("PubnativeNetworkRequest - Error: placement \'" + mPlacementID + "\' is disabled"));
+                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.DISABLED_PLACEMENT, mPlacementID));
             } else if (placement.priority_rules.size() == 0) {
-                invokeFail(new Exception("PubnativeNetworkRequest - Error: no networks configured for placement: " + mPlacementID));
+                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NO_NETWORK_FOR_PLACEMENT, mPlacementID));
             } else {
                 startTracking();
             }
@@ -209,7 +210,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         PubnativeDeliveryRuleModel deliveryRuleModel = mConfig.getPlacement(mPlacementID).delivery_rule;
         if (deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementID)) {
-            invokeFail(new Exception("PubnativeNetworkRequest - Error: (frequecy_cap) too many ads"));
+            invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.FREQUENCY_CAP, mPlacementID));
         } else {
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementID);
@@ -220,7 +221,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 // Pacing cap active and limit reached
                 // return the same mAd during the pacing cap amount of time
                 if (mAd == null) {
-                    invokeFail(new Exception("PubnativeNetworkRequest - Error: (pacing_cap) too many ads"));
+                    invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.PACING_CAP, mPlacementID));
                 } else {
                     invokeLoad(mAd);
                 }
@@ -235,7 +236,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         PubnativePriorityRuleModel currentPriorityRule = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (currentPriorityRule == null) {
             trackRequestInsight();
-            invokeFail(new Exception("PubnativeNetworkRequest - No fill available"));
+            invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NO_FILL, "placementId = " + mPlacementID + ", currentNetworkIndex = " + mCurrentNetworkIndex));
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {
@@ -386,10 +387,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         mTrackingModel.addInterest(interest);
     }
 
-public enum Gender {
-    MALE,
-    FEMALE
-}
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
 
     public void setGender(Gender gender) {
 
