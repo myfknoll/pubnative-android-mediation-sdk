@@ -31,6 +31,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.pubnative.AdvertisingIdClient;
 import net.pubnative.mediation.R;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
@@ -273,11 +274,6 @@ public class PubnativeInsightDataModel {
             this.os_version = Build.VERSION.RELEASE;
             this.device_name = Build.MODEL;
             this.sdk_version = context.getResources().getString(R.string.version);
-            // AAID
-            String androidAdvertisingId = PubnativeDeviceUtils.getAndroidAdvertisingID(context);
-            if (androidAdvertisingId != null) {
-                this.user_uid = androidAdvertisingId;
-            }
             // Connection type
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
                     Context.CONNECTIVITY_SERVICE);
@@ -292,5 +288,24 @@ public class PubnativeInsightDataModel {
                 }
             }
         }
+    }
+
+    public void fillAdvertisingId(Context context, final AdvertisingIdClient.Listener listener) {
+        Log.v(TAG, "fillAdvertisingId");
+        AdvertisingIdClient.getAdvertisingId(context, new AdvertisingIdClient.Listener() {
+
+            @Override
+            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
+                if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
+                    user_uid = adInfo.getId();
+                }
+                listener.onAdvertisingIdClientFinish(adInfo);
+            }
+
+            @Override
+            public void onAdvertisingIdClientFail(Exception exception) {
+                listener.onAdvertisingIdClientFail(exception);
+            }
+        });
     }
 }

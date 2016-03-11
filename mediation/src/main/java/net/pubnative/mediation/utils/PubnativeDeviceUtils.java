@@ -52,28 +52,6 @@ public class PubnativeDeviceUtils {
     }
 
     /**
-     * Gets you the android advertising id.
-     * Note: This method should be called from a non-UI thread.
-     *
-     * @param context valid Context object
-     * @return android advertising id if available, else null.
-     */
-    public static String getAndroidAdvertisingID(Context context) {
-
-        Log.v(TAG, "getAndroidAdvertisingID(Context context)");
-
-        AdvertisingIdClient.AdInfo adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context);
-
-        String androidAdvertisingID = null;
-        if (adInfo.isLimitAdTrackingEnabled()) {
-            Log.w(TAG, "getAndroidAdvertisingID  - Error: limit ad tracking is enabled, android advertising id cannot be retrieved");
-        } else {
-            androidAdvertisingID = adInfo.getId();
-        }
-        return androidAdvertisingID;
-    }
-
-    /**
      * Checks if the current network is available and connected to internet
      * @param context
      * @return true if it's available and connected
