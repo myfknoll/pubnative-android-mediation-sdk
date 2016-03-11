@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.pubnative.AdvertisingIdClient;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.config.PubnativeConfigManager;
@@ -198,8 +199,19 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
 
                     @Override
                     public void run() {
+                        mTrackingModel.fillAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
 
-                        startRequest();
+                            @Override
+                            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
+                                startRequest();
+                            }
+
+                            @Override
+                            public void onAdvertisingIdClientFail(Exception exception) {
+                                startRequest();
+                            }
+                        });
+
                     }
                 });
             }
