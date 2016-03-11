@@ -11,8 +11,8 @@ public class NetworkAdapterException extends Exception {
         PUBNATIVE
     }
 
-    public NETWORK getNetwork() {
-        return mNetwork;
+    public String getNetwork() {
+        return mNetwork.name();
     }
 
     public int getErrorCode() {
@@ -47,7 +47,7 @@ public class NetworkAdapterException extends Exception {
     @Override
     public String toString() {
         return "NetworkAdapterException{" +
-                "network=" + mNetwork +
+                "network=" + getNetwork() +
                 ", errorCode=" + mErrorCode +
                 ", exception=" + getMessage() +
                 '}';
