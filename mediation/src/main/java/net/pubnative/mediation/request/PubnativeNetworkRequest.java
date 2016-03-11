@@ -26,10 +26,10 @@ package net.pubnative.mediation.request;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.pubnative.AdvertisingIdClient;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
 import net.pubnative.mediation.config.PubnativeConfigManager;
@@ -167,7 +167,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             } else if (placement.delivery_rule == null || placement.priority_rules == null) {
                 invokeFail(new Exception("PubnativeNetworkRequest - Error: retrieved config contains null elements for placement " + mPlacementID));
             } else if (placement.delivery_rule.isDisabled()) {
-               invokeFail(new Exception("PubnativeNetworkRequest - Error: placement \'" + mPlacementID + "\' is disabled"));
+                invokeFail(new Exception("PubnativeNetworkRequest - Error: placement \'" + mPlacementID + "\' is disabled"));
             } else if (placement.priority_rules.size() == 0) {
                 invokeFail(new Exception("PubnativeNetworkRequest - Error: no networks configured for placement: " + mPlacementID));
             } else {
@@ -179,31 +179,29 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     protected void startTracking() {
 
         Log.v(TAG, "startTracking");
-        new Thread(new Runnable() {
+        // Reset tracking
+        mTrackingModel.reset();
+        mTrackingModel.fillDefaults(mContext);
+        mTrackingModel.placement_name = mPlacementID;
+        PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
+        if (placement != null) {
+            mTrackingModel.delivery_segment_ids = placement.delivery_rule.segment_ids;
+            mTrackingModel.ad_format_code = placement.ad_format_code;
+        }
+        mTrackingModel.fillAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
 
             @Override
-            public void run() {
-                // Prepare looper for further handlers
-                Looper.prepare();
-                // Reset tracking
-                mTrackingModel.reset();
-                mTrackingModel.fillDefaults(mContext);
-                mTrackingModel.placement_name = mPlacementID;
-                PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
-                if (placement != null) {
-                    mTrackingModel.delivery_segment_ids = placement.delivery_rule.segment_ids;
-                    mTrackingModel.ad_format_code = placement.ad_format_code;
-                }
-                mHandler.post(new Runnable() {
+            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
 
-                    @Override
-                    public void run() {
-
-                        startRequest();
-                    }
-                });
+                startRequest();
             }
-        }).start();
+
+            @Override
+            public void onAdvertisingIdClientFail(Exception exception) {
+
+                startRequest();
+            }
+        });
     }
 
     protected void startRequest() {
@@ -388,10 +386,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         mTrackingModel.addInterest(interest);
     }
 
-    public enum Gender {
-        MALE,
-        FEMALE
-    }
+public enum Gender {
+    MALE,
+    FEMALE
+}
 
     public void setGender(Gender gender) {
 
