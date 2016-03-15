@@ -7,29 +7,29 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-public class NetworkRequestException extends Exception {
+public class PubnativeNetworkRequestException extends Exception {
 
-    public static final String TAG = NetworkRequestException.class.getSimpleName();
+    public static final String TAG = PubnativeNetworkRequestException.class.getSimpleName();
 
-    public static final int INVALID_PARAMETERS_ERROR_CODE          			= 1000;
-    public static final int NULL_INVALID_CONFIG_ERROR_CODE         			= 1001;
-    public static final int PLACEMENT_NOT_FOUND_ERROR_CODE         			= 1002;
-    public static final int NO_ELEMENT_FOR_PLACEMENT_ERROR_CODE    			= 1003;
-    public static final int DISABLED_PLACEMENT_ERROR_CODE          			= 1004;
-    public static final int NO_NETWORK_FOR_PLACEMENT_ERROR_CODE    			= 1005;
-    public static final int FREQUENCY_CAP_ERROR_CODE               			= 1006;
-    public static final int PACING_CAP_ERROR_CODE                  			= 1007;
-    public static final int NO_FILL_ERROR_CODE                     			= 1008;
+    public static final int INVALID_PARAMETERS_ERROR_CODE          				    = 1000;
+    public static final int NULL_INVALID_CONFIG_ERROR_CODE         				    = 1001;
+    public static final int PLACEMENT_NOT_FOUND_ERROR_CODE         				    = 1002;
+    public static final int NO_ELEMENT_FOR_PLACEMENT_ERROR_CODE    				    = 1003;
+    public static final int DISABLED_PLACEMENT_ERROR_CODE          				    = 1004;
+    public static final int NO_NETWORK_FOR_PLACEMENT_ERROR_CODE    				    = 1005;
+    public static final int FREQUENCY_CAP_ERROR_CODE               				    = 1006;
+    public static final int PACING_CAP_ERROR_CODE                  				    = 1007;
+    public static final int NO_FILL_ERROR_CODE                     				    = 1008;
 
-    public static final NetworkRequestException INVALID_PARAMETERS          = new NetworkRequestException(EXCEPTION_TYPE.INVALID_PARAMETERS);
-    public static final NetworkRequestException NULL_INVALID_CONFIG         = new NetworkRequestException(EXCEPTION_TYPE.NULL_INVALID_CONFIG);
-    public static final NetworkRequestException PLACEMENT_NOT_FOUND         = new NetworkRequestException(EXCEPTION_TYPE.PLACEMENT_NOT_FOUND);
-    public static final NetworkRequestException NO_ELEMENT_FOR_PLACEMENT    = new NetworkRequestException(EXCEPTION_TYPE.NO_ELEMENT_FOR_PLACEMENT);
-    public static final NetworkRequestException DISABLED_PLACEMENT          = new NetworkRequestException(EXCEPTION_TYPE.DISABLED_PLACEMENT);
-    public static final NetworkRequestException NO_NETWORK_FOR_PLACEMENT    = new NetworkRequestException(EXCEPTION_TYPE.NO_NETWORK_FOR_PLACEMENT);
-    public static final NetworkRequestException FREQUENCY_CAP               = new NetworkRequestException(EXCEPTION_TYPE.FREQUENCY_CAP);
-    public static final NetworkRequestException PACING_CAP                  = new NetworkRequestException(EXCEPTION_TYPE.PACING_CAP);
-    public static final NetworkRequestException NO_FILL                     = new NetworkRequestException(EXCEPTION_TYPE.NO_FILL);
+    public static final PubnativeNetworkRequestException INVALID_PARAMETERS         = new PubnativeNetworkRequestException(EXCEPTION_TYPE.INVALID_PARAMETERS);
+    public static final PubnativeNetworkRequestException NULL_INVALID_CONFIG        = new PubnativeNetworkRequestException(EXCEPTION_TYPE.NULL_INVALID_CONFIG);
+    public static final PubnativeNetworkRequestException PLACEMENT_NOT_FOUND        = new PubnativeNetworkRequestException(EXCEPTION_TYPE.PLACEMENT_NOT_FOUND);
+    public static final PubnativeNetworkRequestException NO_ELEMENT_FOR_PLACEMENT   = new PubnativeNetworkRequestException(EXCEPTION_TYPE.NO_ELEMENT_FOR_PLACEMENT);
+    public static final PubnativeNetworkRequestException DISABLED_PLACEMENT         = new PubnativeNetworkRequestException(EXCEPTION_TYPE.DISABLED_PLACEMENT);
+    public static final PubnativeNetworkRequestException NO_NETWORK_FOR_PLACEMENT   = new PubnativeNetworkRequestException(EXCEPTION_TYPE.NO_NETWORK_FOR_PLACEMENT);
+    public static final PubnativeNetworkRequestException FREQUENCY_CAP              = new PubnativeNetworkRequestException(EXCEPTION_TYPE.FREQUENCY_CAP);
+    public static final PubnativeNetworkRequestException PACING_CAP                 = new PubnativeNetworkRequestException(EXCEPTION_TYPE.PACING_CAP);
+    public static final PubnativeNetworkRequestException NO_FILL                    = new PubnativeNetworkRequestException(EXCEPTION_TYPE.NO_FILL);
 
     public void addParameter(String key, String value) {
         if(mKeyValueMap == null) {
@@ -47,7 +47,7 @@ public class NetworkRequestException extends Exception {
         return mKeyValueMap;
     }
 
-    public NetworkRequestException(EXCEPTION_TYPE exception_type) {
+    public PubnativeNetworkRequestException(EXCEPTION_TYPE exception_type) {
         super(exception_type.getReadableName());
         mErrorCode = exception_type.getErrorCode();
     }
