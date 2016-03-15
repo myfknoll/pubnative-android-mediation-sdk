@@ -127,7 +127,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 Log.e(TAG, "start - request already running, dropping the call");
             } else {
                 if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
-                    invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.INVALID_PARAMETERS));
+                    invokeFail(NetworkRequestException.INVALID_PARAMETERS);
                 } else {
                     mIsRunning = true;
                     mContext = context;
@@ -160,17 +160,27 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
-            invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NULL_INVALID_CONFIG, mPlacementID));
+            NetworkRequestException exception = NetworkRequestException.NULL_INVALID_CONFIG;
+            exception.addParameter("placementId", mPlacementID);
+            invokeFail(exception);
         } else {
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
-                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.PLACEMENT_NOT_FOUND, mPlacementID));
+                NetworkRequestException exception = NetworkRequestException.PLACEMENT_NOT_FOUND;
+                exception.addParameter("placementId", mPlacementID);
+                invokeFail(exception);
             } else if (placement.delivery_rule == null || placement.priority_rules == null) {
-                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NO_ELEMENT_FOR_PLACEMENT, mPlacementID));
+                NetworkRequestException exception = NetworkRequestException.NO_ELEMENT_FOR_PLACEMENT;
+                exception.addParameter("placementId", mPlacementID);
+                invokeFail(exception);
             } else if (placement.delivery_rule.isDisabled()) {
-                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.DISABLED_PLACEMENT, mPlacementID));
+                NetworkRequestException exception = NetworkRequestException.DISABLED_PLACEMENT;
+                exception.addParameter("placementId", mPlacementID);
+                invokeFail(exception);
             } else if (placement.priority_rules.size() == 0) {
-                invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NO_NETWORK_FOR_PLACEMENT, mPlacementID));
+                NetworkRequestException exception = NetworkRequestException.NO_NETWORK_FOR_PLACEMENT;
+                exception.addParameter("placementId", mPlacementID);
+                invokeFail(exception);
             } else {
                 startTracking();
             }
@@ -210,7 +220,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         PubnativeDeliveryRuleModel deliveryRuleModel = mConfig.getPlacement(mPlacementID).delivery_rule;
         if (deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementID)) {
-            invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.FREQUENCY_CAP, mPlacementID));
+            NetworkRequestException exception = NetworkRequestException.FREQUENCY_CAP;
+            exception.addParameter("placementId", mPlacementID);
+            invokeFail(exception);
         } else {
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementID);
@@ -221,7 +233,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 // Pacing cap active and limit reached
                 // return the same mAd during the pacing cap amount of time
                 if (mAd == null) {
-                    invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.PACING_CAP, mPlacementID));
+                    NetworkRequestException exception = NetworkRequestException.PACING_CAP;
+                    exception.addParameter("placementId", mPlacementID);
+                    invokeFail(exception);
                 } else {
                     invokeLoad(mAd);
                 }
@@ -236,7 +250,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         PubnativePriorityRuleModel currentPriorityRule = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
         if (currentPriorityRule == null) {
             trackRequestInsight();
-            invokeFail(new NetworkRequestException(NetworkRequestException.EXCEPTION_TYPE.NO_FILL, "placementId = " + mPlacementID + ", currentNetworkIndex = " + mCurrentNetworkIndex));
+            NetworkRequestException exception = NetworkRequestException.NO_FILL;
+            exception.addParameter("placementId", mPlacementID);
+            exception.addParameter("currentNetworkIndex", mCurrentNetworkIndex + "");
+            invokeFail(exception);
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {
