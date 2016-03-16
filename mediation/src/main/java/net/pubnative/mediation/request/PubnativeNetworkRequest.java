@@ -39,7 +39,6 @@ import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.exceptions.NoNetworkException;
 import net.pubnative.mediation.insights.PubnativeInsightsManager;
 import net.pubnative.mediation.insights.model.PubnativeInsightCrashModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
@@ -140,7 +139,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     if (PubnativeDeviceUtils.isNetworkAvailable(mContext)) {
                         getConfig(appToken, this);
                     } else {
-                        invokeFail(new NoNetworkException("internet connection is not available"));
+                        invokeFail(PubnativeException.NO_NETWORK);
                     }
                 }
             }
