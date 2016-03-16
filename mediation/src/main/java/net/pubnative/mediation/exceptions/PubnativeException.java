@@ -12,17 +12,24 @@ public class PubnativeException extends Exception {
     public static final String TAG = PubnativeException.class.getSimpleName();
 
     //==============================================================================================
+    // Generic Exceptions
+    //==============================================================================================
+    public static final int ERROR_CODE_NO_NETWORK                     		= 1000;
+
+    public static final PubnativeException NO_NETWORK                 		= new PubnativeException(ERROR_CODE_NO_NETWORK, "Internet connection is not available");
+
+    //==============================================================================================
     // Request Exceptions
     //==============================================================================================
-    public static final int ERROR_CODE_INVALID_PARAMETERS             		= 1000;
-    public static final int ERROR_CODE_NULL_INVALID_CONFIG            		= 1001;
-    public static final int ERROR_CODE_PLACEMENT_NOT_FOUND            		= 1002;
-    public static final int ERROR_CODE_NO_ELEMENT_FOR_PLACEMENT       		= 1003;
-    public static final int ERROR_CODE_DISABLED_PLACEMENT             		= 1004;
-    public static final int ERROR_CODE_NO_NETWORK_FOR_PLACEMENT       		= 1005;
-    public static final int ERROR_CODE_FREQUENCY_CAP                  		= 1006;
-    public static final int ERROR_CODE_PACING_CAP                     		= 1007;
-    public static final int ERROR_CODE_NO_FILL                        		= 1008;
+    public static final int ERROR_CODE_INVALID_PARAMETERS             		= 2000;
+    public static final int ERROR_CODE_NULL_INVALID_CONFIG            		= 2001;
+    public static final int ERROR_CODE_PLACEMENT_NOT_FOUND            		= 2002;
+    public static final int ERROR_CODE_NO_ELEMENT_FOR_PLACEMENT       		= 2003;
+    public static final int ERROR_CODE_DISABLED_PLACEMENT             		= 2004;
+    public static final int ERROR_CODE_NO_NETWORK_FOR_PLACEMENT       		= 2005;
+    public static final int ERROR_CODE_FREQUENCY_CAP                  		= 2006;
+    public static final int ERROR_CODE_PACING_CAP                     		= 2007;
+    public static final int ERROR_CODE_NO_FILL                        		= 2008;
 
     public static final PubnativeException INVALID_PARAMETERS         		= new PubnativeException(ERROR_CODE_INVALID_PARAMETERS, "Invalid start parameters");
     public static final PubnativeException NULL_INVALID_CONFIG        		= new PubnativeException(ERROR_CODE_NULL_INVALID_CONFIG, "Null or invalid config");
@@ -37,26 +44,29 @@ public class PubnativeException extends Exception {
     //==============================================================================================
     // Adapter Exceptions
     //==============================================================================================
-    public static final int ERROR_CODE_ADAPTER                        		= 2000;
-    public static final int ERROR_CODE_FACEBOOK_ADAPTER               		= 2001;
-    public static final int ERROR_CODE_YAHOO_ADAPTER                  		= 2002;
-    public static final int ERROR_CODE_PUBNATIVE_ADAPTER              		= 2003;
-    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_NO_CONTEXT   		= 2301;
-    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_INVALID_REQUEST    = 2302;
+    public static final int ERROR_CODE_ADAPTER                        		= 3000;
+    public static final int ERROR_CODE_FACEBOOK_ADAPTER_UNKNOWN             = 3100;
+    public static final int ERROR_CODE_FACEBOOK_ADAPTER_PLACEMENT           = 3101;
+    public static final int ERROR_CODE_FACEBOOK_ADAPTER_NO_CONTEXT   		= 3102;
+    public static final int ERROR_CODE_YAHOO_ADAPTER_UNKNOWN                = 3200;
+    public static final int ERROR_CODE_YAHOO_ADAPTER_AD_SPACE_NAME          = 3201;
+    public static final int ERROR_CODE_YAHOO_ADAPTER_API_KEY                = 3202;
+    public static final int ERROR_CODE_YAHOO_ADAPTER_NO_CONTEXT   		    = 3203;
+    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_UNKNOWN            = 3300;
+    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_NO_CONTEXT   		= 3301;
+    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_INVALID_REQUEST    = 3302;
 
     public static final PubnativeException ADAPTER_NULL_CONTEXT       		= new PubnativeException(ERROR_CODE_ADAPTER, "Null context provided");
-    public static final PubnativeException FACEBOOK_ADAPTER           		= new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER, "Facebook adapter error");
-    public static final PubnativeException YAHOO_ADAPTER              		= new PubnativeException(ERROR_CODE_YAHOO_ADAPTER, "Yahoo adapter error");
-    public static final PubnativeException PUBNATIVE_ADAPTER          		= new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER, "Pubnative adapter error");
+    public static final PubnativeException FACEBOOK_ADAPTER_UNKNOWN         = new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_UNKNOWN, "Facebook adapter unknown error");
+    public static final PubnativeException FACEBOOK_INVALID_PLACEMENT  		= new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_PLACEMENT, "Invalid placement_id provided");
+    public static final PubnativeException FACEBOOK_NO_CONTEXT_OR_ADAPTER   = new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_NO_CONTEXT, "No context or adapter data provided");
+    public static final PubnativeException YAHOO_ADAPTER_UNKNOWN            = new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_UNKNOWN, "Yahoo adapter unknown error");
+    public static final PubnativeException YAHOO_INVALID_AD_SPACE_NAME 		= new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_AD_SPACE_NAME, "Invalid ad_space_name provided");
+    public static final PubnativeException YAHOO_INVALID_API_KEY     		= new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_API_KEY, "Invalid api_key provided");
+    public static final PubnativeException YAHOO_NO_CONTEXT_OR_ADAPTER      = new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_NO_CONTEXT, "No context or adapter data provided");
+    public static final PubnativeException PUBNATIVE_ADAPTER          		= new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_UNKNOWN, "Pubnative adapter unknown error");
     public static final PubnativeException PUBNATIVE_NO_CONTEXT_OR_ADAPTER  = new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_NO_CONTEXT, "No context or adapter data provided");
     public static final PubnativeException PUBNATIVE_INVALID_REQUEST 		= new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_INVALID_REQUEST, "Invalid request object on response");
-
-    //==============================================================================================
-    // Generic Exceptions
-    //==============================================================================================
-    public static final int ERROR_CODE_NO_NETWORK                     		= 3000;
-
-    public static final PubnativeException NO_NETWORK                 		= new PubnativeException(ERROR_CODE_NO_NETWORK, "Internet connection is not available");
 
     /**
      * Adds a key value pair

@@ -34,6 +34,7 @@ import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -60,10 +61,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             if (!TextUtils.isEmpty(placementId)) {
                 createRequest(context, placementId);
             } else {
-                invokeFailed(new IllegalArgumentException("FacebookNetworkAdapter - Error: Invalid placement_id provided."));
+                invokeFailed(PubnativeException.FACEBOOK_INVALID_PLACEMENT);
             }
         } else {
-            invokeFailed(new IllegalArgumentException("FacebookNetworkAdapter - Error: No context or adapter data provided."));
+            invokeFailed(PubnativeException.FACEBOOK_NO_CONTEXT_OR_ADAPTER);
         }
     }
 
@@ -96,10 +97,13 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
                     1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(new Exception("FacebookNetworkAdapter - Error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
+                    PubnativeException exception = PubnativeException.FACEBOOK_ADAPTER_UNKNOWN;
+                    exception.addParameter("facebookErrorCode", adError.getErrorCode()+"");
+                    exception.addParameter("facebookErrorMessage", adError.getErrorMessage());
+                    invokeFailed(exception);
                 }
             } else {
-                invokeFailed(new Exception("FacebookNetworkAdapter - Error: Unknown"));
+                invokeFailed(PubnativeException.FACEBOOK_ADAPTER_UNKNOWN);
             }
         }
     }
