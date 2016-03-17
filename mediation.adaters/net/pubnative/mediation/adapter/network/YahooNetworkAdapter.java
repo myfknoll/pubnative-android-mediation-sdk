@@ -34,7 +34,7 @@ import com.flurry.android.ads.FlurryAdNativeListener;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
-import net.pubnative.mediation.exceptions.NetworkAdapterException;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -65,13 +65,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 if (!TextUtils.isEmpty(adSpaceName)) {
                     createRequest(context, adSpaceName, apiKey);
                 } else {
-                    invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "Invalid ad_space_name provided."));
+                    invokeFailed(PubnativeException.YAHOO_INVALID_AD_SPACE_NAME);
                 }
             } else {
-                invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "Invalid api_key provided."));
+                invokeFailed(PubnativeException.YAHOO_INVALID_API_KEY);
             }
         } else {
-            invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "No context or adapter data provided."));
+            invokeFailed(PubnativeException.YAHOO_NO_CONTEXT_OR_ADAPTER);
         }
     }
 
@@ -127,12 +127,15 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
                 }
                 break;
                 default: {
-                    invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, errCode, flurryAdErrorType.name()));
+                    PubnativeException exception = PubnativeException.YAHOO_ADAPTER_UNKNOWN;
+                    exception.addParameter("flurryAdErrorType", flurryAdErrorType.name());
+                    exception.addParameter("errCode", errCode + "");
+                    invokeFailed(exception);
                 }
                 break;
             }
         } else {
-            invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.YAHOO, "Unknown error"));
+            invokeFailed(PubnativeException.YAHOO_ADAPTER_UNKNOWN);
         }
     }
 

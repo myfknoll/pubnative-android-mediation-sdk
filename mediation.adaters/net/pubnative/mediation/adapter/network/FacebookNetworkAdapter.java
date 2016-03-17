@@ -34,7 +34,7 @@ import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
-import net.pubnative.mediation.exceptions.NetworkAdapterException;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -61,10 +61,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             if (!TextUtils.isEmpty(placementId)) {
                 createRequest(context, placementId);
             } else {
-                invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.FACEBOOK, "Invalid placement_id provided."));
+                invokeFailed(PubnativeException.FACEBOOK_INVALID_PLACEMENT);
             }
         } else {
-            invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.FACEBOOK, "No context or adapter data provided."));
+            invokeFailed(PubnativeException.FACEBOOK_NO_CONTEXT_OR_ADAPTER);
         }
     }
 
@@ -93,14 +93,17 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
                 int errorCode = adError.getErrorCode();
                 // 1001 || 1002 || 1203 (No_fill)
                 if (AdError.NO_FILL_ERROR_CODE == errorCode ||
-                    AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
-                    1203 == errorCode) {
+                        AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
+                        1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.FACEBOOK, adError.getErrorCode(), adError.getErrorMessage()));
+                    PubnativeException exception = PubnativeException.FACEBOOK_ADAPTER_UNKNOWN;
+                    exception.addParameter("facebookErrorCode", adError.getErrorCode()+"");
+                    exception.addParameter("facebookErrorMessage", adError.getErrorMessage());
+                    invokeFailed(exception);
                 }
             } else {
-                invokeFailed(new NetworkAdapterException(NetworkAdapterException.NETWORK.FACEBOOK, "Unknown error"));
+                invokeFailed(PubnativeException.FACEBOOK_ADAPTER_UNKNOWN);
             }
         }
     }

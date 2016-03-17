@@ -44,29 +44,29 @@ public class PubnativeException extends Exception {
     //==============================================================================================
     // Adapter Exceptions
     //==============================================================================================
-    public static final int ERROR_CODE_ADAPTER                        		= 3000;
+    public static final int ERROR_CODE_ADAPTER                              = 3000;
     public static final int ERROR_CODE_FACEBOOK_ADAPTER_UNKNOWN             = 3100;
     public static final int ERROR_CODE_FACEBOOK_ADAPTER_PLACEMENT           = 3101;
-    public static final int ERROR_CODE_FACEBOOK_ADAPTER_NO_CONTEXT   		= 3102;
+    public static final int ERROR_CODE_FACEBOOK_ADAPTER_NO_CONTEXT          = 3102;
     public static final int ERROR_CODE_YAHOO_ADAPTER_UNKNOWN                = 3200;
     public static final int ERROR_CODE_YAHOO_ADAPTER_AD_SPACE_NAME          = 3201;
     public static final int ERROR_CODE_YAHOO_ADAPTER_API_KEY                = 3202;
-    public static final int ERROR_CODE_YAHOO_ADAPTER_NO_CONTEXT   		    = 3203;
+    public static final int ERROR_CODE_YAHOO_ADAPTER_NO_CONTEXT             = 3203;
     public static final int ERROR_CODE_PUBNATIVE_ADAPTER_UNKNOWN            = 3300;
-    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_NO_CONTEXT   		= 3301;
+    public static final int ERROR_CODE_PUBNATIVE_ADAPTER_NO_CONTEXT         = 3301;
     public static final int ERROR_CODE_PUBNATIVE_ADAPTER_INVALID_REQUEST    = 3302;
 
-    public static final PubnativeException ADAPTER_NULL_CONTEXT       		= new PubnativeException(ERROR_CODE_ADAPTER, "Null context provided");
+    public static final PubnativeException ADAPTER_NULL_CONTEXT             = new PubnativeException(ERROR_CODE_ADAPTER, "Null context provided");
     public static final PubnativeException FACEBOOK_ADAPTER_UNKNOWN         = new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_UNKNOWN, "Facebook adapter unknown error");
-    public static final PubnativeException FACEBOOK_INVALID_PLACEMENT  		= new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_PLACEMENT, "Invalid placement_id provided");
+    public static final PubnativeException FACEBOOK_INVALID_PLACEMENT       = new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_PLACEMENT, "Invalid placement_id provided");
     public static final PubnativeException FACEBOOK_NO_CONTEXT_OR_ADAPTER   = new PubnativeException(ERROR_CODE_FACEBOOK_ADAPTER_NO_CONTEXT, "No context or adapter data provided");
     public static final PubnativeException YAHOO_ADAPTER_UNKNOWN            = new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_UNKNOWN, "Yahoo adapter unknown error");
-    public static final PubnativeException YAHOO_INVALID_AD_SPACE_NAME 		= new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_AD_SPACE_NAME, "Invalid ad_space_name provided");
-    public static final PubnativeException YAHOO_INVALID_API_KEY     		= new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_API_KEY, "Invalid api_key provided");
+    public static final PubnativeException YAHOO_INVALID_AD_SPACE_NAME      = new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_AD_SPACE_NAME, "Invalid ad_space_name provided");
+    public static final PubnativeException YAHOO_INVALID_API_KEY            = new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_API_KEY, "Invalid api_key provided");
     public static final PubnativeException YAHOO_NO_CONTEXT_OR_ADAPTER      = new PubnativeException(ERROR_CODE_YAHOO_ADAPTER_NO_CONTEXT, "No context or adapter data provided");
-    public static final PubnativeException PUBNATIVE_ADAPTER          		= new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_UNKNOWN, "Pubnative adapter unknown error");
+    public static final PubnativeException PUBNATIVE_ADAPTER                = new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_UNKNOWN, "Pubnative adapter unknown error");
     public static final PubnativeException PUBNATIVE_NO_CONTEXT_OR_ADAPTER  = new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_NO_CONTEXT, "No context or adapter data provided");
-    public static final PubnativeException PUBNATIVE_INVALID_REQUEST 		= new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_INVALID_REQUEST, "Invalid request object on response");
+    public static final PubnativeException PUBNATIVE_INVALID_REQUEST        = new PubnativeException(ERROR_CODE_PUBNATIVE_ADAPTER_INVALID_REQUEST, "Invalid request object on response");
 
     /**
      * Adds a key value pair
