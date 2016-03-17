@@ -14,32 +14,32 @@ public class PubnativeException extends Exception {
     //==============================================================================================
     // Generic Exceptions
     //==============================================================================================
-    public static final int ERROR_CODE_NO_NETWORK                     		= 1000;
+    public static final int ERROR_CODE_NO_NETWORK                           = 1000;
 
-    public static final PubnativeException NO_NETWORK                 		= new PubnativeException(ERROR_CODE_NO_NETWORK, "Internet connection is not available");
+    public static final PubnativeException NO_NETWORK                       = new PubnativeException(ERROR_CODE_NO_NETWORK, "Internet connection is not available");
 
     //==============================================================================================
     // Request Exceptions
     //==============================================================================================
-    public static final int ERROR_CODE_INVALID_PARAMETERS             		= 2000;
-    public static final int ERROR_CODE_NULL_INVALID_CONFIG            		= 2001;
-    public static final int ERROR_CODE_PLACEMENT_NOT_FOUND            		= 2002;
-    public static final int ERROR_CODE_NO_ELEMENT_FOR_PLACEMENT       		= 2003;
-    public static final int ERROR_CODE_DISABLED_PLACEMENT             		= 2004;
-    public static final int ERROR_CODE_NO_NETWORK_FOR_PLACEMENT       		= 2005;
-    public static final int ERROR_CODE_FREQUENCY_CAP                  		= 2006;
-    public static final int ERROR_CODE_PACING_CAP                     		= 2007;
-    public static final int ERROR_CODE_NO_FILL                        		= 2008;
+    public static final int ERROR_CODE_INVALID_PARAMETERS                   = 2000;
+    public static final int ERROR_CODE_NULL_INVALID_CONFIG                  = 2001;
+    public static final int ERROR_CODE_PLACEMENT_NOT_FOUND                  = 2002;
+    public static final int ERROR_CODE_NO_ELEMENT_FOR_PLACEMENT             = 2003;
+    public static final int ERROR_CODE_DISABLED_PLACEMENT                   = 2004;
+    public static final int ERROR_CODE_NO_NETWORK_FOR_PLACEMENT             = 2005;
+    public static final int ERROR_CODE_FREQUENCY_CAP                        = 2006;
+    public static final int ERROR_CODE_PACING_CAP                           = 2007;
+    public static final int ERROR_CODE_NO_FILL                              = 2008;
 
-    public static final PubnativeException INVALID_PARAMETERS         		= new PubnativeException(ERROR_CODE_INVALID_PARAMETERS, "Invalid start parameters");
-    public static final PubnativeException NULL_INVALID_CONFIG        		= new PubnativeException(ERROR_CODE_NULL_INVALID_CONFIG, "Null or invalid config");
-    public static final PubnativeException PLACEMENT_NOT_FOUND        		= new PubnativeException(ERROR_CODE_PLACEMENT_NOT_FOUND, "Placement not found");
-    public static final PubnativeException NO_ELEMENT_FOR_PLACEMENT   		= new PubnativeException(ERROR_CODE_NO_ELEMENT_FOR_PLACEMENT, "Retrieved config contains null element");
-    public static final PubnativeException DISABLED_PLACEMENT         		= new PubnativeException(ERROR_CODE_DISABLED_PLACEMENT, "Placement is disabled");
-    public static final PubnativeException NO_NETWORK_FOR_PLACEMENT   		= new PubnativeException(ERROR_CODE_NO_NETWORK_FOR_PLACEMENT, "No network is configured for placement");
-    public static final PubnativeException FREQUENCY_CAP              		= new PubnativeException(ERROR_CODE_FREQUENCY_CAP, "(frequency_cap) too many ads");
-    public static final PubnativeException PACING_CAP                 		= new PubnativeException(ERROR_CODE_PACING_CAP, "(pacing_cap) too many ads");
-    public static final PubnativeException NO_FILL                    		= new PubnativeException(ERROR_CODE_NO_FILL, "No fill available");
+    public static final PubnativeException INVALID_PARAMETERS               = new PubnativeException(ERROR_CODE_INVALID_PARAMETERS, "Invalid start parameters");
+    public static final PubnativeException NULL_INVALID_CONFIG              = new PubnativeException(ERROR_CODE_NULL_INVALID_CONFIG, "Null or invalid config");
+    public static final PubnativeException PLACEMENT_NOT_FOUND              = new PubnativeException(ERROR_CODE_PLACEMENT_NOT_FOUND, "Placement not found");
+    public static final PubnativeException NO_ELEMENT_FOR_PLACEMENT         = new PubnativeException(ERROR_CODE_NO_ELEMENT_FOR_PLACEMENT, "Retrieved config contains null element");
+    public static final PubnativeException DISABLED_PLACEMENT               = new PubnativeException(ERROR_CODE_DISABLED_PLACEMENT, "Placement is disabled");
+    public static final PubnativeException NO_NETWORK_FOR_PLACEMENT         = new PubnativeException(ERROR_CODE_NO_NETWORK_FOR_PLACEMENT, "No network is configured for placement");
+    public static final PubnativeException FREQUENCY_CAP                    = new PubnativeException(ERROR_CODE_FREQUENCY_CAP, "(frequency_cap) too many ads");
+    public static final PubnativeException PACING_CAP                       = new PubnativeException(ERROR_CODE_PACING_CAP, "(pacing_cap) too many ads");
+    public static final PubnativeException NO_FILL                          = new PubnativeException(ERROR_CODE_NO_FILL, "No fill available");
 
     //==============================================================================================
     // Adapter Exceptions
