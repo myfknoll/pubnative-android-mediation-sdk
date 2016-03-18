@@ -26,6 +26,7 @@ package net.pubnative.mediation.adapter;
 import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
+import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Test;
@@ -71,7 +72,7 @@ public class PubnativeNetworkAdapterTest {
 
         // onRequestFailed
         adapterInstance.mListener = listenerSpy;
-        Exception exceptionMock = mock(Exception.class);
+        PubnativeException exceptionMock = mock(PubnativeException.class);
         adapterInstance.invokeFailed(exceptionMock);
         assertThat(adapterInstance.mListener).isNull();
     }
@@ -102,7 +103,7 @@ public class PubnativeNetworkAdapterTest {
         adapterInstance.mListener = listenerSpy;
 
         // onRequestFailed
-        Exception exceptionMock = mock(Exception.class);
+        PubnativeException exceptionMock = mock(PubnativeException.class);
         adapterInstance.invokeFailed(exceptionMock);
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapterInstance), eq(exceptionMock));
     }
@@ -121,7 +122,7 @@ public class PubnativeNetworkAdapterTest {
         adapterSpy.mListener = null;
         adapterSpy.invokeStart();
         adapterSpy.invokeLoaded(mock(PubnativeAdModel.class));
-        adapterSpy.invokeFailed(mock(Exception.class));
+        adapterSpy.invokeFailed(mock(PubnativeException.class));
     }
 
     @Test
@@ -138,7 +139,7 @@ public class PubnativeNetworkAdapterTest {
         Robolectric.flushForegroundThreadScheduler();
 
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
-        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
+        verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(PubnativeException.class));
         verify(listenerSpy, after(2 * TIMEOUT_HALF_SECOND).never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
     }
 

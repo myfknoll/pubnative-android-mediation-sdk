@@ -35,10 +35,19 @@ public class PubnativeException extends Exception {
     public static final int ERROR_CODE_ADAPTER_UNKNOWN_ERROR                = 2000;
     public static final int ERROR_CODE_ADAPTER_MISSING_DATA                 = 2001;
     public static final int ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS            = 2002;
+    public static final int ERROR_CODE_ADAPTER_TIME_OUT                     = 2003;
+    public static final int ERROR_CODE_ADAPTER_CREATION                     = 2004;
 
     public static final PubnativeException ADAPTER_UNKNOWN_ERROR            = new PubnativeException(ERROR_CODE_ADAPTER_UNKNOWN_ERROR, "Unknown error");
     public static final PubnativeException ADAPTER_MISSING_DATA             = new PubnativeException(ERROR_CODE_ADAPTER_MISSING_DATA, "Null context or adapter data provided");
     public static final PubnativeException ADAPTER_ILLEGAL_ARGUMENTS        = new PubnativeException(ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS, "Invalid data provided");
+    public static final PubnativeException ADAPTER_TIME_OUT                 = new PubnativeException(ERROR_CODE_ADAPTER_TIME_OUT, "adapter timeout");
+    public static final PubnativeException ADAPTER_CREATION                 = new PubnativeException(ERROR_CODE_ADAPTER_CREATION, "adapter creation error");
+
+    //==============================================================================================
+    // Library Exceptions
+    //==============================================================================================
+    public static final int ERROR_CODE_LIBRARY_EXCEPTION                    = 3000;
 
     /**
     * Constructor
@@ -56,6 +65,14 @@ public class PubnativeException extends Exception {
                 "\"errorCode\":" + mErrorCode +
                 ",\"message\":" + getMessage() +
                 '}';
+    }
+
+    /**
+     * Returns the error code
+     * @return Error code
+     */
+    public int getErrorCode() {
+        return mErrorCode;
     }
 
     private int mErrorCode;

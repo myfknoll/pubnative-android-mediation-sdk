@@ -23,7 +23,7 @@
 
 package net.pubnative.mediation.adapter;
 
-import  android.content.Context;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -31,7 +31,6 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Map;
-import java.util.concurrent.TimeoutException;
 
 public abstract class PubnativeNetworkAdapter {
 
@@ -68,7 +67,7 @@ public abstract class PubnativeNetworkAdapter {
          * @param adapter   Object used for requesting the ad.
          * @param exception Exception raised with proper message to indicate request failure.
          */
-        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception);
+        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, PubnativeException exception);
     }
 
     //==============================================================================================
@@ -89,7 +88,7 @@ public abstract class PubnativeNetworkAdapter {
 
             Log.v(TAG, "timeout");
             // Invoke failed and avoid more callbacks by setting listener to null
-            mAdapter.invokeFailed(new TimeoutException(PubnativeNetworkAdapter.this.getClass().getSimpleName() + ".doRequest - adapter timeout"));
+            mAdapter.invokeFailed(PubnativeException.ADAPTER_TIME_OUT);
         }
     }
     //==============================================================================================
@@ -195,7 +194,7 @@ public abstract class PubnativeNetworkAdapter {
         mListener = null;
     }
 
-    protected void invokeFailed(Exception exception) {
+    protected void invokeFailed(PubnativeException exception) {
 
         Log.v(TAG, "invokeFailed: " + exception);
         cancelTimeout();

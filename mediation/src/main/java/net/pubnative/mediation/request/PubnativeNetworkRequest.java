@@ -52,7 +52,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeoutException;
 
 public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener,
                                                 PubnativeConfigManager.Listener {
@@ -102,7 +101,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
          * @param request   Object used to make the ad request.
          * @param exception Exception with proper message of request failure.
          */
-        void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception);
+        void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, PubnativeException exception);
     }
     //==============================================================================================
     // Pubic methods
@@ -242,12 +241,12 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {
-                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, "Network id " + currentPriorityRule.network_code + " not found");
+                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, PubnativeException.ADAPTER_MISSING_DATA);
                 doNextNetworkRequest();
             } else {
                 PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(networkModel);
                 if (adapter == null) {
-                    trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, "Adapter for network " + currentPriorityRule.network_code + " creation error");
+                    trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, PubnativeException.ADAPTER_CREATION);
                     doNextNetworkRequest();
                 } else {
                     // Add ML extras for adapter
@@ -296,7 +295,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         });
     }
 
-    protected void invokeFail(final Exception exception) {
+    protected void invokeFail(final PubnativeException exception) {
 
         Log.v(TAG, "invokeFail: " + exception);
         mHandler.post(new Runnable() {
@@ -327,7 +326,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
-    private void trackUnreachableNetwork(String error, String details) {
+    private void trackUnreachableNetwork(String error, PubnativeException exception) {
 
         Log.v(TAG, "trackUnreachableNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
@@ -337,13 +336,20 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
             crashModel.error = error;
-            crashModel.details = details;
+            try {
+                JSONObject errorDetails = new JSONObject();
+                errorDetails.put("exception", exception.toString());
+                errorDetails.put("stackTrace", Log.getStackTraceString(exception));
+                crashModel.details = errorDetails.toString();
+            } catch (JSONException e) {
+                crashModel.details = exception.toString();
+            }
             mTrackingModel.addUnreachableNetwork(priorityRuleModel.network_code);
             mTrackingModel.addNetwork(priorityRuleModel, responseTime, crashModel);
         }
     }
 
-    private void trackAttemptedNetwork(String error, String details) {
+    private void trackAttemptedNetwork(String error, PubnativeException exception) {
 
         Log.v(TAG, "trackAttemptedNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
@@ -353,7 +359,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
             crashModel.error = error;
-            crashModel.details = details;
+            try {
+                JSONObject errorDetails = new JSONObject();
+                errorDetails.put("exception", exception.toString());
+                errorDetails.put("stackTrace", Log.getStackTraceString(exception));
+                crashModel.details = errorDetails.toString();
+            } catch (JSONException e) {
+                crashModel.details = exception.toString();
+            }
             mTrackingModel.addAttemptedNetwork(priorityRuleModel.network_code);
             mTrackingModel.addNetwork(priorityRuleModel, responseTime, crashModel);
         }
@@ -439,7 +452,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
         if (ad == null) {
-            trackAttemptedNetwork(PubnativeInsightCrashModel.ERROR_NO_FILL, "");
+            trackAttemptedNetwork(PubnativeInsightCrashModel.ERROR_NO_FILL, PubnativeException.REQUEST_NO_FILL);
             doNextNetworkRequest();
         } else {
             mAd = ad;
@@ -465,31 +478,20 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception) {
+    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, PubnativeException exception) {
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
-
-        String errorMessage;
-        try {
-            JSONObject errorLog = new JSONObject();
-            JSONObject data = new JSONObject();
-            data.put("placementId", mPlacementID);
-            data.put("currentNetworkIndex", mCurrentNetworkIndex);
-            errorLog.put("data", data);
-            errorLog.put("exception", exception.toString());
-            errorLog.put("stackTrace", Log.getStackTraceString(exception));
-            errorMessage = errorLog.toString();
-        } catch (JSONException e) {
-            errorMessage = exception.toString();
-        }
-
         // Waterfall to the next network
-        if (IllegalArgumentException.class.isAssignableFrom(exception.getClass())) {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, errorMessage);
-        } else if (TimeoutException.class.isAssignableFrom(exception.getClass())) {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, errorMessage);
-        } else {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, errorMessage);
+        switch (exception.getErrorCode()) {
+            case PubnativeException.ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS:
+                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, exception);
+                break;
+            case PubnativeException.ERROR_CODE_ADAPTER_TIME_OUT:
+                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, exception);
+                break;
+            default:
+                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, exception);
+                break;
         }
         doNextNetworkRequest();
     }

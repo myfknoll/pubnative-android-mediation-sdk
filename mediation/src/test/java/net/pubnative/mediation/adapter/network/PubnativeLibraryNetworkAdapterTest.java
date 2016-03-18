@@ -28,7 +28,7 @@ import android.content.Context;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.adapter.network.PubnativeLibraryNetworkAdapter;
+import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
@@ -76,7 +76,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         adapterSpy.doRequest(this.applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapterSpy));
         verify(listenerSpy, times(1)).onPubnativeNetworkAdapterRequestLoaded(eq(adapterSpy), any(PubnativeAdModel.class));
-        verify(listenerSpy, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(Exception.class));
+        verify(listenerSpy, never()).onPubnativeNetworkAdapterRequestFailed(eq(adapterSpy), any(PubnativeException.class));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class PubnativeLibraryNetworkAdapterTest {
 
     private void failCallbacksWhenInvalidDataProvided(PubnativeLibraryNetworkAdapter adapter, PubnativeNetworkAdapter.Listener listener) {
         verify(listener, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapter));
-        verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(Exception.class));
+        verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(PubnativeException.class));
         verify(listener, never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
