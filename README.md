@@ -53,23 +53,20 @@ Here is a sample on how to use It.
 
 ```java
 PubnativeNetworkRequest request = new PubnativeNetworkRequest();
-request.start(context, "<APP_TOKEN>", "<PLACEMENT_ID>", new PubnativeNetworkRequest.Listener()
-{
+request.start(context, "<APP_TOKEN>", "<PLACEMENT_ID>", new PubnativeNetworkRequest.Listener() {
+
 	@Override
     public void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request) {
-    {
         // Request started
     }
 
     @Override
     public void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
-    {
         // Requested ad returned
     }
 
     @Override
     public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception) {
-    {
         // Request failed
     }
 });
