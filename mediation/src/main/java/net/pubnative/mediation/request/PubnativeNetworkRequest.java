@@ -469,25 +469,27 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
 
-        JSONObject errorLog = new JSONObject();
+        String errorMessage;
         try {
+            JSONObject errorLog = new JSONObject();
             JSONObject data = new JSONObject();
             data.put("placementId", mPlacementID);
             data.put("currentNetworkIndex", mCurrentNetworkIndex);
             errorLog.put("data", data);
             errorLog.put("exception", exception.toString());
             errorLog.put("stackTrace", Log.getStackTraceString(exception));
+            errorMessage = errorLog.toString();
         } catch (JSONException e) {
-            // Do nothing
+            errorMessage = exception.toString();
         }
 
         // Waterfall to the next network
         if (IllegalArgumentException.class.isAssignableFrom(exception.getClass())) {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, errorLog.toString());
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, errorMessage);
         } else if (TimeoutException.class.isAssignableFrom(exception.getClass())) {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, errorLog.toString());
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, errorMessage);
         } else {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, errorLog.toString());
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, errorMessage);
         }
         doNextNetworkRequest();
     }

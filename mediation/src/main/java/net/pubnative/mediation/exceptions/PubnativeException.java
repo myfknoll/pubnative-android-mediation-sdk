@@ -52,9 +52,9 @@ public class PubnativeException extends Exception {
 
     @Override
     public String toString() {
-        return "PubnativeException{" +
-                "errorCode=" + mErrorCode +
-                "message=" + getMessage() +
+        return "PubnativeException: {" +
+                "\"errorCode\":" + mErrorCode +
+                ",\"message\":" + getMessage() +
                 '}';
     }
 
