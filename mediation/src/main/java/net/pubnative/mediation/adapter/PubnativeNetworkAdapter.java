@@ -143,7 +143,7 @@ public abstract class PubnativeNetworkAdapter {
         } else {
             mListener = listener;
             if (context == null) {
-                invokeFailed(PubnativeException.ADAPTER_NULL_CONTEXT);
+                invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 invokeStart();
                 startTimeout(timeoutInMillis);

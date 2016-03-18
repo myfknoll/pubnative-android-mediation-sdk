@@ -54,7 +54,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
         if (context != null && mData != null) {
             createRequest(context);
         } else {
-            invokeFailed(PubnativeException.PUBNATIVE_NO_CONTEXT_OR_ADAPTER);
+            invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
         }
     }
 
@@ -89,7 +89,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
         Log.v(TAG, "onPubnativeRequestSuccess");
         if (request == null) {
-            invokeFailed(PubnativeException.PUBNATIVE_INVALID_REQUEST);
+            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {

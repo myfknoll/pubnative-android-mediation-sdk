@@ -61,10 +61,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             if (!TextUtils.isEmpty(placementId)) {
                 createRequest(context, placementId);
             } else {
-                invokeFailed(PubnativeException.FACEBOOK_INVALID_PLACEMENT);
+                invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
             }
         } else {
-            invokeFailed(PubnativeException.FACEBOOK_NO_CONTEXT_OR_ADAPTER);
+            invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
         }
     }
 
@@ -97,13 +97,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
                         1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    PubnativeException exception = PubnativeException.FACEBOOK_ADAPTER_UNKNOWN;
-                    exception.addParameter("facebookErrorCode", adError.getErrorCode()+"");
-                    exception.addParameter("facebookErrorMessage", adError.getErrorMessage());
-                    invokeFailed(exception);
+                    invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
                 }
             } else {
-                invokeFailed(PubnativeException.FACEBOOK_ADAPTER_UNKNOWN);
+                invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
             }
         }
     }
