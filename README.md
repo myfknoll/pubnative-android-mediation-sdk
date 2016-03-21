@@ -27,7 +27,20 @@ pubnative-android-mediation-sdk is an Open Source client mediation layer for int
 
 * Android API 10 (Gingerbread 2.3.3+)
 * An App Token provided in PubNative Dashboard.
-* A Placement ID that'
+* A Placement ID configured in the PubNative Dashboard
+
+Add the following permissions to your application manifest
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+Optionally but not necessary for better tracking
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+```
 
 <a name="install"></a>
 # Install

@@ -23,6 +23,11 @@
         </activity>
 
         <activity
+            android:name="com.flurry.android.FlurryFullscreenTakeoverActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode">
+        </activity>
+
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_setting" />
     </application>
