@@ -33,7 +33,6 @@ import net.pubnative.mediation.config.PubnativeConfigTestUtils;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;

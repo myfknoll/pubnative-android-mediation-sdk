@@ -28,7 +28,6 @@ import android.content.Context;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;
@@ -120,7 +119,7 @@ public class PubnativeLibraryNetworkAdapterTest {
 
     private void failCallbacksWhenInvalidDataProvided(PubnativeLibraryNetworkAdapter adapter, PubnativeNetworkAdapter.Listener listener) {
         verify(listener, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapter));
-        verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(PubnativeException.class));
+        verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(Exception.class));
         verify(listener, never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
