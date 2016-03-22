@@ -295,7 +295,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         });
     }
 
-    protected void invokeFail(final PubnativeException exception) {
+    protected void invokeFail(final Exception exception) {
 
         Log.v(TAG, "invokeFail: " + exception);
         mHandler.post(new Runnable() {
@@ -349,7 +349,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
-    private void trackAttemptedNetwork(String error, PubnativeException exception) {
+    private void trackAttemptedNetwork(String error, Exception exception) {
 
         Log.v(TAG, "trackAttemptedNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
