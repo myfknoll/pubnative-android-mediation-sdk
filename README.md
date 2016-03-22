@@ -12,10 +12,12 @@ pubnative-android-mediation-sdk is an Open Source client mediation layer for int
 
 * [Requirements](#requirements)
 * [Install](#install)
+  * [Gradle](#install_gradle)
+  * [Manually](#install_manual)
 * [Usage](#usage)
   * [Request ads](#usage_request)
   * [Track ad](#usage_track_ad)
-
+* [Third party networks](#networks)
 * [Misc](#misc)
   * [License](#misc_license)
   * [Contributing](#misc_contributing)
@@ -25,11 +27,35 @@ pubnative-android-mediation-sdk is an Open Source client mediation layer for int
 
 * Android API 10 (Gingerbread 2.3.3+)
 * An App Token provided in PubNative Dashboard.
-* A Placement ID that'
+* A Placement ID configured in the PubNative Dashboard
+
+Add the following permissions to your application manifest
+
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+Optionally but not necessary for better tracking
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+```
 
 <a name="install"></a>
 # Install
 
+<a name="install_gradle"></a>
+### Gradle
+
+Add the following dependency to your project `build.gradle` file
+
+```
+compile 'net.pubantive:mediation:1.0.0'
+```
+
+<a name="install_manual"></a>
+### Manual
 Clone the repository and import the `:mediation` project into your app.
 
 <a name="usage"></a>
@@ -53,23 +79,20 @@ Here is a sample on how to use It.
 
 ```java
 PubnativeNetworkRequest request = new PubnativeNetworkRequest();
-request.start(context, "<APP_TOKEN>", "<PLACEMENT_ID>", new PubnativeNetworkRequest.Listener()
-{
+request.start(context, "<APP_TOKEN>", "<PLACEMENT_ID>", new PubnativeNetworkRequest.Listener() {
+
 	@Override
     public void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request) {
-    {
         // Request started
     }
 
     @Override
     public void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
-    {
         // Requested ad returned
     }
 
     @Override
     public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception) {
-    {
         // Request failed
     }
 });
@@ -100,6 +123,16 @@ ad.setListener(new PubnativeAdModel.Listener() {
     }
 });
 ```
+<a name="networks"></a>
+# Third party networks
+
+In oder to integrate third party networks you need to do the following:
+
+1. Integrate third party SDK as detailed in that SDK integration instructions
+2. Copy the desired adapter network and model (they have to remain in the same package) to your project, our currently supported network adapters can be found [here](https://github.com/pubnative/pubnative-android-mediation-sdk/tree/master/mediation.adaters/net/pubnative/mediation/adapter)
+3. Ensure to add the network in Pubnative dashboard priorities
+
+Once this integration steps are accomplished, you'll start receiving ads from those networks too.
 
 <a name="misc"></a>
 # Misc
