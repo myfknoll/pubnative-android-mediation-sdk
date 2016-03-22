@@ -44,11 +44,6 @@ public class PubnativeException extends Exception {
     public static final PubnativeException ADAPTER_TIME_OUT                 = new PubnativeException(ERROR_CODE_ADAPTER_TIME_OUT, "adapter timeout");
     public static final PubnativeException ADAPTER_CREATION                 = new PubnativeException(ERROR_CODE_ADAPTER_CREATION, "adapter creation error");
 
-    //==============================================================================================
-    // Library Exceptions
-    //==============================================================================================
-    public static final int ERROR_CODE_LIBRARY_EXCEPTION                    = 3000;
-
     /**
     * Constructor
     * @param errorCode Error code

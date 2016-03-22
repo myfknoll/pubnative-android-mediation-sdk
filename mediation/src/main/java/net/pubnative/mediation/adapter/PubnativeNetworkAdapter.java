@@ -67,7 +67,7 @@ public abstract class PubnativeNetworkAdapter {
          * @param adapter   Object used for requesting the ad.
          * @param exception Exception raised with proper message to indicate request failure.
          */
-        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, PubnativeException exception);
+        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception);
     }
 
     //==============================================================================================
@@ -194,7 +194,7 @@ public abstract class PubnativeNetworkAdapter {
         mListener = null;
     }
 
-    protected void invokeFailed(PubnativeException exception) {
+    protected void invokeFailed(Exception exception) {
 
         Log.v(TAG, "invokeFailed: " + exception);
         cancelTimeout();

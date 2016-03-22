@@ -102,6 +102,6 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     @Override
     public void onPubnativeRequestFailed(PubnativeRequest request, Exception ex) {
         Log.v(TAG, "onPubnativeRequestFailed: " + ex);
-        invokeFailed(new PubnativeException(PubnativeException.ERROR_CODE_LIBRARY_EXCEPTION, ex.getMessage()));
+        invokeFailed(ex);
     }
 }

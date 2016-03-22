@@ -101,7 +101,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
          * @param request   Object used to make the ad request.
          * @param exception Exception with proper message of request failure.
          */
-        void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, PubnativeException exception);
+        void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception);
     }
     //==============================================================================================
     // Pubic methods
@@ -326,7 +326,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
-    private void trackUnreachableNetwork(String error, PubnativeException exception) {
+    private void trackUnreachableNetwork(String error, Exception exception) {
 
         Log.v(TAG, "trackUnreachableNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
@@ -478,20 +478,16 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, PubnativeException exception) {
+    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception) {
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network
-        switch (exception.getErrorCode()) {
-            case PubnativeException.ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS:
-                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, exception);
-                break;
-            case PubnativeException.ERROR_CODE_ADAPTER_TIME_OUT:
-                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, exception);
-                break;
-            default:
-                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, exception);
-                break;
+        if(exception.equals(PubnativeException.ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS)) {
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, exception);
+        } else if(exception.equals(PubnativeException.ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS)) {
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, exception);
+        } else {
+            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, exception);
         }
         doNextNetworkRequest();
     }

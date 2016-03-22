@@ -37,7 +37,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -167,7 +166,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     }
 
     @Override
-    public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, PubnativeException exception) {
+    public void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception) {
 
         Log.d(TAG, "onPubnativeNetworkRequestFailed: " + exception);
         Toast.makeText(mContext, exception.getMessage(), Toast.LENGTH_LONG).show();
