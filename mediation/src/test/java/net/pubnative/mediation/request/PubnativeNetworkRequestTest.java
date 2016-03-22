@@ -124,7 +124,7 @@ public class PubnativeNetworkRequestTest {
         }).when(networkRequest).getConfig(anyString(), any(PubnativeConfigManager.Listener.class));
         networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_VALID, listenerMock);
         verify(listenerMock, after(TEST_TIMEOUT).times(1)).onPubnativeNetworkRequestStarted(eq(networkRequest));
-        verify(listenerMock, after(TEST_TIMEOUT).never()).onPubnativeNetworkRequestFailed(eq(networkRequest), any(PubnativeException.class));
+        verify(listenerMock, after(TEST_TIMEOUT).never()).onPubnativeNetworkRequestFailed(eq(networkRequest), any(Exception.class));
         verify(listenerMock, after(TEST_TIMEOUT).times(1)).onPubnativeNetworkRequestLoaded(eq(networkRequest), eq(modelMock));
     }
 
@@ -165,6 +165,6 @@ public class PubnativeNetworkRequestTest {
         PubnativeDeliveryManager.setImpressionLastUpdate(this.applicationContext, TEST_PLACEMENT_ID_VALID, currentCalendar);
         networkRequestSpy.startRequest();
 
-        verify(listenerMock, never()).onPubnativeNetworkRequestFailed(eq(networkRequestSpy), any(PubnativeException.class));
+        verify(listenerMock, never()).onPubnativeNetworkRequestFailed(eq(networkRequestSpy), any(Exception.class));
     }
 }
