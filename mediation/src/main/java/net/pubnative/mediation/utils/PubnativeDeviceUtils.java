@@ -62,6 +62,7 @@ public class PubnativeDeviceUtils {
     public static boolean isNetworkAvailable(Context context) {
 
         Log.v(TAG, "isNetworkAvailable");
+        context = context.getApplicationContext();
         boolean result;
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivityManager == null) {
