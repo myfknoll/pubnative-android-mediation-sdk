@@ -63,7 +63,8 @@ public class PubnativeDeviceUtils {
 
         Log.v(TAG, "isNetworkAvailable");
         boolean result;
-        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+        Context appContext = context.getApplicationContext();
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivityManager == null) {
             Log.e(TAG, "ERROR: Couldn't retrieve valid ConnectivityManager, please ensure that you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
             result = false;
