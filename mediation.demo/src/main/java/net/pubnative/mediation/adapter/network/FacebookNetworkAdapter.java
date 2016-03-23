@@ -34,6 +34,7 @@ import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -60,10 +61,10 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
             if (!TextUtils.isEmpty(placementId)) {
                 createRequest(context, placementId);
             } else {
-                invokeFailed(new IllegalArgumentException("FacebookNetworkAdapter - Error: Invalid placement_id provided."));
+                invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
             }
         } else {
-            invokeFailed(new IllegalArgumentException("FacebookNetworkAdapter - Error: No context or adapter data provided."));
+            invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
         }
     }
 
@@ -88,7 +89,9 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
         if (ad == mNativeAd) {
-            if (adError != null) {
+            if (adError == null) {
+                invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+            } else {
                 int errorCode = adError.getErrorCode();
                 // 1001 || 1002 || 1203 (No_fill)
                 if (AdError.NO_FILL_ERROR_CODE == errorCode ||
@@ -96,10 +99,8 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
                     1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(new Exception("FacebookNetworkAdapter - Error: " + adError.getErrorCode() + " - " + adError.getErrorMessage()));
+                    invokeFailed(new Exception("FacebookNetworkAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
                 }
-            } else {
-                invokeFailed(new Exception("FacebookNetworkAdapter - Error: Unknown"));
             }
         }
     }

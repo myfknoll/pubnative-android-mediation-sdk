@@ -28,7 +28,6 @@ import android.content.Context;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.adapter.network.PubnativeLibraryNetworkAdapter;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import org.junit.Before;

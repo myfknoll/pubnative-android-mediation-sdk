@@ -30,6 +30,7 @@ import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
         if (context != null && mData != null) {
             createRequest(context);
         } else {
-            invokeFailed(new IllegalArgumentException("PubnativeLibraryNetworkAdapter - Error: No context or adapter data provided."));
+            invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
         }
     }
 
@@ -88,7 +89,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
         Log.v(TAG, "onPubnativeRequestSuccess");
         if (request == null) {
-            invokeFailed(new Exception("PubnativeLibraryNetworkAdapter - Error: invalid request object on response"));
+            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {

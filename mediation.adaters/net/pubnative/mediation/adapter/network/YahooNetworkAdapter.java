@@ -34,6 +34,7 @@ import com.flurry.android.ads.FlurryAdNativeListener;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     private static      String TAG                = YahooNetworkAdapter.class.getSimpleName();
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
-    private Context mContext;
+    protected Context mContext;
 
     public YahooNetworkAdapter(Map data) {
 
@@ -56,40 +57,36 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     public void request(Context context) {
 
         Log.v(TAG, "request");
-        if (context != null && mData != null) {
-            mContext = context;
-            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
-            if (!TextUtils.isEmpty(apiKey)) {
-                String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
-                if (!TextUtils.isEmpty(adSpaceName)) {
-                    createRequest(context, adSpaceName, apiKey);
-                } else {
-                    invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: Invalid ad_space_name provided."));
-                }
-            } else {
-                invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: Invalid api_key provided."));
-            }
+        if (context == null || mData == null) {
+            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
-            invokeFailed(new IllegalArgumentException("YahooNetworkAdapter - Error: No context or adapter data provided."));
+            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
+            String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
+            if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
+                invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
+            } else {
+                mContext = context;
+                createRequest(adSpaceName, apiKey);
+            }
         }
     }
 
     //==============================================================================================
     // YahooNetworkAdapter
     //==============================================================================================
-    protected void createRequest(Context context, String adSpaceName, String apiKey) {
+    protected void createRequest(String adSpaceName, String apiKey) {
 
         Log.v(TAG, "createRequest");
         // configure flurry
         FlurryAgent.setLogEnabled(true);
         // initialize flurry with new apiKey
-        FlurryAgent.init(context, apiKey);
+        FlurryAgent.init(mContext, apiKey);
         // start/resume session
         if (!FlurryAgent.isSessionActive()) {
-            FlurryAgent.onStartSession(context);
+            FlurryAgent.onStartSession(mContext);
         }
         // Make request
-        FlurryAdNative flurryAdNative = new FlurryAdNative(context, adSpaceName);
+        FlurryAdNative flurryAdNative = new FlurryAdNative(mContext, adSpaceName);
         flurryAdNative.setListener(this);
         flurryAdNative.fetchAd();
     }
@@ -117,21 +114,14 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     @Override
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
 
-        Log.v(TAG, "onError: " + flurryAdErrorType.name() + " - " + errCode);
+        Log.v(TAG, "onError: " + errCode);
         endFlurrySession(mContext);
-        if (flurryAdErrorType != null) {
-            switch (flurryAdErrorType) {
-                case FETCH: {
-                    invokeLoaded(null);
-                }
-                break;
-                default: {
-                    invokeFailed(new Exception("YahooNetworkAdapter - Error: " + flurryAdErrorType.name() + " - " + errCode));
-                }
-                break;
-            }
+        if (flurryAdErrorType == null) {
+            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        } else if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
+            invokeLoaded(null);
         } else {
-            invokeFailed(new Exception("YahooNetworkAdapter - Error: Unknown"));
+            invokeFailed(new Exception("YahooNetworkAdapter - " + errCode + " - " + flurryAdErrorType.name()));
         }
     }
 
@@ -172,11 +162,13 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
 
     @Override
     public void onExpanded(FlurryAdNative flurryAdNative) {
+
         Log.v(TAG, "onExpanded");
     }
 
     @Override
     public void onCollapsed(FlurryAdNative flurryAdNative) {
+
         Log.v(TAG, "onCollapsed");
     }
 }
