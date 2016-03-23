@@ -89,18 +89,18 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
         if (ad == mNativeAd) {
-            if (adError != null) {
+            if (adError == null) {
+                invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+            } else {
                 int errorCode = adError.getErrorCode();
                 // 1001 || 1002 || 1203 (No_fill)
                 if (AdError.NO_FILL_ERROR_CODE == errorCode ||
-                        AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
-                        1203 == errorCode) {
+                    AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
+                    1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+                    invokeFailed(new Exception("FacebookNetworkAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
                 }
-            } else {
-                invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
             }
         }
     }

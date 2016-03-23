@@ -45,9 +45,6 @@ import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,7 +125,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 Log.e(TAG, "start - request already running, dropping the call");
             } else {
                 if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementID)) {
-                    invokeFail(PubnativeException.REQUEST_INVALID_PARAMETERS);
+                    invokeFail(PubnativeException.REQUEST_PARAMETERS_INVALID);
                 } else {
                     mIsRunning = true;
                     mContext = context;
@@ -141,7 +138,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     if (PubnativeDeviceUtils.isNetworkAvailable(mContext)) {
                         getConfig(appToken, this);
                     } else {
-                        invokeFail(PubnativeException.REQUEST_NO_NETWORK);
+                        invokeFail(PubnativeException.REQUEST_NO_INTERNET);
                     }
                 }
             }
@@ -161,17 +158,15 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "startRequest");
         mConfig = configModel;
         if (mConfig == null || mConfig.isNullOrEmpty()) {
-            invokeFail(PubnativeException.REQUEST_NULL_INVALID_CONFIG);
+            invokeFail(PubnativeException.REQUEST_CONFIG_INVALID);
         } else {
             PubnativePlacementModel placement = mConfig.getPlacement(mPlacementID);
             if (placement == null) {
                 invokeFail(PubnativeException.REQUEST_PLACEMENT_NOT_FOUND);
             } else if (placement.delivery_rule == null || placement.priority_rules == null) {
-                invokeFail(PubnativeException.REQUEST_NO_ELEMENT_FOR_PLACEMENT);
+                invokeFail(PubnativeException.REQUEST_PLACEMENT_EMPTY);
             } else if (placement.delivery_rule.isDisabled()) {
-                invokeFail(PubnativeException.REQUEST_DISABLED_PLACEMENT);
-            } else if (placement.priority_rules.size() == 0) {
-                invokeFail(PubnativeException.REQUEST_NO_NETWORK_FOR_PLACEMENT);
+                invokeFail(PubnativeException.REQUEST_PLACEMENT_DISABLED);
             } else {
                 startTracking();
             }
@@ -241,12 +236,12 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         } else {
             PubnativeNetworkModel networkModel = mConfig.getNetwork(currentPriorityRule.network_code);
             if (networkModel == null) {
-                trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, PubnativeException.ADAPTER_MISSING_DATA);
+                trackUnreachableNetwork(PubnativeException.REQUEST_NETWORK_NOT_FOUND);
                 doNextNetworkRequest();
             } else {
                 PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createAdapter(networkModel);
                 if (adapter == null) {
-                    trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, PubnativeException.ADAPTER_CREATION);
+                    trackUnreachableNetwork(PubnativeException.REQUEST_ADAPTER_CREATION);
                     doNextNetworkRequest();
                 } else {
                     // Add ML extras for adapter
@@ -326,7 +321,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
-    private void trackUnreachableNetwork(String error, Exception exception) {
+    private void trackUnreachableNetwork(Exception exception) {
 
         Log.v(TAG, "trackUnreachableNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
@@ -335,21 +330,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         } else {
             long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
-            crashModel.error = error;
-            try {
-                JSONObject errorDetails = new JSONObject();
-                errorDetails.put("exception", exception.toString());
-                errorDetails.put("stackTrace", Log.getStackTraceString(exception));
-                crashModel.details = errorDetails.toString();
-            } catch (JSONException e) {
-                crashModel.details = exception.toString();
-            }
+            crashModel.error = exception.getMessage();
+            crashModel.details = exception.toString();
             mTrackingModel.addUnreachableNetwork(priorityRuleModel.network_code);
             mTrackingModel.addNetwork(priorityRuleModel, responseTime, crashModel);
         }
     }
 
-    private void trackAttemptedNetwork(String error, Exception exception) {
+    private void trackAttemptedNetwork(Exception exception) {
 
         Log.v(TAG, "trackAttemptedNetwork");
         PubnativePriorityRuleModel priorityRuleModel = mConfig.getPriorityRule(mPlacementID, mCurrentNetworkIndex);
@@ -358,15 +346,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         } else {
             long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
             PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
-            crashModel.error = error;
-            try {
-                JSONObject errorDetails = new JSONObject();
-                errorDetails.put("exception", exception.toString());
-                errorDetails.put("stackTrace", Log.getStackTraceString(exception));
-                crashModel.details = errorDetails.toString();
-            } catch (JSONException e) {
-                crashModel.details = exception.toString();
-            }
+            crashModel.error = exception.getMessage();
+            crashModel.details = exception.toString();
             mTrackingModel.addAttemptedNetwork(priorityRuleModel.network_code);
             mTrackingModel.addNetwork(priorityRuleModel, responseTime, crashModel);
         }
@@ -452,7 +433,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
         if (ad == null) {
-            trackAttemptedNetwork(PubnativeInsightCrashModel.ERROR_NO_FILL, PubnativeException.REQUEST_NO_FILL);
+            trackAttemptedNetwork(PubnativeException.REQUEST_NO_FILL);
             doNextNetworkRequest();
         } else {
             mAd = ad;
@@ -482,13 +463,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network
-        if(exception.equals(PubnativeException.ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS)) {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_CONFIG, exception);
-        } else if(exception.equals(PubnativeException.ERROR_CODE_ADAPTER_ILLEGAL_ARGUMENTS)) {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_TIMEOUT, exception);
-        } else {
-            trackUnreachableNetwork(PubnativeInsightCrashModel.ERROR_ADAPTER, exception);
-        }
+        trackUnreachableNetwork(exception);
         doNextNetworkRequest();
     }
 }
