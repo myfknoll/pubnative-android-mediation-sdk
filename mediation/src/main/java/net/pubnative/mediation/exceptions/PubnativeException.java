@@ -63,19 +63,21 @@ public class PubnativeException extends Exception {
     @Override
     public String toString() {
 
-        String result = null;
-        JSONObject json = new JSONObject();
+        String result;
         try {
+            JSONObject json = new JSONObject();
             json.put("code", getErrorCode());
             json.put("message", super.getMessage());
             StackTraceElement[] stack = getStackTrace();
             if (stack != null && stack.length > 0) {
                 StringBuilder stackTraceBuilder = new StringBuilder();
                 for (StackTraceElement element : getStackTrace()) {
-                    stackTraceBuilder.append(element.toString() + "\n");
+                    stackTraceBuilder.append(element.toString());
+                    stackTraceBuilder.append('\n');
                 }
                 json.put("stackTrace", stackTraceBuilder.toString());
             }
+            result = json.toString();
         } catch (JSONException e) {
             result = getMessage();
         }
