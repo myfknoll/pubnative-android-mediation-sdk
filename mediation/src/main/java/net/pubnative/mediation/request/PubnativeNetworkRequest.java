@@ -359,6 +359,12 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
         parameters.put(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
+        if(mConfig.request_params != null) {
+            for (String key : mConfig.request_params.keySet()){
+                String value = mConfig.request_params.get(key);
+                parameters.put(key, value);
+            }
+        }
         return parameters;
     }
 

@@ -32,6 +32,7 @@ public class PubnativeConfigModel {
     private static final String TAG = PubnativeConfigModel.class.getSimpleName();
     public Map<String, Object>                  globals;
     public Map<String, PubnativeNetworkModel>   networks;
+    public Map<String, String>                  request_params;
     public Map<String, PubnativePlacementModel> placements;
 
     //==============================================================================================
