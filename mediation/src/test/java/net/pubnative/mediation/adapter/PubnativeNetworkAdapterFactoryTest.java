@@ -46,12 +46,6 @@ public class PubnativeNetworkAdapterFactoryTest {
 
     private PubnativeNetworkModel model;
 
-
-    @Test
-    public void test_empty() {
-        assertThat(true).isTrue();
-    }
-
     @Before
     public void setUp() {
         model = new PubnativeNetworkModel();
