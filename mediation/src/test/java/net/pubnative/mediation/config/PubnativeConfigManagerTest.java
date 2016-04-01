@@ -67,78 +67,78 @@ public class PubnativeConfigManagerTest {
 
     @Before
     public void setUp() {
-        this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
+        applicationContext = RuntimeEnvironment.application.getApplicationContext();
 
         // Clean the manager on every test
-        PubnativeConfigManager.clean(this.applicationContext);
+        PubnativeConfigManager.clean(applicationContext);
     }
 
     @Test
     public void configWithInvalidJSONs() {
         // Empty getConfig  >> Should return an empty getConfig
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty_config.json", TEST_APP_TOKEN_VALUE);
-        this.storedDataIsNull();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, "empty_config.json", TEST_APP_TOKEN_VALUE);
+        storedDataIsNull();
 
         // Empty JSON "{}"  >> Should return an empty getConfig
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "empty.json", TEST_APP_TOKEN_VALUE);
-        this.storedDataIsNull();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, "empty.json", TEST_APP_TOKEN_VALUE);
+        storedDataIsNull();
 
         // Invalid JSON "{..<useless_data>..}" >> Should return an empty getConfig
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "invalid.json", TEST_APP_TOKEN_VALUE);
-        this.storedDataIsNull();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, "invalid.json", TEST_APP_TOKEN_VALUE);
+        storedDataIsNull();
 
         // Broken JSON "{"
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "broken.json", TEST_APP_TOKEN_VALUE);
-        this.storedDataIsNull();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, "broken.json", TEST_APP_TOKEN_VALUE);
+        storedDataIsNull();
     }
 
     @Test
     public void callbackWithValidJSON() {
         // Valid getConfig  >> Should return an initializedConfig
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         PubnativeConfigManager.Listener listenerSpy = spy(PubnativeConfigManager.Listener.class);
-        PubnativeConfigManager.getConfig(this.applicationContext, TEST_APP_TOKEN_VALUE, listenerSpy);
+        PubnativeConfigManager.getConfig(applicationContext, TEST_APP_TOKEN_VALUE, listenerSpy);
         verify(listenerSpy, times(1)).onConfigLoaded(any(PubnativeConfigModel.class));
     }
 
     private void storedDataIsNull() {
-        assertThat(PubnativeConfigManager.getStoredConfigString(this.applicationContext)).isNull();
-        assertThat(PubnativeConfigManager.getStoredTimestamp(this.applicationContext)).isNull();
-        assertThat(PubnativeConfigManager.getStoredAppToken(this.applicationContext)).isNull();
-        assertThat(PubnativeConfigManager.getStoredRefresh(this.applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredConfigString(applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredTimestamp(applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredAppToken(applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredRefresh(applicationContext)).isNull();
     }
 
     @Test
     public void configNullOnStart() {
-        assertThat(PubnativeConfigManager.getStoredConfigString(this.applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredConfigString(applicationContext)).isNull();
     }
 
     @Test
     public void configSetCorrectly() {
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        assertThat(PubnativeConfigManager.getStoredConfigString(this.applicationContext)).isNotNull();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        assertThat(PubnativeConfigManager.getStoredConfigString(applicationContext)).isNotNull();
     }
 
     @Test
     public void appTokenNullOnStart() {
-        assertThat(PubnativeConfigManager.getStoredAppToken(this.applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredAppToken(applicationContext)).isNull();
     }
 
     @Test
     public void appTokenSetOnSetConfigString() {
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        assertThat(PubnativeConfigManager.getStoredAppToken(this.applicationContext)).isEqualTo(TEST_APP_TOKEN_VALUE);
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        assertThat(PubnativeConfigManager.getStoredAppToken(applicationContext)).isEqualTo(TEST_APP_TOKEN_VALUE);
     }
 
     @Test
     public void timestampIsNullOnStart() {
-        assertThat(PubnativeConfigManager.getStoredTimestamp(this.applicationContext)).isNull();
+        assertThat(PubnativeConfigManager.getStoredTimestamp(applicationContext)).isNull();
     }
 
     @Test
     public void timestampSetOnSetConfigString() {
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        assertThat(PubnativeConfigManager.getStoredTimestamp(this.applicationContext)).isNotNull();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        assertThat(PubnativeConfigManager.getStoredTimestamp(applicationContext)).isNotNull();
     }
 
     @Test
@@ -146,90 +146,90 @@ public class PubnativeConfigManagerTest {
         PubnativeConfigModel configMock = mock(PubnativeConfigModel.class);
 
         PubnativeConfigManager.updateConfig(null, TEST_APP_TOKEN_VALUE, configMock);
-        this.storedDataIsNull();
+        storedDataIsNull();
 
-        PubnativeConfigManager.updateConfig(this.applicationContext, null, null);
-        this.storedDataIsNull();
+        PubnativeConfigManager.updateConfig(applicationContext, null, null);
+        storedDataIsNull();
 
-        PubnativeConfigManager.updateConfig(this.applicationContext, "", null);
-        this.storedDataIsNull();
+        PubnativeConfigManager.updateConfig(applicationContext, "", null);
+        storedDataIsNull();
 
-        PubnativeConfigManager.updateConfig(this.applicationContext, null, configMock);
-        this.storedDataIsNull();
+        PubnativeConfigManager.updateConfig(applicationContext, null, configMock);
+        storedDataIsNull();
 
-        PubnativeConfigManager.updateConfig(this.applicationContext, "", configMock);
-        this.storedDataIsNull();
+        PubnativeConfigManager.updateConfig(applicationContext, "", configMock);
+        storedDataIsNull();
 
-        PubnativeConfigManager.updateConfig(this.applicationContext, TEST_APP_TOKEN_VALUE, null);
-        this.storedDataIsNull();
+        PubnativeConfigManager.updateConfig(applicationContext, TEST_APP_TOKEN_VALUE, null);
+        storedDataIsNull();
     }
 
     @Test
     public void configNeedsUpdateForDifferentTimestamps() {
         // null timestamp
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        PubnativeConfigManager.setStoredTimestamp(this.applicationContext, null);
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigManager.setStoredTimestamp(applicationContext, null);
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
 
         // timestamp is not set or set to zero.
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        PubnativeConfigManager.setStoredTimestamp(this.applicationContext, (long) 0);
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigManager.setStoredTimestamp(applicationContext, (long) 0);
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
 
         // negative timestamp
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        PubnativeConfigManager.setStoredTimestamp(this.applicationContext, (long) -1);
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigManager.setStoredTimestamp(applicationContext, (long) -1);
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
 
         // positive timestamp - should not update
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
-        PubnativeConfigManager.setStoredTimestamp(this.applicationContext, System.currentTimeMillis());
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isFalse();
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigManager.setStoredTimestamp(applicationContext, System.currentTimeMillis());
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isFalse();
     }
 
     @Test
     public void configNeedsUpdateWithDifferentVales() {
         // At start, it needs update
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
 
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
 
         // TRUE
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, "")).isTrue(); // empty app_token
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, null)).isTrue(); // null app_token
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, "sample_token_value")).isTrue(); //different app_token
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, "")).isTrue(); // empty app_token
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, null)).isTrue(); // null app_token
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, "sample_token_value")).isTrue(); //different app_token
         // FALSE
         assertThat(PubnativeConfigManager.configNeedsUpdate(null, TEST_APP_TOKEN_VALUE)).isFalse(); // null context
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isFalse(); //valid parameters
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isFalse(); //valid parameters
     }
 
     @Test
     public void configNeedsUpdateForTimedOutConfig() {
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
 
-        Long refreshTime = PubnativeConfigManager.getStoredRefresh(this.applicationContext);
-        Long storedTime  = PubnativeConfigManager.getStoredTimestamp(this.applicationContext);
+        Long refreshTime = PubnativeConfigManager.getStoredRefresh(applicationContext);
+        Long storedTime  = PubnativeConfigManager.getStoredTimestamp(applicationContext);
 
         storedTime = storedTime - TimeUnit.MINUTES.toMillis(refreshTime);
-        PubnativeConfigManager.setStoredTimestamp(this.applicationContext, storedTime);
+        PubnativeConfigManager.setStoredTimestamp(applicationContext, storedTime);
 
-        assertThat(PubnativeConfigManager.configNeedsUpdate(this.applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
+        assertThat(PubnativeConfigManager.configNeedsUpdate(applicationContext, TEST_APP_TOKEN_VALUE)).isTrue();
     }
 
     @Test
     public void configUrlTakenFromStoredConfigAfterFirstTime() {
-        String downloadUrlBeforeDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(this.applicationContext);
+        String downloadUrlBeforeDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(applicationContext);
         assertThat(downloadUrlBeforeDownload).isEqualTo(PubnativeConfigManager.CONFIG_DOWNLOAD_BASE_URL);
 
         // simulate download
         String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource(VALID_CONFIG_NAME);
-        PubnativeConfigManager.processConfigDownloadResponse(this.applicationContext, "placement_id", configJson);
+        PubnativeConfigManager.processConfigDownloadResponse(applicationContext, "placement_id", configJson);
 
         // get config_url from downloaded config
         PubnativeConfigAPIResponseModel apiResponse = new Gson().fromJson(configJson, PubnativeConfigAPIResponseModel.class);
         String                          configUrl   = (String) apiResponse.config.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
 
-        String downloadUrlAfterDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(this.applicationContext);
+        String downloadUrlAfterDownload = PubnativeConfigManager.getConfigDownloadBaseUrl(applicationContext);
         assertThat(downloadUrlAfterDownload).isEqualTo(configUrl);
     }
 }

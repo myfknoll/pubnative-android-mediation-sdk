@@ -81,13 +81,6 @@ public class PubnativeNetworkAdapterFactoryTest {
     }
 
     @Test
-    public void createAdapterWithEmptyString() {
-        model.adapter = "";
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
-        assertThat(adapterInstance).isNull();
-    }
-
-    @Test
     public void createAdapterWithNullString() {
         model.adapter = null;
         PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);

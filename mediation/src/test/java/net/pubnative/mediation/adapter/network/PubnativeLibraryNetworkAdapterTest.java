@@ -83,7 +83,7 @@ public class PubnativeLibraryNetworkAdapterTest {
         Map<String, String> data = mock(HashMap.class);
         PubnativeNetworkAdapter.Listener listenerSpy = spy(PubnativeNetworkAdapter.Listener.class);
         PubnativeLibraryNetworkAdapter  adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
-        // stubbing the createRequest method to simulate facebook error.
+
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
