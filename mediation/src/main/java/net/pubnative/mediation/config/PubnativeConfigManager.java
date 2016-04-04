@@ -222,7 +222,7 @@ public class PubnativeConfigManager {
                 @Override
                 public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
 
-                    Log.v(TAG, "onHttpTaskSuccess");
+                    Log.v(TAG, "onPubnativeHttpRequestFinish");
                     processConfigDownloadResponse(context, appToken, result);
                     serveStoredConfig(context, listener);
                 }
@@ -230,7 +230,7 @@ public class PubnativeConfigManager {
                 @Override
                 public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
 
-                    Log.v(TAG, "onHttpTaskFailed: " + exception.toString());
+                    Log.v(TAG, "onPubnativeHttpRequestFail: " + exception.toString());
                     serveStoredConfig(context, listener);
                 }
             });

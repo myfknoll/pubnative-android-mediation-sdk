@@ -118,7 +118,7 @@ public class PubnativeInsightsManager {
 
                         @Override
                         public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
-                            Log.v(TAG, "onHttpTaskSuccess");
+                            Log.v(TAG, "onPubnativeHttpRequestFinish");
                             if (TextUtils.isEmpty(result)) {
                                 trackingFailed(context, model, "invalid insight response (empty or null)");
                             } else {
@@ -137,7 +137,7 @@ public class PubnativeInsightsManager {
 
                         @Override
                         public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
-                            Log.v(TAG, "onHttpTaskFailed: " + exception);
+                            Log.v(TAG, "onPubnativeHttpRequestFail: " + exception);
                             trackingFailed(context, model, exception.toString());
                         }
                     };
