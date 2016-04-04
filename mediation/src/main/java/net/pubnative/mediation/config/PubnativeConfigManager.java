@@ -35,7 +35,7 @@ import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
-import net.pubnative.mediation.task.PubnativeHttpTask;
+import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -212,11 +212,15 @@ public class PubnativeConfigManager {
         Log.v(TAG, "downloadConfig");
         if (context != null && !TextUtils.isEmpty(appToken)) {
             String downloadURLString = getConfigDownloadBaseUrl(context) + APP_TOKEN_KEY + appToken;
-            PubnativeHttpTask http = new PubnativeHttpTask(context);
-            http.setListener(new PubnativeHttpTask.Listener() {
+            PubnativeHttpRequest http = new PubnativeHttpRequest();
+            http.start(context, downloadURLString, new PubnativeHttpRequest.Listener() {
+                @Override
+                public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
+
+                }
 
                 @Override
-                public void onHttpTaskSuccess(PubnativeHttpTask task, String result) {
+                public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
 
                     Log.v(TAG, "onHttpTaskSuccess");
                     processConfigDownloadResponse(context, appToken, result);
@@ -224,13 +228,12 @@ public class PubnativeConfigManager {
                 }
 
                 @Override
-                public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
+                public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
 
-                    Log.v(TAG, "onHttpTaskFailed: " + errorMessage);
+                    Log.v(TAG, "onHttpTaskFailed: " + exception.toString());
                     serveStoredConfig(context, listener);
                 }
             });
-            http.execute(downloadURLString);
         } else {
             serveStoredConfig(context, listener);
         }
