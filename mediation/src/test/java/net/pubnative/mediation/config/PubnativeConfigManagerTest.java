@@ -109,30 +109,15 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void configNullOnStart() {
-        assertThat(PubnativeConfigManager.getStoredConfigString(applicationContext)).isNull();
-    }
-
-    @Test
     public void configSetCorrectly() {
         PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         assertThat(PubnativeConfigManager.getStoredConfigString(applicationContext)).isNotNull();
     }
 
     @Test
-    public void appTokenNullOnStart() {
-        assertThat(PubnativeConfigManager.getStoredAppToken(applicationContext)).isNull();
-    }
-
-    @Test
     public void appTokenSetOnSetConfigString() {
         PubnativeConfigTestUtils.setTestConfig(applicationContext, VALID_CONFIG_NAME, TEST_APP_TOKEN_VALUE);
         assertThat(PubnativeConfigManager.getStoredAppToken(applicationContext)).isEqualTo(TEST_APP_TOKEN_VALUE);
-    }
-
-    @Test
-    public void timestampIsNullOnStart() {
-        assertThat(PubnativeConfigManager.getStoredTimestamp(applicationContext)).isNull();
     }
 
     @Test
