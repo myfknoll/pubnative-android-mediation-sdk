@@ -31,7 +31,7 @@ import net.pubnative.mediation.BuildConfig;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
-import net.pubnative.mediation.task.PubnativeHttpTask;
+import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -147,16 +147,16 @@ public class PubnativeInsightsManagerTest {
         PowerMockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                PubnativeHttpTask.Listener        listener = (PubnativeHttpTask.Listener) invocation.getArguments()[3];
+                PubnativeHttpRequest.Listener        listener = (PubnativeHttpRequest.Listener) invocation.getArguments()[3];
                 PubnativeInsightsAPIResponseModel model    = new PubnativeInsightsAPIResponseModel();
                 model.status = PubnativeInsightsAPIResponseModel.Status.OK;
                 String result = new Gson().toJson(model);
-                listener.onHttpTaskSuccess(mock(PubnativeHttpTask.class), result);
+                listener.onPubnativeHttpRequestFinish(mock(PubnativeHttpRequest.class), result);
                 return null;
             }
         }).when(PubnativeInsightsManager.class,
                 "sendTrackingDataToServer",
-                (any(Context.class)), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
+                (any(Context.class)), any(String.class), any(String.class), any(PubnativeHttpRequest.Listener.class));
 
         PubnativeInsightDataModel dataModel = insightDataModel;
         PubnativeInsightsManager.trackData(appContext, sampleURL, mock(Map.class), dataModel);
@@ -180,14 +180,14 @@ public class PubnativeInsightsManagerTest {
         PowerMockito.doNothing()
                     .when(PubnativeInsightsManager.class,
                           "sendTrackingDataToServer",
-                          any(Context.class), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
+                          any(Context.class), any(String.class), any(String.class), any(PubnativeHttpRequest.Listener.class));
 
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
         PubnativeInsightsManager.trackData(appContext, sampleURL, mock(Map.class), dataModel);
 
         // verify that the network call inside trackNext is not called.
         PowerMockito.verifyStatic(never());
-        PubnativeInsightsManager.sendTrackingDataToServer(any(Context.class), any(String.class), any(String.class), any(PubnativeHttpTask.Listener.class));
+        PubnativeInsightsManager.sendTrackingDataToServer(any(Context.class), any(String.class), any(String.class), any(PubnativeHttpRequest.Listener.class));
 
         // marking tracker as available (avoiding issue caused with static variable)
         PubnativeInsightsManager.sIdle = true;

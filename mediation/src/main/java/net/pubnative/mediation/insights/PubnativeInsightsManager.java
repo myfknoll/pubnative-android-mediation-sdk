@@ -35,7 +35,7 @@ import com.google.gson.JsonSyntaxException;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
-import net.pubnative.mediation.task.PubnativeHttpTask;
+import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,12 +109,16 @@ public class PubnativeInsightsManager {
 
                 String trackingDataString = new Gson().toJson(model.dataModel);
                 if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString)) {
-                    PubnativeHttpTask.Listener listener = new PubnativeHttpTask.Listener() {
+                    PubnativeHttpRequest.Listener listener = new PubnativeHttpRequest.Listener() {
 
                         @Override
-                        public void onHttpTaskSuccess(PubnativeHttpTask task, String result) {
+                        public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
 
-                            Log.v(TAG, "onHttpTaskSuccess");
+                        }
+
+                        @Override
+                        public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
+                            Log.v(TAG, "onPubnativeHttpRequestFinish");
                             if (TextUtils.isEmpty(result)) {
                                 trackingFailed(context, model, "invalid insight response (empty or null)");
                             } else {
@@ -132,10 +136,9 @@ public class PubnativeInsightsManager {
                         }
 
                         @Override
-                        public void onHttpTaskFailed(PubnativeHttpTask task, String errorMessage) {
-
-                            Log.v(TAG, "onHttpTaskFailed: " + errorMessage);
-                            trackingFailed(context, model, errorMessage);
+                        public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
+                            Log.v(TAG, "onPubnativeHttpRequestFail: " + exception);
+                            trackingFailed(context, model, exception.toString());
                         }
                     };
                     sendTrackingDataToServer(context, trackingDataString, model.url, listener);
@@ -166,13 +169,12 @@ public class PubnativeInsightsManager {
         trackNext(context);
     }
 
-    protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpTask.Listener listener) {
+    protected static void sendTrackingDataToServer(Context context, String trackingDataString, String url, PubnativeHttpRequest.Listener listener) {
 
         Log.v(TAG, "sendTrackingDataToServer");
-        PubnativeHttpTask http = new PubnativeHttpTask(context);
-        http.setPOSTData(trackingDataString);
-        http.setListener(listener);
-        http.execute(url);
+        PubnativeHttpRequest http = new PubnativeHttpRequest();
+        http.setPOSTString(trackingDataString);
+        http.start(context, url, listener);
     }
 
     //==============================================================================================
