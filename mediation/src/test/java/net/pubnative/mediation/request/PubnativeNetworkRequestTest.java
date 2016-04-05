@@ -84,15 +84,15 @@ public class PubnativeNetworkRequestTest {
     @Before
     public void setUp() {
 
-        this.applicationContext = RuntimeEnvironment.application.getApplicationContext();
-        this.requestSpy = spy(PubnativeNetworkRequest.class);
-        this.listenerMock = mock(PubnativeNetworkRequest.Listener.class);
+        applicationContext = RuntimeEnvironment.application.getApplicationContext();
+        requestSpy = spy(PubnativeNetworkRequest.class);
+        listenerMock = mock(PubnativeNetworkRequest.Listener.class);
     }
 
     @Test
     public void requestWithCorrectParameters() {
 
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, "valid_config.json", TEST_APP_TOKEN);
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, "valid_config.json", TEST_APP_TOKEN);
         final PubnativeAdModel modelMock = spy(PubnativeAdModel.class);
         final PubnativeNetworkAdapter adapterMock = mock(PubnativeNetworkAdapter.class);
         // Stub Adapter doRequest to callback the mListener directly
@@ -102,7 +102,7 @@ public class PubnativeNetworkRequestTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
 
                 PubnativeNetworkAdapter adapterMock = (PubnativeNetworkAdapter) invocation.getMock();
-                PubnativeNetworkAdapter.Listener adapterListener = (PubnativeNetworkAdapter.Listener) invocation.getArgumentAt(2, PubnativeNetworkAdapter.Listener.class);
+                PubnativeNetworkAdapter.Listener adapterListener = invocation.getArgumentAt(2, PubnativeNetworkAdapter.Listener.class);
                 adapterListener.onPubnativeNetworkAdapterRequestStarted(adapterMock);
                 adapterListener.onPubnativeNetworkAdapterRequestLoaded(adapterMock, modelMock);
                 return null;
@@ -121,7 +121,7 @@ public class PubnativeNetworkRequestTest {
                 return null;
             }
         }).when(networkRequest).getConfig(anyString(), any(PubnativeConfigManager.Listener.class));
-        networkRequest.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_VALID, listenerMock);
+        networkRequest.start(applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_VALID, listenerMock);
         verify(listenerMock, after(TEST_TIMEOUT).times(1)).onPubnativeNetworkRequestStarted(eq(networkRequest));
         verify(listenerMock, after(TEST_TIMEOUT).never()).onPubnativeNetworkRequestFailed(eq(networkRequest), any(Exception.class));
         verify(listenerMock, after(TEST_TIMEOUT).times(1)).onPubnativeNetworkRequestLoaded(eq(networkRequest), eq(modelMock));
@@ -130,38 +130,38 @@ public class PubnativeNetworkRequestTest {
     @Test
     public void requestWithNullListenerDrops() {
         // This should not crash
-        requestSpy.start(this.applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, null);
+        requestSpy.start(applicationContext, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, null);
     }
 
     @Test
     public void freqDayLimitResets() {
 
-        this.frequencyResets(Calendar.DAY_OF_MONTH, "delivery_freq_day.json");
+        frequencyResets(Calendar.DAY_OF_MONTH, "delivery_freq_day.json");
     }
 
     @Test
     public void freqHourLimitResets() {
 
-        this.frequencyResets(Calendar.HOUR_OF_DAY, "delivery_freq_hour.json");
+        frequencyResets(Calendar.HOUR_OF_DAY, "delivery_freq_hour.json");
     }
 
     public void frequencyResets(int field, String configFileName) {
 
-        PubnativeConfigTestUtils.setTestConfig(this.applicationContext, configFileName, TEST_APP_TOKEN);
-        PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(this.applicationContext);
+        PubnativeConfigTestUtils.setTestConfig(applicationContext, configFileName, TEST_APP_TOKEN);
+        PubnativeConfigModel configModel = PubnativeConfigManager.getStoredConfig(applicationContext);
         PubnativeNetworkRequest.Listener listenerMock = mock(PubnativeNetworkRequest.Listener.class);
 
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         doNothing().when(networkRequestSpy).doNextNetworkRequest();
         networkRequestSpy.mConfig = configModel;
         networkRequestSpy.mPlacementID = TEST_PLACEMENT_ID_VALID;
-        networkRequestSpy.mContext = this.applicationContext;
+        networkRequestSpy.mContext = applicationContext;
         networkRequestSpy.mListener = listenerMock;
 
-        PubnativeDeliveryManager.logImpression(this.applicationContext, TEST_PLACEMENT_ID_VALID);
+        PubnativeDeliveryManager.logImpression(applicationContext, TEST_PLACEMENT_ID_VALID);
         Calendar currentCalendar = Calendar.getInstance();
         currentCalendar.add(field, -1);
-        PubnativeDeliveryManager.setImpressionLastUpdate(this.applicationContext, TEST_PLACEMENT_ID_VALID, currentCalendar);
+        PubnativeDeliveryManager.setImpressionLastUpdate(applicationContext, TEST_PLACEMENT_ID_VALID, currentCalendar);
         networkRequestSpy.startRequest();
 
         verify(listenerMock, never()).onPubnativeNetworkRequestFailed(eq(networkRequestSpy), any(Exception.class));

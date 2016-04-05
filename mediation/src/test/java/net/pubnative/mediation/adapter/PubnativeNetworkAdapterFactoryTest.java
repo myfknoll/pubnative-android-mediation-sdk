@@ -46,12 +46,6 @@ public class PubnativeNetworkAdapterFactoryTest {
 
     private PubnativeNetworkModel model;
 
-
-    @Test
-    public void test_empty() {
-        assertThat(true).isTrue();
-    }
-
     @Before
     public void setUp() {
         model = new PubnativeNetworkModel();
@@ -76,13 +70,6 @@ public class PubnativeNetworkAdapterFactoryTest {
     @Test
     public void createAdapterWithInvalidClassString() {
         model.adapter = "invalid_class_string";
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
-        assertThat(adapterInstance).isNull();
-    }
-
-    @Test
-    public void createAdapterWithEmptyString() {
-        model.adapter = "";
         PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
         assertThat(adapterInstance).isNull();
     }
