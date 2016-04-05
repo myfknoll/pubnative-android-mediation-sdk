@@ -115,6 +115,7 @@ public class PubnativeHttpRequest {
 
         Log.v(TAG, "start: " + urlString);
         mListener = listener;
+        mHandler = new Handler(Looper.getMainLooper());
         if (mListener == null) {
             Log.w(TAG, "Warning: null listener specified, performing request without callbacks");
         }
@@ -122,7 +123,6 @@ public class PubnativeHttpRequest {
             invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null or empty url, dropping call"));
         } else {
             if(PubnativeDeviceUtils.isNetworkAvailable(context)) {
-                mHandler = new Handler(Looper.getMainLooper());
                 invokeStart();
                 new Thread(new Runnable() {
 
