@@ -78,7 +78,7 @@ public class PubnativeHttpRequest {
     // Properties
     //==============================================================================================
     // Request properties
-    protected int      mTimeoutInMillis = 0; // 0 seconds
+    protected int      mTimeoutInMillis = 4000; // 4 seconds
     protected String   mPOSTString      = null;
     // Inner
     protected Listener mListener        = null;
@@ -160,7 +160,6 @@ public class PubnativeHttpRequest {
             // 2. Set connection properties
             connection.setDoInput(true);
             connection.setConnectTimeout(mTimeoutInMillis);
-            connection.setReadTimeout(mTimeoutInMillis);
             if (TextUtils.isEmpty(mPOSTString)) {
                 connection.setRequestMethod("GET");
             } else {

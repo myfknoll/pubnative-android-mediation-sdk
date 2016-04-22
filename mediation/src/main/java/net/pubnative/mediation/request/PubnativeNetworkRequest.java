@@ -25,6 +25,7 @@ package net.pubnative.mediation.request;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -112,14 +113,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
      * @param placementID valid placementId provided by Pubnative.
      * @param listener    valid Listener to keep track of request callbacks.
      */
-    public void start(Context context, String appToken, String placementID, PubnativeNetworkRequest.Listener listener) {
+    public synchronized void start(Context context, String appToken, String placementID, PubnativeNetworkRequest.Listener listener) {
 
         Log.v(TAG, "start: -placement: " + placementID + " -appToken:" + appToken);
         if (listener == null) {
             // Just drop the call
             Log.e(TAG, "start - listener not specified, dropping the call");
         } else {
-            mHandler = new Handler();
+            mHandler = new Handler(Looper.getMainLooper());
             mListener = listener;
             if (mIsRunning) {
                 Log.e(TAG, "start - request already running, dropping the call");
