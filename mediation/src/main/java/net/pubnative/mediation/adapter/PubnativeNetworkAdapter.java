@@ -25,6 +25,7 @@ package net.pubnative.mediation.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
@@ -160,7 +161,7 @@ public abstract class PubnativeNetworkAdapter {
         Log.v(TAG, "startTimeout");
         if (timeoutInMillis > 0) {
             mTimeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
-            mHandler = new Handler();
+            mHandler = new Handler(Looper.getMainLooper());
             mHandler.postDelayed(mTimeoutRunnable, timeoutInMillis);
         }
     }

@@ -48,7 +48,6 @@ public class PubnativeInsightsManager {
     protected static final String  INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
     protected static final String  INSIGHTS_PENDING_DATA    = "pending_data";
     protected static final String  INSIGHTS_FAILED_DATA     = "failed_data";
-    protected static final String  PARAMETER_APP_TOKEN_KEY  = "app_token";
     protected static       boolean sIdle                    = true;
     //==============================================================================================
     // PubnativeInsightsManager
@@ -113,7 +112,7 @@ public class PubnativeInsightsManager {
 
                         @Override
                         public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
-
+                            Log.v(TAG, "onPubnativeHttpRequestStart");
                         }
 
                         @Override
