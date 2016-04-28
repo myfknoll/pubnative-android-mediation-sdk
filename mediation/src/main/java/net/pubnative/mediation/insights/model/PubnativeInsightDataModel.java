@@ -32,7 +32,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.AdvertisingIdClient;
-import net.pubnative.mediation.R;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
@@ -41,8 +40,7 @@ import java.util.List;
 
 public class PubnativeInsightDataModel {
 
-    private static final String TAG = PubnativeInsightDataModel.class.getName();
-
+    private static final   String TAG                      = PubnativeInsightDataModel.class.getName();
     protected static final String CONNECTION_TYPE_CELLULAR = "cellular";
     protected static final String CONNECTION_TYPE_WIFI     = "wifi";
     // Tracking info
@@ -89,64 +87,64 @@ public class PubnativeInsightDataModel {
             return false;
         }
         PubnativeInsightDataModel dataModel = (PubnativeInsightDataModel) object;
-        boolean result = isEqual(this.network, dataModel.network);
+        boolean result = isEqual(network, dataModel.network);
         if (result) {
-            result = isEqual(this.attempted_networks, dataModel.attempted_networks);
+            result = isEqual(attempted_networks, dataModel.attempted_networks);
         }
         if (result) {
-            result = isEqual(this.placement_name, dataModel.placement_name);
+            result = isEqual(placement_name, dataModel.placement_name);
         }
         if (result) {
-            result = isEqual(this.pub_app_version, dataModel.pub_app_version);
+            result = isEqual(pub_app_version, dataModel.pub_app_version);
         }
         if (result) {
-            result = isEqual(this.pub_app_bundle_id, dataModel.pub_app_bundle_id);
+            result = isEqual(pub_app_bundle_id, dataModel.pub_app_bundle_id);
         }
         if (result) {
-            result = isEqual(this.os_version, dataModel.os_version);
+            result = isEqual(os_version, dataModel.os_version);
         }
         if (result) {
-            result = isEqual(this.sdk_version, dataModel.sdk_version);
+            result = isEqual(sdk_version, dataModel.sdk_version);
         }
         if (result) {
-            result = isEqual(this.user_uid, dataModel.user_uid);
+            result = isEqual(user_uid, dataModel.user_uid);
         }
         if (result) {
-            result = isEqual(this.connection_type, dataModel.connection_type);
+            result = isEqual(connection_type, dataModel.connection_type);
         }
         if (result) {
-            result = isEqual(this.device_name, dataModel.device_name);
+            result = isEqual(device_name, dataModel.device_name);
         }
         if (result) {
-            result = isEqual(this.ad_format_code, dataModel.ad_format_code);
+            result = isEqual(ad_format_code, dataModel.ad_format_code);
         }
         if (result) {
-            result = isEqual(this.creative_url, dataModel.creative_url);
+            result = isEqual(creative_url, dataModel.creative_url);
         }
         if (result) {
-            result = isEqual(this.video_start, dataModel.video_start);
+            result = isEqual(video_start, dataModel.video_start);
         }
         if (result) {
-            result = isEqual(this.video_complete, dataModel.video_complete);
+            result = isEqual(video_complete, dataModel.video_complete);
         }
         // user info
         if (result) {
-            result = isEqual(this.age, dataModel.age);
+            result = isEqual(age, dataModel.age);
         }
         if (result) {
-            result = isEqual(this.education, dataModel.education);
+            result = isEqual(education, dataModel.education);
         }
         if (result) {
-            result = isEqual(this.interests, dataModel.interests);
+            result = isEqual(interests, dataModel.interests);
         }
         if (result) {
-            result = isEqual(this.gender, dataModel.gender);
+            result = isEqual(gender, dataModel.gender);
         }
         if (result) {
-            result = isEqual(this.iap, dataModel.iap);
+            result = isEqual(iap, dataModel.iap);
         }
         if (result) {
-            result = isEqual(this.iap_total, dataModel.iap_total);
+            result = isEqual(iap_total, dataModel.iap_total);
         }
         return result;
     }
@@ -155,6 +153,7 @@ public class PubnativeInsightDataModel {
     //==============================================================================================
     // Private
     //----------------------------------------------------------------------------------------------
+
     /**
      * This method takes two Objects "first" and "second" as arguments and does a comparison.
      * Returns true if they are equal.
@@ -177,10 +176,10 @@ public class PubnativeInsightDataModel {
 
         Log.v(TAG, "addInterest: " + interest);
         if (!TextUtils.isEmpty(interest)) {
-            if (this.interests == null) {
-                this.interests = new ArrayList<String>();
+            if (interests == null) {
+                interests = new ArrayList<String>();
             }
-            this.interests.add(interest);
+            interests.add(interest);
         }
     }
 
@@ -195,8 +194,8 @@ public class PubnativeInsightDataModel {
 
         Log.v(TAG, "addNetwork");
         if (priorityRuleModel != null) {
-            if (this.networks == null) {
-                this.networks = new ArrayList<PubnativeInsightNetworkModel>();
+            if (networks == null) {
+                networks = new ArrayList<PubnativeInsightNetworkModel>();
             }
             PubnativeInsightNetworkModel networkModel = new PubnativeInsightNetworkModel();
             networkModel.code = priorityRuleModel.network_code;
@@ -219,10 +218,10 @@ public class PubnativeInsightDataModel {
 
         Log.v(TAG, "addAttemptedNetwork: " + network);
         if (!TextUtils.isEmpty(network)) {
-            if (this.attempted_networks == null) {
-                this.attempted_networks = new ArrayList<String>();
+            if (attempted_networks == null) {
+                attempted_networks = new ArrayList<String>();
             }
-            this.attempted_networks.add(network);
+            attempted_networks.add(network);
         }
     }
 
@@ -235,10 +234,10 @@ public class PubnativeInsightDataModel {
 
         Log.v(TAG, "addUnreachableNetwork: " + network);
         if (!TextUtils.isEmpty(network)) {
-            if (this.unreachable_networks == null) {
-                this.unreachable_networks = new ArrayList<String>();
+            if (unreachable_networks == null) {
+                unreachable_networks = new ArrayList<String>();
             }
-            this.unreachable_networks.add(network);
+            unreachable_networks.add(network);
         }
     }
 
@@ -248,12 +247,12 @@ public class PubnativeInsightDataModel {
     public void reset() {
 
         Log.v(TAG, "reset");
-        this.retry = 0;
-        this.network = null;
-        this.networks = null;
-        this.delivery_segment_ids = null;
-        this.attempted_networks = null;
-        this.unreachable_networks = null;
+        retry = 0;
+        network = null;
+        networks = null;
+        delivery_segment_ids = null;
+        attempted_networks = null;
+        unreachable_networks = null;
     }
 
     /**
@@ -267,13 +266,13 @@ public class PubnativeInsightDataModel {
         if (context != null) {
             PackageInfo info = PubnativeDeviceUtils.getPackageInfo(context);
             if (info != null) {
-                this.pub_app_version = info.versionName;
-                this.pub_app_bundle_id = info.packageName;
+                pub_app_version = info.versionName;
+                pub_app_bundle_id = info.packageName;
             }
-            this.retry = 0;
-            this.os_version = Build.VERSION.RELEASE;
-            this.device_name = Build.MODEL;
-            this.sdk_version = context.getResources().getString(R.string.version);
+            retry = 0;
+            os_version = Build.VERSION.RELEASE;
+            device_name = Build.MODEL;
+            sdk_version = net.pubnative.mediation.BuildConfig.VERSION_NAME + " (" + net.pubnative.mediation.BuildConfig.VERSION_CODE + ")";
             // Connection type
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
                     Context.CONNECTIVITY_SERVICE);
@@ -284,18 +283,20 @@ public class PubnativeInsightDataModel {
                     if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
                         connectionType = CONNECTION_TYPE_WIFI;
                     }
-                    this.connection_type = connectionType;
+                    connection_type = connectionType;
                 }
             }
         }
     }
 
     public void fillAdvertisingId(Context context, final AdvertisingIdClient.Listener listener) {
+
         Log.v(TAG, "fillAdvertisingId");
         AdvertisingIdClient.getAdvertisingId(context, new AdvertisingIdClient.Listener() {
 
             @Override
             public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
+
                 if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
                     user_uid = adInfo.getId();
                 }
@@ -304,6 +305,7 @@ public class PubnativeInsightDataModel {
 
             @Override
             public void onAdvertisingIdClientFail(Exception exception) {
+
                 listener.onAdvertisingIdClientFail(exception);
             }
         });
