@@ -6,3 +6,4 @@ machine:
 test:
   override:
     - ./gradlew cobertura coveralls
+
