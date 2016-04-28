@@ -1,14 +1,25 @@
 machine:
-  timezone:
-    Europe/Berlin
-# TODO: Uncomment this to enable master/development compile only
-#general:
-#  branches:
-#    only:
-#      - master
-#      - development
-deployment:
-  development:
-    branch: development
-    commands:
-      - echo TODO-Deploy to QA
+  timezone: Europe/Berlin
+  java:
+      version: oraclejdk8
+
+dependencies:
+  pre:
+    - echo y | android update sdk --no-ui --all --filter tool
+    - echo y | android update sdk --no-ui --all --filter extra-android-support,extra-android-m2repository
+    - echo y | android update sdk --no-ui --all --filter build-tools-23.0.3
+
+test:
+  pre:
+    # start emulator for instrumentation tests
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
+        parallel: true
+
+    - circle-android wait-for-boot
+    - sleep 60
+    - adb shell input keyevent 82
+    - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
+
+  override:
+    - ./gradlew cobertura coveralls
