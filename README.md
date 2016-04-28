@@ -1,6 +1,6 @@
 ![ScreenShot](PNLogo.png)
 
-[![Circle CI](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk.svg?style=shield)](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk) ![Version](https://img.shields.io/badge/version-1.0.1-blue.svg) ![Gradle](https://img.shields.io/badge/gradle-net.pubnative:mediation:1.0.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
+[![Circle CI](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk.svg?style=shield)](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk) ![Version](https://img.shields.io/badge/version-1.0.1-blue.svg) ![Gradle](https://img.shields.io/badge/gradle-net.pubnative:mediation:1.0.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg) [![Coverage Status](https://coveralls.io/repos/github/pubnative/pubnative-android-mediation-sdk/badge.svg?branch=code_coverage_configuration)](https://coveralls.io/github/pubnative/pubnative-android-mediation-sdk?branch=code_coverage_configuration)
 
 PubNative is an API-based publisher platform dedicated to native advertising which does not require the integration of an Library.
 
