@@ -72,7 +72,7 @@ public class PubnativeNetworkRequestTest {
 
     @Rule
     public       PowerMockRule rule                      = new PowerMockRule();
-    final static String        TEST_PLACEMENT_ID_INVALID = "mPlacement";
+    final static String        TEST_PLACEMENT_ID_INVALID = "mPlacementName";
     final static String        TEST_PLACEMENT_ID_VALID   = "1";
     final static String        TEST_APP_TOKEN            = "app_token";
     final static int           TEST_TIMEOUT              = 500;
@@ -154,7 +154,7 @@ public class PubnativeNetworkRequestTest {
         PubnativeNetworkRequest networkRequestSpy = spy(PubnativeNetworkRequest.class);
         doNothing().when(networkRequestSpy).doNextNetworkRequest();
         networkRequestSpy.mConfig = configModel;
-        networkRequestSpy.mPlacementID = TEST_PLACEMENT_ID_VALID;
+        networkRequestSpy.mPlacementName = TEST_PLACEMENT_ID_VALID;
         networkRequestSpy.mContext = applicationContext;
         networkRequestSpy.mListener = listenerMock;
 
