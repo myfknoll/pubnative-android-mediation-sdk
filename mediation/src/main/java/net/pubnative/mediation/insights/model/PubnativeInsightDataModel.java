@@ -205,7 +205,7 @@ public class PubnativeInsightDataModel {
             if (crashModel != null) {
                 networkModel.crash_report = crashModel;
             }
-            this.networks.add(networkModel);
+            networks.add(networkModel);
         }
     }
 

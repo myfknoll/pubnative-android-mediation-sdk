@@ -51,8 +51,8 @@ public class PubnativePlacementModel {
 
         Log.v(TAG, "getPriorityRule: " + index);
         PubnativePriorityRuleModel result = null;
-        if (this.priority_rules != null && this.priority_rules.size() > index) {
-            result = this.priority_rules.get(index);
+        if (priority_rules != null && priority_rules.size() > index) {
+            result = priority_rules.get(index);
         }
         return result;
     }
