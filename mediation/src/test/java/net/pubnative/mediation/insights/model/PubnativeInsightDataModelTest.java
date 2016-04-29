@@ -27,7 +27,6 @@ import net.pubnative.mediation.BuildConfig;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -36,7 +35,6 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
-@PrepareForTest(PubnativeInsightDataModel.class)
 public class PubnativeInsightDataModelTest {
 
     private final String validString = "sampleText";

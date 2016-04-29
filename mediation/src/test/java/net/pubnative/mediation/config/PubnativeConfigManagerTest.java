@@ -32,12 +32,8 @@ import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -53,17 +49,12 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 21)
-@PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
-@PrepareForTest(PubnativeConfigManager.class)
 public class PubnativeConfigManagerTest {
 
     protected Context applicationContext;
     protected static final String TEST_CONFIG_VALUE    = "testConfigValue";
     protected static final String TEST_APP_TOKEN_VALUE = "appTokenValue";
     protected static final String VALID_CONFIG_NAME    = "valid_config.json";
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Before
     public void setUp() {
