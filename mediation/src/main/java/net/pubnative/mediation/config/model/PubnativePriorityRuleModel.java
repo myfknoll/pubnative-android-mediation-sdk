@@ -33,6 +33,7 @@ public class PubnativePriorityRuleModel {
     public String              network_code;
     public Map<String, Object> params;
     public List<Integer>       segment_ids;
+
     //==============================================================================================
     // PubnativePriorityRuleModel
     //==============================================================================================

@@ -37,6 +37,7 @@ public class PubnativePlacementModel {
     //==============================================================================================
     // PubnativePlacementModel.AdFormatCode
     //==============================================================================================
+
     public interface AdFormatCode {
 
         String NATIVE_ICON   = "icon";
@@ -47,6 +48,7 @@ public class PubnativePlacementModel {
     //==============================================================================================
     // PubnativePlacementModel
     //==============================================================================================
+
     public PubnativePriorityRuleModel getPriorityRule(int index) {
 
         Log.v(TAG, "getPriorityRule: " + index);

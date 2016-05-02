@@ -44,6 +44,7 @@ public class PubnativeDeliveryRuleModel {
     //==============================================================================================
     // PubnativeDeliveryRuleModel
     //==============================================================================================
+
     public boolean isDisabled() {
 
         Log.v(TAG, "isDisabled");

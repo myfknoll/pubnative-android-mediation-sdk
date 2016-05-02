@@ -69,6 +69,7 @@ public class PubnativeInsightDataModel {
     public String                             gender;
     public Boolean                            iap; // In app purchase enabled, Just open it for the user to fill
     public Float                              iap_total; // In app purchase total spent, just open for the user to fill
+
     //==============================================================================================
     // Object
     //==============================================================================================
@@ -148,6 +149,7 @@ public class PubnativeInsightDataModel {
         }
         return result;
     }
+
     //==============================================================================================
     // PubnativeInsightDataModel
     //==============================================================================================
@@ -164,6 +166,8 @@ public class PubnativeInsightDataModel {
         Log.v(TAG, "isEqual");
         return (first != null) ? first.equals(second) : second == null;
     }
+
+    //----------------------------------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------------------------------
 

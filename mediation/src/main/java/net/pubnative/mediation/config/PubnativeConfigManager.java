@@ -54,6 +54,7 @@ public class PubnativeConfigManager {
     protected static final String                            APP_TOKEN_KEY             = "?app_token=";
     protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
     protected static       boolean                           sIdle                     = true;
+
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -70,15 +71,18 @@ public class PubnativeConfigManager {
          */
         void onConfigLoaded(PubnativeConfigModel configModel);
     }
+
     //==============================================================================================
     // PubnativeConfigManager
     //==============================================================================================
-
     // Singleton
     //----------------------------------------------------------------------------------------------
+
     private PubnativeConfigManager() {
         // do some initialization here may be.
     }
+
+    //----------------------------------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------------------------------
 
@@ -121,8 +125,10 @@ public class PubnativeConfigManager {
         setStoredConfig(context, null);
     }
 
+    //----------------------------------------------------------------------------------------------
     // Private
     //----------------------------------------------------------------------------------------------
+
     protected static void doNextConfigRequest() {
 
         Log.v(TAG, "doNextConfigRequest");
@@ -334,6 +340,7 @@ public class PubnativeConfigManager {
     //==============================================================================================
     // QUEUE
     //==============================================================================================
+
     protected static void enqueueRequest(PubnativeConfigRequestModel item) {
 
         Log.v(TAG, "enqueueRequest");
@@ -357,9 +364,9 @@ public class PubnativeConfigManager {
     //==============================================================================================
     // SHARED PREFERENCES
     //==============================================================================================
-
     // CONFIG URL
     //----------------------------------------------------------------------------------------------
+
     protected static String getConfigDownloadBaseUrl(Context context) {
 
         Log.v(TAG, "getConfigDownloadBaseUrl");
@@ -374,8 +381,10 @@ public class PubnativeConfigManager {
         return configDownloadBaseUrl;
     }
 
+    //----------------------------------------------------------------------------------------------
     // CONFIG
     //----------------------------------------------------------------------------------------------
+
     protected synchronized static String getStoredConfigString(Context context) {
 
         Log.v(TAG, "getStoredConfigString");
@@ -390,8 +399,10 @@ public class PubnativeConfigManager {
         setStringSharedPreference(context, CONFIG_STRING_KEY, configString);
     }
 
+    //----------------------------------------------------------------------------------------------
     // APP_TOKEN
     //----------------------------------------------------------------------------------------------
+
     protected static String getStoredAppToken(Context context) {
 
         Log.v(TAG, "getStoredAppToken");
@@ -404,8 +415,10 @@ public class PubnativeConfigManager {
         setStringSharedPreference(context, APP_TOKEN_STRING_KEY, appToken);
     }
 
+    //----------------------------------------------------------------------------------------------
     // TIMESTAMP
     //----------------------------------------------------------------------------------------------
+
     protected static Long getStoredTimestamp(Context context) {
 
         Log.v(TAG, "getStoredTimestamp");
@@ -418,8 +431,10 @@ public class PubnativeConfigManager {
         setLongSharedPreference(context, TIMESTAMP_LONG_KEY, timestamp);
     }
 
+    //----------------------------------------------------------------------------------------------
     // REFRESH
     //----------------------------------------------------------------------------------------------
+
     protected static Long getStoredRefresh(Context context) {
 
         Log.v(TAG, "getStoredRefresh");
@@ -432,8 +447,10 @@ public class PubnativeConfigManager {
         setLongSharedPreference(context, REFRESH_LONG_KEY, refresh);
     }
 
+    //----------------------------------------------------------------------------------------------
     // String
     //----------------------------------------------------------------------------------------------
+
     protected static String getStringSharedPreference(Context context, String key) {
 
         Log.v(TAG, "getStringSharedPreference");
@@ -463,8 +480,10 @@ public class PubnativeConfigManager {
         }
     }
 
+    //----------------------------------------------------------------------------------------------
     // Long
     //----------------------------------------------------------------------------------------------
+
     protected static Long getLongSharedPreference(Context context, String key) {
 
         Log.v(TAG, "getLongSharedPreference");
@@ -495,8 +514,10 @@ public class PubnativeConfigManager {
         }
     }
 
+    //----------------------------------------------------------------------------------------------
     // BASE SharedPreferences item
     //----------------------------------------------------------------------------------------------
+
     protected static SharedPreferences getSharedPreferences(Context context) {
 
         Log.v(TAG, "getSharedPreferences");

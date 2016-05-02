@@ -38,6 +38,7 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel.ConfigContract
     //==============================================================================================
+
     public interface ConfigContract {
 
         String REFRESH           = "refresh";
@@ -50,6 +51,7 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel
     //==============================================================================================
+
     public boolean isNullOrEmpty() {
 
         Log.v(TAG, "isNullOrEmpty");

@@ -69,6 +69,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
     protected String                           mRequestID;
+
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -101,6 +102,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
          */
         void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception);
     }
+
     //==============================================================================================
     // Pubic methods
     //==============================================================================================
@@ -258,6 +260,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
+
     protected void invokeStart() {
 
         Log.v(TAG, "invokeStart");
@@ -307,6 +310,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             }
         });
     }
+
     //==============================================================================================
     // TRACKING
     //==============================================================================================
@@ -372,6 +376,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     //==============================================================================================
     // Tracking data
     //==============================================================================================
+
     public void setAge(int age) {
 
         Log.v(TAG, "setAge: " + age);
@@ -412,12 +417,13 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "setInAppPurchasesTotal: " + iapTotal);
         mTrackingModel.iap_total = iapTotal;
     }
+
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-
     // PubnativeConfigRequestListener
     //----------------------------------------------------------------------------------------------
+
     @Override
     public void onConfigLoaded(PubnativeConfigModel configModel) {
 
@@ -425,8 +431,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         startRequest(configModel);
     }
 
+    //----------------------------------------------------------------------------------------------
     // PubnativeNetworkAdapterListener
     //----------------------------------------------------------------------------------------------
+
     @Override
     public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
 
