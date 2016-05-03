@@ -13,24 +13,35 @@ public class PubnativeException extends Exception {
     //==============================================================================================
     // Request Exceptions
     //==============================================================================================
-    public static final PubnativeException REQUEST_NO_INTERNET         = new PubnativeException(1000, "Internet connection is not available");
-    public static final PubnativeException REQUEST_PARAMETERS_INVALID  = new PubnativeException(1001, "Invalid start parameters");
-    public static final PubnativeException REQUEST_CONFIG_INVALID      = new PubnativeException(1002, "Null or invalid config");
-    public static final PubnativeException REQUEST_PLACEMENT_NOT_FOUND = new PubnativeException(1003, "Placement not found");
-    public static final PubnativeException REQUEST_PLACEMENT_EMPTY     = new PubnativeException(1004, "Retrieved config contains null element");
-    public static final PubnativeException REQUEST_PLACEMENT_DISABLED  = new PubnativeException(1005, "Placement is disabled");
-    public static final PubnativeException REQUEST_FREQUENCY_CAP       = new PubnativeException(1006, "(frequency_cap) too many ads");
-    public static final PubnativeException REQUEST_PACING_CAP          = new PubnativeException(1007, "(pacing_cap) too many ads");
-    public static final PubnativeException REQUEST_NO_FILL             = new PubnativeException(1008, "No fill");
-    public static final PubnativeException REQUEST_ADAPTER_CREATION    = new PubnativeException(1009, "Network adapter couldn't be created");
-    public static final PubnativeException REQUEST_NETWORK_NOT_FOUND   = new PubnativeException(1010, "Network wasn't found in config");
+    public static final PubnativeException REQUEST_NO_INTERNET             = new PubnativeException(1000, "Internet connection is not available");
+    public static final PubnativeException REQUEST_PARAMETERS_INVALID      = new PubnativeException(1001, "Invalid start parameters");
+    public static final PubnativeException REQUEST_NO_FILL                 = new PubnativeException(1008, "No fill");
+    public static final PubnativeException REQUEST_ADAPTER_CREATION        = new PubnativeException(1009, "Network adapter couldn't be created");
     //==============================================================================================
     // Adapter Exceptions
     //==============================================================================================
-    public static final PubnativeException ADAPTER_UNKNOWN_ERROR       = new PubnativeException(2000, "Unknown error");
-    public static final PubnativeException ADAPTER_MISSING_DATA        = new PubnativeException(2001, "Null context or adapter data provided");
-    public static final PubnativeException ADAPTER_ILLEGAL_ARGUMENTS   = new PubnativeException(2002, "Invalid data provided");
-    public static final PubnativeException ADAPTER_TIME_OUT            = new PubnativeException(2003, "adapter timeout");
+    public static final PubnativeException ADAPTER_UNKNOWN_ERROR           = new PubnativeException(2000, "Unknown error");
+    public static final PubnativeException ADAPTER_MISSING_DATA            = new PubnativeException(2001, "Null context or adapter data provided");
+    public static final PubnativeException ADAPTER_ILLEGAL_ARGUMENTS       = new PubnativeException(2002, "Invalid data provided");
+    public static final PubnativeException ADAPTER_TIMEOUT                 = new PubnativeException(2003, "adapter timeout");
+    //==============================================================================================
+    // Interstitial Exceptions
+    //==============================================================================================
+    public static final PubnativeException INTERSTITIAL_PARAMETERS_INVALID = new PubnativeException(3000, "parameters configuring the interstitial are invalid");
+    public static final PubnativeException INTERSTITIAL_LOADING            = new PubnativeException(3001, "interstitial is currently loading");
+    public static final PubnativeException INTERSTITIAL_SHOWN              = new PubnativeException(3002, "interstitial is already shown");
+    public static final PubnativeException INTERSTITIAL_NO_FILL            = new PubnativeException(3004, "interstitial cannot fill the ad");
+    public static final PubnativeException INTERSTITIAL_ADAPTER_CREATION   = new PubnativeException(3005, "interstitial network adapter cannot be created");
+    //==============================================================================================
+    // Placement Exceptions
+    //==============================================================================================
+    public static final PubnativeException PLACEMENT_FREQUENCY_CAP         = new PubnativeException(4000, "(frequency_cap) too many ads");
+    public static final PubnativeException PLACEMENT_PACING_CAP            = new PubnativeException(4001, "(pacing_cap) too many ads");
+    public static final PubnativeException PLACEMENT_DISABLED              = new PubnativeException(4002, "Placement is disabled");
+    public static final PubnativeException PLACEMENT_CONFIG_INVALID        = new PubnativeException(4003, "Null or invalid config");
+    public static final PubnativeException PLACEMENT_NOT_FOUND             = new PubnativeException(4004, "Placement not found");
+    public static final PubnativeException PLACEMENT_EMPTY                 = new PubnativeException(4005, "Retrieved config contains null element");
+    public static final PubnativeException PLACEMENT_PARAMETERS_INVALID    = new PubnativeException(4006, "Parameters invalid");
 
     /**
      * Constructor

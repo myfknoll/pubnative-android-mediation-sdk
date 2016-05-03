@@ -38,7 +38,7 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel.ConfigContract
     //==============================================================================================
-    public interface ConfigContract {
+    public interface GLOBAL{
 
         String REFRESH           = "refresh";
         String IMPRESSION_BEACON = "impression_beacon";

@@ -58,7 +58,7 @@ public class PubnativeNetworkAdapterFactoryTest {
             model = new PubnativeNetworkModel();
             model.adapter = adapterName;
             model.params = mock(HashMap.class);
-            PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
+            PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createNetworkAdapter(model);
             try {
                 assertThat(adapterInstance).isInstanceOf(Class.forName(PubnativeNetworkAdapterFactory.getPackageName(adapterName)));
             } catch (ClassNotFoundException e) {
@@ -70,14 +70,14 @@ public class PubnativeNetworkAdapterFactoryTest {
     @Test
     public void createAdapterWithInvalidClassString() {
         model.adapter = "invalid_class_string";
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
+        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createNetworkAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 
     @Test
     public void createAdapterWithNullString() {
         model.adapter = null;
-        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createAdapter(model);
+        PubnativeNetworkAdapter adapterInstance = PubnativeNetworkAdapterFactory.createNetworkAdapter(model);
         assertThat(adapterInstance).isNull();
     }
 }

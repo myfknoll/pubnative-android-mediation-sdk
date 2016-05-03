@@ -288,26 +288,4 @@ public class PubnativeInsightDataModel {
             }
         }
     }
-
-    public void fillAdvertisingId(Context context, final AdvertisingIdClient.Listener listener) {
-
-        Log.v(TAG, "fillAdvertisingId");
-        AdvertisingIdClient.getAdvertisingId(context, new AdvertisingIdClient.Listener() {
-
-            @Override
-            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
-
-                if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
-                    user_uid = adInfo.getId();
-                }
-                listener.onAdvertisingIdClientFinish(adInfo);
-            }
-
-            @Override
-            public void onAdvertisingIdClientFail(Exception exception) {
-
-                listener.onAdvertisingIdClientFail(exception);
-            }
-        });
-    }
 }

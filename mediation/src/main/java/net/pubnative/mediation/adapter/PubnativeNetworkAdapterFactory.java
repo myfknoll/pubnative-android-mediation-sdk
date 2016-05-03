@@ -42,9 +42,9 @@ public class PubnativeNetworkAdapterFactory {
      *
      * @return instance of PubnativeNetworkAdapter if created, else null
      */
-    public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model) {
+    public static PubnativeNetworkAdapter createNetworkAdapter(PubnativeNetworkModel model) {
 
-        Log.v(TAG, "createAdapter");
+        Log.v(TAG, "createNetworkAdapter");
         PubnativeNetworkAdapter result = null;
         try {
             Class<?> networkClass = Class.forName(getPackageName(model.adapter));
@@ -53,6 +53,28 @@ public class PubnativeNetworkAdapterFactory {
         } catch (Exception e) {
             // Don't crash, just return null, log error and return null
             Log.e(TAG, "Pubnative - Error creating adapter: " + e);
+        }
+        return result;
+    }
+
+    /**
+     * Creates a new network adapter instance by using the values passed in using model
+     *
+     * @param model network model that contains the values needed for creating a network adapter
+     *
+     * @return instance of PubnativeNetworkAdapter if created, else null
+     */
+    public static PubnativeNetworkInterstitialAdapter createNetworkInterstitialAdapter(PubnativeNetworkModel model) {
+
+        Log.v(TAG, "createNetworkAdapter");
+        PubnativeNetworkInterstitialAdapter result = null;
+        try {
+            Class<?> networkClass = Class.forName(getPackageName(model.adapter));
+            Constructor<?> constructor = networkClass.getConstructor(Map.class);
+            result = (PubnativeNetworkInterstitialAdapter) constructor.newInstance(model.params);
+        } catch (Exception e) {
+            // Don't crash, just return null, log error and return null
+            Log.e(TAG, "createNetworkInterstitialAdapter - Error creating adapter", e);
         }
         return result;
     }

@@ -36,6 +36,9 @@ import java.util.Map;
 public abstract class PubnativeNetworkAdapter {
 
     private static String TAG = PubnativeNetworkAdapter.class.getSimpleName();
+
+    public static String EXTRA_REQID = "reqid";
+
     protected PubnativeNetworkAdapter.Listener mListener;
     protected PubnativeNetworkAdapterRunnable  mTimeoutRunnable;
     protected Map                              mData;
@@ -89,7 +92,7 @@ public abstract class PubnativeNetworkAdapter {
 
             Log.v(TAG, "timeout");
             // Invoke failed and avoid more callbacks by setting listener to null
-            mAdapter.invokeFailed(PubnativeException.ADAPTER_TIME_OUT);
+            mAdapter.invokeFailed(PubnativeException.ADAPTER_TIMEOUT);
         }
     }
     //==============================================================================================
