@@ -180,7 +180,7 @@ public abstract class PubnativeNetworkInterstitial implements PubnativePlacement
         mPlacement.next();
         PubnativeNetworkModel networkModel = mPlacement.currentNetwork();
         if (networkModel == null) {
-            mPlacement.sendRequestInsight();
+            mPlacement.getInsightModel().sendRequestInsight();
             invokeLoadFail(PubnativeException.INTERSTITIAL_NO_FILL);
         } else {
             PubnativeNetworkInterstitialAdapter adapter = PubnativeNetworkAdapterFactory.createNetworkInterstitialAdapter(networkModel);
@@ -191,7 +191,7 @@ public abstract class PubnativeNetworkInterstitial implements PubnativePlacement
                 mStartTimestamp = System.currentTimeMillis();
                 // Add ML extras for adapter
                 adapter.setLoadListener(this);
-                adapter.load(mContext, networkModel.timeout);
+                adapter.execute(mContext, networkModel.timeout);
             }
         }
     }

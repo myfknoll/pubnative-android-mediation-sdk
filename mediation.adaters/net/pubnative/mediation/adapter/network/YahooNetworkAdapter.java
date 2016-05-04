@@ -32,13 +32,13 @@ import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdNative;
 import com.flurry.android.ads.FlurryAdNativeListener;
 
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
+import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements FlurryAdNativeListener {
+public class YahooNetworkAdapter extends PubnativeNetworkRequestAdapter implements FlurryAdNativeListener {
 
     private static      String TAG                = YahooNetworkAdapter.class.getSimpleName();
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
@@ -53,10 +53,9 @@ public class YahooNetworkAdapter extends PubnativeNetworkAdapter implements Flur
     //==============================================================================================
     // PubnativeNetworkAdapter
     //==============================================================================================
-    @Override
-    public void request(Context context) {
+    public void start(Context context) {
 
-        Log.v(TAG, "request");
+        Log.v(TAG, "start");
         if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {

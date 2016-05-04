@@ -1,26 +1,3 @@
-// The MIT License (MIT)
-//
-// Copyright (c) 2015 PubNative GmbH
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
-
 package net.pubnative.mediation.adapter;
 
 import android.content.Context;
@@ -28,51 +5,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
-
 import java.util.Map;
 
+/**
+ * Created by davidmartin on 04/05/16.
+ */
 public abstract class PubnativeNetworkAdapter {
 
     private static String TAG = PubnativeNetworkAdapter.class.getSimpleName();
-
-    public static String EXTRA_REQID = "reqid";
-
-    protected PubnativeNetworkAdapter.Listener mListener;
-    protected PubnativeNetworkAdapterRunnable  mTimeoutRunnable;
-    protected Map                              mData;
-    protected Map<String, String>              mExtras;
-    protected Handler                          mHandler;
-
-    /**
-     * Listener
-     */
-    public interface Listener {
-
-        /**
-         * Invoked when PubnativeNetworkAdapter starts the request with valid params.
-         *
-         * @param adapter Object used for requesting the ad.
-         */
-        void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkAdapter adapter);
-
-        /**
-         * Invoked when ad was received successfully from the network.
-         *
-         * @param adapter Object used for requesting the ad.
-         * @param ad      Loaded ad object.
-         */
-        void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad);
-
-        /**
-         * Invoked when ad request is failed or when networks gives no ad.
-         *
-         * @param adapter   Object used for requesting the ad.
-         * @param exception Exception raised with proper message to indicate request failure.
-         */
-        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception);
-    }
+    protected PubnativeNetworkAdapterRunnable mTimeoutRunnable;
+    protected Map                             mData;
+    protected Map<String, String>             mExtras;
+    protected Handler                         mHandler;
 
     //==============================================================================================
     // Adapter Runnable
@@ -80,27 +24,20 @@ public abstract class PubnativeNetworkAdapter {
     protected class PubnativeNetworkAdapterRunnable implements Runnable {
 
         private final String TAG = PubnativeNetworkAdapterRunnable.class.getSimpleName();
-        private PubnativeNetworkAdapter mAdapter;
-
-        public PubnativeNetworkAdapterRunnable(PubnativeNetworkAdapter adapter) {
-
-            mAdapter = adapter;
-        }
 
         @Override
         public void run() {
 
             Log.v(TAG, "timeout");
-            // Invoke failed and avoid more callbacks by setting listener to null
-            mAdapter.invokeFailed(PubnativeException.ADAPTER_TIMEOUT);
+            onTimeout();
         }
     }
     //==============================================================================================
-    // PubnativeNetworkAdapter
+    // PubnativeNetworkRequestAdapter
     //==============================================================================================
 
     /**
-     * Creates a new instance of PubnativeNetworkAdapter
+     * Creates a new instance of PubnativeNetworkRequestAdapter
      *
      * @param data server configured data for the current adapter network.
      */
@@ -132,38 +69,29 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
-     * This method starts the adapter request setting up the configured timeout
+     * This method starts the adapter action
      *
      * @param context         valid context
      * @param timeoutInMillis timeout in milliseconds. time to wait for an adapter to respond.
-     * @param listener        lister to track the callbacks on adapter
      */
-    public void doRequest(Context context, int timeoutInMillis, PubnativeNetworkAdapter.Listener listener) {
+    public void execute(Context context, int timeoutInMillis) {
 
-        Log.v(TAG, "doRequest");
-        if (listener == null) {
-            Log.e(TAG, "doRequest - context not specified, dropping the call");
-        } else {
-            mListener = listener;
-            if (context == null) {
-                invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
-            } else {
-                invokeStart();
-                startTimeout(timeoutInMillis);
-                request(context);
-            }
-        }
+        Log.v(TAG, "execute");
+        startTimeout(timeoutInMillis);
+        start(context);
     }
 
-    public abstract void request(Context context);
+    protected abstract void start(Context context);
 
-    // Helpers
+    protected abstract void onTimeout();
+
+    // Timeout helpers
     //----------------------------------------------------------------------------------------------
     protected void startTimeout(int timeoutInMillis) {
 
         Log.v(TAG, "startTimeout");
         if (timeoutInMillis > 0) {
-            mTimeoutRunnable = new PubnativeNetworkAdapterRunnable(this);
+            mTimeoutRunnable = new PubnativeNetworkAdapterRunnable();
             mHandler = new Handler(Looper.getMainLooper());
             mHandler.postDelayed(mTimeoutRunnable, timeoutInMillis);
         }
@@ -176,35 +104,5 @@ public abstract class PubnativeNetworkAdapter {
             mHandler.removeCallbacks(mTimeoutRunnable);
             mHandler = null;
         }
-    }
-    // Callback helpers
-    //----------------------------------------------------------------------------------------------
-
-    protected void invokeStart() {
-
-        Log.v(TAG, "invokeStart");
-        if (mListener != null) {
-            mListener.onPubnativeNetworkAdapterRequestStarted(this);
-        }
-    }
-
-    protected void invokeLoaded(PubnativeAdModel ad) {
-
-        Log.v(TAG, "invokeLoaded");
-        cancelTimeout();
-        if (mListener != null) {
-            mListener.onPubnativeNetworkAdapterRequestLoaded(this, ad);
-        }
-        mListener = null;
-    }
-
-    protected void invokeFailed(Exception exception) {
-
-        Log.v(TAG, "invokeFailed: " + exception);
-        cancelTimeout();
-        if (mListener != null) {
-            mListener.onPubnativeNetworkAdapterRequestFailed(this, exception);
-        }
-        mListener = null;
     }
 }

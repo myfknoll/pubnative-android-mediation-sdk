@@ -29,9 +29,8 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.pubnative.AdvertisingIdClient;
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
 import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
+import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.config.PubnativePlacement;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
@@ -42,13 +41,12 @@ import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener {
+public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.Listener {
 
     private static       String TAG                           = PubnativeNetworkRequest.class.getSimpleName();
     protected Context                          mContext;
     protected PubnativeNetworkRequest.Listener mListener;
     protected PubnativePlacement               mPlacement;
-    protected PubnativeInsightDataModel        mTrackingModel;
     protected PubnativeAdModel                 mAd;
     protected long                             mRequestStartTimestamp;
     protected boolean                          mIsRunning;
@@ -199,8 +197,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             invokeFail(PubnativeException.REQUEST_PARAMETERS_INVALID);
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             mContext = context;
-            mTrackingModel = new PubnativeInsightDataModel();
-
             mPlacement = new PubnativePlacement();
             mPlacement.load(mContext, appToken, placementName, new PubnativePlacement.Listener() {
 
@@ -236,49 +232,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             }
         } else {
             invokeStart();
-            startTracking(new AdvertisingIdClient.Listener() {
-
-                @Override
-                public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
-
-                    waterfall();
-                }
-
-                @Override
-                public void onAdvertisingIdClientFail(Exception exception) {
-
-                    waterfall();
-                }
-            });
+            waterfall();
         }
-    }
-
-    protected void startTracking(final AdvertisingIdClient.Listener listener) {
-
-        Log.v(TAG, "startTracking");
-        // Reset tracking
-        mTrackingModel.reset();
-        mTrackingModel.fillDefaults(mContext);
-        mTrackingModel.placement_name = mPlacement.getName();
-        mTrackingModel.delivery_segment_ids = mPlacement.getDeliveryRule().segment_ids;
-        mTrackingModel.ad_format_code = mPlacement.getAdFormatCode();
-        AdvertisingIdClient.getAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
-
-            @Override
-            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
-
-                if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
-                    mTrackingModel.user_uid = adInfo.getId();
-                }
-                listener.onAdvertisingIdClientFinish(adInfo);
-            }
-
-            @Override
-            public void onAdvertisingIdClientFail(Exception exception) {
-
-                listener.onAdvertisingIdClientFail(exception);
-            }
-        });
     }
 
     protected void waterfall() {
@@ -287,19 +242,20 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         mPlacement.next();
         PubnativeNetworkModel networkModel = mPlacement.currentNetwork();
         if (networkModel == null) {
-            mPlacement.sendRequestInsight();
+            mPlacement.getInsightModel().sendRequestInsight();
             invokeFail(PubnativeException.REQUEST_NO_FILL);
         } else {
-            PubnativeNetworkAdapter adapter = PubnativeNetworkAdapterFactory.createNetworkAdapter(networkModel);
+            PubnativeNetworkRequestAdapter adapter = PubnativeNetworkAdapterFactory.createNetworkAdapter(networkModel);
             if (adapter == null) {
                 mPlacement.trackUnreachableNetwork(0, PubnativeException.REQUEST_ADAPTER_CREATION);
                 waterfall();
             } else {
                 // Add ML extras for adapter
                 Map<String, String> extras = new HashMap<String, String>();
-                extras.put(PubnativeNetworkAdapter.EXTRA_REQID, mPlacement.getTrackingUUID());
+                extras.put(PubnativeNetworkRequestAdapter.EXTRA_REQID, mPlacement.getTrackingUUID());
                 adapter.setExtras(extras);
-                adapter.doRequest(mContext, networkModel.timeout, this);
+                adapter.setListener(this);
+                adapter.execute(mContext, networkModel.timeout);
             }
         }
     }
@@ -363,14 +319,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     // PubnativeNetworkAdapterListener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
+    public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkRequestAdapter adapter) {
 
         Log.v(TAG, "onAdapterRequestStarted");
         mRequestStartTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkAdapter adapter, PubnativeAdModel ad) {
+    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter, PubnativeAdModel ad) {
 
         Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
@@ -380,20 +336,16 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         } else {
             mAd = ad;
             // Track succeded network
-
             mPlacement.trackSuccededNetwork(responseTime);
-            // Send tracking
-            mPlacement.sendRequestInsight();
             // Default tracking data
-            mAd.setPlacement(mPlacement);
-
+            mAd.setInsightModel(mPlacement.getInsightModel());
             // Finish the request
             invokeLoad(ad);
         }
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkAdapter adapter, Exception exception) {
+    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter, Exception exception) {
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network

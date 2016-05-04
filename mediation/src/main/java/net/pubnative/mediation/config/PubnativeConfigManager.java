@@ -195,8 +195,8 @@ public class PubnativeConfigManager {
                 setStoredConfig(context, configModel);
                 setStoredAppToken(context, appToken);
                 setStoredTimestamp(context, System.currentTimeMillis());
-                if (configModel.globals.containsKey(PubnativeConfigModel.ConfigContract.REFRESH)) {
-                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.ConfigContract.REFRESH);
+                if (configModel.globals.containsKey(PubnativeConfigModel.GLOBAL.REFRESH)) {
+                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.GLOBAL.REFRESH);
                     setStoredRefresh(context, refresh.longValue());
                 }
             } else {
@@ -366,7 +366,7 @@ public class PubnativeConfigManager {
         String configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
         PubnativeConfigModel storedConfig = getStoredConfig(context);
         if (storedConfig != null && !storedConfig.isNullOrEmpty()) {
-            String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
+            String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.GLOBAL.CONFIG_URL);
             if (!TextUtils.isEmpty(configUrl)) {
                 configDownloadBaseUrl = configUrl;
             }

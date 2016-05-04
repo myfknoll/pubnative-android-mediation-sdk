@@ -28,27 +28,26 @@ import android.util.Log;
 
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
+import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.List;
 import java.util.Map;
 
-public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements PubnativeRequest.Listener{
+public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements PubnativeRequest.Listener{
 
-    private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
+    private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
 
-    public PubnativeLibraryNetworkAdapter(Map data) {
+    public PubnativeLibraryNetworkRequestAdapter(Map data) {
 
         super(data);
     }
 
     //==============================================================================================
-    // PubnativeNetworkAdapter methods
+    // PubnativeNetworkRequestAdapter methods
     //==============================================================================================
-    @Override
-    public void request(Context context) {
+    public void start(Context context) {
 
         Log.v(TAG, "request");
         if (context != null && mData != null) {
@@ -59,7 +58,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter impl
     }
 
     //==============================================================================================
-    // PubnativeLibraryNetworkAdapter methods
+    // PubnativeLibraryNetworkRequestAdapter methods
     //==============================================================================================
     protected void createRequest(Context context) {
 

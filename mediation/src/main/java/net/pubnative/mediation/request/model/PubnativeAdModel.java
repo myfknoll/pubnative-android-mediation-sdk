@@ -27,19 +27,19 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
-import net.pubnative.mediation.config.PubnativePlacement;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
+import net.pubnative.mediation.insights.model.PubnativeInsightModel;
 
 public abstract class PubnativeAdModel {
 
-    private static final String             TAG                = PubnativeAdModel.class.getSimpleName();
+    private static final String                TAG                = PubnativeAdModel.class.getSimpleName();
     // Model
-    protected            Context            mContext           = null;
-    protected            Listener           mListener          = null;
+    protected            Context               mContext           = null;
+    protected            Listener              mListener          = null;
     // Tracking
-    protected            PubnativePlacement mPlacement         = null;
-    protected            boolean            mImpressionTracked = false;
-    protected            boolean            mClickTracked      = false;
+    protected            PubnativeInsightModel mInsightModel      = null;
+    protected            boolean               mImpressionTracked = false;
+    protected            boolean               mClickTracked      = false;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -153,18 +153,18 @@ public abstract class PubnativeAdModel {
     /**
      * Sets extended tracking (used to initialize the view)
      *
-     * @param placement placement model with all the tracking data
+     * @param insightModel insight model with all the tracking data
      */
-    public void setPlacement(PubnativePlacement placement) {
+    public void setInsightModel(PubnativeInsightModel insightModel) {
 
-        Log.v(TAG, "setPlacement");
-        mPlacement = placement;
+        Log.v(TAG, "setInsightModel");
+        mInsightModel = insightModel;
         // We set the creative based on  the model creative
-        if (mPlacement != null) {
-            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mPlacement.getAdFormatCode())) {
-                mPlacement.setCreativeURL(getIconUrl());
+        if (mInsightModel != null) {
+            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mInsightModel.getAdFormat())) {
+                mInsightModel.setCreativeUrl(getIconUrl());
             } else {
-                mPlacement.setCreativeURL(getBannerUrl());
+                mInsightModel.setCreativeUrl(getBannerUrl());
             }
         }
     }
@@ -177,7 +177,7 @@ public abstract class PubnativeAdModel {
         Log.v(TAG, "invokeOnAdImpressionConfirmed");
         if (!mImpressionTracked) {
             mImpressionTracked = true;
-            mPlacement.sendImpressionInsight();
+            mInsightModel.sendImpressionInsight();
             if (mListener != null) {
                 mListener.onAdImpressionConfirmed(this);
             }
@@ -189,7 +189,7 @@ public abstract class PubnativeAdModel {
         Log.v(TAG, "invokeOnAdClick");
         if (!mClickTracked) {
             mClickTracked = true;
-            mPlacement.sendClickInsight();
+            mInsightModel.sendClickInsight();
         }
         if (mListener != null) {
             mListener.onAdClick(this);

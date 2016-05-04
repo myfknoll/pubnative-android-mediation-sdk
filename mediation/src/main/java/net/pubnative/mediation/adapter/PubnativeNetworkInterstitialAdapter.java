@@ -1,16 +1,27 @@
 package net.pubnative.mediation.adapter;
 
-import android.content.Context;
 import android.util.Log;
+
+import java.util.Map;
 
 /**
  * Created by davidmartin on 01/05/16.
  */
-public abstract class PubnativeNetworkInterstitialAdapter {
+public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetworkAdapter {
 
     private static final String TAG = PubnativeNetworkInterstitialAdapter.class.getSimpleName();
-    protected AdListener mAdListener;
+    protected AdListener   mAdListener;
     protected LoadListener mLoadListener;
+
+    /**
+     * Creates a new instance of PubnativeNetworkRequestAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
+    public PubnativeNetworkInterstitialAdapter(Map data) {
+
+        super(data);
+    }
 
     /**
      * Interface for callbacks related to the interstitial view behaviour
@@ -32,6 +43,7 @@ public abstract class PubnativeNetworkInterstitialAdapter {
          */
         void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial, Exception exception);
     }
+
     /**
      * Interface for callbacks related to the interstitial view behaviour
      */
@@ -80,17 +92,16 @@ public abstract class PubnativeNetworkInterstitialAdapter {
         Log.v(TAG, "setAdListener");
         mAdListener = listener;
     }
+    //==============================================================================================
+    // Abstract
+    //==============================================================================================
 
     /**
      * Tells if the interstitial is ready to be shown in the screen
+     *
      * @return true if it's ready, false if it's not
      */
     public abstract boolean isReady();
-
-    /**
-     * Starts loading the interstitial for the adapted network;
-     */
-    public abstract void load(Context context, float timeout);
 
     /**
      * Starts showing the interstitial for the adapted network

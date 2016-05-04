@@ -11,13 +11,9 @@ import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.insights.PubnativeInsightsManager;
-import net.pubnative.mediation.insights.model.PubnativeInsightCrashModel;
-import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
+import net.pubnative.mediation.insights.model.PubnativeInsightModel;
 
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class PubnativePlacement implements PubnativeConfigManager.Listener {
@@ -25,16 +21,15 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     private static final String TAG                           = PubnativePlacement.class.getSimpleName();
     private static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
     private static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
-    protected Context                   mContext;
-    protected Listener                  mListener;
-    protected String                    mAppToken;
-    protected String                    mRequestID;
-    protected String                    mPlacementName;
-    protected PubnativePlacementModel   mPlacementModel;
-    protected PubnativeConfigModel      mConfigModel;
-    protected PubnativeInsightDataModel mInsightModel;
-    protected Map<String, String>       mInsightParameters;
-    protected int                       mCurrentNetworkIndex;
+    protected Context                 mContext;
+    protected Listener                mListener;
+    protected String                  mAppToken;
+    protected String                  mRequestID;
+    protected String                  mPlacementName;
+    protected PubnativePlacementModel mPlacementModel;
+    protected PubnativeConfigModel    mConfigModel;
+    protected PubnativeInsightModel   mInsightModel;
+    protected int                     mCurrentNetworkIndex;
 
     /**
      * Interface for placement callbacks
@@ -82,11 +77,15 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
                 mAppToken = appToken;
                 mPlacementName = placementName;
                 mCurrentNetworkIndex = -1;
-                mInsightModel = new PubnativeInsightDataModel();
                 mRequestID = UUID.randomUUID().toString();
                 PubnativeConfigManager.getConfig(mContext, mAppToken, this);
             }
         }
+    }
+
+    public PubnativeInsightModel getInsightModel() {
+
+        return mInsightModel;
     }
 
     /**
@@ -210,17 +209,6 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     }
 
     /**
-     * Gets tis placement app token
-     *
-     * @return valid app token string
-     */
-    public String getAppToken() {
-
-        Log.v(TAG, "getAppToken");
-        return mAppToken;
-    }
-
-    /**
      * Gets the current priority model
      *
      * @return valid PubnativePriorityRuleModel, null if there are no more
@@ -260,97 +248,87 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
         mCurrentNetworkIndex++;
     }
 
-    public void setCreativeURL(String creativeURL) {
-
-        Log.v(TAG, "setCreativeURL");
-        if (mInsightModel != null) {
-            mInsightModel.creative_url = creativeURL;
-        }
-    }
     //==============================================================================================
-    // Tracking
+    // Tracking data
     //==============================================================================================
 
     /**
-     * Sets the current network as unreachable due to the passed exception
+     * Sets the age for the ad request
      *
-     * @param exception exception with the details of the unreachability
+     * @param age age of the target
      */
-    public void trackUnreachableNetwork(long responseTime, Exception exception) {
+    public void setAge(int age) {
 
-        Log.v(TAG, "trackUnreachableNetwork", exception);
-        PubnativePriorityRuleModel priorityRuleModel = currentPriority();
-        PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
-        crashModel.error = exception.getMessage();
-        crashModel.details = exception.toString();
-        mInsightModel.addUnreachableNetwork(priorityRuleModel.network_code);
-        mInsightModel.addNetwork(priorityRuleModel, responseTime, crashModel);
+        Log.v(TAG, "setAge: " + age);
+        mInsightModel.setAge(age);
     }
 
     /**
-     * Sets the current network as attempted but failed
+     * Sets education for the ad request
      *
-     * @param exception exception with the details
+     * @param education education of the target as string
      */
-    public void trackAttemptedNetwork(long responseTime, Exception exception) {
+    public void setEducation(String education) {
 
-        Log.v(TAG, "trackAttemptedNetwork", exception);
-        PubnativePriorityRuleModel priorityRuleModel = currentPriority();
-        PubnativeInsightCrashModel crashModel = new PubnativeInsightCrashModel();
-        crashModel.error = exception.getMessage();
-        crashModel.details = exception.toString();
-        mInsightModel.addAttemptedNetwork(priorityRuleModel.network_code);
-        mInsightModel.addNetwork(priorityRuleModel, responseTime, crashModel);
+        Log.v(TAG, "setEducation: " + education);
+        mInsightModel.setEducation(education);
     }
 
     /**
-     * Sets the current network as succeded
+     * Adds an interest keyword for the request
+     *
+     * @param interest interest keyword of the target
      */
-    public void trackSuccededNetwork(long responseTime) {
+    public void addInterest(String interest) {
 
-        Log.v(TAG, "trackSuccededNetwork");
-        PubnativePriorityRuleModel priorityRuleModel = currentPriority();
-        mInsightModel.network = priorityRuleModel.network_code;
-        mInsightModel.addNetwork(priorityRuleModel, responseTime, null);
-        PubnativeDeliveryManager.updatePacingCalendar(mPlacementName);
+        Log.v(TAG, "addInterest: " + interest);
+        mInsightModel.addInterest(interest);
     }
 
     /**
-     * Sends request insight data
+     * Possible gender values
      */
-    public void sendRequestInsight() {
-
-        Log.v(TAG, "sendRequestInsight");
-        String baseURL = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.REQUEST_BEACON);
-        PubnativeInsightsManager.trackData(mContext, baseURL, mInsightParameters, mInsightModel);
+    public enum Gender {
+        MALE,
+        FEMALE
     }
 
     /**
-     * Sends impression insight data
+     * Sets the gender of the target
+     *
+     * @param gender gender of the garget as Enum value
      */
-    public void sendImpressionInsight() {
+    public void setGender(Gender gender) {
 
-        Log.v(TAG, "sendImpressionInsight");
-        // TODO: Send impression insight
-        PubnativeDeliveryManager.logImpression(mContext, mPlacementName);
-        String baseURL = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.IMPRESSION_BEACON);
-        PubnativeInsightsManager.trackData(mContext, baseURL, mInsightParameters, mInsightModel);
+        Log.v(TAG, "setGender: " + gender.name());
+        mInsightModel.setGender(gender);mTrackingModel.gender = gender.name().toLowerCase();
     }
 
     /**
-     * Sends a request insight data
+     * Sets a value for the request to tell if the inapp purchased are enabled
+     *
+     * @param iap true if in app purchased are enabled, false if not
      */
-    public void sendClickInsight() {
+    public void setInAppPurchasesEnabled(boolean iap) {
 
-        Log.v(TAG, "sendClickInsight");
-        // TODO: Send click insight
-        String baseURL = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.CLICK_BEACON);
-        PubnativeInsightsManager.trackData(mContext, baseURL, mInsightParameters, mInsightModel);
+        Log.v(TAG, "setInAppPurchasesEnabled: " + iap);
+        mTrackingModel.iap = iap;
+    }
+
+    /**
+     * Sets the total amount spent by this client in in app purchased
+     *
+     * @param iapTotal total amount spent as float
+     */
+    public void setInAppPurchasesTotal(float iapTotal) {
+
+        Log.v(TAG, "setInAppPurchasesTotal: " + iapTotal);
+        mTrackingModel.iap_total = iapTotal;
     }
 
     //==============================================================================================
     // Private methods
-    //==============================================================================================\
+    //==============================================================================================
     protected void configurePlacement() {
 
         PubnativePlacementModel placement = mConfigModel.getPlacement(mPlacementName);
@@ -362,46 +340,80 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
             invokeOnLoadFail(PubnativeException.PLACEMENT_DISABLED);
         } else {
             mPlacementModel = placement;
-            startTracking();
+            mInsightModel = new PubnativeInsightModel(mContext);
+            mInsightModel.setPlacement(mPlacementName);
+            mInsightModel.setSegments(mPlacementModel.delivery_rule.segment_ids);
+            mInsightModel.setAdFormatCode(mPlacementModel.ad_format_code);
+            AdvertisingIdClient.getAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
+
+                @Override
+                public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
+
+                    if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
+                        mInsightModel.setUserId(adInfo.getId());
+                    }
+                    startTracking();
+                }
+
+                @Override
+                public void onAdvertisingIdClientFail(Exception exception) {
+
+                    startTracking();
+                }
+            });
         }
     }
 
     protected void startTracking() {
 
-        mInsightModel = new PubnativeInsightDataModel();
-        mInsightModel.reset();
-        mInsightModel.fillDefaults(mContext);
-        mInsightModel.placement_name = mPlacementName;
-        mInsightModel.delivery_segment_ids = mPlacementModel.delivery_rule.segment_ids;
-        mInsightModel.ad_format_code = mPlacementModel.ad_format_code;
-        // Gather needed data
-        Log.v(TAG, "getTrackingParameters");
-        mInsightParameters = new HashMap<String, String>();
-        mInsightParameters.put(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
-        mInsightParameters.put(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
+        Log.v(TAG, "startTracking");
+        String requestUrl = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.REQUEST_BEACON);
+        String impressionUrl = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.IMPRESSION_BEACON);
+        String clickUrl = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.CLICK_BEACON);
+        mInsightModel.setInsightURLs(requestUrl, impressionUrl, clickUrl);
+        mInsightModel.addExtra(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
+        mInsightModel.addExtra(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
         if (mConfigModel.request_params != null) {
             for (String key : mConfigModel.request_params.keySet()) {
                 String value = mConfigModel.request_params.get(key);
-                mInsightParameters.put(key, value);
+                mInsightModel.addExtra(key, value);
             }
         }
-        AdvertisingIdClient.getAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
+        invokeOnReady();
+    }
 
-            @Override
-            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
+    //==============================================================================================
+    // Private methods
+    //==============================================================================================
+    /**
+     * Sets the current network as unreachable due to the passed exception
+     *
+     * @param exception exception with the details of the unreachability
+     */
+    public void trackUnreachableNetwork(long responseTime, Exception exception) {
 
-                if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
-                    mInsightModel.user_uid = adInfo.getId();
-                }
-                invokeOnReady();
-            }
+        Log.v(TAG, "trackUnreachableNetwork", exception);
+        mInsightModel.trackUnreachableNetwork(currentPriority(), responseTime, exception);
+    }
 
-            @Override
-            public void onAdvertisingIdClientFail(Exception exception) {
+    /**
+     * Sets the current network as attempted but failed
+     *
+     * @param exception exception with the details
+     */
+    public void trackAttemptedNetwork(long responseTime, Exception exception) {
 
-                invokeOnReady();
-            }
-        });
+        Log.v(TAG, "trackAttemptedNetwork", exception);
+        mInsightModel.trackAttemptedNetwork(currentPriority(), responseTime, exception);
+    }
+
+    /**
+     * Sets the current network as succeded
+     */
+    public void trackSuccededNetwork(long responseTime) {
+
+        Log.v(TAG, "trackSuccededNetwork");
+        mInsightModel.trackSuccededNetwork(currentPriority(), responseTime);
     }
 
     //==============================================================================================

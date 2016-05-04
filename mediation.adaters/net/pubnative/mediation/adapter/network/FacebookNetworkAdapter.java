@@ -32,13 +32,13 @@ import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
 import com.facebook.ads.NativeAd;
 
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
+import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements AdListener {
+public class FacebookNetworkAdapter extends PubnativeNetworkRequestAdapter implements AdListener {
 
     private static         String TAG              = FacebookNetworkAdapter.class.getSimpleName();
     protected static final String KEY_PLACEMENT_ID = "placement_id";
@@ -52,10 +52,9 @@ public class FacebookNetworkAdapter extends PubnativeNetworkAdapter implements A
     //==============================================================================================
     // PubnativeNetworkAdapter methods
     //==============================================================================================
-    @Override
-    public void request(Context context) {
+    public void start(Context context) {
 
-        Log.v(TAG, "request");
+        Log.v(TAG, "start");
         if (context != null && mData != null) {
             String placementId = (String) mData.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
