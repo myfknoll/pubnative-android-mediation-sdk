@@ -38,7 +38,7 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel.ConfigContract
     //==============================================================================================
-    public interface GLOBAL{
+    public interface GLOBAL {
 
         String REFRESH           = "refresh";
         String IMPRESSION_BEACON = "impression_beacon";
@@ -50,18 +50,22 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel
     //==============================================================================================
-    public boolean isNullOrEmpty() {
+    public static boolean isNullOrEmpty(PubnativeConfigModel model) {
 
         Log.v(TAG, "isNullOrEmpty");
-        return this.networks == null || this.placements == null || this.networks.size() == 0 || this.placements.size() == 0;
+        return model == null
+               || model.networks == null
+               || model.placements == null
+               || model.networks.size() == 0
+               || model.placements.size() == 0;
     }
 
     public Object getGlobal(String globalKey) {
 
         Log.v(TAG, "getGlobal: " + globalKey);
         Object result = null;
-        if (this.globals != null) {
-            result = this.globals.get(globalKey);
+        if (globals != null) {
+            result = globals.get(globalKey);
         }
         return result;
     }
@@ -70,8 +74,8 @@ public class PubnativeConfigModel {
 
         Log.v(TAG, "getPlacement: " + placementID);
         PubnativePlacementModel result = null;
-        if (this.placements != null) {
-            result = this.placements.get(placementID);
+        if (placements != null) {
+            result = placements.get(placementID);
         }
         return result;
     }
@@ -80,8 +84,8 @@ public class PubnativeConfigModel {
 
         Log.v(TAG, "getNetwork: " + networkID);
         PubnativeNetworkModel result = null;
-        if (this.networks != null) {
-            result = this.networks.get(networkID);
+        if (networks != null) {
+            result = networks.get(networkID);
         }
         return result;
     }

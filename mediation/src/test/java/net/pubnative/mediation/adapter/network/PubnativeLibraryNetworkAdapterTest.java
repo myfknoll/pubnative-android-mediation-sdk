@@ -69,7 +69,7 @@ public class PubnativeLibraryNetworkAdapterTest {
     public void verifyCallbacksWithValidParams() {
         Map<String, String> data = mock(HashMap.class);
         PubnativeNetworkRequestAdapter.Listener listenerSpy = spy(PubnativeNetworkRequestAdapter.Listener.class);
-        PubnativeLibraryNetworkRequestAdapter adapterSpy  = spy(new PubnativeLibraryNetworkRequestAdapter(data));
+        PubnativeLibraryNetworkAdapter adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
         stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
         adapterSpy.doRequest(applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
@@ -82,12 +82,12 @@ public class PubnativeLibraryNetworkAdapterTest {
     public void verifyCallbacksOnPubnativeLibraryFailure() {
         Map<String, String> data = mock(HashMap.class);
         PubnativeNetworkRequestAdapter.Listener listenerSpy = spy(PubnativeNetworkRequestAdapter.Listener.class);
-        PubnativeLibraryNetworkRequestAdapter adapterSpy  = spy(new PubnativeLibraryNetworkRequestAdapter(data));
+        PubnativeLibraryNetworkAdapter adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(data));
 
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                PubnativeLibraryNetworkRequestAdapter adapter = (PubnativeLibraryNetworkRequestAdapter) invocation.getMock();
+                PubnativeLibraryNetworkAdapter adapter = (PubnativeLibraryNetworkAdapter) invocation.getMock();
                 adapter.onPubnativeRequestFailed(mock(PubnativeRequest.class), mock(Exception.class));
                 return null;
             }
@@ -100,7 +100,7 @@ public class PubnativeLibraryNetworkAdapterTest {
     @Test
     public void verifyCallbacksWithNotNullDataButNoAppToken() {
         PubnativeNetworkRequestAdapter.Listener listenerSpy = spy(PubnativeNetworkRequestAdapter.Listener.class);
-        PubnativeLibraryNetworkRequestAdapter adapterSpy  = spy(new PubnativeLibraryNetworkRequestAdapter(null));
+        PubnativeLibraryNetworkAdapter adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
         adapterSpy.doRequest(applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
@@ -110,24 +110,24 @@ public class PubnativeLibraryNetworkAdapterTest {
     @Test
     public void verifyCallbacksWithNullData() {
         PubnativeNetworkRequestAdapter.Listener listenerSpy = spy(PubnativeNetworkRequestAdapter.Listener.class);
-        PubnativeLibraryNetworkRequestAdapter adapterSpy  = spy(new PubnativeLibraryNetworkRequestAdapter(null));
+        PubnativeLibraryNetworkAdapter adapterSpy  = spy(new PubnativeLibraryNetworkAdapter(null));
         stubCreateRequestMethodWithRequestFinishedCallback(adapterSpy);
 
         adapterSpy.doRequest(applicationContext, TIMEOUT_DEACTIVATED, listenerSpy);
         failCallbacksWhenInvalidDataProvided(adapterSpy, listenerSpy);
     }
 
-    private void failCallbacksWhenInvalidDataProvided(PubnativeLibraryNetworkRequestAdapter adapter, PubnativeNetworkRequestAdapter.Listener listener) {
+    private void failCallbacksWhenInvalidDataProvided(PubnativeLibraryNetworkAdapter adapter, PubnativeNetworkRequestAdapter.Listener listener) {
         verify(listener, times(1)).onPubnativeNetworkAdapterRequestStarted(eq(adapter));
         verify(listener, times(1)).onPubnativeNetworkAdapterRequestFailed(eq(adapter), any(Exception.class));
         verify(listener, never()).onPubnativeNetworkAdapterRequestLoaded(eq(adapter), any(PubnativeAdModel.class));
     }
 
-    private void stubCreateRequestMethodWithRequestFinishedCallback(PubnativeLibraryNetworkRequestAdapter adapterMock) {
+    private void stubCreateRequestMethodWithRequestFinishedCallback(PubnativeLibraryNetworkAdapter adapterMock) {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                PubnativeLibraryNetworkRequestAdapter adapter = (PubnativeLibraryNetworkRequestAdapter) invocation.getMock();
+                PubnativeLibraryNetworkAdapter adapter = (PubnativeLibraryNetworkAdapter) invocation.getMock();
                 adapter.onPubnativeRequestSuccess(mock(PubnativeRequest.class), mock(ArrayList.class));
                 return null;
             }

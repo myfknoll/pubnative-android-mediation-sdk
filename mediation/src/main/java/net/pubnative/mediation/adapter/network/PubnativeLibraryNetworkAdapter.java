@@ -35,11 +35,11 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 import java.util.List;
 import java.util.Map;
 
-public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements PubnativeRequest.Listener{
+public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkRequestAdapter implements PubnativeRequest.Listener{
 
-    private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
+    private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
 
-    public PubnativeLibraryNetworkRequestAdapter(Map data) {
+    public PubnativeLibraryNetworkAdapter(Map data) {
 
         super(data);
     }
@@ -58,7 +58,7 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
     }
 
     //==============================================================================================
-    // PubnativeLibraryNetworkRequestAdapter methods
+    // PubnativeLibraryNetworkAdapter methods
     //==============================================================================================
     protected void createRequest(Context context) {
 

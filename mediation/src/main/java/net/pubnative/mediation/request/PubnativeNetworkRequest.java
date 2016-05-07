@@ -34,8 +34,8 @@ import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.config.PubnativePlacement;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.HashMap;
@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.Listener {
 
-    private static       String TAG                           = PubnativeNetworkRequest.class.getSimpleName();
+    private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
     protected Context                          mContext;
     protected PubnativeNetworkRequest.Listener mListener;
     protected PubnativePlacement               mPlacement;
@@ -51,6 +51,8 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
     protected long                             mRequestStartTimestamp;
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
+    protected PubnativeAdTargetingModel        mTargeting;
+    ;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -115,77 +117,14 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
     //==============================================================================================
 
     /**
-     * Sets the age for the ad request
+     * Sets the targeting model for the request
      *
-     * @param age age of the target
+     * @param targeting targeting model with extended targeting config
      */
-    public void setAge(int age) {
+    public void setTargeting(PubnativeAdTargetingModel targeting) {
 
-        Log.v(TAG, "setAge: " + age);
-        mTrackingModel.age = age;
-    }
-
-    /**
-     * Sets education for the ad request
-     *
-     * @param education education of the target as string
-     */
-    public void setEducation(String education) {
-
-        Log.v(TAG, "setEducation: " + education);
-        mTrackingModel.education = education;
-    }
-
-    /**
-     * Adds an interest keyword for the request
-     *
-     * @param interest interest keyword of the target
-     */
-    public void addInterest(String interest) {
-
-        Log.v(TAG, "addInterest: " + interest);
-        mTrackingModel.addInterest(interest);
-    }
-
-    /**
-     * Possible gender values
-     */
-    public enum Gender {
-        MALE,
-        FEMALE
-    }
-
-    /**
-     * Sets the gender of the target
-     *
-     * @param gender gender of the garget as Enum value
-     */
-    public void setGender(Gender gender) {
-
-        Log.v(TAG, "setGender: " + gender.name());
-        mTrackingModel.gender = gender.name().toLowerCase();
-    }
-
-    /**
-     * Sets a value for the request to tell if the inapp purchased are enabled
-     *
-     * @param iap true if in app purchased are enabled, false if not
-     */
-    public void setInAppPurchasesEnabled(boolean iap) {
-
-        Log.v(TAG, "setInAppPurchasesEnabled: " + iap);
-        mTrackingModel.iap = iap;
-    }
-
-    /**
-     * Sets the total amount spent by this client in in app purchased
-     *
-     * @param iapTotal total amount spent as float
-     */
-    public void setInAppPurchasesTotal(float iapTotal) {
-
-        Log.v(TAG, "setInAppPurchasesTotal: " + iapTotal);
-        mTrackingModel.iap_total = iapTotal;
+        Log.v(TAG, "setTargeting");
+        mTargeting = targeting;
     }
 
     //==============================================================================================
@@ -198,6 +137,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             mContext = context;
             mPlacement = new PubnativePlacement();
+            mPlacement.setTargeting(mTargeting);
             mPlacement.load(mContext, appToken, placementName, new PubnativePlacement.Listener() {
 
                 @Override
@@ -253,6 +193,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
                 // Add ML extras for adapter
                 Map<String, String> extras = new HashMap<String, String>();
                 extras.put(PubnativeNetworkRequestAdapter.EXTRA_REQID, mPlacement.getTrackingUUID());
+                if(mTargeting != null) {
+                    extras.putAll(mTargeting.toDictionary());
+                }
                 adapter.setExtras(extras);
                 adapter.setListener(this);
                 adapter.execute(mContext, networkModel.timeout);

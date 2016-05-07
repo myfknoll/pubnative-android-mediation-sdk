@@ -12,8 +12,10 @@ import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.insights.model.PubnativeInsightModel;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 import java.util.Calendar;
+import java.util.Map;
 import java.util.UUID;
 
 public class PubnativePlacement implements PubnativeConfigManager.Listener {
@@ -21,15 +23,16 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     private static final String TAG                           = PubnativePlacement.class.getSimpleName();
     private static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
     private static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
-    protected Context                 mContext;
-    protected Listener                mListener;
-    protected String                  mAppToken;
-    protected String                  mRequestID;
-    protected String                  mPlacementName;
-    protected PubnativePlacementModel mPlacementModel;
-    protected PubnativeConfigModel    mConfigModel;
-    protected PubnativeInsightModel   mInsightModel;
-    protected int                     mCurrentNetworkIndex;
+    protected Context                   mContext;
+    protected Listener                  mListener;
+    protected String                    mAppToken;
+    protected String                    mRequestID;
+    protected String                    mPlacementName;
+    protected PubnativePlacementModel   mPlacementModel;
+    protected PubnativeConfigModel      mConfigModel;
+    protected PubnativeInsightModel     mInsightModel;
+    protected PubnativeAdTargetingModel mTargetingModel;
+    protected int                       mCurrentNetworkIndex;
 
     /**
      * Interface for placement callbacks
@@ -78,13 +81,18 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
                 mPlacementName = placementName;
                 mCurrentNetworkIndex = -1;
                 mRequestID = UUID.randomUUID().toString();
-                PubnativeConfigManager.getConfig(mContext, mAppToken, this);
+                Map extras = null;
+                if(mTargetingModel != null) {
+                    extras = mTargetingModel.toDictionary();
+                }
+                PubnativeConfigManager.getConfig(mContext, mAppToken, extras, this);
             }
         }
     }
 
     public PubnativeInsightModel getInsightModel() {
 
+        Log.v(TAG, "getInsightModel");
         return mInsightModel;
     }
 
@@ -247,83 +255,22 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
         Log.v(TAG, "next");
         mCurrentNetworkIndex++;
     }
-
     //==============================================================================================
     // Tracking data
     //==============================================================================================
 
     /**
-     * Sets the age for the ad request
+     * Sets the targetting data in the tracking model
      *
-     * @param age age of the target
+     * @param targeting valid targeting item, null if not
      */
-    public void setAge(int age) {
+    public void setTargeting(PubnativeAdTargetingModel targeting) {
 
-        Log.v(TAG, "setAge: " + age);
-        mInsightModel.setAge(age);
-    }
-
-    /**
-     * Sets education for the ad request
-     *
-     * @param education education of the target as string
-     */
-    public void setEducation(String education) {
-
-        Log.v(TAG, "setEducation: " + education);
-        mInsightModel.setEducation(education);
-    }
-
-    /**
-     * Adds an interest keyword for the request
-     *
-     * @param interest interest keyword of the target
-     */
-    public void addInterest(String interest) {
-
-        Log.v(TAG, "addInterest: " + interest);
-        mInsightModel.addInterest(interest);
-    }
-
-    /**
-     * Possible gender values
-     */
-    public enum Gender {
-        MALE,
-        FEMALE
-    }
-
-    /**
-     * Sets the gender of the target
-     *
-     * @param gender gender of the garget as Enum value
-     */
-    public void setGender(Gender gender) {
-
-        Log.v(TAG, "setGender: " + gender.name());
-        mInsightModel.setGender(gender);mTrackingModel.gender = gender.name().toLowerCase();
-    }
-
-    /**
-     * Sets a value for the request to tell if the inapp purchased are enabled
-     *
-     * @param iap true if in app purchased are enabled, false if not
-     */
-    public void setInAppPurchasesEnabled(boolean iap) {
-
-        Log.v(TAG, "setInAppPurchasesEnabled: " + iap);
-        mTrackingModel.iap = iap;
-    }
-
-    /**
-     * Sets the total amount spent by this client in in app purchased
-     *
-     * @param iapTotal total amount spent as float
-     */
-    public void setInAppPurchasesTotal(float iapTotal) {
-
-        Log.v(TAG, "setInAppPurchasesTotal: " + iapTotal);
-        mTrackingModel.iap_total = iapTotal;
+        Log.v(TAG, "setTargeting");
+        if (targeting != null) {
+            mTargetingModel = targeting;
+            mInsightModel.setTargeting(targeting);
+        }
     }
 
     //==============================================================================================
@@ -381,10 +328,10 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
         }
         invokeOnReady();
     }
-
     //==============================================================================================
     // Private methods
     //==============================================================================================
+
     /**
      * Sets the current network as unreachable due to the passed exception
      *
@@ -443,9 +390,8 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     @Override
     public void onConfigLoaded(PubnativeConfigModel config) {
 
-        if (config == null ||
-            config.isNullOrEmpty()) {
-            invokeOnLoadFail(PubnativeException.PLACEMENT_CONFIG_INVALID);
+        if (PubnativeConfigModel.isNullOrEmpty(config)) {
+                invokeOnLoadFail(PubnativeException.PLACEMENT_CONFIG_INVALID);
         } else {
             mConfigModel = config;
             configurePlacement();

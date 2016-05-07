@@ -6,6 +6,7 @@ import android.util.Log;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.insights.PubnativeInsightsManager;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,83 +66,21 @@ public class PubnativeInsightModel {
 
         mData.user_uid = uid;
     }
-
     //==============================================================================================
     // Tracking data
     //==============================================================================================
 
     /**
-     * Sets the age for the ad request
+     * Sets the data targeting values
      *
-     * @param age age of the target
+     * @param targeting valid targeting model
      */
-    public void setAge(int age) {
+    public void setTargeting(PubnativeAdTargetingModel targeting) {
 
-        Log.v(TAG, "setAge: " + age);
-        mData.age = age;
-    }
-
-    /**
-     * Sets education for the ad request
-     *
-     * @param education education of the target as string
-     */
-    public void setEducation(String education) {
-
-        Log.v(TAG, "setEducation: " + education);
-        mData.education = education;
-    }
-
-    /**
-     * Adds an interest keyword for the request
-     *
-     * @param interest interest keyword of the target
-     */
-    public void addInterest(String interest) {
-
-        Log.v(TAG, "addInterest: " + interest);
-        mData.addInterest(interest);
-    }
-
-    /**
-     * Possible gender values
-     */
-    public enum Gender {
-        MALE,
-        FEMALE
-    }
-
-    /**
-     * Sets the gender of the target
-     *
-     * @param gender gender of the garget as Enum value
-     */
-    public void setGender(Gender gender) {
-
-        Log.v(TAG, "setGender: " + gender.name());
-        mData.gender = gender.name().toLowerCase();
-    }
-
-    /**
-     * Sets a value for the request to tell if the inapp purchased are enabled
-     *
-     * @param iap true if in app purchased are enabled, false if not
-     */
-    public void setInAppPurchasesEnabled(boolean iap) {
-
-        Log.v(TAG, "setInAppPurchasesEnabled: " + iap);
-        mData.iap = iap;
-    }
-
-    /**
-     * Sets the total amount spent by this client in in app purchased
-     *
-     * @param iapTotal total amount spent as float
-     */
-    public void setInAppPurchasesTotal(float iapTotal) {
-
-        Log.v(TAG, "setInAppPurchasesTotal: " + iapTotal);
-        mData.iap_total = iapTotal;
+        Log.v(TAG, "setTargeting");
+        if (targeting != null) {
+            mData.setTargetting(targeting);
+        }
     }
 
     /**
@@ -151,6 +90,7 @@ public class PubnativeInsightModel {
      */
     public String getAdFormat() {
 
+        Log.v(TAG, "getAdFormat");
         return mData.ad_format_code;
     }
 
@@ -189,6 +129,7 @@ public class PubnativeInsightModel {
      */
     public void setInsightURLs(String requestUrl, String impressionUrl, String clickUrl) {
 
+        Log.v(TAG, "setInsightURLs");
         mRequestInsightURL = requestUrl;
         mImpressionInsightURL = impressionUrl;
         mClickInsightURL = clickUrl;

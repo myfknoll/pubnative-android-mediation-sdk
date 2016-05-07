@@ -23,15 +23,11 @@
 
 package net.pubnative.mediation.request.model;
 
-import android.content.Context;
-
 import net.pubnative.mediation.BuildConfig;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.spy;
@@ -39,15 +35,6 @@ import static org.mockito.Mockito.spy;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class PubnativeAdModelTest {
-
-    private static final String SAMPLE_URL = "http://pubnative.net";
-
-    private Context appContext = null;
-
-    @Before
-    public void setUp() {
-        this.appContext = RuntimeEnvironment.application.getApplicationContext();
-    }
 
     @Test
     public void callbackWithNullListenerDoesNothing() {

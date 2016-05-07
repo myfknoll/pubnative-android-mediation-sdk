@@ -31,8 +31,8 @@ import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.pubnative.AdvertisingIdClient;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.ArrayList;
@@ -168,22 +168,6 @@ public class PubnativeInsightDataModel {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Adds interest to the insight data mode
-     *
-     * @param interest String
-     */
-    public void addInterest(String interest) {
-
-        Log.v(TAG, "addInterest: " + interest);
-        if (!TextUtils.isEmpty(interest)) {
-            if (interests == null) {
-                interests = new ArrayList<String>();
-            }
-            interests.add(interest);
-        }
-    }
-
-    /**
      * Adds network insight data to the insight
      *
      * @param priorityRuleModel valid PubnativePriorityRuleModel object
@@ -287,5 +271,16 @@ public class PubnativeInsightDataModel {
                 }
             }
         }
+    }
+
+    public void setTargetting(PubnativeAdTargetingModel targetting) {
+
+        Log.v(TAG, "setTargeting");
+        age = targetting.age;
+        education = targetting.education;
+        interests = targetting.interests;
+        gender = targetting.gender;
+        iap = targetting.iap;
+        iap_total = targetting.iap_total;
     }
 }

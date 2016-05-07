@@ -26,7 +26,6 @@ package net.pubnative.mediation.insights;
 import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,15 +40,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Config(constants = BuildConfig.class)
 public class PubnativeInsightsManagerTest {
 
-    private PubnativeInsightDataModel insightDataModel = null;
     private Context                   appContext       = null;
-    private String                    sampleURL        = "http://pubnative.net";
 
     @Before
     public void setUp() {
         appContext = RuntimeEnvironment.application.getApplicationContext();
-        // Gson() gives error when mock/spy of PubnativeInsightDataModel
-        insightDataModel = new PubnativeInsightDataModel();
     }
 
     @Test
@@ -59,6 +54,4 @@ public class PubnativeInsightsManagerTest {
         // assert that the pending items queue is empty at the beginning
         assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
     }
-
-    // TODO: Test that ensures that a failing request is re-queued
 }
