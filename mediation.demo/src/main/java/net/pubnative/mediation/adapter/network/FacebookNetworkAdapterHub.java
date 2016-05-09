@@ -32,19 +32,18 @@ import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
 import com.facebook.ads.NativeAd;
 
-import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class FacebookNetworkAdapter extends PubnativeNetworkRequestAdapter implements AdListener {
+public class FacebookNetworkAdapterHub extends PubnativeNetworkRequestAdapter implements AdListener {
 
-    private static         String TAG              = FacebookNetworkAdapter.class.getSimpleName();
+    private static         String TAG              = FacebookNetworkAdapterHub.class.getSimpleName();
     protected static final String KEY_PLACEMENT_ID = "placement_id";
     protected NativeAd mNativeAd;
 
-    public FacebookNetworkAdapter(Map data) {
+    public FacebookNetworkAdapterHub(Map data) {
 
         super(data);
     }
@@ -54,7 +53,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkRequestAdapter imple
     //==============================================================================================
     public void start(Context context) {
 
-        Log.v(TAG, "start");
+        Log.v(TAG, "execute");
         if (context != null && mData != null) {
             String placementId = (String) mData.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
@@ -68,7 +67,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkRequestAdapter imple
     }
 
     //==============================================================================================
-    // FacebookNetworkAdapter methods
+    // FacebookNetworkAdapterHub methods
     //==============================================================================================
     protected void createRequest(Context context, String placementId) {
 
@@ -98,7 +97,7 @@ public class FacebookNetworkAdapter extends PubnativeNetworkRequestAdapter imple
                     1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(new Exception("FacebookNetworkAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+                    invokeFailed(new Exception("FacebookNetworkAdapterHub -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
                 }
             }
         }

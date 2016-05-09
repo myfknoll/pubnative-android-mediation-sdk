@@ -21,23 +21,32 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.adapter.network;
+package net.pubnative.mediation.adapter;
 
-import net.pubnative.mediation.adapter.PubnativeNetworkHub;
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 
-public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
+import org.junit.Test;
 
-    private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
-    @Override
-    public PubnativeNetworkRequestAdapter getRequestAdapter() {
+public class PubnativeNetworkHubFactoryTest {
 
-        return new PubnativeLibraryNetworkRequestAdapter(mNetworkData);
+    @Test
+    public void createHub_withInvalidAdapterName_returnsNull() {
+
+        PubnativeNetworkModel model = spy(PubnativeNetworkModel.class);
+        model.adapter = "invalid_class_string";
+        PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(model);
+        assertThat(hub).isNull();
     }
 
-    @Override
-    public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
+    @Test
+    public void createHub_withNullAdapterName_returnsNull() {
 
-        return null;
+        PubnativeNetworkModel model = spy(PubnativeNetworkModel.class);
+        model.adapter = null;
+        PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(model);
+        assertThat(hub).isNull();
     }
 }

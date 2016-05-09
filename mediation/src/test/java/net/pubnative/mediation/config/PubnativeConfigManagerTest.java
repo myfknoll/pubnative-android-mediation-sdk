@@ -50,7 +50,7 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void updateConfig_WithEmptyConfigModel_DoNotSetsConfig() {
+    public void updateConfig_withEmptyConfigModel_doNotSetsConfig() {
 
         PubnativeConfigModel model = PubnativeConfigTestUtils.getTestConfig("empty_config.json");
         PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), TEST_APP_TOKEN_VALUE, model);
@@ -61,7 +61,7 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void updateConfg_WithValidConfig_SetsConfigAppTokenRefreshAndTimestamp() {
+    public void updateConfig_withValidConfig_setsConfigAppTokenRefreshAndTimestamp() {
 
         PubnativeConfigModel model = PubnativeConfigTestUtils.getTestConfig("valid_config.json");
         PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), TEST_APP_TOKEN_VALUE, model);
@@ -72,7 +72,7 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void updateConfig_WithNullContext_DoNotSetsConfig() {
+    public void updateConfig_withNullContext_doNotSetsConfig() {
 
         PubnativeConfigManager.updateConfig(null, TEST_APP_TOKEN_VALUE, mock(PubnativeConfigModel.class));
         assertThat(PubnativeConfigManager.getStoredConfigString(RuntimeEnvironment.application.getApplicationContext())).isNull();
@@ -82,7 +82,7 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void updateConfig_WithNullAppToken_DoNotSetsConfig() {
+    public void updateConfig_withNullAppToken_doNotSetsConfig() {
 
         PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), null, mock(PubnativeConfigModel.class));
         assertThat(PubnativeConfigManager.getStoredConfigString(RuntimeEnvironment.application.getApplicationContext())).isNull();
@@ -92,7 +92,7 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void updateConfig_WithEmptyAppToken_DoNotSetsConfig() {
+    public void updateConfig_withEmptyAppToken_doNotSetsConfig() {
 
         PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), "", mock(PubnativeConfigModel.class));
         assertThat(PubnativeConfigManager.getStoredConfigString(RuntimeEnvironment.application.getApplicationContext())).isNull();
@@ -102,7 +102,7 @@ public class PubnativeConfigManagerTest {
     }
 
     @Test
-    public void updateConfig_WithNullConfig_DoNotSetsConfig() {
+    public void updateConfig_withNullConfig_doNotSetsConfig() {
 
         PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), "", null);
         assertThat(PubnativeConfigManager.getStoredConfigString(RuntimeEnvironment.application.getApplicationContext())).isNull();

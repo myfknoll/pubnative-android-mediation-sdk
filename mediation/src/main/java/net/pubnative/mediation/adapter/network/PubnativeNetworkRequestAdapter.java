@@ -21,8 +21,9 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.adapter;
+package net.pubnative.mediation.adapter.network;
 
+import android.content.Context;
 import android.util.Log;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
@@ -32,10 +33,9 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAdapter {
 
-    private static String TAG         = PubnativeNetworkRequestAdapter.class.getSimpleName();
-    public static  String EXTRA_REQID = "reqid";
+    private static String TAG = PubnativeNetworkRequestAdapter.class.getSimpleName();
+    public static String EXTRA_REQUEST_ID = "reqid";
     protected Listener            mListener;
-    protected Map<String, String> mExtras;
 
     /**
      * Listener
@@ -77,43 +77,38 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
     }
 
     /**
-     * get extras map setted to the adapter when doing the request
-     *
-     * @return extras Map setted when doing the request
-     */
-    public Map<String, String> getExtras() {
-
-        Log.v(TAG, "getExtras");
-        return mExtras;
-    }
-
-    /**
-     * This method sets the extras for the adapter request
-     *
-     * @param extras valid extras Map
-     */
-    public void setExtras(Map<String, String> extras) {
-
-        Log.v(TAG, "setExtras");
-        mExtras = extras;
-    }
-
-    /**
      * Sets listener for this request
+     *
      * @param listener valid listener
      */
     public void setListener(Listener listener) {
 
+        Log.v(TAG, "setListener");
         mListener = listener;
     }
 
+    @Override
+    public void execute(Context context, int timeoutInMillis) {
+
+        invokeStart();
+        startTimeout(timeoutInMillis);
+        request(context);
+    }
+
+    @Override
     protected void onTimeout() {
 
         invokeFailed(PubnativeException.ADAPTER_TIMEOUT);
     }
 
+    //==============================================================================================
+    // Abstract methods
+    //==============================================================================================
+    protected abstract void request(Context context);
+
+    //==============================================================================================
     // Callback helpers
-    //----------------------------------------------------------------------------------------------
+    //==============================================================================================
     protected void invokeStart() {
 
         Log.v(TAG, "invokeStart");

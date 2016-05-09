@@ -37,14 +37,14 @@ import static org.mockito.Mockito.spy;
 public class PubnativeAdModelTest {
 
     @Test
-    public void invokeOnAdImpressionConfirmed_WithNullListener_Pass(){
+    public void invokeOnAdImpressionConfirmed_withNullListener_pass(){
 
         PubnativeAdModel model = spy(PubnativeAdModel.class);
         model.invokeOnAdImpressionConfirmed();
     }
 
     @Test
-    public void invokeOnAdClick_WithNullListener_Pass(){
+    public void invokeOnAdClick_withNullListener_pass(){
         PubnativeAdModel model = spy(PubnativeAdModel.class);
         model.invokeOnAdClick();
     }

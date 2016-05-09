@@ -21,7 +21,48 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.adapter;
+package net.pubnative.mediation.adapter.network;
 
-public class PubnativeNetworkRequestAdapterTest {
+import android.content.Context;
+
+import java.util.Map;
+
+public class PubnativeLibraryNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
+
+    private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
+
+    /**
+     * Creates a new instance of PubnativeNetworkRequestAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
+    public PubnativeLibraryNetworkInterstitialAdapter(Map data) {
+
+        super(data);
+    }
+
+    //==============================================================================================
+    // PubnativeNetworkInterstitialAdapter
+    //==============================================================================================
+
+    @Override
+    public void load(Context context) {
+        // TODO: Load
+    }
+
+    @Override
+    public boolean isReady() {
+
+        return false;
+    }
+
+    @Override
+    public void show() {
+        // TODO: Show
+    }
+
+    @Override
+    public void destroy() {
+        // TODO: Destroy
+    }
 }

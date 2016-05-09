@@ -1,6 +1,9 @@
-package net.pubnative.mediation.adapter;
+package net.pubnative.mediation.adapter.network;
 
+import android.content.Context;
 import android.util.Log;
+
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -92,9 +95,34 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
         Log.v(TAG, "setAdListener");
         mAdListener = listener;
     }
+
+    //==============================================================================================
+    // PubnativeNetworkAdapter
+    //==============================================================================================
+    @Override
+    protected void onTimeout() {
+
+        invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
+    }
+
+    @Override
+    public void execute(Context context, int timeoutInMillis) {
+
+        startTimeout(timeoutInMillis);
+        load(context);
+    }
     //==============================================================================================
     // Abstract
     //==============================================================================================
+
+    /**
+     * Starts loading the interstitial ad
+     *
+     * @param context valid Context
+     *
+     * @return true if it's ready, false if it's not
+     */
+    public abstract void load(Context context);
 
     /**
      * Tells if the interstitial is ready to be shown in the screen
@@ -122,6 +150,7 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFinish(this);
         }
+        mLoadListener = null;
     }
 
     protected void invokeLoadFail(Exception exception) {
@@ -130,6 +159,7 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFail(this, exception);
         }
+        mLoadListener = null;
     }
 
     protected void invokeShow() {

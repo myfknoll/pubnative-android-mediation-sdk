@@ -1,4 +1,4 @@
-package net.pubnative.mediation.adapter;
+package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.os.Handler;
@@ -7,9 +7,6 @@ import android.util.Log;
 
 import java.util.Map;
 
-/**
- * Created by davidmartin on 04/05/16.
- */
 public abstract class PubnativeNetworkAdapter {
 
     private static String TAG = PubnativeNetworkAdapter.class.getSimpleName();
@@ -17,7 +14,6 @@ public abstract class PubnativeNetworkAdapter {
     protected Map                             mData;
     protected Map<String, String>             mExtras;
     protected Handler                         mHandler;
-
     //==============================================================================================
     // Adapter Runnable
     //==============================================================================================
@@ -33,7 +29,6 @@ public abstract class PubnativeNetworkAdapter {
             onTimeout();
         }
     }
-
     //==============================================================================================
     // PubnativeNetworkAdapter
     //==============================================================================================
@@ -49,17 +44,6 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
-     * get extras map setted to the adapter when doing the request
-     *
-     * @return extras Map setted when doing the request
-     */
-    public Map<String, String> getExtras() {
-
-        Log.v(TAG, "getExtras");
-        return mExtras;
-    }
-
-    /**
      * This method sets the extras for the adapter request
      *
      * @param extras valid extras Map
@@ -71,26 +55,18 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
-     * This method starts the adapter action
+     * Starts this adapter process
      *
      * @param context         valid context
-     * @param timeoutInMillis timeout in milliseconds. time to wait for an adapter to respond.
+     * @param timeoutInMillis timeout in milliseconds, if 0, then no timeout is set
      */
-    public void execute(Context context, int timeoutInMillis) {
-
-        Log.v(TAG, "execute");
-        startTimeout(timeoutInMillis);
-        start(context);
-    }
-
-    protected abstract void start(Context context);
+    public abstract void execute(Context context, int timeoutInMillis);
 
     protected abstract void onTimeout();
 
-    //----------------------------------------------------------------------------------------------
+    //==============================================================================================
     // Timeout helpers
-    //----------------------------------------------------------------------------------------------
-
+    //==============================================================================================
     protected void startTimeout(int timeoutInMillis) {
 
         Log.v(TAG, "startTimeout");

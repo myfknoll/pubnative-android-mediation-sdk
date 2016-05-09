@@ -14,9 +14,8 @@ public class PubnativeException extends Exception {
     // Request Exceptions
     //==============================================================================================
     public static final PubnativeException REQUEST_NO_INTERNET             = new PubnativeException(1000, "Internet connection is not available");
-    public static final PubnativeException REQUEST_PARAMETERS_INVALID      = new PubnativeException(1001, "Invalid start parameters");
+    public static final PubnativeException REQUEST_PARAMETERS_INVALID      = new PubnativeException(1001, "Invalid execute parameters");
     public static final PubnativeException REQUEST_NO_FILL                 = new PubnativeException(1008, "No fill");
-    public static final PubnativeException REQUEST_ADAPTER_CREATION        = new PubnativeException(1009, "Network adapter couldn't be created");
     //==============================================================================================
     // Adapter Exceptions
     //==============================================================================================
@@ -24,6 +23,8 @@ public class PubnativeException extends Exception {
     public static final PubnativeException ADAPTER_MISSING_DATA            = new PubnativeException(2001, "Null context or adapter data provided");
     public static final PubnativeException ADAPTER_ILLEGAL_ARGUMENTS       = new PubnativeException(2002, "Invalid data provided");
     public static final PubnativeException ADAPTER_TIMEOUT                 = new PubnativeException(2003, "adapter timeout");
+    public static final PubnativeException ADAPTER_NOT_FOUND               = new PubnativeException(2004, "adapter not found");
+    public static final PubnativeException ADAPTER_TYPE_NOT_IMPLEMENTED    = new PubnativeException(2005, "adapter doesn't implements this type");
     //==============================================================================================
     // Interstitial Exceptions
     //==============================================================================================
@@ -31,7 +32,6 @@ public class PubnativeException extends Exception {
     public static final PubnativeException INTERSTITIAL_LOADING            = new PubnativeException(3001, "interstitial is currently loading");
     public static final PubnativeException INTERSTITIAL_SHOWN              = new PubnativeException(3002, "interstitial is already shown");
     public static final PubnativeException INTERSTITIAL_NO_FILL            = new PubnativeException(3004, "interstitial cannot fill the ad");
-    public static final PubnativeException INTERSTITIAL_ADAPTER_CREATION   = new PubnativeException(3005, "interstitial network adapter cannot be created");
     //==============================================================================================
     // Placement Exceptions
     //==============================================================================================

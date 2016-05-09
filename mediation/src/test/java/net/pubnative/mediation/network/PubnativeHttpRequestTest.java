@@ -22,7 +22,7 @@ import static org.mockito.Mockito.verify;
 public class PubnativeHttpRequestTest {
 
     @Test
-    public void start_WithNullContext_CallbacksFail() {
+    public void start_withNullContext_callbacksFail() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         PubnativeHttpRequest.Listener listener = mock(PubnativeHttpRequest.Listener.class);
@@ -32,7 +32,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void start_WithNullUrl_CallbacksFail() {
+    public void start_withNullUrl_callbacksFail() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         PubnativeHttpRequest.Listener listener = mock(PubnativeHttpRequest.Listener.class);
@@ -42,7 +42,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void start_WithEmptyUrl_CallbacksFail() {
+    public void start_withEmptyUrl_callbacksFail() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         PubnativeHttpRequest.Listener listener = mock(PubnativeHttpRequest.Listener.class);
@@ -52,7 +52,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void invokeFinish_WithNullListener_Pass() {
+    public void invokeFinish_withNullListener_pass() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         request.mListener = null;
@@ -61,7 +61,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void invokeStart_WithNullListener_Pass() {
+    public void invokeStart_withNullListener_pass() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         request.mListener = null;
@@ -70,7 +70,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void invokeFail_WithNullListener_Pass() {
+    public void invokeFail_withNullListener_pass() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         request.mListener = null;
@@ -79,7 +79,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void invokeStart_WithValidListener_Callback() {
+    public void invokeStart_withValidListener_callback() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         PubnativeHttpRequest.Listener listener = mock(PubnativeHttpRequest.Listener.class);
@@ -90,7 +90,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void invokeLoad_WithValidListener_CallbackAndNullsListener() {
+    public void invokeLoad_WithValidListener_callbackAndNullsListener() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         PubnativeHttpRequest.Listener listener = mock(PubnativeHttpRequest.Listener.class);
@@ -102,7 +102,7 @@ public class PubnativeHttpRequestTest {
     }
 
     @Test
-    public void invokeFail_WithValidListener_CallbackAndNullsListener() {
+    public void invokeFail_withValidListener_callbackAndNullsListener() {
 
         PubnativeHttpRequest request = spy(PubnativeHttpRequest.class);
         PubnativeHttpRequest.Listener listener = mock(PubnativeHttpRequest.Listener.class);

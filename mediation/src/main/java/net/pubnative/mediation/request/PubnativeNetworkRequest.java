@@ -26,33 +26,25 @@ package net.pubnative.mediation.request;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapterFactory;
-import net.pubnative.mediation.adapter.PubnativeNetworkRequestAdapter;
-import net.pubnative.mediation.config.PubnativePlacement;
+import net.pubnative.mediation.adapter.PubnativeNetworkHub;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
-import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
-import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.Listener {
+public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
+        implements PubnativeNetworkRequestAdapter.Listener {
 
     private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
-    protected Context                          mContext;
     protected PubnativeNetworkRequest.Listener mListener;
-    protected PubnativePlacement               mPlacement;
-    protected PubnativeAdModel                 mAd;
-    protected long                             mRequestStartTimestamp;
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
-    protected PubnativeAdTargetingModel        mTargeting;
-
+    protected PubnativeAdModel                 mAd;
+    protected long                             mRequestStartTimestamp;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -61,13 +53,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
      * Interface for request callbacks that will inform about the request status
      */
     public interface Listener {
-
-        /**
-         * Invoked when ad request starts with valid params
-         *
-         * @param request Object used to make the ad request.
-         */
-        void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request);
 
         /**
          * Invoked when ad request returns valid ads.
@@ -85,7 +70,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
          */
         void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception);
     }
-
     //==============================================================================================
     // Pubic methods
     //==============================================================================================
@@ -102,127 +86,51 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
 
         Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
         if (listener == null) {
-            // Just drop the call
-            Log.e(TAG, "start - listener not specified, dropping the call");
+            Log.e(TAG, "start - Error: listener not specified, dropping the call");
         } else if (mIsRunning) {
-            Log.e(TAG, "start - request already running, dropping the call");
+            Log.e(TAG, "start - Error: request already running, dropping the call");
         } else {
             mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
-            mListener = listener;
-            startRequest(context, appToken, placementName);
-        }
-    }
-    //==============================================================================================
-    // Tracking data
-    //==============================================================================================
-
-    /**
-     * Sets the targeting model for the request
-     *
-     * @param targeting targeting model with extended targeting config
-     */
-    public void setTargeting(PubnativeAdTargetingModel targeting) {
-
-        Log.v(TAG, "setTargeting");
-        mTargeting = targeting;
-    }
-
-    //==============================================================================================
-    // Private methods
-    //==============================================================================================
-    protected synchronized void startRequest(Context context, String appToken, String placementName) {
-
-        if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementName)) {
-            invokeFail(PubnativeException.REQUEST_PARAMETERS_INVALID);
-        } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
-            mContext = context;
-            mPlacement = new PubnativePlacement();
-            mPlacement.setTargeting(mTargeting);
-            mPlacement.load(mContext, appToken, placementName, new PubnativePlacement.Listener() {
-
-                @Override
-                public void onPubnativePlacementReady(PubnativePlacement placement) {
-
-                    checkDeliveryCaps();
-                }
-
-                @Override
-                public void onPubnativePlacementLoadFail(PubnativePlacement placement, Exception exception) {
-
-                    invokeFail(exception);
-                }
-            });
-        } else {
-            invokeFail(PubnativeException.REQUEST_NO_INTERNET);
+            super.start(context, appToken, placementName);
         }
     }
 
-    protected void checkDeliveryCaps() {
+    //==============================================================================================
+    // PubnativeNetworkRequest
+    //==============================================================================================
+    @Override
+    protected void onPacingCapActive() {
 
-        Log.v(TAG, "checkDeliveryCaps");
-        if (mPlacement.isDisabled()) {
-            invokeFail(PubnativeException.PLACEMENT_DISABLED);
-        } else if (mPlacement.isFrequencyCapActive()) {
-            invokeFail(PubnativeException.PLACEMENT_FREQUENCY_CAP);
-        } else if (mPlacement.isPacingCapActive()) {
-            if (mAd == null) {
-                invokeFail(PubnativeException.PLACEMENT_PACING_CAP);
-            } else {
-                invokeLoad(mAd);
-            }
+        if (mAd == null) {
+            invokeFail(PubnativeException.PLACEMENT_PACING_CAP);
         } else {
-            invokeStart();
+            invokeLoad(mAd);
+        }
+    }
+
+    @Override
+    protected void onLoadFail(Exception exception) {
+
+        invokeFail(exception);
+    }
+
+    @Override
+    protected void onLoadFinish(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+
+        PubnativeNetworkRequestAdapter adapter = hub.getRequestAdapter();
+        if (adapter == null) {
+            mPlacement.trackUnreachableNetwork(0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             waterfall();
-        }
-    }
-
-    protected void waterfall() {
-
-        Log.v(TAG, "waterfall");
-        mPlacement.next();
-        PubnativeNetworkModel networkModel = mPlacement.currentNetwork();
-        if (networkModel == null) {
-            mPlacement.getInsightModel().sendRequestInsight();
-            invokeFail(PubnativeException.REQUEST_NO_FILL);
         } else {
-            PubnativeNetworkRequestAdapter adapter = PubnativeNetworkAdapterFactory.createNetworkAdapter(networkModel);
-            if (adapter == null) {
-                mPlacement.trackUnreachableNetwork(0, PubnativeException.REQUEST_ADAPTER_CREATION);
-                waterfall();
-            } else {
-                // Add ML extras for adapter
-                Map<String, String> extras = new HashMap<String, String>();
-                extras.put(PubnativeNetworkRequestAdapter.EXTRA_REQID, mPlacement.getTrackingUUID());
-                if(mTargeting != null) {
-                    extras.putAll(mTargeting.toDictionary());
-                }
-                adapter.setExtras(extras);
-                adapter.setListener(this);
-                adapter.execute(mContext, networkModel.timeout);
-            }
+            adapter.setExtras(extras);
+            adapter.setListener(this);
+            adapter.execute(mContext, network.timeout);
         }
     }
-
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-
-    protected void invokeStart() {
-
-        Log.v(TAG, "invokeStart");
-        // Ensure returning callbacks on same thread than where we started the call
-        mHandler.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                if (mListener != null) {
-                    mListener.onPubnativeNetworkRequestStarted(PubnativeNetworkRequest.this);
-                }
-            }
-        });
-    }
 
     protected void invokeLoad(final PubnativeAdModel ad) {
 
@@ -257,11 +165,9 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
             }
         });
     }
-
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-
     // PubnativeNetworkAdapterListener
     //----------------------------------------------------------------------------------------------
 

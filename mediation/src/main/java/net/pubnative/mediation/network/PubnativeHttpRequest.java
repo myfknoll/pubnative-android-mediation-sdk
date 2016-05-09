@@ -61,9 +61,9 @@ public class PubnativeHttpRequest {
     public interface Listener {
 
         /**
-         * Called when the HttpRequest is about to start
+         * Called when the HttpRequest is about to execute
          *
-         * @param request request that is about to start
+         * @param request request that is about to execute
          */
         void onPubnativeHttpRequestStart(PubnativeHttpRequest request);
 
@@ -106,7 +106,7 @@ public class PubnativeHttpRequest {
     }
 
     /**
-     * This method will start a new request to the given URL
+     * This method will execute a new request to the given URL
      *
      * @param context   valid Context object
      * @param urlString URL where the request will be done
@@ -114,7 +114,7 @@ public class PubnativeHttpRequest {
      */
     public void start(Context context, final String urlString, Listener listener) {
 
-        Log.v(TAG, "start: " + urlString);
+        Log.v(TAG, "execute: " + urlString);
         mListener = listener;
         mHandler = new Handler(Looper.getMainLooper());
         if (mListener == null) {
