@@ -178,16 +178,18 @@ public class PubnativeConfigManager {
     protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel) {
 
         Log.v(TAG, "updateConfig");
-        if (context != null && !TextUtils.isEmpty(appToken) && !PubnativeConfigModel.isNullOrEmpty(configModel)) {
-            setStoredConfig(context, configModel);
-            setStoredAppToken(context, appToken);
-            setStoredTimestamp(context, System.currentTimeMillis());
-            if (configModel.globals.containsKey(PubnativeConfigModel.GLOBAL.REFRESH)) {
-                Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.GLOBAL.REFRESH);
-                setStoredRefresh(context, refresh.longValue());
+        if(context != null) {
+            if (TextUtils.isEmpty(appToken) || PubnativeConfigModel.isNullOrEmpty(configModel)) {
+                clean(context);
+            } else {
+                setStoredConfig(context, configModel);
+                setStoredAppToken(context, appToken);
+                setStoredTimestamp(context, System.currentTimeMillis());
+                if (configModel.globals.containsKey(PubnativeConfigModel.GLOBAL.REFRESH)) {
+                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.GLOBAL.REFRESH);
+                    setStoredRefresh(context, refresh.longValue());
+                }
             }
-        } else {
-            clean(context);
         }
     }
 

@@ -21,10 +21,12 @@ public class PubnativeAdTargetingModel {
 
     public void addInterest(String interest) {
 
-        if (interests == null) {
-            interests = new ArrayList<String>();
+        if(!TextUtils.isEmpty(interest)) {
+            if (interests == null) {
+                interests = new ArrayList<String>();
+            }
+            interests.add(interest);
         }
-        interests.add(interest);
     }
 
     public Map toDictionary() {

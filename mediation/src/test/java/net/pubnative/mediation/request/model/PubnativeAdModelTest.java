@@ -37,11 +37,15 @@ import static org.mockito.Mockito.spy;
 public class PubnativeAdModelTest {
 
     @Test
-    public void callbackWithNullListenerDoesNothing() {
-        PubnativeAdModel modelSpy = spy(PubnativeAdModel.class);
+    public void invokeOnAdImpressionConfirmed_WithNullListener_Pass(){
 
-        // Does nothing with null listener
-        modelSpy.invokeOnAdImpressionConfirmed();
-        modelSpy.invokeOnAdClick();
+        PubnativeAdModel model = spy(PubnativeAdModel.class);
+        model.invokeOnAdImpressionConfirmed();
+    }
+
+    @Test
+    public void invokeOnAdClick_WithNullListener_Pass(){
+        PubnativeAdModel model = spy(PubnativeAdModel.class);
+        model.invokeOnAdClick();
     }
 }

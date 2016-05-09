@@ -175,7 +175,7 @@ public abstract class PubnativeAdModel {
     protected void invokeOnAdImpressionConfirmed() {
 
         Log.v(TAG, "invokeOnAdImpressionConfirmed");
-        if (!mImpressionTracked) {
+        if (!mImpressionTracked && mInsightModel != null) {
             mImpressionTracked = true;
             mInsightModel.sendImpressionInsight();
             if (mListener != null) {
@@ -187,7 +187,7 @@ public abstract class PubnativeAdModel {
     protected void invokeOnAdClick() {
 
         Log.v(TAG, "invokeOnAdClick");
-        if (!mClickTracked) {
+        if (!mClickTracked && mInsightModel != null) {
             mClickTracked = true;
             mInsightModel.sendClickInsight();
         }
