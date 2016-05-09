@@ -35,6 +35,7 @@ public class PubnativeConfigRequestModel {
     public String                          appToken;
     public Map<String, String>             extras;
     public PubnativeConfigManager.Listener listener;
+
     //==============================================================================================
     // PubnativeConfigRequestModel
     //==============================================================================================

@@ -41,9 +41,9 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     //==============================================================================================
     // PubnativeAdModel methods
     //==============================================================================================
-
     // Fields
     //----------------------------------------------------------------------------------------------
+
     @Override
     public String getTitle() {
 
@@ -112,6 +112,8 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
         Log.v(TAG, "getAdvertisingDisclosureView");
         return null;
     }
+
+    //----------------------------------------------------------------------------------------------
     // Tracking
     //----------------------------------------------------------------------------------------------
 
@@ -132,11 +134,13 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
         mAdModel.stopTracking();
         // Do nothing
     }
+
     //==============================================================================================
     // Callbacks
     //==============================================================================================
     // PubnativeAdModel.Listener
     //----------------------------------------------------------------------------------------------
+
     @Override
     public void onPubnativeAdModelImpression(PubnativeAdModel pubnativeAdModel, View view) {
         Log.v(TAG, "onPubnativeAdModelImpression");

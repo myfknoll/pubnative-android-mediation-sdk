@@ -44,10 +44,20 @@ import java.net.URL;
 public class PubnativeHttpRequest {
 
     private static final String TAG = PubnativeHttpRequest.class.getSimpleName();
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
+    // Request properties
+    protected int      mTimeoutInMillis = 4000; // 4 seconds
+    protected String   mPOSTString      = null;
+    // Inner
+    protected Listener mListener        = null;
+    protected Handler  mHandler         = null;
 
     //==============================================================================================
     // Listener
     //==============================================================================================
+
     public interface Listener {
 
         /**
@@ -74,15 +84,6 @@ public class PubnativeHttpRequest {
         void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception);
     }
 
-    //==============================================================================================
-    // Properties
-    //==============================================================================================
-    // Request properties
-    protected int      mTimeoutInMillis = 4000; // 4 seconds
-    protected String   mPOSTString      = null;
-    // Inner
-    protected Listener mListener        = null;
-    protected Handler  mHandler         = null;
     //==============================================================================================
     // Public
     //==============================================================================================
@@ -141,6 +142,7 @@ public class PubnativeHttpRequest {
     //==============================================================================================
     // Private
     //==============================================================================================
+
     protected void disableConnectionReuseIfNecessary() {
         // HTTP connection reuse which was buggy pre-froyo
         if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
@@ -228,6 +230,7 @@ public class PubnativeHttpRequest {
     //==============================================================================================
     // Listener helpers
     //==============================================================================================
+
     protected void invokeStart() {
 
         Log.v(TAG, "invokeStart");

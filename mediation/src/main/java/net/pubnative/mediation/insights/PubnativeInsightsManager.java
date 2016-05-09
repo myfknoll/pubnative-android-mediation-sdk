@@ -49,6 +49,7 @@ public class PubnativeInsightsManager {
     protected static final String  INSIGHTS_PENDING_DATA    = "pending_data";
     protected static final String  INSIGHTS_FAILED_DATA     = "failed_data";
     protected static       boolean sIdle                    = true;
+
     //==============================================================================================
     // PubnativeInsightsManager
     //==============================================================================================
@@ -93,6 +94,7 @@ public class PubnativeInsightsManager {
     //==============================================================================================
     // WORKFLOW
     //==============================================================================================
+
     protected synchronized static void trackNext(final Context context) {
 
         Log.v(TAG, "trackNext");
@@ -181,6 +183,7 @@ public class PubnativeInsightsManager {
     //==============================================================================================
     // QUEUE
     //==============================================================================================
+
     protected static void enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model) {
 
         Log.v(TAG, "enqueueInsightItem");
@@ -227,6 +230,7 @@ public class PubnativeInsightsManager {
     //==============================================================================================
     // TRACKING LIST
     //----------------------------------------------------------------------------------------------
+
     protected static List<PubnativeInsightRequestModel> getTrackingList(Context context, String listKey) {
 
         Log.v(TAG, "getTrackingList");
@@ -269,8 +273,10 @@ public class PubnativeInsightsManager {
         }
     }
 
+    //----------------------------------------------------------------------------------------------
     // Shared preferences base item
     //----------------------------------------------------------------------------------------------
+
     protected static SharedPreferences.Editor getSharedPreferencesEditor(Context context) {
 
         Log.v(TAG, "getSharedPreferencesEditor");

@@ -52,7 +52,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
     protected PubnativeAdTargetingModel        mTargeting;
-    ;
+
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -85,6 +85,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
          */
         void onPubnativeNetworkRequestFailed(PubnativeNetworkRequest request, Exception exception);
     }
+
     //==============================================================================================
     // Pubic methods
     //==============================================================================================
@@ -206,6 +207,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
+
     protected void invokeStart() {
 
         Log.v(TAG, "invokeStart");
@@ -259,8 +261,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkRequestAdapter.L
     //==============================================================================================
     // Callbacks
     //==============================================================================================
+
     // PubnativeNetworkAdapterListener
     //----------------------------------------------------------------------------------------------
+
     @Override
     public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkRequestAdapter adapter) {
 

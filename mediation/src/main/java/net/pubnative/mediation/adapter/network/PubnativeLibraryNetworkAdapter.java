@@ -60,6 +60,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkRequestAdapt
     //==============================================================================================
     // PubnativeLibraryNetworkAdapter methods
     //==============================================================================================
+
     protected void createRequest(Context context) {
 
         Log.v(TAG, "createRequest");
@@ -84,6 +85,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkRequestAdapt
     //==============================================================================================
     // PubnativeRequest.Listener
     //----------------------------------------------------------------------------------------------
+
     @Override
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
         Log.v(TAG, "onPubnativeRequestSuccess");

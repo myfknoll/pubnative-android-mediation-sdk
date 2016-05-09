@@ -21,6 +21,7 @@ public abstract class PubnativeNetworkAdapter {
     //==============================================================================================
     // Adapter Runnable
     //==============================================================================================
+
     protected class PubnativeNetworkAdapterRunnable implements Runnable {
 
         private final String TAG = PubnativeNetworkAdapterRunnable.class.getSimpleName();
@@ -32,8 +33,9 @@ public abstract class PubnativeNetworkAdapter {
             onTimeout();
         }
     }
+
     //==============================================================================================
-    // PubnativeNetworkRequestAdapter
+    // PubnativeNetworkAdapter
     //==============================================================================================
 
     /**
@@ -85,8 +87,10 @@ public abstract class PubnativeNetworkAdapter {
 
     protected abstract void onTimeout();
 
+    //----------------------------------------------------------------------------------------------
     // Timeout helpers
     //----------------------------------------------------------------------------------------------
+
     protected void startTimeout(int timeoutInMillis) {
 
         Log.v(TAG, "startTimeout");

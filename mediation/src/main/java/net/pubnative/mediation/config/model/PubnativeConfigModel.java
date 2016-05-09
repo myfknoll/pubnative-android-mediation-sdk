@@ -36,10 +36,9 @@ public class PubnativeConfigModel {
     public Map<String, PubnativePlacementModel> placements;
 
     //==============================================================================================
-    // PubnativeConfigModel.ConfigContract
+    // PubnativeConfigModel.GLOBAL
     //==============================================================================================
     public interface GLOBAL {
-
         String REFRESH           = "refresh";
         String IMPRESSION_BEACON = "impression_beacon";
         String CLICK_BEACON      = "click_beacon";
