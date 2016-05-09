@@ -119,22 +119,22 @@ public class PubnativeHttpRequest {
         if (mListener == null) {
             Log.w(TAG, "Warning: null listener specified, performing request without callbacks");
         }
-        if (TextUtils.isEmpty(urlString)) {
+        if (context == null) {
+            invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null context provided, dropping call"));
+        } else if (TextUtils.isEmpty(urlString)) {
             invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null or empty url, dropping call"));
+        } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
+            invokeStart();
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    doRequest(urlString);
+                }
+            }).start();
         } else {
-            if(PubnativeDeviceUtils.isNetworkAvailable(context)) {
-                invokeStart();
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        doRequest(urlString);
-                    }
-                }).start();
-            } else {
-                invokeFail(new Exception("PubnativeHttpRequest - Error: internet connection not detected, dropping call"));
-            }
+            invokeFail(new Exception("PubnativeHttpRequest - Error: internet connection not detected, dropping call"));
         }
     }
 
