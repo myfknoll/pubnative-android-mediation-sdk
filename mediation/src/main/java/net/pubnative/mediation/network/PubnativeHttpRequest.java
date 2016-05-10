@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.io.BufferedReader;
@@ -40,6 +41,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 public class PubnativeHttpRequest {
 
@@ -134,7 +136,7 @@ public class PubnativeHttpRequest {
                     }
                 }).start();
             } else {
-                invokeFail(new Exception("PubnativeHttpRequest - Error: internet connection not detected, dropping call"));
+                invokeFail(PubnativeException.REQUEST_NETWORK_NOT_FOUND);
             }
         }
     }
@@ -180,13 +182,28 @@ public class PubnativeHttpRequest {
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
                 String resultString = stringFromInputString(inputStream);
+                String response = "";
+                while (inputStream.available() > 0) {
+                    response += inputStream.read();
+                }
+                System.out.println("Anshuman " + response);
                 if (resultString == null) {
-                    invokeFail(new Exception("PubnativeHttpRequest - Error: invalid response from server"));
+                    /*String response = "";
+                    while (inputStream.available() > 0) {
+                        response += inputStream.read();
+                    }
+                    System.out.println("Anshuman " + response);*/
+                    HashMap<String, String> errorData = new HashMap<String, String>();
+                    errorData.put("serverResponse", response);
+                    invokeFail(new PubnativeException(PubnativeException.ERROR_CODE.REQUEST_INVALID_RESPONSE, "Invalid response from server.", errorData));
                 } else {
                     invokeFinish(resultString);
                 }
             } else {
-                invokeFail(new Exception("PubnativeHttpRequest - Error: invalid status code: " + responseCode));
+                HashMap<String, String> errorData = new HashMap<String, String>();
+                errorData.put("statusCode", responseCode+"");
+                errorData.put("errorString", stringFromInputString(connection.getErrorStream()));
+                invokeFail(new PubnativeException(PubnativeException.ERROR_CODE.REQUEST_INVALID_STATUS_CODE, "Invalid status code.", errorData));
             }
         } catch (Exception exception) {
             invokeFail(exception);

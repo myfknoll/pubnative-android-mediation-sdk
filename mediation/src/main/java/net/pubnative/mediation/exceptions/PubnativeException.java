@@ -3,13 +3,22 @@ package net.pubnative.mediation.exceptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PubnativeException extends Exception {
 
     public static final String TAG = PubnativeException.class.getSimpleName();
+
+    public interface ERROR_CODE {
+        int REQUEST_INVALID_RESPONSE    = 100;
+        int REQUEST_INVALID_STATUS_CODE = 101;
+    }
     //==============================================================================================
     // Private fields
     //==============================================================================================
-    protected int mErrorCode;
+    protected int                     mErrorCode;
+    protected HashMap<String, String> mExtraMap;
     //==============================================================================================
     // Request Exceptions
     //==============================================================================================
@@ -45,6 +54,20 @@ public class PubnativeException extends Exception {
     }
 
     /**
+     * Constructor
+     *
+     * @param errorCode Error code
+     * @param message   Error message
+     * @param extra     Extra data
+     */
+    public PubnativeException(int errorCode, String message, HashMap<String, String> extra) {
+
+        super(message);
+        mErrorCode = errorCode;
+        mExtraMap = extra;
+    }
+
+    /**
      * This will return this exception error code number
      *
      * @return valid int representing the error code
@@ -76,6 +99,13 @@ public class PubnativeException extends Exception {
                     stackTraceBuilder.append('\n');
                 }
                 json.put("stackTrace", stackTraceBuilder.toString());
+            }
+            if(mExtraMap != null) {
+                JSONObject extraDataObj = new JSONObject();
+                for (Map.Entry<String, String> entry: mExtraMap.entrySet()) {
+                    extraDataObj.put(entry.getKey(), entry.getValue());
+                }
+                json.put("extraData", extraDataObj);
             }
             result = json.toString();
         } catch (JSONException e) {
