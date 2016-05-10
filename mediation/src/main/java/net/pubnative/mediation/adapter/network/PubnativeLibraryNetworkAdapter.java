@@ -32,12 +32,13 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkRequestAdapter getRequestAdapter() {
 
+
         return new PubnativeLibraryNetworkRequestAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
 
-        return null;
+        return new PubnativeLibraryNetworkInterstitialAdapter(mNetworkData);
     }
 }

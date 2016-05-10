@@ -49,14 +49,12 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel
     //==============================================================================================
-    public static boolean isNullOrEmpty(PubnativeConfigModel model) {
-
-        Log.v(TAG, "isNullOrEmpty");
-        return model == null
-               || model.networks == null
-               || model.placements == null
-               || model.networks.size() == 0
-               || model.placements.size() == 0;
+    public boolean isEmpty() {
+        Log.v(TAG, "isEmpty");
+        return networks == null
+               || placements == null
+               || networks.size() == 0
+               || placements.size() == 0;
     }
 
     public Object getGlobal(String globalKey) {

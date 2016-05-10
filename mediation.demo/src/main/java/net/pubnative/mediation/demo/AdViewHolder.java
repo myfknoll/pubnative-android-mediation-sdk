@@ -43,7 +43,7 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 /**
  * A class that holds the reference to all views in a cell.
  * This helps us to avoid redundant calls to "findViewById" each
- * time we load values into the cell.
+ * time we initialize values into the cell.
  */
 public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                                      View.OnClickListener {

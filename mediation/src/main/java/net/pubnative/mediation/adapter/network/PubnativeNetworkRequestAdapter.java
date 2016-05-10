@@ -34,8 +34,7 @@ import java.util.Map;
 public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAdapter {
 
     private static String TAG = PubnativeNetworkRequestAdapter.class.getSimpleName();
-    public static String EXTRA_REQUEST_ID = "reqid";
-    protected Listener            mListener;
+    protected Listener mListener;
 
     /**
      * Listener

@@ -175,7 +175,7 @@ public class PubnativeConfigManager {
             }
         }
         // Ensure not returning an invalid getConfig
-        if (PubnativeConfigModel.isNullOrEmpty(currentConfig)) {
+        if (currentConfig == null || currentConfig.isEmpty()) {
             currentConfig = null;
         }
         return currentConfig;
@@ -185,7 +185,7 @@ public class PubnativeConfigManager {
 
         Log.v(TAG, "updateConfig");
         if(context != null) {
-            if (TextUtils.isEmpty(appToken) || PubnativeConfigModel.isNullOrEmpty(configModel)) {
+            if (TextUtils.isEmpty(appToken) || configModel == null || configModel.isEmpty()) {
                 clean(context);
             } else {
                 setStoredConfig(context, configModel);
@@ -355,7 +355,7 @@ public class PubnativeConfigManager {
         Log.v(TAG, "getConfigDownloadBaseUrl");
         String configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
         PubnativeConfigModel storedConfig = getStoredConfig(context);
-        if (!PubnativeConfigModel.isNullOrEmpty(storedConfig)) {
+        if (storedConfig != null && !storedConfig.isEmpty()) {
             String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.GLOBAL.CONFIG_URL);
             if (!TextUtils.isEmpty(configUrl)) {
                 configDownloadBaseUrl = configUrl;

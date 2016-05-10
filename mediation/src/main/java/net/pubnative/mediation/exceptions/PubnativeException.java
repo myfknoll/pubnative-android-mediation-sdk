@@ -15,7 +15,7 @@ public class PubnativeException extends Exception {
     //==============================================================================================
     public static final PubnativeException REQUEST_NO_INTERNET             = new PubnativeException(1000, "Internet connection is not available");
     public static final PubnativeException REQUEST_PARAMETERS_INVALID      = new PubnativeException(1001, "Invalid execute parameters");
-    public static final PubnativeException REQUEST_NO_FILL                 = new PubnativeException(1008, "No fill");
+    public static final PubnativeException REQUEST_NO_FILL                 = new PubnativeException(1002, "No fill");
     //==============================================================================================
     // Adapter Exceptions
     //==============================================================================================
@@ -31,17 +31,17 @@ public class PubnativeException extends Exception {
     public static final PubnativeException INTERSTITIAL_PARAMETERS_INVALID = new PubnativeException(3000, "parameters configuring the interstitial are invalid");
     public static final PubnativeException INTERSTITIAL_LOADING            = new PubnativeException(3001, "interstitial is currently loading");
     public static final PubnativeException INTERSTITIAL_SHOWN              = new PubnativeException(3002, "interstitial is already shown");
-    public static final PubnativeException INTERSTITIAL_NO_FILL            = new PubnativeException(3004, "interstitial cannot fill the ad");
     //==============================================================================================
     // Placement Exceptions
     //==============================================================================================
-    public static final PubnativeException PLACEMENT_FREQUENCY_CAP         = new PubnativeException(4000, "(frequency_cap) too many ads");
-    public static final PubnativeException PLACEMENT_PACING_CAP            = new PubnativeException(4001, "(pacing_cap) too many ads");
-    public static final PubnativeException PLACEMENT_DISABLED              = new PubnativeException(4002, "Placement is disabled");
-    public static final PubnativeException PLACEMENT_CONFIG_INVALID        = new PubnativeException(4003, "Null or invalid config");
-    public static final PubnativeException PLACEMENT_NOT_FOUND             = new PubnativeException(4004, "Placement not found");
-    public static final PubnativeException PLACEMENT_EMPTY                 = new PubnativeException(4005, "Retrieved config contains null element");
-    public static final PubnativeException PLACEMENT_PARAMETERS_INVALID    = new PubnativeException(4006, "Parameters invalid");
+    public static final PubnativeException PLACEMENT_NO_FILL               = new PubnativeException(4000, "No fill");
+    public static final PubnativeException PLACEMENT_FREQUENCY_CAP         = new PubnativeException(4001, "(frequency_cap) too many ads");
+    public static final PubnativeException PLACEMENT_PACING_CAP            = new PubnativeException(4002, "(pacing_cap) too many ads");
+    public static final PubnativeException PLACEMENT_DISABLED              = new PubnativeException(4003, "Placement is disabled");
+    public static final PubnativeException PLACEMENT_CONFIG_INVALID        = new PubnativeException(4004, "Null or invalid config");
+    public static final PubnativeException PLACEMENT_NOT_FOUND             = new PubnativeException(4005, "Placement not found");
+    public static final PubnativeException PLACEMENT_EMPTY                 = new PubnativeException(4006, "Retrieved config contains null element");
+    public static final PubnativeException PLACEMENT_PARAMETERS_INVALID    = new PubnativeException(4007, "Parameters invalid");
 
     /**
      * Constructor

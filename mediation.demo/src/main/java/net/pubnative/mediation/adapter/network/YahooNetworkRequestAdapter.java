@@ -37,14 +37,14 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class YahooNetworkAdapterHub extends PubnativeNetworkRequestAdapter implements FlurryAdNativeListener {
+public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements FlurryAdNativeListener {
 
-    private static      String TAG                = YahooNetworkAdapterHub.class.getSimpleName();
+    private static      String TAG                = YahooNetworkRequestAdapter.class.getSimpleName();
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
     public static final String KEY_FLURRY_API_KEY = "api_key";
     protected Context mContext;
 
-    public YahooNetworkAdapterHub(Map data) {
+    public YahooNetworkRequestAdapter(Map data) {
 
         super(data);
     }
@@ -52,9 +52,10 @@ public class YahooNetworkAdapterHub extends PubnativeNetworkRequestAdapter imple
     //==============================================================================================
     // PubnativeNetworkAdapter
     //==============================================================================================
-    public void start(Context context) {
+    @Override
+    protected void request(Context context) {
 
-        Log.v(TAG, "execute");
+        Log.v(TAG, "request");
         if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {

@@ -1,18 +1,38 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2015 PubNative GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 package net.pubnative.mediation.config;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.pubnative.AdvertisingIdClient;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeDeliveryRuleModel;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.insights.model.PubnativeInsightModel;
-import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -20,19 +40,15 @@ import java.util.UUID;
 
 public class PubnativePlacement implements PubnativeConfigManager.Listener {
 
-    private static final String TAG                           = PubnativePlacement.class.getSimpleName();
-    private static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
-    private static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
-    protected Context                   mContext;
-    protected Listener                  mListener;
-    protected String                    mAppToken;
-    protected String                    mRequestID;
-    protected String                    mPlacementName;
-    protected PubnativePlacementModel   mPlacementModel;
-    protected PubnativeConfigModel      mConfigModel;
-    protected PubnativeInsightModel     mInsightModel;
-    protected PubnativeAdTargetingModel mTargetingModel;
-    protected int                       mCurrentNetworkIndex;
+    private static final String TAG = PubnativePlacement.class.getSimpleName();
+    protected Context                 mContext;
+    protected Listener                mListener;
+    protected String                  mAppToken;
+    protected String                  mRequestID;
+    protected String                  mPlacementName;
+    protected PubnativePlacementModel mPlacementModel;
+    protected PubnativeConfigModel    mConfigModel;
+    protected int                     mCurrentNetworkIndex;
 
     /**
      * Interface for placement callbacks
@@ -42,12 +58,13 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
         /**
          * Called when the placement was loaded
          *
-         * @param placement placement that finished loading
+         * @param placement    placement that finished loading
+         * @param pacingActive indicates if the pacing cap is active or not
          */
-        void onPubnativePlacementReady(PubnativePlacement placement);
+        void onPubnativePlacementReady(PubnativePlacement placement, boolean pacingActive);
 
         /**
-         * Called when the placement load failed
+         * Called when the placement initialize failed
          *
          * @param placement placement that failed loading
          */
@@ -62,11 +79,11 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
      * @param placementName placement name string
      * @param listener      valid listener to callback when the placement is ready
      */
-    public void load(Context context, String appToken, String placementName, final Listener listener) {
+    public void load(Context context, String appToken, String placementName, Map extras, final Listener listener) {
 
-        Log.v(TAG, "load");
+        Log.v(TAG, "initialize");
         if (listener == null) {
-            Log.e(TAG, "load", new IllegalArgumentException("listener cannot be null, dropping this call"));
+            Log.e(TAG, "initialize", new IllegalArgumentException("listener cannot be null, dropping this call"));
         } else {
             mListener = listener;
             if (context == null ||
@@ -74,26 +91,16 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
                 TextUtils.isEmpty(placementName)) {
                 invokeOnLoadFail(PubnativeException.PLACEMENT_PARAMETERS_INVALID);
             } else if (mConfigModel != null) {
-                invokeOnLoadFail(new Exception("load - Error: placement is loaded"));
+                invokeOnLoadFail(new Exception("initialize - Error: placement is loaded"));
             } else {
                 mContext = context;
                 mAppToken = appToken;
                 mPlacementName = placementName;
                 mCurrentNetworkIndex = -1;
                 mRequestID = UUID.randomUUID().toString();
-                Map extras = null;
-                if(mTargetingModel != null) {
-                    extras = mTargetingModel.toDictionary();
-                }
                 PubnativeConfigManager.getConfig(mContext, mAppToken, extras, this);
             }
         }
-    }
-
-    public PubnativeInsightModel getInsightModel() {
-
-        Log.v(TAG, "getInsightModel");
-        return mInsightModel;
     }
 
     /**
@@ -109,59 +116,14 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     }
 
     /**
-     * Checks if the current placement is disabled
+     * Returns the configured app token for this placement
      *
-     * @return true if the placement is disabled, false if it's enabled
+     * @return valid apptoken string, null if not set
      */
-    public boolean isDisabled() {
+    public String getAppToken() {
 
-        Log.v(TAG, "isDisabled");
-        boolean result = true;
-        if (mPlacementModel != null) {
-            PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
-            result = deliveryRuleModel.isDisabled();
-        }
-        return result;
-    }
-
-    /**
-     * Checks if the frequency cap of this placement is reached
-     *
-     * @return true if the frequency cap is active, false if it's not
-     */
-    public boolean isFrequencyCapActive() {
-
-        Log.v(TAG, "isFrequencyCapEnabled");
-        boolean result = false;
-        if (mPlacementModel != null) {
-            PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
-            result = deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementName);
-        }
-        return result;
-    }
-
-    /**
-     * Checks if the pacing cap of this placement is reached
-     *
-     * @return true if the pacing cap is active, false if it's not
-     */
-    public boolean isPacingCapActive() {
-
-        Log.v(TAG, "isPacingCapEnabled");
-        boolean result = false;
-        if (mPlacementModel != null) {
-            PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
-            Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
-            Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementName);
-            if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar)) {
-                // Pacing cap reset or deactivated or not reached
-                result = false;
-            } else {
-                // Pacing cap active and limit reached
-                result = true;
-            }
-        }
-        return result;
+        Log.v(TAG, "getAppToken");
+        return mAppToken;
     }
 
     /**
@@ -255,122 +217,84 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
         Log.v(TAG, "next");
         mCurrentNetworkIndex++;
     }
-    //==============================================================================================
-    // Tracking data
-    //==============================================================================================
-
-    /**
-     * Sets the targetting data in the tracking model
-     *
-     * @param targeting valid targeting item, null if not
-     */
-    public void setTargeting(PubnativeAdTargetingModel targeting) {
-
-        Log.v(TAG, "setTargeting");
-        if (targeting != null) {
-            mTargetingModel = targeting;
-            mInsightModel.setTargeting(targeting);
-        }
-    }
 
     //==============================================================================================
     // Private methods
     //==============================================================================================
-    protected void configurePlacement() {
+    protected void loadPlacement(PubnativeConfigModel config) {
 
-        PubnativePlacementModel placement = mConfigModel.getPlacement(mPlacementName);
-        if (placement == null) {
-            invokeOnLoadFail(PubnativeException.PLACEMENT_NOT_FOUND);
-        } else if (placement.delivery_rule == null || placement.priority_rules == null) {
-            invokeOnLoadFail(PubnativeException.PLACEMENT_EMPTY);
-        } else if (placement.delivery_rule.isDisabled()) {
-            invokeOnLoadFail(PubnativeException.PLACEMENT_DISABLED);
+        Log.v(TAG, "loadPlacement");
+        mConfigModel = config;
+        if (mConfigModel == null || mConfigModel.isEmpty()) {
+            invokeOnLoadFail(PubnativeException.PLACEMENT_CONFIG_INVALID);
         } else {
-            mPlacementModel = placement;
-            mInsightModel = new PubnativeInsightModel(mContext);
-            mInsightModel.setPlacement(mPlacementName);
-            mInsightModel.setSegments(mPlacementModel.delivery_rule.segment_ids);
-            mInsightModel.setAdFormatCode(mPlacementModel.ad_format_code);
-            AdvertisingIdClient.getAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
-
-                @Override
-                public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
-
-                    if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
-                        mInsightModel.setUserId(adInfo.getId());
-                    }
-                    startTracking();
-                }
-
-                @Override
-                public void onAdvertisingIdClientFail(Exception exception) {
-
-                    startTracking();
-                }
-            });
-        }
-    }
-
-    protected void startTracking() {
-
-        Log.v(TAG, "startTracking");
-        String requestUrl = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.REQUEST_BEACON);
-        String impressionUrl = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.IMPRESSION_BEACON);
-        String clickUrl = (String) mConfigModel.getGlobal(PubnativeConfigModel.GLOBAL.CLICK_BEACON);
-        mInsightModel.setInsightURLs(requestUrl, impressionUrl, clickUrl);
-        mInsightModel.addExtra(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
-        mInsightModel.addExtra(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
-        if (mConfigModel.request_params != null) {
-            for (String key : mConfigModel.request_params.keySet()) {
-                String value = mConfigModel.request_params.get(key);
-                mInsightModel.addExtra(key, value);
+            mPlacementModel = mConfigModel.getPlacement(mPlacementName);
+            if (mPlacementModel == null) {
+                invokeOnLoadFail(PubnativeException.PLACEMENT_NOT_FOUND);
+            } else if (mPlacementModel.delivery_rule == null
+                       || mPlacementModel.priority_rules == null
+                       || mPlacementModel.priority_rules.size() == 0) {
+                invokeOnLoadFail(PubnativeException.PLACEMENT_EMPTY);
+            } else if (isDisabled()) {
+                invokeOnLoadFail(PubnativeException.PLACEMENT_DISABLED);
+            } else if (isFrequencyCapActive()) {
+                invokeOnLoadFail(PubnativeException.PLACEMENT_FREQUENCY_CAP);
+            } else {
+                invokeOnReady(isPacingCapActive());
             }
         }
-        invokeOnReady();
-    }
-    //==============================================================================================
-    // Private methods
-    //==============================================================================================
-
-    /**
-     * Sets the current network as unreachable due to the passed exception
-     *
-     * @param exception exception with the details of the unreachability
-     */
-    public void trackUnreachableNetwork(long responseTime, Exception exception) {
-
-        Log.v(TAG, "trackUnreachableNetwork", exception);
-        mInsightModel.trackUnreachableNetwork(currentPriority(), responseTime, exception);
     }
 
-    /**
-     * Sets the current network as attempted but failed
-     *
-     * @param exception exception with the details
-     */
-    public void trackAttemptedNetwork(long responseTime, Exception exception) {
 
-        Log.v(TAG, "trackAttemptedNetwork", exception);
-        mInsightModel.trackAttemptedNetwork(currentPriority(), responseTime, exception);
+    protected boolean isDisabled() {
+
+        Log.v(TAG, "isDisabled");
+        boolean result = true;
+        if (mPlacementModel != null) {
+            PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
+            result = deliveryRuleModel.isDisabled();
+        }
+        return result;
     }
 
-    /**
-     * Sets the current network as succeded
-     */
-    public void trackSuccededNetwork(long responseTime) {
+    protected boolean isFrequencyCapActive() {
 
-        Log.v(TAG, "trackSuccededNetwork");
-        mInsightModel.trackSuccededNetwork(currentPriority(), responseTime);
+        Log.v(TAG, "isFrequencyCapEnabled");
+        boolean result = false;
+        if (mPlacementModel != null) {
+            PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
+            result = deliveryRuleModel.isFrequencyCapReached(mContext, mPlacementName);
+        }
+        return result;
+    }
+
+    protected boolean isPacingCapActive() {
+
+        Log.v(TAG, "isPacingCapEnabled");
+        boolean result = false;
+        if (mPlacementModel != null) {
+            PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
+            Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
+            Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementName);
+            if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar)) {
+                // Pacing cap reset or deactivated or not reached
+                result = false;
+            } else {
+                // Pacing cap active and limit reached
+                result = true;
+            }
+        }
+        return result;
     }
 
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeOnReady() {
+    protected void invokeOnReady(boolean pacingActive) {
 
         Log.v(TAG, "invokeOnReady");
         if (mListener != null) {
-            mListener.onPubnativePlacementReady(this);
+            mListener.onPubnativePlacementReady(this, pacingActive);
         }
     }
 
@@ -390,11 +314,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     @Override
     public void onConfigLoaded(PubnativeConfigModel config) {
 
-        if (PubnativeConfigModel.isNullOrEmpty(config)) {
-                invokeOnLoadFail(PubnativeException.PLACEMENT_CONFIG_INVALID);
-        } else {
-            mConfigModel = config;
-            configurePlacement();
-        }
+        Log.v(TAG, "onConfigLoaded");
+        loadPlacement(config);
     }
 }

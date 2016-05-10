@@ -124,7 +124,7 @@ tasks.withType(Test) {
 //}
 //
 //Properties properties = new Properties()
-//properties.load(project.rootProject.file('local.properties').newDataInputStream())
+//properties.initialize(project.rootProject.file('local.properties').newDataInputStream())
 //
 //task sourcesJar(type: Jar) {
 //    from android.sourceSets.main.java.srcDirs

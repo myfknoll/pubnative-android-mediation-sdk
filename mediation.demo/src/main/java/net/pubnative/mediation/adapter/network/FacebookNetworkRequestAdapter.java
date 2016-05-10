@@ -37,23 +37,30 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class FacebookNetworkAdapterHub extends PubnativeNetworkRequestAdapter implements AdListener {
+public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
+        implements AdListener {
 
-    private static         String TAG              = FacebookNetworkAdapterHub.class.getSimpleName();
-    protected static final String KEY_PLACEMENT_ID = "placement_id";
-    protected NativeAd mNativeAd;
+    private static         String   TAG              = FacebookNetworkRequestAdapter.class.getSimpleName();
+    protected static final String   KEY_PLACEMENT_ID = "placement_id";
+    protected              NativeAd mNativeAd        = null;
 
-    public FacebookNetworkAdapterHub(Map data) {
+    /**
+     * Creates a new instance of PubnativeNetworkRequestAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
+    public FacebookNetworkRequestAdapter(Map data) {
 
         super(data);
     }
-
     //==============================================================================================
     // PubnativeNetworkAdapter methods
     //==============================================================================================
-    public void start(Context context) {
 
-        Log.v(TAG, "execute");
+    @Override
+    protected void request(Context context) {
+
+        Log.v(TAG, "request");
         if (context != null && mData != null) {
             String placementId = (String) mData.get(KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
@@ -67,7 +74,7 @@ public class FacebookNetworkAdapterHub extends PubnativeNetworkRequestAdapter im
     }
 
     //==============================================================================================
-    // FacebookNetworkAdapterHub methods
+    // FacebookNetworkAdapter methods
     //==============================================================================================
     protected void createRequest(Context context, String placementId) {
 
@@ -97,7 +104,7 @@ public class FacebookNetworkAdapterHub extends PubnativeNetworkRequestAdapter im
                     1203 == errorCode) {
                     invokeLoaded(null);
                 } else {
-                    invokeFailed(new Exception("FacebookNetworkAdapterHub -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+                    invokeFailed(new Exception("FacebookNetworkAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
                 }
             }
         }

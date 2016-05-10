@@ -21,38 +21,49 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.adapter;
+package net.pubnative.mediation.adapter.network;
 
-import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
+import android.content.Context;
+import android.util.Log;
 
 import java.util.Map;
 
-public abstract class PubnativeNetworkHub {
+public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
 
-    protected Map mNetworkData;
+    private static String TAG = FacebookNetworkInterstitialAdapter.class.getSimpleName();
 
     /**
-     * Sets the network data to be used by the adapter hub to create the different formats adapters
+     * Creates a new instance of PubnativeNetworkRequestAdapter
      *
-     * @param data map with the network data required
+     * @param data server configured data for the current adapter network.
      */
-    public void setNetworkData(Map data) {
+    public FacebookNetworkInterstitialAdapter(Map data) {
 
-        mNetworkData = data;
+        super(data);
     }
 
-    /**
-     * This method will return the network dependent adapter for requests
-     *
-     * @return valid PubnativeNetworkRequestAdapter
-     */
-    public abstract PubnativeNetworkRequestAdapter getRequestAdapter();
+    @Override
+    public void load(Context context) {
 
-    /**
-     * Gets the network dependent adapter for interstitials
-     *
-     * @return valid PubnativeNetworkInterstitialAdapter
-     */
-    public abstract PubnativeNetworkInterstitialAdapter getInterstitialAdapter();
+        Log.v(TAG, "load");
+    }
+
+    @Override
+    public boolean isReady() {
+
+        Log.v(TAG, "isReady");
+        return false;
+    }
+
+    @Override
+    public void show() {
+
+        Log.v(TAG, "show");
+    }
+
+    @Override
+    public void destroy() {
+
+        Log.v(TAG, "destroy");
+    }
 }

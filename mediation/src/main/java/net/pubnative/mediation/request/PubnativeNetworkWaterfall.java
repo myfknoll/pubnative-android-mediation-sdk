@@ -1,15 +1,40 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2015 PubNative GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 package net.pubnative.mediation.request;
 
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.pubnative.AdvertisingIdClient;
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.PubnativeNetworkHubFactory;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.config.PubnativePlacement;
+import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.insights.model.PubnativeInsightModel;
 import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
@@ -18,11 +43,13 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkWaterfall {
 
-    private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
-    protected Context                          mContext;
-    protected PubnativePlacement               mPlacement;
-    protected PubnativeAdTargetingModel        mTargeting;
-
+    private static         String TAG                           = PubnativeNetworkRequest.class.getSimpleName();
+    protected static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
+    protected static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
+    protected Context                   mContext;
+    protected PubnativePlacement        mPlacement;
+    protected PubnativeInsightModel     mInsight;
+    protected PubnativeAdTargetingModel mTargeting;
     //==============================================================================================
     // Tracking data
     //==============================================================================================
@@ -41,82 +68,103 @@ public abstract class PubnativeNetworkWaterfall {
     //==============================================================================================
     // Private methods
     //==============================================================================================
-    protected synchronized void start(Context context, String appToken, String placementName) {
+    protected synchronized void initialize(Context context, String appToken, String placementName) {
 
+        Log.v(TAG, "initialize");
         if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementName)) {
-            onLoadFail(PubnativeException.REQUEST_PARAMETERS_INVALID);
+            onWaterfallError(PubnativeException.REQUEST_PARAMETERS_INVALID);
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             mContext = context;
             mPlacement = new PubnativePlacement();
-            mPlacement.setTargeting(mTargeting);
-            mPlacement.load(mContext, appToken, placementName, new PubnativePlacement.Listener() {
+            Map extras = null;
+            if (mTargeting != null) {
+                extras = mTargeting.toDictionary();
+            }
+            mPlacement.load(mContext, appToken, placementName, extras, new PubnativePlacement.Listener() {
 
                 @Override
-                public void onPubnativePlacementReady(PubnativePlacement placement) {
+                public void onPubnativePlacementReady(PubnativePlacement placement, boolean pacingActive) {
 
-                    checkDeliveryCaps();
+                    if (pacingActive) {
+                        onWaterfallLoadFinish(pacingActive);
+                    } else {
+                        startTracking();
+                    }
                 }
 
                 @Override
                 public void onPubnativePlacementLoadFail(PubnativePlacement placement, Exception exception) {
 
-                    onLoadFail(exception);
+                    onWaterfallError(exception);
                 }
             });
         } else {
-            onLoadFail(PubnativeException.REQUEST_NO_INTERNET);
+            onWaterfallError(PubnativeException.REQUEST_NO_INTERNET);
         }
     }
 
-    protected void checkDeliveryCaps() {
+    protected void startTracking() {
 
-        Log.v(TAG, "checkDeliveryCaps");
-        if (mPlacement.isDisabled()) {
-            onLoadFail(PubnativeException.PLACEMENT_DISABLED);
-        } else if (mPlacement.isFrequencyCapActive()) {
-            onLoadFail(PubnativeException.PLACEMENT_FREQUENCY_CAP);
-        } else if (mPlacement.isPacingCapActive()) {
-            onPacingCapActive();
-        } else {
-            waterfall();
-        }
+        String requestUrl = (String) mPlacement.getConfig().getGlobal(PubnativeConfigModel.GLOBAL.REQUEST_BEACON);
+        String impressionUrl = (String) mPlacement.getConfig().getGlobal(PubnativeConfigModel.GLOBAL.IMPRESSION_BEACON);
+        String clickUrl = (String) mPlacement.getConfig().getGlobal(PubnativeConfigModel.GLOBAL.CLICK_BEACON);
+        mInsight = new PubnativeInsightModel(mContext);
+        mInsight.setInsightURLs(requestUrl, impressionUrl, clickUrl);
+        mInsight.setPlacement(mPlacement.getName());
+        mInsight.setSegments(mPlacement.getDeliveryRule().segment_ids);
+        mInsight.setAdFormatCode(mPlacement.getAdFormatCode());
+        mInsight.addExtra(TRACKING_PARAMETER_APP_TOKEN, mPlacement.getAppToken());
+        mInsight.addExtra(TRACKING_PARAMETER_REQUEST_ID, mPlacement.getTrackingUUID());
+        mInsight.addExtras(mPlacement.getConfig().request_params);
+        AdvertisingIdClient.getAdvertisingId(mContext, new AdvertisingIdClient.Listener() {
+
+            @Override
+            public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
+
+                if (adInfo != null && !adInfo.isLimitAdTrackingEnabled()) {
+                    mInsight.setUserId(adInfo.getId());
+                }
+                onWaterfallLoadFinish(false);
+            }
+
+            @Override
+            public void onAdvertisingIdClientFail(Exception exception) {
+
+                onWaterfallLoadFinish(false);
+            }
+        });
     }
 
-    protected void waterfall() {
+    protected void getNextNetwork() {
 
-        Log.v(TAG, "waterfall");
+        Log.v(TAG, "getNextNetwork");
         mPlacement.next();
         PubnativeNetworkModel network = mPlacement.currentNetwork();
         if (network == null) {
-            mPlacement.getInsightModel().sendRequestInsight();
-            onLoadFail(PubnativeException.REQUEST_NO_FILL);
+            mInsight.sendRequestInsight();
+            onWaterfallError(PubnativeException.PLACEMENT_NO_FILL);
         } else {
-            executeAdapter(network);
-        }
-    }
-
-    protected void executeAdapter(PubnativeNetworkModel network) {
-
-        PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(network);
-        if (hub == null) {
-            mPlacement.trackUnreachableNetwork(0, PubnativeException.ADAPTER_NOT_FOUND);
-            waterfall();
-        } else {
-            Map<String, String> extras = new HashMap<String, String>();
-            extras.put(PubnativeNetworkRequestAdapter.EXTRA_REQUEST_ID, mPlacement.getTrackingUUID());
-            if (mTargeting != null) {
-                extras.putAll(mTargeting.toDictionary());
+            PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(network);
+            if (hub == null) {
+                mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_NOT_FOUND);
+                getNextNetwork();
+            } else {
+                Map<String, String> extras = new HashMap<String, String>();
+                extras.put(TRACKING_PARAMETER_REQUEST_ID, mPlacement.getTrackingUUID());
+                if (mTargeting != null) {
+                    extras.putAll(mTargeting.toDictionary());
+                }
+                onWaterfallNextNetwork(hub, network, extras);
             }
-            onLoadFinish(hub, network, extras);
         }
     }
 
     //==============================================================================================
     // Abstract methods
     //==============================================================================================
-    protected abstract void onPacingCapActive();
+    protected abstract void onWaterfallLoadFinish(boolean pacingActive);
 
-    protected abstract void onLoadFail(Exception exception);
+    protected abstract void onWaterfallError(Exception exception);
 
-    protected abstract void onLoadFinish(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras);
+    protected abstract void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras);
 }

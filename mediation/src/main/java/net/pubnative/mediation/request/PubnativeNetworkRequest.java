@@ -92,7 +92,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         } else {
             mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
-            super.start(context, appToken, placementName);
+            initialize(context, appToken, placementName);
         }
     }
 
@@ -100,28 +100,30 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     // PubnativeNetworkRequest
     //==============================================================================================
     @Override
-    protected void onPacingCapActive() {
+    protected void onWaterfallLoadFinish(boolean pacingActive) {
 
-        if (mAd == null) {
+        if (pacingActive && mAd == null) {
             invokeFail(PubnativeException.PLACEMENT_PACING_CAP);
-        } else {
+        } else if (pacingActive) {
             invokeLoad(mAd);
+        } else {
+            getNextNetwork();
         }
     }
 
     @Override
-    protected void onLoadFail(Exception exception) {
+    protected void onWaterfallError(Exception exception) {
 
         invokeFail(exception);
     }
 
     @Override
-    protected void onLoadFinish(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
 
         PubnativeNetworkRequestAdapter adapter = hub.getRequestAdapter();
         if (adapter == null) {
-            mPlacement.trackUnreachableNetwork(0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
-            waterfall();
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+            getNextNetwork();
         } else {
             adapter.setExtras(extras);
             adapter.setListener(this);
@@ -184,16 +186,16 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
         if (ad == null) {
-            mPlacement.trackAttemptedNetwork(responseTime, PubnativeException.REQUEST_NO_FILL);
-            waterfall();
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, PubnativeException.REQUEST_NO_FILL);
+            getNextNetwork();
         } else {
-            mAd = ad;
             // Track succeded network
-            mPlacement.trackSuccededNetwork(responseTime);
+            mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
+            mInsight.sendRequestInsight();
             // Default tracking data
-            mAd.setInsightModel(mPlacement.getInsightModel());
-            // Finish the request
-            invokeLoad(ad);
+            mAd = ad;
+            mAd.setInsightModel(mInsight);
+            invokeLoad(mAd);
         }
     }
 
@@ -203,7 +205,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
-        mPlacement.trackUnreachableNetwork(responseTime, exception);
-        waterfall();
+        mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+        getNextNetwork();
     }
 }

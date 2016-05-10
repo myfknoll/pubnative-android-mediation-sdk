@@ -1,3 +1,26 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2015 PubNative GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
@@ -7,9 +30,6 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-/**
- * Created by davidmartin on 01/05/16.
- */
 public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetworkAdapter {
 
     private static final String TAG = PubnativeNetworkInterstitialAdapter.class.getSimpleName();
@@ -34,15 +54,15 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
         /**
          * Called whenever the interstitial finished loading an ad
          *
-         * @param interstitial interstitial that finished the load
+         * @param interstitial interstitial that finished the initialize
          */
         void onAdapterLoadFinish(PubnativeNetworkInterstitialAdapter interstitial);
 
         /**
          * Called whenever the interstitial failed loading an ad
          *
-         * @param interstitial interstitial that failed the load
-         * @param exception    exception with the description of the load error
+         * @param interstitial interstitial that failed the initialize
+         * @param exception    exception with the description of the initialize error
          */
         void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial, Exception exception);
     }

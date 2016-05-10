@@ -1,3 +1,26 @@
+// The MIT License (MIT)
+//
+// Copyright (c) 2015 PubNative GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 package net.pubnative.mediation.request;
 
 import android.content.Context;
@@ -13,8 +36,9 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall implements PubnativeNetworkInterstitialAdapter.LoadListener,
-                                                                                PubnativeNetworkInterstitialAdapter.AdListener {
+public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
+        implements PubnativeNetworkInterstitialAdapter.LoadListener,
+                   PubnativeNetworkInterstitialAdapter.AdListener {
 
     private static final String TAG = PubnativeNetworkInterstitial.class.getSimpleName();
     protected Listener                            mListener;
@@ -31,16 +55,17 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
 
         /**
          * Called whenever the interstitial finished loading an ad
-         *w
-         * @param interstitial interstitial that finished the load
+         * w
+         *
+         * @param interstitial interstitial that finished the initialize
          */
         void onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial interstitial);
 
         /**
          * Called whenever the interstitial failed loading an ad
          *
-         * @param interstitial interstitial that failed the load
-         * @param exception    exception with the description of the load error
+         * @param interstitial interstitial that failed the initialize
+         * @param exception    exception with the description of the initialize error
          */
         void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial, Exception exception);
 
@@ -72,7 +97,6 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
          */
         void onPubnativeNetworkInterstitialHide(PubnativeNetworkInterstitial interstitial);
     }
-
     //==============================================================================================
     // Public methods
     //==============================================================================================
@@ -93,9 +117,9 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
      */
     public synchronized void load(Context context, String appToken, String placement) {
 
-        Log.v(TAG, "load");
+        Log.v(TAG, "initialize");
         if (mListener == null) {
-            Log.e(TAG, "load - Error: listener was not set, have you configured one using setListener()?");
+            Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
         } else if (context == null ||
                    TextUtils.isEmpty(appToken) ||
                    TextUtils.isEmpty(placement)) {
@@ -106,7 +130,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
             invokeLoadFail(PubnativeException.INTERSTITIAL_SHOWN);
         } else {
             mHandler = new Handler(Looper.getMainLooper());
-            super.start(context, appToken, placement);
+            load(context, appToken, placement);
         }
     }
 
@@ -137,32 +161,36 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
             mAdapter.show();
         }
     }
-
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================
 
     @Override
-    protected void onPacingCapActive() {
-        if (mAdapter == null) {
+    protected void onWaterfallLoadFinish(boolean pacingActive) {
+
+        if (pacingActive && mAdapter == null) {
             invokeLoadFail(PubnativeException.PLACEMENT_PACING_CAP);
-        } else {
+        } else if (pacingActive) {
             invokeLoadFinish();
+        } else {
+            getNextNetwork();
         }
     }
 
     @Override
-    protected void onLoadFail(Exception exception) {
+    protected void onWaterfallError(Exception exception) {
+
         invokeLoadFail(exception);
     }
 
     @Override
-    protected void onLoadFinish(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
 
         mAdapter = hub.getInterstitialAdapter();
         if (mAdapter == null) {
-            mPlacement.trackUnreachableNetwork(0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
-            waterfall();
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+
+            getNextNetwork();
         } else {
             mStartTimestamp = System.currentTimeMillis();
             // Add ML extras for adapter
@@ -277,7 +305,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
 
         Log.v(TAG, "onPubnativePlacementLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        mPlacement.trackSuccededNetwork(responseTime);
+        mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
         invokeLoadFinish();
     }
 
@@ -287,11 +315,11 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall impl
         Log.v(TAG, "onPubnativePlacementLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         if (exception == PubnativeException.ADAPTER_TIMEOUT) {
-            mPlacement.trackUnreachableNetwork(responseTime, exception);
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         } else {
-            mPlacement.trackAttemptedNetwork(responseTime, exception);
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         }
-        waterfall();
+        getNextNetwork();
     }
 
     // PubnativeNetworkInterstitialAdapter.AdListener

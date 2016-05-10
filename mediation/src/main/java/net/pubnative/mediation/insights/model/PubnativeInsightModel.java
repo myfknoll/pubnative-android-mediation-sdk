@@ -1,6 +1,7 @@
 package net.pubnative.mediation.insights.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
@@ -108,16 +109,34 @@ public class PubnativeInsightModel {
     /**
      * Adds extra fields to be added in the insight query string
      *
+     * @param extras dictionary with extras key and values
+     */
+    public void addExtras(Map<String, String> extras) {
+
+        Log.v(TAG, "addExtra");
+        if(extras != null) {
+            if (mExtras == null) {
+                mExtras = new HashMap<String, String>();
+            }
+            mExtras.putAll(extras);
+        }
+    }
+
+    /**
+     * Adds extra fields to be added in the insight query string
+     *
      * @param key   key string
      * @param value value string
      */
     public void addExtra(String key, String value) {
 
         Log.v(TAG, "addExtra");
-        if (mExtras == null) {
-            mExtras = new HashMap<String, String>();
+        if(!TextUtils.isEmpty(key) && !TextUtils.isEmpty(value)) {
+            if (mExtras == null) {
+                mExtras = new HashMap<String, String>();
+            }
+            mExtras.put(key, value);
         }
-        mExtras.put(key, value);
     }
 
     /**
