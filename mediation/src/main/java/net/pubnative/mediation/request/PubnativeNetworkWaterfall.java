@@ -151,9 +151,6 @@ public abstract class PubnativeNetworkWaterfall {
             } else {
                 Map<String, String> extras = new HashMap<String, String>();
                 extras.put(TRACKING_PARAMETER_REQUEST_ID, mPlacement.getTrackingUUID());
-                if (mTargeting != null) {
-                    extras.putAll(mTargeting.toDictionary());
-                }
                 onWaterfallNextNetwork(hub, network, extras);
             }
         }

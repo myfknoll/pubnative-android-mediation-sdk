@@ -53,7 +53,7 @@ public class PubnativeAdTargetingModel {
 
         Map result = new HashMap();
         if (age != null) {
-            result.put("age", age);
+            result.put("age", String.valueOf(age));
         }
         if (!TextUtils.isEmpty(education)) {
             result.put("education", education);
@@ -65,10 +65,10 @@ public class PubnativeAdTargetingModel {
             result.put("gender", gender);
         }
         if (iap != null) {
-            result.put("iap", iap);
+            result.put("iap", String.valueOf(iap));
         }
         if (iap_total != null) {
-            result.put("iap_total", iap_total);
+            result.put("iap_total", String.valueOf(iap_total));
         }
         return result;
     }

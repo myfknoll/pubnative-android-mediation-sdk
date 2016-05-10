@@ -130,7 +130,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             invokeLoadFail(PubnativeException.INTERSTITIAL_SHOWN);
         } else {
             mHandler = new Handler(Looper.getMainLooper());
-            load(context, appToken, placement);
+            initialize(context, appToken, placement);
         }
     }
 

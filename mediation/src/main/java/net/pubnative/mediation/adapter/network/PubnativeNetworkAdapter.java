@@ -28,6 +28,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
+
 import java.util.Map;
 
 public abstract class PubnativeNetworkAdapter {
@@ -37,6 +39,7 @@ public abstract class PubnativeNetworkAdapter {
     protected Map                             mData;
     protected Map<String, String>             mExtras;
     protected Handler                         mHandler;
+    protected PubnativeAdTargetingModel       mTargeting;
     //==============================================================================================
     // Adapter Runnable
     //==============================================================================================
@@ -75,6 +78,17 @@ public abstract class PubnativeNetworkAdapter {
 
         Log.v(TAG, "setExtras");
         mExtras = extras;
+    }
+
+    /**
+     * This method sets the extras for the adapter request
+     *
+     * @param targeting valid targeting filed
+     */
+    public void setTargeting(PubnativeAdTargetingModel targeting) {
+
+        Log.v(TAG, "setExtras");
+        mTargeting = targeting;
     }
 
     /**

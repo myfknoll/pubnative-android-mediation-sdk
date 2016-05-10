@@ -164,11 +164,11 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeLoadFinish() {
+    protected void invokeLoadFinish(PubnativeNetworkInterstitialAdapter interstitial) {
 
         Log.v(TAG, "invokeLoadFinish");
         if (mLoadListener != null) {
-            mLoadListener.onAdapterLoadFinish(this);
+            mLoadListener.onAdapterLoadFinish(interstitial);
         }
         mLoadListener = null;
     }

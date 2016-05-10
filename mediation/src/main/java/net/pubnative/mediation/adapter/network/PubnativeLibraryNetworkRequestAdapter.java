@@ -75,6 +75,13 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
                 request.setParameter(key, mExtras.get(key));
             }
         }
+        if (mTargeting != null) {
+            Map targeting = mTargeting.toDictionary();
+            for (Object key : targeting.keySet()) {
+                String value = (String) targeting.get(key);
+                request.setParameter((String) key, value);
+            }
+        }
         request.start(context, PubnativeRequest.Endpoint.NATIVE, this);
     }
 

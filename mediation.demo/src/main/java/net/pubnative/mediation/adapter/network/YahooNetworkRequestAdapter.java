@@ -31,13 +31,17 @@ import com.flurry.android.FlurryAgent;
 import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdNative;
 import com.flurry.android.ads.FlurryAdNativeListener;
+import com.flurry.android.ads.FlurryAdTargeting;
+import com.flurry.android.ads.FlurryGender;
 
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements FlurryAdNativeListener {
+public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
+        implements FlurryAdNativeListener {
 
     private static      String TAG                = YahooNetworkRequestAdapter.class.getSimpleName();
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
@@ -86,6 +90,27 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
         }
         // Make request
         FlurryAdNative flurryAdNative = new FlurryAdNative(mContext, adSpaceName);
+        // Add targeting
+        if (mTargeting != null) {
+            FlurryAdTargeting targeting = new FlurryAdTargeting();
+            targeting.setAge(mTargeting.age);
+            FlurryGender gender = null;
+            if (mTargeting.gender != null) {
+                if (mTargeting.gender.equals("female")) {
+                    targeting.setGender(FlurryGender.FEMALE);
+                } else if (mTargeting.gender.equals("male")) {
+                    targeting.setGender(FlurryGender.MALE);
+                } else {
+                    targeting.setGender(FlurryGender.UNKNOWN);
+                }
+            }
+            if (mTargeting.interests != null) {
+                Map interests = new HashMap();
+                interests.put("interest", TextUtils.join(",", mTargeting.interests));
+                targeting.setKeywords(interests);
+            }
+            flurryAdNative.setTargeting(targeting);
+        }
         flurryAdNative.setListener(this);
         flurryAdNative.fetchAd();
     }

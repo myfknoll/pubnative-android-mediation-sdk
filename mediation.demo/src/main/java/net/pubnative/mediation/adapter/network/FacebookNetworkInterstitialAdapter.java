@@ -24,13 +24,25 @@
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
+
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.ImpressionListener;
+import com.facebook.ads.InterstitialAd;
+import com.facebook.ads.InterstitialAdListener;
+
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
+public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
+        implements InterstitialAdListener,
+                   ImpressionListener {
 
     private static String TAG = FacebookNetworkInterstitialAdapter.class.getSimpleName();
+    private InterstitialAd mInterstitial;
 
     /**
      * Creates a new instance of PubnativeNetworkRequestAdapter
@@ -46,24 +58,106 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
     public void load(Context context) {
 
         Log.v(TAG, "load");
+        if (context != null && mData != null) {
+            String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
+            if (!TextUtils.isEmpty(placementId)) {
+                mInterstitial = new InterstitialAd(context, placementId);
+                mInterstitial.setAdListener(this);
+                mInterstitial.loadAd();
+            } else {
+                invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+            }
+        } else {
+            invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
+        }
     }
 
     @Override
     public boolean isReady() {
 
         Log.v(TAG, "isReady");
-        return false;
+        boolean result = false;
+        if (mInterstitial != null) {
+            result = mInterstitial.isAdLoaded();
+        }
+        return result;
     }
 
     @Override
     public void show() {
 
         Log.v(TAG, "show");
+        if (mInterstitial != null) {
+            mInterstitial.show();
+        }
     }
 
     @Override
     public void destroy() {
 
         Log.v(TAG, "destroy");
+        if (mInterstitial != null) {
+            mInterstitial.destroy();
+        }
+    }
+
+    //==============================================================================================
+    // Callabacks
+    //==============================================================================================
+    // InterstitialAdListener
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onInterstitialDisplayed(Ad ad) {
+
+        Log.v(TAG, "onInterstitialDisplayed");
+        invokeShow();
+    }
+
+    @Override
+    public void onInterstitialDismissed(Ad ad) {
+
+        Log.v(TAG, "onInterstitialDismissed");
+        invokeHide();
+    }
+
+    @Override
+    public void onError(Ad ad, AdError adError) {
+
+        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
+        if (adError == null) {
+            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        } else {
+            int errorCode = adError.getErrorCode();
+            // 1001 || 1002 || 1203 (No_fill)
+            if (AdError.NO_FILL_ERROR_CODE == errorCode ||
+                AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
+                1203 == errorCode) {
+                invokeLoadFinish(null);
+            } else {
+                invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+            }
+        }
+    }
+
+    @Override
+    public void onAdLoaded(Ad ad) {
+
+        Log.v(TAG, "onAdLoaded");
+        mInterstitial.setImpressionListener(this);
+        invokeLoadFinish(this);
+    }
+
+    @Override
+    public void onAdClicked(Ad ad) {
+
+        Log.v(TAG, "onAdClicked");
+        invokeClick();
+    }
+
+    @Override
+    public void onLoggingImpression(Ad ad) {
+
+        Log.v(TAG, "onLoggingImpression");
+        invokeImpressionConfirmed();
     }
 }

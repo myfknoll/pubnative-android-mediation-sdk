@@ -24,10 +24,12 @@
 package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Map;
 
-public class PubnativeLibraryNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
+public class PubnativeLibraryNetworkInterstitialAdapter
+        extends PubnativeNetworkInterstitialAdapter {
 
     private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
 
@@ -40,29 +42,35 @@ public class PubnativeLibraryNetworkInterstitialAdapter extends PubnativeNetwork
 
         super(data);
     }
-
     //==============================================================================================
     // PubnativeNetworkInterstitialAdapter
     //==============================================================================================
 
     @Override
     public void load(Context context) {
-        // TODO: Load
+
+        Log.v(TAG, "load");
+        // TODO: Add once library is released
     }
 
     @Override
     public boolean isReady() {
 
-        return false;
+        Log.v(TAG, "isReady");
+        boolean result = false;
+        // TODO: Add once library is released
+        return result;
     }
 
     @Override
     public void show() {
-        // TODO: Show
+        // TODO: Add once library is released
+        Log.v(TAG, "show");
     }
 
     @Override
     public void destroy() {
-        // TODO: Destroy
+        // TODO: Add once library is released
+        Log.v(TAG, "destroy");
     }
 }

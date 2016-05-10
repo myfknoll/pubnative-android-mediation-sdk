@@ -127,6 +127,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         } else {
             adapter.setExtras(extras);
             adapter.setListener(this);
+            adapter.setTargeting(mTargeting);
             adapter.execute(mContext, network.timeout);
         }
     }
