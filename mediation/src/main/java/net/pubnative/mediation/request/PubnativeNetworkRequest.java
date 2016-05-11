@@ -92,6 +92,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         } else {
             mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
+            mListener = listener;
             initialize(context, appToken, placementName);
         }
     }
