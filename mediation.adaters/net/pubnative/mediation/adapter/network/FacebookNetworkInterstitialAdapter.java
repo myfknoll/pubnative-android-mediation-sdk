@@ -42,7 +42,6 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
                    ImpressionListener {
 
     private static final String TAG = FacebookNetworkInterstitialAdapter.class.getSimpleName();
-    private static int FACEBOOK_ERROR_NO_FILL_1203 = 1203;
     private InterstitialAd mInterstitial;
 
     /**
@@ -128,14 +127,14 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
         if (adError == null) {
             invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         } else {
-            int errorCode = adError.getErrorCode();
-            // 1001 || 1002 || 1203 (No_fill)
-            if (AdError.NO_FILL_ERROR_CODE == errorCode ||
-                AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
-                FACEBOOK_ERROR_NO_FILL_1203 == errorCode) {
-                invokeLoadFinish(null);
-            } else {
-                invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+            switch (adError.getErrorCode()) {
+                case AdError.NO_FILL_ERROR_CODE:
+                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
+                case FacebookNetworkRequestAdapter.FACEBOOK_ERROR_NO_FILL_1203:
+                    invokeLoadFinish(null);
+                    break;
+                default:
+                    invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
             }
         }
     }
