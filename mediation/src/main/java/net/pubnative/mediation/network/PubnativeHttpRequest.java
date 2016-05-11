@@ -33,11 +33,11 @@ import android.util.Log;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -181,28 +181,16 @@ public class PubnativeHttpRequest {
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                String resultString = stringFromInputString(inputStream);
-                String response = "";
-                while (inputStream.available() > 0) {
-                    response += inputStream.read();
-                }
-                System.out.println("Anshuman " + response);
-                if (resultString == null) {
-                    /*String response = "";
-                    while (inputStream.available() > 0) {
-                        response += inputStream.read();
-                    }
-                    System.out.println("Anshuman " + response);*/
-                    HashMap<String, String> errorData = new HashMap<String, String>();
-                    errorData.put("serverResponse", response);
-                    invokeFail(new PubnativeException(PubnativeException.ERROR_CODE.REQUEST_INVALID_RESPONSE, "Invalid response from server.", errorData));
+                Object resultString = stringFromInputStream(inputStream);
+                if (resultString instanceof Exception) {
+                    invokeFail((PubnativeException) resultString);
                 } else {
-                    invokeFinish(resultString);
+                    invokeFinish(resultString.toString());
                 }
             } else {
                 HashMap<String, String> errorData = new HashMap<String, String>();
                 errorData.put("statusCode", responseCode+"");
-                errorData.put("errorString", stringFromInputString(connection.getErrorStream()));
+                errorData.put("errorString", stringFromInputStream(connection.getErrorStream()).toString());
                 invokeFail(new PubnativeException(PubnativeException.ERROR_CODE.REQUEST_INVALID_STATUS_CODE, "Invalid status code.", errorData));
             }
         } catch (Exception exception) {
@@ -214,32 +202,43 @@ public class PubnativeHttpRequest {
         }
     }
 
-    protected String stringFromInputString(InputStream inputStream) {
+    protected Object stringFromInputStream(InputStream inputStream) {
 
-        Log.v(TAG, "stringFromInputString");
-        String result = null;
-        BufferedReader bufferReader = null;
-        StringBuilder stringBuilder = new StringBuilder();
+        Log.v(TAG, "stringFromInputStream");
+        Object result;
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try {
-            String line;
-            bufferReader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((line = bufferReader.readLine()) != null) {
-                stringBuilder.append(line);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, length);
             }
+            byteArrayOutputStream.flush();
+            result = byteArrayOutputStream.toString();
         } catch (IOException e) {
-            Log.e(TAG, "stringFromInputString - Error:" + e);
-            stringBuilder = null;
-        } finally {
-            if (bufferReader != null) {
-                try {
-                    bufferReader.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "stringFromInputString - Error:" + e);
+            Log.e(TAG, "stringFromInputStream - Error:" + e);
+
+            InputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            String response = "";
+            int n;
+            try {
+                while (-1 != (n = byteArrayInputStream.read())) {
+                    response += Integer.toHexString(n) + " ";
                 }
+            } catch (IOException e1) {
+                Log.e(TAG, "stringFromInputStream - Error:" + e);
             }
-        }
-        if (stringBuilder != null) {
-            result = stringBuilder.toString();
+            HashMap<String, String> errorData = new HashMap<String, String>();
+            errorData.put("serverResponse", response);
+
+            result = new PubnativeException(PubnativeException.ERROR_CODE.REQUEST_INVALID_RESPONSE, "Invalid response from server.", errorData);
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                // Do nothing
+            }
         }
         return result;
     }
