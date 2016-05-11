@@ -40,9 +40,10 @@ import java.util.Map;
 public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements AdListener {
 
-    private static         String   TAG              = FacebookNetworkRequestAdapter.class.getSimpleName();
-    protected static final String   KEY_PLACEMENT_ID = "placement_id";
-    protected              NativeAd mNativeAd        = null;
+    private static         String   TAG                         = FacebookNetworkRequestAdapter.class.getSimpleName();
+    protected static final String   KEY_PLACEMENT_ID            = "placement_id";
+    protected static final int      FACEBOOK_ERROR_NO_FILL_1203 = 1203;
+    protected              NativeAd mNativeAd                   = null;
 
     /**
      * Creates a new instance of PubnativeNetworkRequestAdapter
@@ -93,19 +94,17 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     public void onError(Ad ad, AdError adError) {
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        if (ad == mNativeAd) {
-            if (adError == null) {
-                invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-            } else {
-                int errorCode = adError.getErrorCode();
-                // 1001 || 1002 || 1203 (No_fill)
-                if (AdError.NO_FILL_ERROR_CODE == errorCode ||
-                    AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE == errorCode ||
-                    1203 == errorCode) {
+        if (adError == null) {
+            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        } else {
+            switch (adError.getErrorCode()) {
+                case AdError.NO_FILL_ERROR_CODE:
+                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
+                case FACEBOOK_ERROR_NO_FILL_1203:
                     invokeLoaded(null);
-                } else {
-                    invokeFailed(new Exception("FacebookNetworkAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
-                }
+                    break;
+                default:
+                    invokeFailed(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
             }
         }
     }
