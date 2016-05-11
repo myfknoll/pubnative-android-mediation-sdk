@@ -48,6 +48,11 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     public static final String KEY_FLURRY_API_KEY = "api_key";
     protected Context mContext;
 
+    /**
+     * Creates a new instance of YahooNetworkRequestAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
     public YahooNetworkRequestAdapter(Map data) {
 
         super(data);

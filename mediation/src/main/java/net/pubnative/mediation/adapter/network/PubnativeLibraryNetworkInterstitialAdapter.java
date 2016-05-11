@@ -34,7 +34,7 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
      *
      * @param data server configured data for the current adapter network.
      */

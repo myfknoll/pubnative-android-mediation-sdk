@@ -46,7 +46,7 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     protected              NativeAd mNativeAd                   = null;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of FacebookNetworkRequestAdapter
      *
      * @param data server configured data for the current adapter network.
      */

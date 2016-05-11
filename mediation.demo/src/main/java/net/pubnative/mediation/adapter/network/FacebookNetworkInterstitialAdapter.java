@@ -45,7 +45,7 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
     private InterstitialAd mInterstitial;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of FacebookNetworkInterstitialAdapter
      *
      * @param data server configured data for the current adapter network.
      */
