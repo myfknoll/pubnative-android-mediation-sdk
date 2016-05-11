@@ -231,7 +231,11 @@ public class PubnativeConfigManager {
     protected static void processConfigDownloadResponse(PubnativeConfigRequestModel request, String result) {
 
         Log.v(TAG, "processConfigDownloadResponse");
-        if (!TextUtils.isEmpty(result)) {
+        if (TextUtils.isEmpty(result)) {
+            // In case of server error problem, we serve the stored config
+            Log.e(TAG, "downloadConfig - Error, empty response");
+            serveStoredConfig(request);
+        } else {
             try {
                 PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
@@ -247,10 +251,6 @@ public class PubnativeConfigManager {
                 Log.e(TAG, "downloadConfig - Error: " + e);
                 serveStoredConfig(request);
             }
-        } else {
-            // In case of server error problem, we serve the stored config
-            Log.e(TAG, "downloadConfig - Error, empty response");
-            serveStoredConfig(request);
         }
     }
 
@@ -290,6 +290,7 @@ public class PubnativeConfigManager {
                 // check if new config contains that placement.
                 PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
                 PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
+
                 // Check if impression cap (hour) changed
                 if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
                     PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
