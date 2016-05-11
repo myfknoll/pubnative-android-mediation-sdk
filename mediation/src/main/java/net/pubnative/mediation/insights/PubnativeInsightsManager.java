@@ -133,10 +133,10 @@ public class PubnativeInsightsManager {
                                         trackingFailed(context, model, response.error_message);
                                     }
                                 } catch (Exception e) {
-                                    HashMap<String, String> errorData = new HashMap<String, String>();
+                                    Map errorData = new HashMap();
                                     errorData.put("parsingException", e.toString());
                                     errorData.put("serverResponse", result);
-                                    trackingFailed(context, model, new PubnativeException(PubnativeException.ERROR_CODE.REQUEST_INVALID_RESPONSE, "Invalid response from server.", errorData).toString());
+                                    trackingFailed(context, model, PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, errorData).toString());
                                 }
                             }
                         }
