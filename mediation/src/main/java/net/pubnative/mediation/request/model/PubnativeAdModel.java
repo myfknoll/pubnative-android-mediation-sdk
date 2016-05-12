@@ -27,28 +27,19 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
-import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
-import net.pubnative.mediation.insights.PubnativeInsightsManager;
-import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
-
-import java.util.Map;
+import net.pubnative.mediation.insights.model.PubnativeInsightModel;
 
 public abstract class PubnativeAdModel {
 
-    private static final String TAG = PubnativeAdModel.class.getSimpleName();
-
+    private static final String                TAG                = PubnativeAdModel.class.getSimpleName();
     // Model
-    protected Context                   mContext               = null;
-    protected Listener                  mListener              = null;
+    protected            Context               mContext           = null;
+    protected            Listener              mListener          = null;
     // Tracking
-    protected PubnativeInsightDataModel mTrackingInfoModel     = null;
-    protected String                    mImpressionTrackingURL = null;
-    protected String                    mClickTrackingURL      = null;
-    protected Map<String, String>       mImpressionParameters  = null;
-    protected Map<String, String>       mClickParameters       = null;
-    protected boolean                   mImpressionTracked     = false;
-    protected boolean                   mClickTracked          = false;
+    protected            PubnativeInsightModel mInsightModel      = null;
+    protected            boolean               mImpressionTracked = false;
+    protected            boolean               mClickTracked      = false;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -60,12 +51,14 @@ public abstract class PubnativeAdModel {
 
         /**
          * Callback that will be invoked when the impression is confirmed
+         *
          * @param model model where the impression was confirmed
          */
         void onAdImpressionConfirmed(PubnativeAdModel model);
 
         /**
          * Callback that will be invoked when the ad click was detected
+         *
          * @param model model where the click was confirmed
          */
         void onAdClick(PubnativeAdModel model);
@@ -81,12 +74,12 @@ public abstract class PubnativeAdModel {
         Log.v(TAG, "setListener");
         mListener = listener;
     }
-
     //==============================================================================================
     // ABSTRACT
     //==============================================================================================
     // MODEL FIELDs
     //----------------------------------------------------------------------------------------------
+
     /**
      * gets title of the current ad
      *
@@ -137,7 +130,6 @@ public abstract class PubnativeAdModel {
      * @return Disclosure view to be added on top of the ad.
      */
     public abstract View getAdvertisingDisclosureView(Context context);
-
     //----------------------------------------------------------------------------------------------
     // TRACKING
     //----------------------------------------------------------------------------------------------
@@ -154,50 +146,25 @@ public abstract class PubnativeAdModel {
      * Stop using the view for confirming impression and handle clicks
      */
     public abstract void stopTracking();
-
     //==============================================================================================
     // Tracking data
     //==============================================================================================
-    /**
-     * Sets impression tracking info
-     *
-     * @param impressionURL impression tracking URL
-     * @param parameters    extra parameters to be sent as querystring
-     */
-    public void setTrackingImpressionData(String impressionURL, Map<String, String> parameters) {
-
-        Log.v(TAG, "setTrackingImpressionData");
-        mImpressionParameters = parameters;
-        mImpressionTrackingURL = impressionURL;
-    }
-
-    /**
-     * Sets click tracking info
-     *
-     * @param clickURL   click tracking URL
-     * @param parameters extra parameters to be sent as querystring
-     */
-    public void setTrackingClickData(String clickURL, Map<String, String> parameters) {
-
-        Log.v(TAG, "setTrackingClickData");
-        mClickParameters = parameters;
-        mClickTrackingURL = clickURL;
-    }
 
     /**
      * Sets extended tracking (used to initialize the view)
      *
-     * @param trackingInfoModel tracking model
+     * @param insightModel insight model with all the tracking data
      */
-    public void setTrackingInfo(PubnativeInsightDataModel trackingInfoModel) {
+    public void setInsightModel(PubnativeInsightModel insightModel) {
 
-        Log.v(TAG, "setTrackingInfo");
-        mTrackingInfoModel = trackingInfoModel;
+        Log.v(TAG, "setInsightModel");
+        mInsightModel = insightModel;
         // We set the creative based on  the model creative
-        if (mTrackingInfoModel != null) {
-            mTrackingInfoModel.creative_url = getBannerUrl();
-            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mTrackingInfoModel.ad_format_code)) {
-                mTrackingInfoModel.creative_url = getIconUrl();
+        if (mInsightModel != null) {
+            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mInsightModel.getAdFormat())) {
+                mInsightModel.setCreativeUrl(getIconUrl());
+            } else {
+                mInsightModel.setCreativeUrl(getBannerUrl());
             }
         }
     }
@@ -208,12 +175,9 @@ public abstract class PubnativeAdModel {
     protected void invokeOnAdImpressionConfirmed() {
 
         Log.v(TAG, "invokeOnAdImpressionConfirmed");
-        if (!mImpressionTracked) {
+        if (!mImpressionTracked && mInsightModel != null) {
             mImpressionTracked = true;
-            if (mContext != null && mTrackingInfoModel != null) {
-                PubnativeDeliveryManager.logImpression(mContext, mTrackingInfoModel.placement_name);
-                PubnativeInsightsManager.trackData(mContext, mImpressionTrackingURL, mImpressionParameters, mTrackingInfoModel);
-            }
+            mInsightModel.sendImpressionInsight();
             if (mListener != null) {
                 mListener.onAdImpressionConfirmed(this);
             }
@@ -223,14 +187,12 @@ public abstract class PubnativeAdModel {
     protected void invokeOnAdClick() {
 
         Log.v(TAG, "invokeOnAdClick");
-        if (!mClickTracked) {
+        if (!mClickTracked && mInsightModel != null) {
             mClickTracked = true;
-            if (mContext != null && mTrackingInfoModel != null) {
-                PubnativeInsightsManager.trackData(mContext, mClickTrackingURL, mClickParameters, mTrackingInfoModel);
-            }
-            if (mListener != null) {
-                mListener.onAdClick(this);
-            }
+            mInsightModel.sendClickInsight();
+        }
+        if (mListener != null) {
+            mListener.onAdClick(this);
         }
     }
 }

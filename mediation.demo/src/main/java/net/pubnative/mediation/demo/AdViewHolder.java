@@ -43,7 +43,7 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 /**
  * A class that holds the reference to all views in a cell.
  * This helps us to avoid redundant calls to "findViewById" each
- * time we load values into the cell.
+ * time we initialize values into the cell.
  */
 public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                                      View.OnClickListener {
@@ -68,7 +68,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
     public AdViewHolder(Context context, View convertView) {
 
-        this.mContext = context;
+        mContext = context;
         mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
         mAdContainer = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
         mRequestButton = (Button) convertView.findViewById(R.id.request_button);
@@ -125,7 +125,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             mRating.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
             Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
-            View sponsorView = model.getAdvertisingDisclosureView(this.mContext);
+            View sponsorView = model.getAdvertisingDisclosureView(mContext);
             if (sponsorView != null) {
                 mAdDisclosure.addView(sponsorView);
             }
@@ -147,12 +147,6 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     //==============================================================================================
     // PubnativeNetworkRequest.Listener
     //----------------------------------------------------------------------------------------------
-    @Override
-    public void onPubnativeNetworkRequestStarted(PubnativeNetworkRequest request) {
-
-        Log.d(TAG, "onPubnativeNetworkRequestStarted");
-    }
-
     @Override
     public void onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest request, PubnativeAdModel ad) {
 

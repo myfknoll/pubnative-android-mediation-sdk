@@ -36,11 +36,9 @@ public class PubnativeConfigModel {
     public Map<String, PubnativePlacementModel> placements;
 
     //==============================================================================================
-    // PubnativeConfigModel.ConfigContract
+    // PubnativeConfigModel.GLOBAL
     //==============================================================================================
-
-    public interface ConfigContract {
-
+    public interface GLOBAL {
         String REFRESH           = "refresh";
         String IMPRESSION_BEACON = "impression_beacon";
         String CLICK_BEACON      = "click_beacon";
@@ -51,11 +49,12 @@ public class PubnativeConfigModel {
     //==============================================================================================
     // PubnativeConfigModel
     //==============================================================================================
-
-    public boolean isNullOrEmpty() {
-
-        Log.v(TAG, "isNullOrEmpty");
-        return networks == null || placements == null || networks.size() == 0 || placements.size() == 0;
+    public boolean isEmpty() {
+        Log.v(TAG, "isEmpty");
+        return networks == null
+               || placements == null
+               || networks.size() == 0
+               || placements.size() == 0;
     }
 
     public Object getGlobal(String globalKey) {
