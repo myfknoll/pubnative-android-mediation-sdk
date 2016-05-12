@@ -21,7 +21,7 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.demo;
+package net.pubnative.mediation.demo.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,8 +29,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import net.pubnative.mediation.demo.activities.InterstitialAdActivity;
-import net.pubnative.mediation.demo.activities.NativeAdActivity;
+import net.pubnative.mediation.demo.R;
+import net.pubnative.mediation.demo.Settings;
+import net.pubnative.mediation.demo.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;

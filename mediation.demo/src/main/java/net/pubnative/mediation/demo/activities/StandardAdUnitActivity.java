@@ -31,7 +31,7 @@ public class StandardAdUnitActivity extends Activity {
 
         Log.v(TAG, "loadSpinnerData");
         List<String> placements = Settings.getPlacements(this);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, placements);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_row, placements);
         mPlacementSpinner.setAdapter(adapter);
     }
 }
