@@ -28,17 +28,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
+
+import net.pubnative.mediation.demo.activities.InterstitialAdActivity;
+import net.pubnative.mediation.demo.activities.NativeAdActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final String                 TAG              = MainActivity.class.getSimpleName();
-    private static final String                 APP_TOKEN        = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
-    private              AdListAdapter          mRequestsAdapter = null;
-    private              List<CellRequestModel> mRequests        = new ArrayList<>();
+    private static final String TAG       = MainActivity.class.getSimpleName();
+    private static final String APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,39 +47,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setDefaults();
-        mRequestsAdapter = new AdListAdapter(this, R.layout.ad_list_cell, mRequests);
-        ListView listView = (ListView) findViewById(R.id.ad_list);
-        listView.setAdapter(mRequestsAdapter);
-    }
-
-    @Override
-    protected void onResume() {
-
-        Log.v(TAG, "onResume");
-        super.onResume();
-        mRequestsAdapter.clear();
-        List<String> placements = Settings.getPlacements(this);
-        List<CellRequestModel> requests = new ArrayList<>();
-        for (String placementID : placements) {
-
-            CellRequestModel requestModel = null;
-            for (CellRequestModel model : mRequests) {
-                if(model.placementID.equals(placementID)) {
-                    requestModel = model;
-                    break;
-                }
-            }
-            if (requestModel == null) {
-                requests.add(new CellRequestModel(placementID));
-            } else {
-                requests.add(requestModel);
-            }
-        }
-        mRequests = requests;
-        for (CellRequestModel requestModel : mRequests) {
-            mRequestsAdapter.add(requestModel);
-        }
-        mRequestsAdapter.notifyDataSetChanged();
     }
 
     public void onSettingsClick(View v) {
@@ -87,6 +54,22 @@ public class MainActivity extends Activity {
         Log.v(TAG, "onSettingsClick");
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
         startActivity(settingsIntent);
+    }
+
+    public void onNativeClick(View view) {
+
+        Log.v(TAG, "onNativeClick");
+        // Launch native activity
+        Intent intent = new Intent(this, NativeAdActivity.class);
+        startActivity(intent);
+    }
+
+    public void onInterstitialClick(View view) {
+
+        Log.v(TAG, "onInterstitialClick");
+        // Launch interstitial activity
+        Intent intent = new Intent(this, InterstitialAdActivity.class);
+        startActivity(intent);
     }
 
     protected void setDefaults() {
