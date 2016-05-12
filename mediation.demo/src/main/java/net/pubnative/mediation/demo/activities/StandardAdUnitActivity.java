@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 
 import net.pubnative.mediation.demo.R;
@@ -13,8 +14,9 @@ import java.util.List;
 
 public class StandardAdUnitActivity extends Activity {
 
-    private static final String TAG                = StandardAdUnitActivity.class.getSimpleName();
-    private Spinner             mPlacementSpinner;
+    private static final String         TAG                = StandardAdUnitActivity.class.getSimpleName();
+    private              Spinner        mPlacementSpinner;
+    protected            RelativeLayout mLoaderContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +25,7 @@ public class StandardAdUnitActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_standard_ad_unit);
         mPlacementSpinner = (Spinner) findViewById(R.id.spinner_standard_unit_placement);
-
+        mLoaderContainer = (RelativeLayout) findViewById(R.id.container_standard_ad_unit_loader);
         loadSpinnerData();
     }
 

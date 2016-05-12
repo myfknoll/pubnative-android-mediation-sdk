@@ -21,32 +21,38 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.adapter.model;
+package net.pubnative.mediation.adapter;
 
-import net.pubnative.mediation.BuildConfig;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
+import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
+public abstract class PubnativeNetworkHub {
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21)
-public class PubnativeLibraryAdModelTest {
+    protected Map mNetworkData;
 
-    @Test
-    public void getMethodsDoNotFailWhenNullValueSetToVariables() {
+    /**
+     * Sets the network data to be used by the adapter hub to create the different formats adapters
+     *
+     * @param data map with the network data required
+     */
+    public void setNetworkData(Map data) {
 
-        PubnativeLibraryAdModel adModelSpy = spy(new PubnativeLibraryAdModel(null));
-
-        assertThat(adModelSpy.getTitle()).isNull();
-        assertThat(adModelSpy.getIconUrl()).isNull();
-        assertThat(adModelSpy.getBannerUrl()).isNull();
-        assertThat(adModelSpy.getDescription()).isNull();
-        assertThat(adModelSpy.getCallToAction()).isNull();
-        assertThat(adModelSpy.getStarRating()).isZero();
+        mNetworkData = data;
     }
+
+    /**
+     * This method will return the network dependent adapter for requests
+     *
+     * @return valid PubnativeNetworkRequestAdapter
+     */
+    public abstract PubnativeNetworkRequestAdapter getRequestAdapter();
+
+    /**
+     * Gets the network dependent adapter for interstitials
+     *
+     * @return valid PubnativeNetworkInterstitialAdapter
+     */
+    public abstract PubnativeNetworkInterstitialAdapter getInterstitialAdapter();
 }

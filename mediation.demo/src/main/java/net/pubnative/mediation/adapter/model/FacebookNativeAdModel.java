@@ -134,8 +134,8 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         Log.v(TAG, "getAdvertisingDisclosureView");
         View result = null;
         if (context != null && mNativeAd != null) {
-            this.mContext = context;
-            return new AdChoicesView(this.mContext, mNativeAd);
+            mContext = context;
+            return new AdChoicesView(mContext, mNativeAd);
         }
         return result;
     }
@@ -147,7 +147,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
         Log.v(TAG, "startTracking");
         if (context != null && mNativeAd != null && adView != null) {
-            this.mContext = context;
+            mContext = context;
             mNativeAd.registerViewForInteraction(adView);
         }
     }

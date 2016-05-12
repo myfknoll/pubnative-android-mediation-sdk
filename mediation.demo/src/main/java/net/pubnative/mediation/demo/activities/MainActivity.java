@@ -38,8 +38,9 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final String TAG       = MainActivity.class.getSimpleName();
-    private static final String APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
+    private static final String  TAG       = MainActivity.class.getSimpleName();
+    private static final String  APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
+    private              boolean mIsDefaultsSet   = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,20 +75,24 @@ public class MainActivity extends Activity {
     }
 
     protected void setDefaults() {
+
         Log.v(TAG, "setDefaults");
-        // App token
-        Settings.setAppToken(this, APP_TOKEN);
-        // Placements
-        List<String> placements = new ArrayList<>();
-        placements.add("facebook_only");
-        placements.add("pubnative_only");
-        placements.add("yahoo_only");
-        placements.add("waterfall");
-        placements.add("imp_day_cap_10");
-        placements.add("imp_hour_cap_10");
-        placements.add("pacing_cap_hour_1");
-        placements.add("pacing_cap_min_1");
-        placements.add("disabled");
-        Settings.setPlacements(this, placements);
+        if(!mIsDefaultsSet) {
+            mIsDefaultsSet = true;
+            // App token
+            Settings.setAppToken(this, APP_TOKEN);
+            // Placements
+            List<String> placements = new ArrayList<>();
+            placements.add("facebook_only");
+            placements.add("pubnative_only");
+            placements.add("yahoo_only");
+            placements.add("waterfall");
+            placements.add("imp_day_cap_10");
+            placements.add("imp_hour_cap_10");
+            placements.add("pacing_cap_hour_1");
+            placements.add("pacing_cap_min_1");
+            placements.add("disabled");
+            Settings.setPlacements(this, placements);
+        }
     }
 }

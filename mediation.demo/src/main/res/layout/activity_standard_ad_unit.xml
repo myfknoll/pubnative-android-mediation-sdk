@@ -24,7 +24,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/container_standard_unit_loader"
+        android:id="@+id/container_standard_ad_unit_loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#77000000"
