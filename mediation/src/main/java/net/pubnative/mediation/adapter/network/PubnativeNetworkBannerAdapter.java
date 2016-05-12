@@ -75,6 +75,10 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
 
     }
 
+    //==============================================================================================
+    // Overridable methods
+    //==============================================================================================
+
     public void setLoadListener(LoadListener loadListener) {
 
         Log.v(TAG, "setLoadListener");
@@ -87,6 +91,10 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
         mAdListener = adListener;
     }
 
+    //==============================================================================================
+    // PubnativeNetworkAdapter
+    //==============================================================================================
+
     @Override
     public void execute(Context context, int timeoutInMillis) {
         startTimeout(timeoutInMillis);
@@ -98,13 +106,46 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
         invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
     }
 
+    //==============================================================================================
+    // Abstract
+    //==============================================================================================
+
+    /**
+     * Starts loading the interstitial ad
+     *
+     * @param context valid Context
+     */
     public abstract void load(Context context);
 
+    /**
+     * Starts showing the interstitial for the adapted network
+     */
     public abstract void show();
 
+    /**
+     * Destroys the current interstitial for the adapted network
+     */
     public abstract void destroy();
 
+    /**
+     * Tells if the interstitial is ready to be shown in the screen
+     *
+     * @return true if it's ready, false if it's not
+     */
     public abstract boolean isReady();
+
+    //==============================================================================================
+    // Callback helpers
+    //==============================================================================================
+
+    protected void invokeLoadFinish(PubnativeNetworkBannerAdapter banner) {
+
+        Log.v(TAG, "invokeLoadFinish");
+        if (mLoadListener != null) {
+            mLoadListener.onAdapterLoadFinish(banner);
+        }
+        mLoadListener = null;
+    }
 
     protected void invokeLoadFail(Exception exception) {
 
@@ -113,5 +154,37 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
             mLoadListener.onAdapterLoadFail(this, exception);
         }
         mLoadListener = null;
+    }
+
+    protected void invokeShow() {
+
+        Log.v(TAG, "invokeShow");
+        if (mAdListener != null) {
+            mAdListener.onAdapterShow(this);
+        }
+    }
+
+    protected void invokeImpressionConfirmed() {
+
+        Log.v(TAG, "invokeImpressionConfirmed");
+        if (mAdListener != null) {
+            mAdListener.onAdapterImpressionConfirmed(this);
+        }
+    }
+
+    protected void invokeClick() {
+
+        Log.v(TAG, "invokeClick");
+        if (mAdListener != null) {
+            mAdListener.onAdapterClick(this);
+        }
+    }
+
+    protected void invokeHide() {
+
+        Log.v(TAG, "invokeHide");
+        if (mAdListener != null) {
+            mAdListener.onAdapterHide(this);
+        }
     }
 }

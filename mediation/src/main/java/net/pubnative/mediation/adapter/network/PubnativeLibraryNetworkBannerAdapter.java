@@ -22,6 +22,10 @@ public class PubnativeLibraryNetworkBannerAdapter extends PubnativeNetworkBanner
         super(data);
     }
 
+    //==============================================================================================
+    // PubnativeNetworkInterstitialAdapter
+    //==============================================================================================
+
     @Override
     public void load(Context context) {
 
