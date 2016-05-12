@@ -21,6 +21,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
     protected boolean                       mIsShown;
     protected boolean                       mIsLoading;
     protected PubnativeNetworkBannerAdapter mAdapter;
+    protected long                          mStartTimestamp;
 
     public interface Listener {
 
@@ -69,6 +70,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
         void onPubnativeNetworkBannerHide(PubnativeNetworkBanner banner);
     }
 
+    /**
+     * Loads the interstitial ads before being shown
+     */
     public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
@@ -87,6 +91,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
 
     }
 
+    /**
+     * This method will show the banner if the ad is available
+     */
     public synchronized void show() {
 
         Log.v(TAG, "show");
@@ -100,6 +107,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
 
     }
 
+    /**
+     * Tells if the banner is ready to be shown
+     */
     public synchronized boolean isReady(){
 
         Log.v(TAG, "isReady");
@@ -111,19 +121,59 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
 
     }
 
+    //==============================================================================================
+    // PubnativeNetworkWaterfall methods
+    //==============================================================================================
+
     @Override
     protected void onWaterfallLoadFinish(boolean pacingActive) {
-
+        if (pacingActive && mAdapter == null) {
+            invokeLoadFail(PubnativeException.PLACEMENT_PACING_CAP);
+        } else if (pacingActive) {
+            invokeLoadFinish();
+        } else {
+            getNextNetwork();
+        }
     }
 
     @Override
     protected void onWaterfallError(Exception exception) {
-
+        invokeLoadFail(exception);
     }
 
     @Override
     protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+        mAdapter = hub.getBannerAdapter();
+        if (mAdapter == null) {
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+            getNextNetwork();
+        } else {
+            mStartTimestamp = System.currentTimeMillis();
+            // Add ML extras for adapter
+            mAdapter.setExtras(extras);
+            mAdapter.setLoadListener(this);
+            mAdapter.execute(mContext, network.timeout);
+        }
+    }
 
+    //==============================================================================================
+    // Callback helpers
+    //==============================================================================================
+
+    protected void invokeLoadFinish() {
+
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Log.v(TAG, "invokeLoadFinish");
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner.this);
+                }
+                mListener = null;
+            }
+        });
     }
 
     protected void invokeLoadFail(final Exception exception) {
@@ -140,36 +190,120 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
                 mListener = null;
             }
         });
-
     }
+
+    protected void invokeShow() {
+
+        Log.v(TAG, "invokeShow");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkBannerShow(PubnativeNetworkBanner.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeImpressionConfirmed() {
+
+        Log.v(TAG, "invokeImpressionConfirmed");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkBannerImpressionConfirmed(PubnativeNetworkBanner.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeClick() {
+
+        Log.v(TAG, "invokeClick");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkBannerClick(PubnativeNetworkBanner.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeHide() {
+
+        Log.v(TAG, "invokeHide");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkBannerHide(PubnativeNetworkBanner.this);
+                }
+            }
+        });
+    }
+
+    //==============================================================================================
+    // Callbacks
+    //==============================================================================================
+    // PubnativeNetworkBannerAdapter.AdListener
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onAdapterShow(PubnativeNetworkBannerAdapter banner) {
 
+        Log.v(TAG, "onPubnativeBannerShowLoadFail");
     }
 
     @Override
     public void onAdapterImpressionConfirmed(PubnativeNetworkBannerAdapter banner) {
 
+        Log.v(TAG, "onPubnativeBannerImpressionConfirmed");
     }
 
     @Override
     public void onAdapterClick(PubnativeNetworkBannerAdapter banner) {
 
+        Log.v(TAG, "onPubnativeBannerClick");
     }
 
     @Override
     public void onAdapterHide(PubnativeNetworkBannerAdapter banner) {
 
+        Log.v(TAG, "onPubnativeBannerHide");
     }
+
+    // PubnativeNetworkBannerAdapter.LoadListener
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onAdapterLoadFinish(PubnativeNetworkBannerAdapter banner) {
 
+        Log.v(TAG, "onPubnativeBannerLoadFinish");
+        long responseTime = System.currentTimeMillis() - mStartTimestamp;
+        mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
+        invokeLoadFinish();
     }
 
     @Override
     public void onAdapterLoadFail(PubnativeNetworkBannerAdapter banner, Exception exception) {
 
+        Log.v(TAG, "onPubnativeBannerLoadFail");
+        long responseTime = System.currentTimeMillis() - mStartTimestamp;
+        if (exception == PubnativeException.ADAPTER_TIMEOUT) {
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+        } else {
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+        }
+        getNextNetwork();
     }
 }

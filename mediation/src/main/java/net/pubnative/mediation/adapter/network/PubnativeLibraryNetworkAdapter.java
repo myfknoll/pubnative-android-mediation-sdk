@@ -42,4 +42,10 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
 //        return new PubnativeLibraryNetworkInterstitialAdapter(mNetworkData);
         return null;
     }
+
+    @Override
+    public PubnativeNetworkBannerAdapter getBannerAdapter() {
+
+        return null;
+    }
 }
