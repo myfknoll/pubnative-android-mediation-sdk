@@ -23,87 +23,23 @@
 
 package net.pubnative.mediation.adapter.network;
 
-import android.content.Context;
-import android.util.Log;
+import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 
-import net.pubnative.library.request.PubnativeRequest;
-import net.pubnative.library.request.model.PubnativeAdModel;
-import net.pubnative.mediation.adapter.PubnativeNetworkAdapter;
-import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
-
-import java.util.List;
-import java.util.Map;
-
-public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkAdapter implements PubnativeRequest.Listener{
+public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
 
     private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
 
-    public PubnativeLibraryNetworkAdapter(Map data) {
-
-        super(data);
-    }
-
-    //==============================================================================================
-    // PubnativeNetworkAdapter methods
-    //==============================================================================================
     @Override
-    public void request(Context context) {
+    public PubnativeNetworkRequestAdapter getRequestAdapter() {
 
-        Log.v(TAG, "request");
-        if (context != null && mData != null) {
-            createRequest(context);
-        } else {
-            invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
-        }
-    }
-
-    //==============================================================================================
-    // PubnativeLibraryNetworkAdapter methods
-    //==============================================================================================
-
-    protected void createRequest(Context context) {
-
-        Log.v(TAG, "createRequest");
-        PubnativeRequest request = new PubnativeRequest();
-        // We add all params
-        for (Object key : mData.keySet()) {
-            Object value = mData.get(key);
-            request.setParameter((String) key, value.toString());
-        }
-        Map<String, String> extraMap = getExtras();
-        // Add extras
-        if (extraMap != null) {
-            for (String key : extraMap.keySet()) {
-                request.setParameter(key, extraMap.get(key));
-            }
-        }
-        request.start(context, PubnativeRequest.Endpoint.NATIVE, this);
-    }
-
-    //==============================================================================================
-    // Callbacks
-    //==============================================================================================
-    // PubnativeRequest.Listener
-    //----------------------------------------------------------------------------------------------
-
-    @Override
-    public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
-        Log.v(TAG, "onPubnativeRequestSuccess");
-        if (request == null) {
-            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
-        } else {
-            net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
-            if (ads != null && ads.size() > 0) {
-                wrapAd = new PubnativeLibraryAdModel(ads.get(0));
-            }
-            invokeLoaded(wrapAd);
-        }
+        return new PubnativeLibraryNetworkRequestAdapter(mNetworkData);
     }
 
     @Override
-    public void onPubnativeRequestFailed(PubnativeRequest request, Exception ex) {
-        Log.v(TAG, "onPubnativeRequestFailed: " + ex);
-        invokeFailed(ex);
+    public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
+
+        // TODO: Return when library supports it
+//        return new PubnativeLibraryNetworkInterstitialAdapter(mNetworkData);
+        return null;
     }
 }

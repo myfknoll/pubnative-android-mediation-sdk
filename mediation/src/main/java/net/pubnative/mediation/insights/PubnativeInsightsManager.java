@@ -61,10 +61,10 @@ public class PubnativeInsightsManager {
      *
      * @param context   valid Context object
      * @param baseURL   the base URL of the tracking server
-     * @param parameters added parameters that will be included as querystring parameters
+     * @param extras    added parameters that will be included as querystring parameters
      * @param dataModel PubnativeInsightDataModel object with values filled in.
      */
-    public synchronized static void trackData(Context context, String baseURL, Map<String, String> parameters, PubnativeInsightDataModel dataModel) {
+    public synchronized static void trackData(Context context, String baseURL, Map<String, String> extras, PubnativeInsightDataModel dataModel) {
 
         Log.v(TAG, "trackData");
         if (context == null) {
@@ -76,9 +76,9 @@ public class PubnativeInsightsManager {
         } else {
             Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
             // Fill with passed parameters
-            if (parameters != null) {
-                for (String key : parameters.keySet()) {
-                    uriBuilder.appendQueryParameter(key, parameters.get(key));
+            if (extras != null && extras.size() > 0) {
+                for (String key : extras.keySet()) {
+                    uriBuilder.appendQueryParameter(key, extras.get(key));
                 }
             }
             PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
@@ -109,18 +109,19 @@ public class PubnativeInsightsManager {
                 Log.w(TAG, "trackNext - Dequeued item is null. Dropping call");
                 sIdle = true;
             } else {
-
                 String trackingDataString = new Gson().toJson(model.dataModel);
                 if (!TextUtils.isEmpty(model.url) && !TextUtils.isEmpty(trackingDataString)) {
                     PubnativeHttpRequest.Listener listener = new PubnativeHttpRequest.Listener() {
 
                         @Override
                         public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
+
                             Log.v(TAG, "onPubnativeHttpRequestStart");
                         }
 
                         @Override
                         public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
+
                             Log.v(TAG, "onPubnativeHttpRequestFinish");
                             if (TextUtils.isEmpty(result)) {
                                 trackingFailed(context, model, "invalid insight response (empty or null)");
@@ -143,6 +144,7 @@ public class PubnativeInsightsManager {
 
                         @Override
                         public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
+
                             Log.v(TAG, "onPubnativeHttpRequestFail: " + exception);
                             trackingFailed(context, model, exception.toString());
                         }

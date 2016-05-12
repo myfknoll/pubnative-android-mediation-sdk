@@ -21,22 +21,56 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.config.model;
+package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
-
-import net.pubnative.mediation.config.PubnativeConfigManager;
+import android.util.Log;
 
 import java.util.Map;
 
-public class PubnativeConfigRequestModel {
+public class PubnativeLibraryNetworkInterstitialAdapter
+        extends PubnativeNetworkInterstitialAdapter {
 
-    public Context                         context;
-    public String                          appToken;
-    public Map<String, String>             extras;
-    public PubnativeConfigManager.Listener listener;
+    private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
 
+    /**
+     * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
+    public PubnativeLibraryNetworkInterstitialAdapter(Map data) {
+
+        super(data);
+    }
     //==============================================================================================
-    // PubnativeConfigRequestModel
+    // PubnativeNetworkInterstitialAdapter
     //==============================================================================================
+
+    @Override
+    public void load(Context context) {
+
+        Log.v(TAG, "load");
+        // TODO: Add once library is released
+    }
+
+    @Override
+    public boolean isReady() {
+
+        Log.v(TAG, "isReady");
+        boolean result = false;
+        // TODO: Add once library is released
+        return result;
+    }
+
+    @Override
+    public void show() {
+        // TODO: Add once library is released
+        Log.v(TAG, "show");
+    }
+
+    @Override
+    public void destroy() {
+        // TODO: Add once library is released
+        Log.v(TAG, "destroy");
+    }
 }

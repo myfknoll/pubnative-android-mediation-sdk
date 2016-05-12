@@ -24,10 +24,10 @@
 package net.pubnative.mediation.insights.model;
 
 import net.pubnative.mediation.BuildConfig;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -36,7 +36,6 @@ import static org.mockito.Mockito.spy;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
-@PrepareForTest(PubnativeInsightDataModel.class)
 public class PubnativeInsightDataModelTest {
 
     private final String validString = "sampleText";
@@ -63,7 +62,9 @@ public class PubnativeInsightDataModelTest {
         assertThat(dataModelSpy.interests).isNull();
 
         // valid string
-        dataModelSpy.addInterest(validString);
+        PubnativeAdTargetingModel targeting = new PubnativeAdTargetingModel();
+        targeting.addInterest(validString);
+        dataModelSpy.setTargetting(targeting);
         assertThat(dataModelSpy.interests).isNotNull();
         assertThat(dataModelSpy.interests.size()).isNotZero();
 
@@ -71,11 +72,15 @@ public class PubnativeInsightDataModelTest {
         dataModelSpy.interests = null;
 
         // interest as empty string
-        dataModelSpy.addInterest("");
+        PubnativeAdTargetingModel emptyInterest = new PubnativeAdTargetingModel();
+        emptyInterest.addInterest("");
+        dataModelSpy.setTargetting(emptyInterest);
         assertThat(dataModelSpy.interests).isNull();
 
         // interest as null
-        dataModelSpy.addInterest(null);
+        PubnativeAdTargetingModel nullInterest = new PubnativeAdTargetingModel();
+        nullInterest.addInterest(null);
+        dataModelSpy.setTargetting(nullInterest);
         assertThat(dataModelSpy.interests).isNull();
     }
 
