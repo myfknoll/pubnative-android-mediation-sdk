@@ -42,6 +42,12 @@ public class PubnativeException extends Exception {
     public static final PubnativeException PLACEMENT_NOT_FOUND             = new PubnativeException(4005, "Placement not found");
     public static final PubnativeException PLACEMENT_EMPTY                 = new PubnativeException(4006, "Retrieved config contains null element");
     public static final PubnativeException PLACEMENT_PARAMETERS_INVALID    = new PubnativeException(4007, "Parameters invalid");
+    //==============================================================================================
+    // Banner Exceptions
+    //==============================================================================================
+    public static final PubnativeException BANNER_PARAMETERS_INVALID       = new PubnativeException(5000, "parameters configuring the banner are invalid");
+    public static final PubnativeException BANNER_LOADING                  = new PubnativeException(5001, "banner is currently loading");
+    public static final PubnativeException BANNER_SHOWN                    = new PubnativeException(5002, "banner is already shown");
 
     /**
      * Constructor
