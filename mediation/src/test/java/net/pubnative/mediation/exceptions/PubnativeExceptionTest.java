@@ -25,6 +25,8 @@ package net.pubnative.mediation.exceptions;
 
 import net.pubnative.mediation.BuildConfig;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -34,18 +36,24 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class PubnativeExceptionTest {
 
     @Test
-    public void extraException() {
+    public void extraMapIsNotNull() {
         Map mockExtraMap = mock(Map.class);
-        mockExtraMap.put("errorData", "this is simple error data");
-        when(mockExtraMap.get("errorData")).thenReturn("this is simple error data");
         PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
-        assertThat(extraException.mExtraMap).isEqualTo(mockExtraMap);
+        assertThat(extraException.mExtraMap).isNotNull();
+    }
+
+    @Test
+    public void extraMapData() throws JSONException {
+        Map mockExtraMap = mock(Map.class);
+        PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
+
+        JSONObject exceptionObj = new JSONObject(extraException.toString());
+        assertThat(exceptionObj.get("extraData")).isNotNull();
     }
 }
