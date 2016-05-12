@@ -28,13 +28,8 @@ import android.content.Context;
 import net.pubnative.mediation.BuildConfig;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -42,25 +37,15 @@ import org.robolectric.annotation.Config;
 import java.util.Calendar;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
-@PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
-@PrepareForTest(PubnativeDeliveryManager.class)
 public class PubnativeDeliveryManagerTest {
 
     private Context applicationContext;
     private static final String PLACEMENT_ID_VALID = "placement_id";
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Before
     public void setUp() {
@@ -167,19 +152,6 @@ public class PubnativeDeliveryManagerTest {
     }
 
     @Test
-    public void publicMethodsUpdatesData() {
-        PowerMockito.spy(PubnativeDeliveryManager.class);
-        // Updates once
-        PubnativeDeliveryManager.getCurrentDailyCount(applicationContext, PLACEMENT_ID_VALID);
-        // Updates once
-        PubnativeDeliveryManager.getCurrentHourlyCount(applicationContext, PLACEMENT_ID_VALID);
-        // Updates twice
-        PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
-        PowerMockito.verifyStatic(times(4));
-        PubnativeDeliveryManager.updateImpressionCount(any(Context.class), anyString());
-    }
-
-    @Test
     public void getCurrentCountsReturnsZeroWithInvalidParameters() {
         PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
 
@@ -262,106 +234,6 @@ public class PubnativeDeliveryManagerTest {
         PubnativeDeliveryManager.updateImpressionCount(applicationContext, PLACEMENT_ID_VALID);
         assertThat(PubnativeDeliveryManager.getCurrentDailyCount(applicationContext, PLACEMENT_ID_VALID)).isNotZero();
         assertThat(PubnativeDeliveryManager.getCurrentHourlyCount(applicationContext, PLACEMENT_ID_VALID)).isNotZero();
-    }
-
-    @Test
-    public void resetMethodCalledWithImpHourCapChange() {
-        PubnativeConfigTestUtils.setTestConfig(applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
-
-        PowerMockito.spy(PubnativeDeliveryManager.class);
-        PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
-
-        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_imp_cap_hour_changed.json");
-        PubnativeConfigManager.processConfigDownloadResponse(applicationContext, PLACEMENT_ID_VALID, configJson);
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetPacingCalendar(anyString());
-
-        PowerMockito.verifyStatic(times(1));
-        PubnativeDeliveryManager.resetHourlyImpressionCount(eq(applicationContext), anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetDailyImpressionCount(eq(applicationContext), anyString());
-    }
-
-    @Test
-    public void resetMethodCalledWithImpDayCapChange() {
-        PubnativeConfigTestUtils.setTestConfig(applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
-
-        PowerMockito.spy(PubnativeDeliveryManager.class);
-        PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
-
-        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_imp_cap_day_changed.json");
-        PubnativeConfigManager.processConfigDownloadResponse(applicationContext, PLACEMENT_ID_VALID, configJson);
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetPacingCalendar(anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetHourlyImpressionCount(eq(applicationContext), anyString());
-
-        PowerMockito.verifyStatic(times(1));
-        PubnativeDeliveryManager.resetDailyImpressionCount(eq(applicationContext), anyString());
-    }
-
-    @Test
-    public void resetMethodCalledWhenPacingCapHourChanged() {
-        PubnativeConfigTestUtils.setTestConfig(applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
-
-        PowerMockito.spy(PubnativeDeliveryManager.class);
-        PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
-
-        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_pacing_cap_hour_changed.json");
-        PubnativeConfigManager.processConfigDownloadResponse(applicationContext, PLACEMENT_ID_VALID, configJson);
-
-        PowerMockito.verifyStatic(times(1));
-        PubnativeDeliveryManager.resetPacingCalendar(anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetHourlyImpressionCount(eq(applicationContext), anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetDailyImpressionCount(eq(applicationContext), anyString());
-    }
-
-    @Test
-    public void resetMethodCalledWhenPacingCapMinuteChanged() {
-        PubnativeConfigTestUtils.setTestConfig(applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
-
-        PowerMockito.spy(PubnativeDeliveryManager.class);
-        PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
-
-        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config_pacing_cap_minute_changed.json");
-        PubnativeConfigManager.processConfigDownloadResponse(applicationContext, PLACEMENT_ID_VALID, configJson);
-
-        PowerMockito.verifyStatic(times(1));
-        PubnativeDeliveryManager.resetPacingCalendar(anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetHourlyImpressionCount(eq(applicationContext), anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetDailyImpressionCount(eq(applicationContext), anyString());
-    }
-
-    @Test
-    public void resetMethodsNotCalledForSameDeliveryRule() {
-        PubnativeConfigTestUtils.setTestConfig(applicationContext, "valid_config.json", PLACEMENT_ID_VALID);
-
-        PowerMockito.spy(PubnativeDeliveryManager.class);
-        PubnativeDeliveryManager.logImpression(applicationContext, PLACEMENT_ID_VALID);
-
-        String configJson = PubnativeConfigTestUtils.getConfigApiResponseJsonFromResource("valid_config.json");
-        PubnativeConfigManager.processConfigDownloadResponse(applicationContext, PLACEMENT_ID_VALID, configJson);
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetPacingCalendar(anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetHourlyImpressionCount(eq(applicationContext), anyString());
-
-        PowerMockito.verifyStatic(never());
-        PubnativeDeliveryManager.resetDailyImpressionCount(eq(applicationContext), anyString());
     }
 
     @Test

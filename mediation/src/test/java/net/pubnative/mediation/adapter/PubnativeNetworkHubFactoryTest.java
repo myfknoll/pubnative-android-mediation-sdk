@@ -21,37 +21,32 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.insights;
+package net.pubnative.mediation.adapter;
 
-import android.content.Context;
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 
-import net.pubnative.mediation.BuildConfig;
-
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
-public class PubnativeInsightsManagerTest {
+public class PubnativeNetworkHubFactoryTest {
 
-    private Context                   appContext       = null;
+    @Test
+    public void createHub_withInvalidAdapterName_returnsNull() {
 
-    @Before
-    public void setUp() {
-        appContext = RuntimeEnvironment.application.getApplicationContext();
+        PubnativeNetworkModel model = spy(PubnativeNetworkModel.class);
+        model.adapter = "invalid_class_string";
+        PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(model);
+        assertThat(hub).isNull();
     }
 
     @Test
-    public void pendingAndFailedQueueIsEmptyAtBeginning() {
-        // assert that the failed items queue is empty at the beginning
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_FAILED_DATA)).isNull();
-        // assert that the pending items queue is empty at the beginning
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
+    public void createHub_withNullAdapterName_returnsNull() {
+
+        PubnativeNetworkModel model = spy(PubnativeNetworkModel.class);
+        model.adapter = null;
+        PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(model);
+        assertThat(hub).isNull();
     }
 }

@@ -28,31 +28,33 @@ import android.util.Log;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 
 import java.lang.reflect.Constructor;
-import java.util.Map;
 
-public class PubnativeNetworkAdapterFactory {
+public class PubnativeNetworkHubFactory {
 
-    private static         String TAG             = PubnativeNetworkAdapterFactory.class.getSimpleName();
+    private static         String TAG             = PubnativeNetworkHubFactory.class.getSimpleName();
     protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
     /**
-     * Creates a new network adapter instance by using the values passed in using model
+     * Creates a new hub instance by using the values passed in using model
      *
-     * @param model network model that contains the values needed for creating a network adapter
+     * @param model network model that contains the values needed for creating the hub
      *
-     * @return instance of PubnativeNetworkAdapter if created, else null
+     * @return instance of PubnativeNetworkHub if created, else null
      */
-    public static PubnativeNetworkAdapter createAdapter(PubnativeNetworkModel model) {
+    public static PubnativeNetworkHub createHub(PubnativeNetworkModel model) {
 
-        Log.v(TAG, "createAdapter");
-        PubnativeNetworkAdapter result = null;
+        Log.v(TAG, "createHub");
+        PubnativeNetworkHub result = null;
         try {
-            Class<?> networkClass = Class.forName(getPackageName(model.adapter));
-            Constructor<?> constructor = networkClass.getConstructor(Map.class);
-            result = (PubnativeNetworkAdapter) constructor.newInstance(model.params);
+            Class<?> hubClass = Class.forName(getPackageName(model.adapter));
+            Constructor<?> hubConstructor = hubClass.getConstructor();
+            result = (PubnativeNetworkHub) hubConstructor.newInstance();
+            if (result != null) {
+                result.setNetworkData(model.params);
+            }
         } catch (Exception e) {
             // Don't crash, just return null, log error and return null
-            Log.e(TAG, "Pubnative - Error creating adapter: " + e);
+            Log.e(TAG, "Error creating adapter: " + e);
         }
         return result;
     }

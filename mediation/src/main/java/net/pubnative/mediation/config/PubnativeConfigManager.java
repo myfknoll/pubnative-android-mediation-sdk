@@ -25,6 +25,7 @@ package net.pubnative.mediation.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -39,6 +40,7 @@ import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -51,7 +53,7 @@ public class PubnativeConfigManager {
     protected static final String                            TIMESTAMP_LONG_KEY        = "config.timestamp";
     protected static final String                            REFRESH_LONG_KEY          = "refresh";
     protected static final String                            CONFIG_DOWNLOAD_BASE_URL  = "http://ml.pubnative.net/ml/v1/config";
-    protected static final String                            APP_TOKEN_KEY             = "?app_token=";
+    protected static final String                            APP_TOKEN_KEY             = "app_token";
     protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
     protected static       boolean                           sIdle                     = true;
 
@@ -93,21 +95,26 @@ public class PubnativeConfigManager {
      * @param appToken unique identification key provided by Pubnative for mediation sdk
      * @param listener listener to be used for tracking the config loaded callback
      */
-    public synchronized static void getConfig(Context context, String appToken, PubnativeConfigManager.Listener listener) {
+    public synchronized static void getConfig(Context context, String appToken, Map extras, PubnativeConfigManager.Listener listener) {
 
         Log.v(TAG, "getConfig: " + appToken);
-        if (context != null && !TextUtils.isEmpty(appToken)) {
-            if (listener != null) {
-                PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
-                item.context = context;
-                item.appToken = appToken;
-                item.listener = listener;
-                enqueueRequest(item);
-                doNextConfigRequest();
-            }
-        } else {
+        if (listener == null) {
+            Log.e(TAG, "getConfig - Error: listener is null, dropping this call");
+        } else if (context == null) {
             // ensuring null config is returned
-            invokeLoaded(listener, null);
+            Log.e(TAG, "getConfig - Error: context is null");
+            invokeLoaded(null, listener);
+        } else if (TextUtils.isEmpty(appToken)) {
+            Log.e(TAG, "getConfig - Error: app token is null");
+            invokeLoaded(null, listener);
+        } else {
+            PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
+            item.context = context;
+            item.appToken = appToken;
+            item.extras = extras;
+            item.listener = listener;
+            enqueueRequest(item);
+            doNextConfigRequest();
         }
     }
 
@@ -132,36 +139,27 @@ public class PubnativeConfigManager {
     protected static void doNextConfigRequest() {
 
         Log.v(TAG, "doNextConfigRequest");
-        if (sIdle) {
-            PubnativeConfigRequestModel item = dequeueRequest();
-            if (item != null) {
-                sIdle = false;
-                getNextConfig(item.context, item.appToken, item.listener);
-            }
+        PubnativeConfigRequestModel item = dequeueRequest();
+        if (sIdle && item != null) {
+            sIdle = false;
+            getNextConfig(item);
         }
     }
 
-    private static void getNextConfig(Context context, String appToken, PubnativeConfigManager.Listener listener) {
+    private static void getNextConfig(PubnativeConfigRequestModel requestModel) {
 
-        Log.v(TAG, "getNextConfig: " + appToken);
-        if (context != null && !TextUtils.isEmpty(appToken)) {
-            // Downloads if needed
-            if (configNeedsUpdate(context, appToken)) {
-                downloadConfig(context, listener, appToken);
-            } else {
-                serveStoredConfig(context, listener);
-            }
+        Log.v(TAG, "getNextConfig: " + requestModel.appToken);
+        if (configNeedsUpdate(requestModel)) {
+            downloadConfig(requestModel);
         } else {
-            // ensuring null config is returned
-            invokeLoaded(listener, null);
+            serveStoredConfig(requestModel);
         }
     }
 
-    protected static void serveStoredConfig(Context context, PubnativeConfigManager.Listener listener) {
+    protected static void serveStoredConfig(PubnativeConfigRequestModel request) {
 
         Log.v(TAG, "serveStoredConfig");
-        PubnativeConfigModel configModel = getStoredConfig(context);
-        invokeLoaded(listener, configModel);
+        invokeLoaded(getStoredConfig(request.context), request.listener);
     }
 
     public static PubnativeConfigModel getStoredConfig(Context context) {
@@ -177,126 +175,107 @@ public class PubnativeConfigManager {
             }
         }
         // Ensure not returning an invalid getConfig
-        if (currentConfig != null && currentConfig.isNullOrEmpty()) {
+        if (currentConfig == null || currentConfig.isEmpty()) {
             currentConfig = null;
         }
         return currentConfig;
     }
 
-    protected static void invokeLoaded(PubnativeConfigManager.Listener listener, PubnativeConfigModel configModel) {
-
-        Log.v(TAG, "invokeLoaded");
-        if (listener != null) {
-            listener.onConfigLoaded(configModel);
-        }
-        sIdle = true;
-        doNextConfigRequest();
-    }
-
     protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel) {
 
         Log.v(TAG, "updateConfig");
-        if (context != null && !TextUtils.isEmpty(appToken)) {
-            if (configModel != null && !configModel.isNullOrEmpty()) {
+        if(context != null) {
+            if (TextUtils.isEmpty(appToken) || configModel == null || configModel.isEmpty()) {
+                clean(context);
+            } else {
                 setStoredConfig(context, configModel);
                 setStoredAppToken(context, appToken);
                 setStoredTimestamp(context, System.currentTimeMillis());
-                if (configModel.globals.containsKey(PubnativeConfigModel.ConfigContract.REFRESH)) {
-                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.ConfigContract.REFRESH);
+                if (configModel.globals.containsKey(PubnativeConfigModel.GLOBAL.REFRESH)) {
+                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.GLOBAL.REFRESH);
                     setStoredRefresh(context, refresh.longValue());
                 }
-            } else {
-                clean(context);
             }
-        } else {
-            clean(context);
         }
     }
 
-    protected synchronized static void downloadConfig(final Context context, final PubnativeConfigManager.Listener listener, final String appToken) {
+    protected synchronized static void downloadConfig(final PubnativeConfigRequestModel requestModel) {
 
         Log.v(TAG, "downloadConfig");
-        if (context != null && !TextUtils.isEmpty(appToken)) {
-            String downloadURLString = getConfigDownloadBaseUrl(context) + APP_TOKEN_KEY + appToken;
-            PubnativeHttpRequest http = new PubnativeHttpRequest();
-            http.start(context, downloadURLString, new PubnativeHttpRequest.Listener() {
-                @Override
-                public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
+        PubnativeHttpRequest http = new PubnativeHttpRequest();
+        http.start(requestModel.context, getConfigDownloadUrl(requestModel), new PubnativeHttpRequest.Listener() {
 
-                }
+            @Override
+            public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
 
-                @Override
-                public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
+                Log.v(TAG, "onPubnativeHttpRequestStart");
+            }
 
-                    Log.v(TAG, "onPubnativeHttpRequestFinish");
-                    processConfigDownloadResponse(context, appToken, result);
-                    serveStoredConfig(context, listener);
-                }
+            @Override
+            public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
 
-                @Override
-                public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
+                Log.v(TAG, "onPubnativeHttpRequestFinish");
+                processConfigDownloadResponse(requestModel, result);
+                serveStoredConfig(requestModel);
+            }
 
-                    Log.v(TAG, "onPubnativeHttpRequestFail: " + exception.toString());
-                    serveStoredConfig(context, listener);
-                }
-            });
-        } else {
-            serveStoredConfig(context, listener);
-        }
+            @Override
+            public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
+
+                Log.v(TAG, "onPubnativeHttpRequestFail: " + exception.toString());
+                serveStoredConfig(requestModel);
+            }
+        });
     }
 
-    protected static void processConfigDownloadResponse(Context context, String appToken, String result) {
+    protected static void processConfigDownloadResponse(PubnativeConfigRequestModel request, String result) {
 
         Log.v(TAG, "processConfigDownloadResponse");
-        if (!TextUtils.isEmpty(result)) {
+        if (TextUtils.isEmpty(result)) {
+            // In case of server error problem, we serve the stored config
+            Log.e(TAG, "downloadConfig - Error, empty response");
+            serveStoredConfig(request);
+        } else {
             try {
                 PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
-                    if (response.config != null && !response.config.isNullOrEmpty()) {
-                        // Update delivery manager's tracking data
-                        updateDeliveryManagerCache(context, response.config);
-                        // Saving config string
-                        updateConfig(context, appToken, response.config);
-                    }
+                    // Update delivery manager's tracking data
+                    updateDeliveryManagerCache(request.context, response.config);
+                    // Saving config string
+                    updateConfig(request.context, request.appToken, response.config);
                 } else {
                     Log.e(TAG, "downloadConfig - Error: " + response.error_message);
+                    serveStoredConfig(request);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "downloadConfig - Error: " + e);
+                serveStoredConfig(request);
             }
         }
     }
 
-    protected static boolean configNeedsUpdate(Context context, String appToken) {
+    protected static boolean configNeedsUpdate(PubnativeConfigRequestModel request) {
 
         Log.v(TAG, "configNeedsUpdate");
         boolean result = false;
-        if (context != null) {
-            String storedConfigString = getStoredConfigString(context);
-            if (TextUtils.isEmpty(storedConfigString)) {
-                // No stored config found - need update
-                result = true;
-            } else {
-                String storedAppToken = getStoredAppToken(context);
-                if (TextUtils.isEmpty(storedAppToken) || TextUtils.isEmpty(appToken) || !storedAppToken.equals(appToken)) {
-                    // different (stored token != new token) OR invalid (stored/new token is empty/null) app_tokens found - Need update
-                    result = true;
-                } else {
-                    Long refresh = getStoredRefresh(context);
-                    Long storedTimestamp = getStoredTimestamp(context);
-                    if (refresh == null || storedTimestamp == null) {
-                        // Invalid/unset refresh or timestamp value - Need update
-                        result = true;
-                    } else {
-                        Long currentTimestamp = System.currentTimeMillis();
-                        Long elapsed = TimeUnit.MILLISECONDS.toMinutes(currentTimestamp - storedTimestamp);
-                        if (elapsed >= refresh) {
-                            // Elapsed refresh time - Need update
-                            result = true;
-                        }
-                    }
-                }
-            }
+        String storedConfigString = getStoredConfigString(request.context);
+        String storedAppToken = getStoredAppToken(request.context);
+        Long refresh = getStoredRefresh(request.context);
+        Long storedTimestamp = getStoredTimestamp(request.context);
+        Long currentTimestamp = System.currentTimeMillis();
+        if (TextUtils.isEmpty(storedConfigString)) {
+            // There is no stored config
+            result = true;
+        } else if (!storedAppToken.equals(request.appToken)) {
+            // Stored config is different than the requested app token
+            result = true;
+        } else if (refresh == null ||
+                   storedTimestamp == null) {
+            // There is no previous refresh or timestamp stored
+            result = true;
+        } else if (TimeUnit.MILLISECONDS.toMinutes(currentTimestamp - storedTimestamp) >= refresh) {
+            // refresh time was elapsed
+            result = true;
         }
         return result;
     }
@@ -304,37 +283,42 @@ public class PubnativeConfigManager {
     private static void updateDeliveryManagerCache(Context context, PubnativeConfigModel downloadedConfig) {
 
         Log.v(TAG, "updateDeliveryManagerCache");
-        if (downloadedConfig != null) {
-            PubnativeConfigModel storedConfig = getStoredConfig(context);
-            if (storedConfig != null) {
-                Set<String> storePlacementIds = storedConfig.placements.keySet();
-                for (String placementId : storePlacementIds) {
-                    // check if new config contains that placement.
-                    PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
-                    if (newPlacement != null) {
-                        // compare the delivery rule of the new placement with the stored one.
-                        PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
-                        if (storedPlacement != null) {
-                            if (storedPlacement.delivery_rule != null && newPlacement.delivery_rule != null) {
-                                // check if impression cap (hour) changed
-                                if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
-                                    PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
-                                }
-                                // check if impression cap (day) changed
-                                if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
-                                    PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
-                                }
-                                // check if pacing cap changed
-                                if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
-                                    || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
-                                    PubnativeDeliveryManager.resetPacingCalendar(placementId);
-                                }
-                            }
-                        }
-                    }
+        PubnativeConfigModel storedConfig = getStoredConfig(context);
+        if(storedConfig != null) {
+            Set<String> storePlacementIds = storedConfig.placements.keySet();
+            for (String placementId : storePlacementIds) {
+                // check if new config contains that placement.
+                PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
+                PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
+
+                // Check if impression cap (hour) changed
+                if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
+                    PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
+                }
+                // check if impression cap (day) changed
+                if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
+                    PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
+                }
+                // check if pacing cap changed
+                if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
+                    || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
+                    PubnativeDeliveryManager.resetPacingCalendar(placementId);
                 }
             }
         }
+    }
+
+    //==============================================================================================
+    // Callback helpers
+    //==============================================================================================
+    protected static void invokeLoaded(PubnativeConfigModel configModel, PubnativeConfigManager.Listener listener) {
+
+        Log.v(TAG, "invokeLoaded");
+        if (listener != null) {
+            listener.onConfigLoaded(configModel);
+        }
+        sIdle = true;
+        doNextConfigRequest();
     }
 
     //==============================================================================================
@@ -372,13 +356,26 @@ public class PubnativeConfigManager {
         Log.v(TAG, "getConfigDownloadBaseUrl");
         String configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
         PubnativeConfigModel storedConfig = getStoredConfig(context);
-        if (storedConfig != null && !storedConfig.isNullOrEmpty()) {
-            String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.ConfigContract.CONFIG_URL);
+        if (storedConfig != null && !storedConfig.isEmpty()) {
+            String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.GLOBAL.CONFIG_URL);
             if (!TextUtils.isEmpty(configUrl)) {
                 configDownloadBaseUrl = configUrl;
             }
         }
         return configDownloadBaseUrl;
+    }
+
+    protected static String getConfigDownloadUrl(PubnativeConfigRequestModel request) {
+
+        Uri.Builder uriBuilder = Uri.parse(getConfigDownloadBaseUrl(request.context)).buildUpon();
+        uriBuilder.appendQueryParameter(APP_TOKEN_KEY, request.appToken);
+        if (request.extras != null) {
+            for (String key : request.extras.keySet()) {
+                String value = request.extras.get(key);
+                uriBuilder.appendQueryParameter(key, value);
+            }
+        }
+        return uriBuilder.build().toString();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -467,16 +464,14 @@ public class PubnativeConfigManager {
     protected static void setStringSharedPreference(Context context, String key, String value) {
 
         Log.v(TAG, "setStringSharedPreference");
-        if (context != null && !TextUtils.isEmpty(key)) {
-            SharedPreferences.Editor editor = getSharedPreferences(context).edit();
-            if (editor != null) {
-                if (TextUtils.isEmpty(value)) {
-                    editor.remove(key);
-                } else {
-                    editor.putString(key, value);
-                }
-                editor.apply();
+        SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        if (context != null && !TextUtils.isEmpty(key) && editor != null) {
+            if (TextUtils.isEmpty(value)) {
+                editor.remove(key);
+            } else {
+                editor.putString(key, value);
             }
+            editor.apply();
         }
     }
 

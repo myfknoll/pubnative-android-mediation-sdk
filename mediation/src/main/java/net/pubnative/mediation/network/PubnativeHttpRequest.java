@@ -61,9 +61,9 @@ public class PubnativeHttpRequest {
     public interface Listener {
 
         /**
-         * Called when the HttpRequest is about to start
+         * Called when the HttpRequest is about to execute
          *
-         * @param request request that is about to start
+         * @param request request that is about to execute
          */
         void onPubnativeHttpRequestStart(PubnativeHttpRequest request);
 
@@ -106,7 +106,7 @@ public class PubnativeHttpRequest {
     }
 
     /**
-     * This method will start a new request to the given URL
+     * This method will execute a new request to the given URL
      *
      * @param context   valid Context object
      * @param urlString URL where the request will be done
@@ -114,28 +114,28 @@ public class PubnativeHttpRequest {
      */
     public void start(Context context, final String urlString, Listener listener) {
 
-        Log.v(TAG, "start: " + urlString);
+        Log.v(TAG, "execute: " + urlString);
         mListener = listener;
         mHandler = new Handler(Looper.getMainLooper());
         if (mListener == null) {
             Log.w(TAG, "Warning: null listener specified, performing request without callbacks");
         }
-        if (TextUtils.isEmpty(urlString)) {
+        if (context == null) {
+            invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null context provided, dropping call"));
+        } else if (TextUtils.isEmpty(urlString)) {
             invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null or empty url, dropping call"));
+        } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
+            invokeStart();
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    doRequest(urlString);
+                }
+            }).start();
         } else {
-            if(PubnativeDeviceUtils.isNetworkAvailable(context)) {
-                invokeStart();
-                new Thread(new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        doRequest(urlString);
-                    }
-                }).start();
-            } else {
-                invokeFail(new Exception("PubnativeHttpRequest - Error: internet connection not detected, dropping call"));
-            }
+            invokeFail(new Exception("PubnativeHttpRequest - Error: internet connection not detected, dropping call"));
         }
     }
 
