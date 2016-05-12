@@ -15,7 +15,7 @@ import java.util.List;
 public class StandardAdUnitActivity extends Activity {
 
     private static final String         TAG                = StandardAdUnitActivity.class.getSimpleName();
-    private              Spinner        mPlacementSpinner;
+    protected            Spinner        mPlacementSpinner;
     protected            RelativeLayout mLoaderContainer;
 
     @Override

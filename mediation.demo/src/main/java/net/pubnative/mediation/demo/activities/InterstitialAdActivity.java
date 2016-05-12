@@ -3,54 +3,58 @@ package net.pubnative.mediation.demo.activities;
 import android.util.Log;
 import android.view.View;
 
-public class InterstitialAdActivity extends StandardAdUnitActivity {
+import net.pubnative.mediation.demo.Settings;
+import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class InterstitialAdActivity extends StandardAdUnitActivity implements PubnativeNetworkInterstitial.Listener {
+
+    private static final String TAG = InterstitialAdActivity.class.getSimpleName();
 
     public void onRequestClick(View v) {
 
         Log.v(TAG, "onRequestClick");
         mLoaderContainer.setVisibility(View.VISIBLE);
-        PubnativeInterstitial interstitial = new PubnativeInterstitial(this, Settings.getAppToken());
+        PubnativeNetworkInterstitial interstitial = new PubnativeNetworkInterstitial();
         interstitial.setListener(this);
-        interstitial.load();
+        interstitial.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
     }
 
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-    // PubnativeInterstitial.Listener
+    // PubnativeNetworkInterstitial.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeInterstitialLoadFinish(PubnativeInterstitial interstitial) {
-        Log.v(TAG, "onPubnativeInterstitialLoadFinish");
+    public void onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial interstitial) {
+        Log.v(TAG, "onPubnativeNetworkInterstitialLoadFinish");
+        mLoaderContainer.setVisibility(View.GONE);
         interstitial.show();
     }
 
     @Override
-    public void onPubnativeInterstitialLoadFail(PubnativeInterstitial interstitial, Exception exception) {
-        Log.v(TAG, "onPubnativeInterstitialLoadFail", exception);
+    public void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial, Exception exception) {
+        Log.v(TAG, "onPubnativeNetworkInterstitialLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
     }
 
     @Override
-    public void onPubnativeInterstitialShow(PubnativeInterstitial interstitial) {
-        Log.v(TAG, "onPubnativeInterstitialShow");
+    public void onPubnativeNetworkInterstitialShow(PubnativeNetworkInterstitial interstitial) {
+        Log.v(TAG, "onPubnativeNetworkInterstitialShow");
         mLoaderContainer.setVisibility(View.GONE);
     }
 
     @Override
-    public void onPubnativeInterstitialImpressionConfirmed(PubnativeInterstitial interstitial) {
-        Log.v(TAG, "onPubnativeInterstitialImpressionConfirmed");
+    public void onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial interstitial) {
+        Log.v(TAG, "onPubnativeNetworkInterstitialImpressionConfirmed");
     }
 
     @Override
-    public void onPubnativeInterstitialClick(PubnativeInterstitial interstitial) {
-        Log.v(TAG, "onPubnativeInterstitialClick");
+    public void onPubnativeNetworkInterstitialClick(PubnativeNetworkInterstitial interstitial) {
+        Log.v(TAG, "onPubnativeNetworkInterstitialClick");
     }
 
     @Override
-    public void onPubnativeInterstitialHide(PubnativeInterstitial interstitial) {
-        Log.v(TAG, "onPubnativeInterstitialHide");
+    public void onPubnativeNetworkInterstitialHide(PubnativeNetworkInterstitial interstitial) {
+        Log.v(TAG, "onPubnativeNetworkInterstitialHide");
     }
 }
