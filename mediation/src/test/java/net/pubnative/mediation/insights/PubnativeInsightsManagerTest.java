@@ -36,7 +36,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -58,17 +57,17 @@ public class PubnativeInsightsManagerTest {
     }
 
     @Test
-    public void trackDataWithNullContext() {
+    public void trackData_withNullContext_pass() {
         PubnativeInsightsManager.trackData(null, null, null, null);
     }
 
     @Test
-    public void trackDataWithInvalidUrl() {
+    public void trackData_withInvalidUrl_pass() {
         PubnativeInsightsManager.trackData(appContext, null, null, null);
     }
 
     @Test
-    public void trackData() {
+    public void trackData_withValidData_pass() {
         PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
         dataModel.fillDefaults(appContext);
         PubnativeInsightsManager.trackData(appContext, "http://www.google.com", null, dataModel);

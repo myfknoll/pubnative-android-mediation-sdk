@@ -42,14 +42,14 @@ import static org.mockito.Mockito.mock;
 public class PubnativeExceptionTest {
 
     @Test
-    public void extraMapIsNotNull() {
+    public void extraException_extraMapIsNotNull_pass() {
         Map mockExtraMap = mock(Map.class);
         PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
         assertThat(extraException.mExtraMap).isNotNull();
     }
 
     @Test
-    public void extraMapData() throws JSONException {
+    public void extraException_extraDataInJsonIsNotNull_pass() throws JSONException {
         Map mockExtraMap = mock(Map.class);
         PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
 

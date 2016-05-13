@@ -119,7 +119,6 @@ public class PubnativeException extends Exception {
         Log.v(TAG, "extraException");
         PubnativeException extraException = new PubnativeException(exception.getErrorCode(), exception.getMessage());
         extraException.mExtraMap = extraMap;
-
         return extraException;
     }
 }
