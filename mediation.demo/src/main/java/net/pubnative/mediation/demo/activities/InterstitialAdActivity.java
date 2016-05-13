@@ -29,6 +29,7 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
         Log.v(TAG, "onPubnativeNetworkInterstitialLoadFinish");
         mLoaderContainer.setVisibility(View.GONE);
         interstitial.show();
+        showToast("Interstitial ad loaded");
     }
 
     @Override
@@ -36,26 +37,31 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
         Log.v(TAG, "onPubnativeNetworkInterstitialLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
         showToast(exception.getMessage());
+        showToast("Interstitial ad loading failed");
     }
 
     @Override
     public void onPubnativeNetworkInterstitialShow(PubnativeNetworkInterstitial interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialShow");
         mLoaderContainer.setVisibility(View.GONE);
+        showToast("Interstitial show");
     }
 
     @Override
     public void onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialImpressionConfirmed");
+        showToast("Interstitial impression confirmed");
     }
 
     @Override
     public void onPubnativeNetworkInterstitialClick(PubnativeNetworkInterstitial interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialClick");
+        showToast("Interstitial click");
     }
 
     @Override
     public void onPubnativeNetworkInterstitialHide(PubnativeNetworkInterstitial interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialHide");
+        showToast("Interstitial hide");
     }
 }
