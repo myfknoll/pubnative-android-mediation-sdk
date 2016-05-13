@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.demo.Settings;
@@ -35,5 +36,9 @@ public class StandardAdUnitActivity extends Activity {
         List<String> placements = Settings.getPlacements(this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_row, placements);
         mPlacementSpinner.setAdapter(adapter);
+    }
+
+    protected void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

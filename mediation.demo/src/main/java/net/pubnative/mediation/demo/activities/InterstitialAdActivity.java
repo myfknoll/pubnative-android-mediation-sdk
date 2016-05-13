@@ -35,6 +35,7 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
     public void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial, Exception exception) {
         Log.v(TAG, "onPubnativeNetworkInterstitialLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
+        showToast(exception.getMessage());
     }
 
     @Override
