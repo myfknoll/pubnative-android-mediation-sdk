@@ -26,9 +26,7 @@ package net.pubnative.mediation.insights;
 import android.content.Context;
 
 import net.pubnative.mediation.BuildConfig;
-import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -41,15 +39,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Config(constants = BuildConfig.class)
 public class PubnativeInsightsManagerTest {
 
-    private Context                   appContext       = null;
-
-    @Before
-    public void setUp() {
-        appContext = RuntimeEnvironment.application.getApplicationContext();
-    }
-
     @Test
     public void pendingAndFailedQueueIsEmptyAtBeginning() {
+
+        Context appContext = RuntimeEnvironment.application.getApplicationContext();
         // assert that the failed items queue is empty at the beginning
         assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_FAILED_DATA)).isNull();
         // assert that the pending items queue is empty at the beginning
@@ -63,14 +56,8 @@ public class PubnativeInsightsManagerTest {
 
     @Test
     public void trackData_withInvalidUrl_pass() {
-        PubnativeInsightsManager.trackData(appContext, null, null, null);
-    }
 
-    @Test
-    public void trackData_withValidData_pass() {
-        PubnativeInsightDataModel dataModel = new PubnativeInsightDataModel();
-        dataModel.fillDefaults(appContext);
-        PubnativeInsightsManager.trackData(appContext, "http://www.google.com", null, dataModel);
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
+        Context appContext = RuntimeEnvironment.application.getApplicationContext();
+        PubnativeInsightsManager.trackData(appContext, null, null, null);
     }
 }

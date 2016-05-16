@@ -209,7 +209,7 @@ public class PubnativeHttpRequest {
     protected String stringFromInputStream(InputStream inputStream) throws PubnativeException {
 
         Log.v(TAG, "stringFromInputStream");
-        String result;
+        String result = null;
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         int length;
@@ -224,19 +224,12 @@ public class PubnativeHttpRequest {
         } catch (IOException e) {
             Log.e(TAG, "stringFromInputStream - Error:" + e);
 
-            InputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            String response = "";
-            try {
-                while ((length = byteArrayInputStream.read()) != -1) {
-                    response += Integer.toHexString(length) + " ";
-                }
-                byteArrayInputStream.close();
-            } catch (IOException e1) {
-                Log.e(TAG, "stringFromInputStream - Error:" + e);
-            }
-
             Map errorData = new HashMap();
-            errorData.put("serverResponse", response);
+            if(result == null) {
+                result = byteArrayOutputStream.toString();
+            }
+            errorData.put("serverResponse", result);
+            errorData.put("IOException", e.getMessage());
             throw PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, errorData);
         }
         return result;
