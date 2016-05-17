@@ -32,6 +32,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
@@ -39,6 +40,7 @@ import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -132,7 +134,10 @@ public class PubnativeInsightsManager {
                                         trackingFailed(context, model, response.error_message);
                                     }
                                 } catch (Exception e) {
-                                    trackingFailed(context, model, e.toString());
+                                    Map errorData = new HashMap();
+                                    errorData.put("parsingException", e.toString());
+                                    errorData.put("serverResponse", result);
+                                    trackingFailed(context, model, PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, errorData).toString());
                                 }
                             }
                         }
