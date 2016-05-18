@@ -28,7 +28,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
+import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdInterstitial;
+import com.flurry.android.ads.FlurryAdInterstitialListener;
 import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
 
@@ -37,7 +39,8 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
+public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
+        implements FlurryAdInterstitialListener {
 
     private static String TAG = YahooNetworkInterstitialAdapter.class.getSimpleName();
     private FlurryAdInterstitial mInterstitial;
@@ -65,6 +68,7 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 FlurryAgent.setLogEnabled(true);
+                FlurryAgent.setLogLevel(Log.VERBOSE);
                 // initialize flurry with new apiKey
                 FlurryAgent.init(context, apiKey);
                 // execute/resume session
@@ -72,6 +76,7 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
                     FlurryAgent.onStartSession(context);
                 }
                 mInterstitial = new FlurryAdInterstitial(context, adSpaceName);
+                mInterstitial.setListener(this);
                 // Add targeting
                 FlurryAdTargeting targeting = getTargeting();
                 if (targeting != null) {
@@ -88,7 +93,6 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         if (mTargeting != null) {
             result = new FlurryAdTargeting();
             result.setAge(mTargeting.age);
-
             if (mTargeting.gender == null) {
                 result.setGender(FlurryGender.UNKNOWN);
             } else if (mTargeting.gender.equals("female")) {
@@ -98,7 +102,6 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
             } else {
                 result.setGender(FlurryGender.UNKNOWN);
             }
-
             if (mTargeting.interests != null) {
                 Map interests = new HashMap();
                 interests.put("interest", TextUtils.join(",", mTargeting.interests));
@@ -135,5 +138,64 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         if (mInterstitial != null) {
             mInterstitial.destroy();
         }
+    }
+
+    //==============================================================================================
+    // Callabacks
+    //==============================================================================================
+    // FlurryAdInterstitialListener
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onFetched(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onFetched");
+        invokeLoadFinish(this);
+    }
+
+    @Override
+    public void onRendered(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onRendered");
+        invokeShow();
+    }
+
+    @Override
+    public void onDisplay(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onDisplay");
+        invokeImpressionConfirmed();
+    }
+
+    @Override
+    public void onClose(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onClose");
+        invokeHide();
+    }
+
+    @Override
+    public void onAppExit(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onAppExit");
+    }
+
+    @Override
+    public void onClicked(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onClicked");
+        invokeClick();
+    }
+
+    @Override
+    public void onVideoCompleted(FlurryAdInterstitial flurryAdInterstitial) {
+
+        Log.v(TAG, "onVideoCompleted");
+    }
+
+    @Override
+    public void onError(FlurryAdInterstitial flurryAdInterstitial, FlurryAdErrorType flurryAdErrorType, int i) {
+
+        Log.v(TAG, "onError: " + i);
+        invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
     }
 }
