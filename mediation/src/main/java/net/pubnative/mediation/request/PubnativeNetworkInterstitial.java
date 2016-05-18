@@ -305,6 +305,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onPubnativePlacementLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
+        interstitial.setAdListener(this);
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
         invokeLoadFinish();
     }
@@ -328,23 +329,27 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     public void onAdapterShow(PubnativeNetworkInterstitialAdapter interstitial) {
 
         Log.v(TAG, "onPubnativePlacementLoadFail");
+        invokeShow();
     }
 
     @Override
     public void onAdapterImpressionConfirmed(PubnativeNetworkInterstitialAdapter interstitial) {
 
         Log.v(TAG, "onPubnativePlacementLoadFail");
+        invokeImpressionConfirmed();
     }
 
     @Override
     public void onAdapterClick(PubnativeNetworkInterstitialAdapter interstitial) {
 
         Log.v(TAG, "onPubnativePlacementLoadFail");
+        invokeClick();
     }
 
     @Override
     public void onAdapterHide(PubnativeNetworkInterstitialAdapter interstitial) {
 
         Log.v(TAG, "onPubnativePlacementLoadFail");
+        invokeHide();
     }
 }

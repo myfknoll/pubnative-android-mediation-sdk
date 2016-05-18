@@ -1,15 +1,21 @@
 package net.pubnative.mediation.exceptions;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class PubnativeException extends Exception {
 
     public static final String TAG = PubnativeException.class.getSimpleName();
+
     //==============================================================================================
     // Private fields
     //==============================================================================================
     protected int mErrorCode;
+    protected Map mExtraMap;
     //==============================================================================================
     // Request Exceptions
     //==============================================================================================
@@ -42,6 +48,12 @@ public class PubnativeException extends Exception {
     public static final PubnativeException PLACEMENT_NOT_FOUND             = new PubnativeException(4005, "Placement not found");
     public static final PubnativeException PLACEMENT_EMPTY                 = new PubnativeException(4006, "Retrieved config contains null element");
     public static final PubnativeException PLACEMENT_PARAMETERS_INVALID    = new PubnativeException(4007, "Parameters invalid");
+    //==============================================================================================
+    // Network Exceptions
+    //==============================================================================================
+    public static final PubnativeException NETWORK_NO_INTERNET             = new PubnativeException(5001, "Internet connection is not available");
+    public static final PubnativeException NETWORK_INVALID_RESPONSE        = new PubnativeException(5002, "Invalid response from server");
+    public static final PubnativeException NETWORK_INVALID_STATUS_CODE     = new PubnativeException(5003, "Invalid status code from server");
 
     /**
      * Constructor
@@ -88,10 +100,25 @@ public class PubnativeException extends Exception {
                 }
                 json.put("stackTrace", stackTraceBuilder.toString());
             }
+            if(mExtraMap != null) {
+                JSONObject extraDataObj = new JSONObject();
+                for (Object key: mExtraMap.keySet()) {
+                    extraDataObj.put(key.toString(), mExtraMap.get(key));
+                }
+                json.put("extraData", extraDataObj);
+            }
             result = json.toString();
         } catch (JSONException e) {
             result = getMessage();
         }
         return result;
+    }
+
+    public static PubnativeException extraException(PubnativeException exception, Map extraMap) {
+
+        Log.v(TAG, "extraException");
+        PubnativeException extraException = new PubnativeException(exception.getErrorCode(), exception.getMessage());
+        extraException.mExtraMap = extraMap;
+        return extraException;
     }
 }
