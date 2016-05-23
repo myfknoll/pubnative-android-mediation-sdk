@@ -118,7 +118,7 @@ public class PubnativeHttpTask extends AsyncTask<String, Void, String> {
                             connection.setDoOutput(true);
                             OutputStream connectionOutputStream = connection.getOutputStream();
                             DataOutputStream wr = new DataOutputStream(connectionOutputStream);
-                            wr.writeBytes(mPostString);
+                            wr.writeUTF(mPostString);
                             wr.flush();
                             wr.close();
                         }

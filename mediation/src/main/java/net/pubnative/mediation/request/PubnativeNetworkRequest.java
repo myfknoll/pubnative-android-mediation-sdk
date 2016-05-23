@@ -230,7 +230,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
-    protected void doNextNetworkRequest() {
+    protected synchronized void doNextNetworkRequest() {
 
         Log.v(TAG, "doNextNetworkRequest");
         mCurrentNetworkIndex++;
@@ -253,6 +253,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     Map<String, String> extras = new HashMap<String, String>();
                     extras.put(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
                     adapter.setExtras(extras);
+                    mRequestStartTimestamp = System.currentTimeMillis();
                     adapter.doRequest(mContext, networkModel.timeout, this);
                 }
             }
@@ -429,7 +430,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
 
         Log.v(TAG, "onAdapterRequestStarted");
-        mRequestStartTimestamp = System.currentTimeMillis();
     }
 
     @Override
