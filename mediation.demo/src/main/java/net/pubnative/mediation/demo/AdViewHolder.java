@@ -25,6 +25,7 @@ package net.pubnative.mediation.demo;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,10 +36,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import com.squareup.picasso.Picasso;
 
+import net.pubnative.mediation.adapter.model.AdMobNativeAdModel;
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
+
+import java.util.List;
 
 /**
  * A class that holds the reference to all views in a cell.
@@ -118,19 +124,27 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             // Privacy container
             String adapterNameText = model.getClass().getSimpleName();
             mAdapterName.setText(adapterNameText);
-            // Ad content
-            mTitle.setText(model.getTitle());
-            mDescription.setText(model.getDescription());
-            mRating.setRating(model.getStarRating());
-            mRating.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
-            Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
-            View sponsorView = model.getAdvertisingDisclosureView(mContext);
-            if (sponsorView != null) {
-                mAdDisclosure.addView(sponsorView);
+
+            if (adapterNameText.equals("AdMobNetworkRequestAdapter")) {
+                mAdContainer.removeAllViews();
+                // Assign native ad object to the native view.
+                model.startTracking(mContext, mAdContainer);
+
+            } else {
+                // Ad content
+                mTitle.setText(model.getTitle());
+                mDescription.setText(model.getDescription());
+                mRating.setRating(model.getStarRating());
+                mRating.setVisibility(View.VISIBLE);
+                Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
+                Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
+                View sponsorView = model.getAdvertisingDisclosureView(mContext);
+                if (sponsorView != null) {
+                    mAdDisclosure.addView(sponsorView);
+                }
+                // Tracking
+                model.startTracking(mContext, mAdContainer);
             }
-            // Tracking
-            model.startTracking(mContext, mAdContainer);
         }
     }
 

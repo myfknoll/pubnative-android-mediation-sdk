@@ -26,6 +26,7 @@ package net.pubnative.mediation.request.model;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightModel;
