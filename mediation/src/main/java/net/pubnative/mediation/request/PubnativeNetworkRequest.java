@@ -113,7 +113,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
      * @param placementID valid placementId provided by Pubnative.
      * @param listener    valid Listener to keep track of request callbacks.
      */
-    public void start(Context context, String appToken, String placementID, PubnativeNetworkRequest.Listener listener) {
+    public synchronized void start(Context context, String appToken, String placementID, PubnativeNetworkRequest.Listener listener) {
 
         Log.v(TAG, "start: -placement: " + placementID + " -appToken:" + appToken);
         if (listener == null) {
@@ -230,7 +230,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
-    protected synchronized void doNextNetworkRequest() {
+    protected void doNextNetworkRequest() {
 
         Log.v(TAG, "doNextNetworkRequest");
         mCurrentNetworkIndex++;
@@ -253,7 +253,6 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     Map<String, String> extras = new HashMap<String, String>();
                     extras.put(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
                     adapter.setExtras(extras);
-                    mRequestStartTimestamp = System.currentTimeMillis();
                     adapter.doRequest(mContext, networkModel.timeout, this);
                 }
             }
@@ -430,6 +429,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     public void onPubnativeNetworkAdapterRequestStarted(PubnativeNetworkAdapter adapter) {
 
         Log.v(TAG, "onAdapterRequestStarted");
+        mRequestStartTimestamp = System.currentTimeMillis();
     }
 
     @Override
