@@ -28,6 +28,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedBannerAdapter;
@@ -89,13 +90,6 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
          * @param feedBanner feedBanner that was clicked
          */
         void onPubnativeNetworkFeedBannerClick(PubnativeNetworkFeedBanner feedBanner);
-
-        /**
-         * Called whenever the feedBanner was removed from the screen
-         *
-         * @param feedBanner feedBanner that was hidden
-         */
-        void onPubnativeNetworkFeedBannerHide(PubnativeNetworkFeedBanner feedBanner);
     }
 
     //==============================================================================================
@@ -150,7 +144,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     /**
      * This method will show the feedBanner if the ad is available
      */
-    public synchronized void show() {
+    public synchronized void show(ViewGroup container) {
 
         Log.v(TAG, "show");
         if (mIsShown) {
@@ -158,7 +152,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         } else if (!isReady()) {
             Log.i(TAG, "show - the ad is not loaded yet");
         } else {
-            mAdapter.show();
+            mAdapter.show(container);
         }
     }
 
@@ -214,7 +208,6 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
                 if (mListener != null) {
                     mListener.onPubnativeNetworkFeedBannerLoadFinish(PubnativeNetworkFeedBanner.this);
                 }
-                mListener = null;
             }
         });
     }
@@ -280,21 +273,6 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         });
     }
 
-    protected void invokeHide() {
-
-        Log.v(TAG, "invokeHide");
-        mHandler.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                if (mListener != null) {
-                    mListener.onPubnativeNetworkFeedBannerHide(PubnativeNetworkFeedBanner.this);
-                }
-            }
-        });
-    }
-
     //==============================================================================================
     // Callbacks
     //==============================================================================================
@@ -344,12 +322,5 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onAdapterClick");
         invokeClick();
-    }
-
-    @Override
-    public void onAdapterHide(PubnativeNetworkFeedBannerAdapter feedBanner) {
-
-        Log.v(TAG, "onAdapterHide");
-        invokeHide();
     }
 }

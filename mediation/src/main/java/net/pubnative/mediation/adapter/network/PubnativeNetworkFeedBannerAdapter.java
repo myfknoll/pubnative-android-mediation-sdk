@@ -25,6 +25,9 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ViewGroup;
+
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
@@ -80,13 +83,6 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
          * @param feedBanner feedBanner that was clicked
          */
         void onAdapterClick(PubnativeNetworkFeedBannerAdapter feedBanner);
-
-        /**
-         * Called whenever the feedBanner was removed from the screen
-         *
-         * @param feedBanner feedBanner that was hidden
-         */
-        void onAdapterHide(PubnativeNetworkFeedBannerAdapter feedBanner);
     }
 
     //==============================================================================================
@@ -119,12 +115,13 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     //==============================================================================================
     @Override
     public void execute(Context context, int timeoutInMillis) {
-
+        startTimeout(timeoutInMillis);
+        load(context);
     }
 
     @Override
     protected void onTimeout() {
-
+        invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
     }
 
     //==============================================================================================
@@ -149,7 +146,7 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     /**
      * Starts showing the feedBanner for the adapted network
      */
-    public abstract void show();
+    public abstract void show(ViewGroup container);
 
     /**
      * Destroys the current feedBanner for the adapted network
@@ -200,14 +197,6 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
         Log.v(TAG, "invokeClick");
         if (mAdListener != null) {
             mAdListener.onAdapterClick(this);
-        }
-    }
-
-    protected void invokeHide() {
-
-        Log.v(TAG, "invokeHide");
-        if (mAdListener != null) {
-            mAdListener.onAdapterHide(this);
         }
     }
 }

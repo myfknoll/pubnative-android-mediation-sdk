@@ -26,6 +26,7 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
@@ -33,8 +34,6 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.ImpressionListener;
-import com.facebook.ads.InterstitialAd;
-import com.facebook.ads.InterstitialAdListener;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
@@ -46,6 +45,7 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
 
     private static final String TAG = FacebookNetworkFeedBannerAdapter.class.getSimpleName();
     private AdView mFeedBanner;
+    private boolean mIsLoaded;
 
     /**
      * Creates a new instance of FacebookNetworkFeedBannerAdapter
@@ -81,17 +81,17 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
         Log.v(TAG, "isReady");
         boolean result = false;
         if (mFeedBanner != null) {
-            result = mFeedBanner.isAdLoaded();
+            result = mIsLoaded;
         }
         return result;
     }
 
     @Override
-    public void show() {
+    public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mFeedBanner != null) {
-            mFeedBanner.show();
+        if (mFeedBanner != null && isReady()) {
+            container.addView(mFeedBanner);
         }
     }
 
@@ -132,6 +132,7 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void onAdLoaded(Ad ad) {
 
         Log.v(TAG, "onAdLoaded");
+        mIsLoaded = true;
         mFeedBanner.setImpressionListener(this);
         invokeLoadFinish(this);
     }
