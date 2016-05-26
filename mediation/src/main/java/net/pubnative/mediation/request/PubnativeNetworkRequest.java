@@ -61,7 +61,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     protected PubnativeNetworkRequest.Listener mListener;
     protected PubnativeConfigModel             mConfig;
     protected PubnativeAdModel                 mAd;
-    protected PubnativeInsightDataModel        mTrackingModel;
+    protected PubnativeInsightDataModel        mTrackingModel = new PubnativeInsightDataModel();
     protected String                           mAppToken;
     protected String                           mPlacementID;
     protected int                              mCurrentNetworkIndex;
@@ -131,7 +131,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                 } else {
                     mIsRunning = true;
                     mContext = context;
-                    mTrackingModel = new PubnativeInsightDataModel();
+                    mTrackingModel.reset();
                     mAppToken = appToken;
                     mPlacementID = placementID;
                     mCurrentNetworkIndex = -1;
@@ -166,7 +166,16 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Log.v(TAG, "getConfig");
         // This method getConfig() here gets the stored/downloaded mConfig and
         // continues to startRequest() in it's callback "onConfigLoaded()".
-        PubnativeConfigManager.getConfig(mContext, appToken, mRequestParameters, mTrackingModel, listener);
+        Map<String, String> extras = new HashMap<String, String>();
+        extras.put("app_token", mAppToken);
+        if(mRequestParameters != null) {
+            extras.putAll(mRequestParameters);
+        }
+        if(mTrackingModel != null) {
+            extras.putAll(mTrackingModel.getTrackingParameters());
+        }
+
+        PubnativeConfigManager.getConfig(mContext, appToken, extras, listener);
     }
 
     protected void startRequest(PubnativeConfigModel configModel) {
@@ -267,6 +276,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
                     // Add ML extras for adapter
                     Map<String, String> extras = new HashMap<String, String>();
                     extras.put(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
+                    if(mRequestParameters != null) {
+                        extras.putAll(mRequestParameters);
+                    }
+                    extras.putAll(mTrackingModel.getTrackingParameters());
                     adapter.setExtras(extras);
                     adapter.doRequest(mContext, networkModel.timeout, this);
                 }
@@ -379,6 +392,10 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put(TRACKING_PARAMETER_APP_TOKEN, mAppToken);
         parameters.put(TRACKING_PARAMETER_REQUEST_ID, mRequestID);
+        if(mRequestParameters != null) {
+            parameters.putAll(mRequestParameters);
+        }
+        parameters.putAll(mTrackingModel.getTrackingParameters());
         return parameters;
     }
 

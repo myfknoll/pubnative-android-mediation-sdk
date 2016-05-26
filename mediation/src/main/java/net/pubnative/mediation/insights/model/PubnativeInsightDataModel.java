@@ -34,7 +34,6 @@ import android.util.Log;
 import net.pubnative.mediation.R;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
-import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,10 +89,16 @@ public class PubnativeInsightDataModel {
             result.put("gender", gender);
         }
         if(interests != null) {
-            result.put("interests", String.join(",", interests));
+            result.put("interests", TextUtils.join(",", interests));
         }
-        if(age != null) {
-            result.put("age", String.valueOf(age));
+        if(keywords != null) {
+            result.put("keywords", TextUtils.join(",", keywords));
+        }
+        if(iap != null) {
+            result.put("iap", String.valueOf(iap));
+        }
+        if(iap_total != null) {
+            result.put("iap_total", String.valueOf(iap_total));
         }
         return result;
     }
