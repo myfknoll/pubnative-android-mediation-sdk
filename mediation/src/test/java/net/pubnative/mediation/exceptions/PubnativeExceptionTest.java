@@ -38,22 +38,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class,
+        sdk = 21)
 public class PubnativeExceptionTest {
 
     @Test
     public void extraException_withValidExtraData_extraMapIsNotNull() {
         Map mockExtraMap = mock(Map.class);
         PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
-        assertThat(extraException.mExtraMap).isNotNull();
+        assertThat(extraException.mExtraMap).isEqualTo(mockExtraMap);
     }
 
     @Test
-    public void extraException_withValidExtraData_extraDataIsNotNull() throws JSONException {
+    public void extraException_withValidExtraData_extraDataIsNotNull() throws JSONException{
         Map mockExtraMap = mock(Map.class);
-        PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
-
-        JSONObject exceptionObj = new JSONObject(extraException.toString());
-        assertThat(exceptionObj.get("extraData")).isNotNull();
+        PubnativeException exception = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
+        String exceptionString = exception.toString();
+        JSONObject exceptionJSON = new JSONObject(exceptionString);
+        assertThat(exceptionJSON.get("extraData")).isNotNull();
     }
 }

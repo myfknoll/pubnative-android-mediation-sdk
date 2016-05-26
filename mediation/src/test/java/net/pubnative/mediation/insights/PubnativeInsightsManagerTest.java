@@ -36,17 +36,18 @@ import org.robolectric.annotation.Config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class,
+        sdk = 21)
 public class PubnativeInsightsManagerTest {
 
     @Test
     public void pendingAndFailedQueueIsEmptyAtBeginning() {
 
-        Context appContext = RuntimeEnvironment.application.getApplicationContext();
+        Context context = RuntimeEnvironment.application.getApplicationContext();
         // assert that the failed items queue is empty at the beginning
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_FAILED_DATA)).isNull();
+        assertThat(PubnativeInsightsManager.dequeueInsightItem(context, PubnativeInsightsManager.INSIGHTS_FAILED_DATA)).isNull();
         // assert that the pending items queue is empty at the beginning
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(appContext, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
+        assertThat(PubnativeInsightsManager.dequeueInsightItem(context, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
     }
 
     @Test
@@ -57,7 +58,6 @@ public class PubnativeInsightsManagerTest {
     @Test
     public void trackData_withInvalidUrl_pass() {
 
-        Context appContext = RuntimeEnvironment.application.getApplicationContext();
-        PubnativeInsightsManager.trackData(appContext, null, null, null);
+        PubnativeInsightsManager.trackData(RuntimeEnvironment.application.getApplicationContext(), null, null, null);
     }
 }
