@@ -37,6 +37,7 @@ import com.facebook.ads.ImpressionListener;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAdapter
@@ -123,7 +124,10 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
                     invokeLoadFinish(null);
                     break;
                 default:
-                    invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+                    Map errorData = new HashMap();
+                    errorData.put("errorCode", adError.getErrorCode());
+                    errorData.put("message", adError.getErrorMessage());
+                    invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
             }
         }
     }
