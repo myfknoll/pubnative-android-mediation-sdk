@@ -33,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.formats.NativeContentAdView;
@@ -40,6 +41,9 @@ import com.squareup.picasso.Picasso;
 
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdMobNativeContentAdModel extends PubnativeAdModel {
 
@@ -143,24 +147,40 @@ public class AdMobNativeContentAdModel extends PubnativeAdModel {
 
         Log.v(TAG, "startTracking");
 
-        LayoutInflater inflater = (LayoutInflater) adView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        NativeContentAdView view = (NativeContentAdView) inflater .inflate(R.layout.ad_app_install, null);
+        NativeContentAdView contentAdView = new NativeContentAdView(context);
 
-        view.setHeadlineView(view.findViewById(R.id.appinstall_headline));
-        view.setImageView(view.findViewById(R.id.appinstall_image));
-        view.setBodyView(view.findViewById(R.id.appinstall_body));
-        view.setCallToActionView(view.findViewById(R.id.appinstall_call_to_action));
+        ViewGroup parent = (ViewGroup) adView.getParent();
+        int index = parent.indexOfChild(adView);
+        parent.removeView(adView);
+        contentAdView.addView(adView);
 
-        // Some assets are guaranteed to be in every NativeAppInstallAd.
-        ((TextView) view.getHeadlineView()).setText(getTitle());
-        ((TextView) view.getBodyView()).setText(getDescription());
-        ((Button) view.getCallToActionView()).setText(getCallToAction());
-        Picasso.with(mContext).load(getBannerUrl()).into((ImageView) view.getImageView());
+        contentAdView.setHeadlineView(adView.findViewById(R.id.ad_headline));
+        contentAdView.setImageView(adView.findViewById(R.id.ad_banner));
+        contentAdView.setBodyView(adView.findViewById(R.id.ad_body));
+        contentAdView.setLogoView(adView.findViewById(R.id.ad_icon));
 
-        // Assign native ad object to the native view.
+        // Some assets are guaranteed to be in every NativeContentAd.
+        ((TextView) contentAdView.getHeadlineView()).setText(mNativeAd.getHeadline());
+        ((TextView) contentAdView.getBodyView()).setText(mNativeAd.getBody());
 
-        view.setNativeAd(mNativeAd);
-        ((ViewGroup) adView).addView(view);
+        List<NativeAd.Image> images = mNativeAd.getImages();
+
+        if (images.size() > 0) {
+            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) contentAdView.getImageView());
+        }
+
+        // Some aren't guaranteed, however, and should be checked.
+        NativeAd.Image logoImage = mNativeAd.getLogo();
+
+        if (logoImage == null) {
+            contentAdView.getLogoView().setVisibility(View.INVISIBLE);
+        } else {
+            Picasso.with(context).load(logoImage.getUri()).into((ImageView) contentAdView.getLogoView());
+            contentAdView.getLogoView().setVisibility(View.VISIBLE);
+        }
+
+        contentAdView.setNativeAd(mNativeAd);
+        parent.addView(contentAdView, index);
 
     }
 

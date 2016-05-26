@@ -12,10 +12,13 @@ import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeContentAd;
 
-import net.pubnative.mediation.adapter.model.AdMobNativeAdModel;
+import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
 import net.pubnative.mediation.adapter.model.AdMobNativeContentAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Map;
 
 public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
@@ -24,8 +27,8 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
     protected static final String ADMOB_UNIT_ID   = "unit_id";
     protected static final String ADMOB_APP_ID   = "app_id";
 
-    private static final String ADMOB_AD_UNIT_ID = "ca-app-pub-2479858864815484/9847796057";
-    private static final String ADMOB_AD_APP_ID = "ca-app-pub-2479858864815484~8371062858";
+    private static final String ADMOB_AD_UNIT_ID = "ca-app-pub-9176690371168943/1280919715";
+    private static final String ADMOB_AD_APP_ID = "ca-app-pub-9176690371168943~8804186516";
 
     public AdMobNetworkRequestAdapter(Map data) {
 
@@ -53,7 +56,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
         MobileAds.initialize(context, ADMOB_AD_APP_ID);
 
-        //AdLoader.Builder builder = new AdLoader.Builder(context, unitId);
         AdLoader adLoader = new AdLoader.Builder(context, ADMOB_AD_UNIT_ID)
                 .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
 
@@ -61,7 +63,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
                     public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
 
                         Log.d(TAG, "onAppInstallAdLoaded() called with: " + "nativeAppInstallAd = [" + nativeAppInstallAd + "]");
-                        AdMobNativeAdModel wrapper = new AdMobNativeAdModel(nativeAppInstallAd);
+                        AdMobNativeAppInstallAdModel wrapper = new AdMobNativeAppInstallAdModel(nativeAppInstallAd);
                         invokeLoaded(wrapper);
                     }
                 })
@@ -89,6 +91,28 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
                         .build())
                 .build();
 
-        adLoader.loadAd(new AdRequest.Builder().addTestDevice("16F5F25826CB21FCB488335014973DA7").build());
+        AdRequest request = prepareTargetingData(mTargeting);
+
+        adLoader.loadAd(request);
+    }
+
+    private AdRequest prepareTargetingData(PubnativeAdTargetingModel targeting) {
+
+        AdRequest.Builder builder = new AdRequest.Builder();
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+
+        if (targeting == null) {
+            return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
+        }
+
+        if (targeting.age != null && targeting.age > 0) {
+            builder.setBirthday(new GregorianCalendar(year - targeting.age, 1, 1).getTime());
+        }
+
+        if (!TextUtils.isEmpty(targeting.gender)){
+            builder.setGender(targeting.gender.equalsIgnoreCase("male") ? AdRequest.GENDER_MALE : AdRequest.GENDER_FEMALE);
+        }
+
+        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
     }
 }
