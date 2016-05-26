@@ -139,10 +139,6 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         Log.v(TAG, "onRequestClick");
         cleanView();
         mAdLoading.setVisibility(View.VISIBLE);
-        mCellRequestModel.request.addKeyword("game");
-        mCellRequestModel.request.addKeyword("social");
-        mCellRequestModel.request.setGender(PubnativeNetworkRequest.Gender.MALE);
-        mCellRequestModel.request.setParameter("icon_size", "50x50");
         mCellRequestModel.request.start(mContext, Settings.getAppToken(mContext), mCellRequestModel.placementID, this);
     }
 
