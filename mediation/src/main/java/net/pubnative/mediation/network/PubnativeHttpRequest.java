@@ -34,10 +34,10 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -170,9 +170,10 @@ public class PubnativeHttpRequest {
                 connection.setRequestMethod("POST");
                 connection.setUseCaches(false);
                 connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Length", Integer.toString(mPOSTString.getBytes().length));
                 OutputStream connectionOutputStream = connection.getOutputStream();
-                DataOutputStream wr = new DataOutputStream(connectionOutputStream);
-                wr.writeBytes(mPOSTString);
+                OutputStreamWriter wr = new OutputStreamWriter(connectionOutputStream, "UTF-8");
+                wr.write(mPOSTString);
                 wr.flush();
                 wr.close();
             }
