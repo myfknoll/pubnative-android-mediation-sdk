@@ -69,6 +69,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
     protected String                           mRequestID;
+    protected Map<String, String>              mRequestParameters;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -146,12 +147,26 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
         }
     }
 
+    /**
+     * Sets specific parameter for the request if applicable to the target network
+     * @param key
+     * @param value
+     */
+    public void setParameter(String key, String value) {
+
+        Log.v(TAG, "setParameter");
+        if (mRequestParameters == null) {
+            mRequestParameters = new HashMap<String, String>();
+        }
+        mRequestParameters.put(key, value);
+    }
+
     protected void getConfig(String appToken, PubnativeConfigManager.Listener listener) {
 
         Log.v(TAG, "getConfig");
         // This method getConfig() here gets the stored/downloaded mConfig and
         // continues to startRequest() in it's callback "onConfigLoaded()".
-        PubnativeConfigManager.getConfig(mContext, appToken, listener);
+        PubnativeConfigManager.getConfig(mContext, appToken, mRequestParameters, mTrackingModel, listener);
     }
 
     protected void startRequest(PubnativeConfigModel configModel) {
@@ -167,7 +182,7 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
             } else if (placement.delivery_rule == null || placement.priority_rules == null) {
                 invokeFail(new Exception("PubnativeNetworkRequest - Error: retrieved config contains null elements for placement " + mPlacementID));
             } else if (placement.delivery_rule.isDisabled()) {
-               invokeFail(new Exception("PubnativeNetworkRequest - Error: placement \'" + mPlacementID + "\' is disabled"));
+                invokeFail(new Exception("PubnativeNetworkRequest - Error: placement \'" + mPlacementID + "\' is disabled"));
             } else if (placement.priority_rules.size() == 0) {
                 invokeFail(new Exception("PubnativeNetworkRequest - Error: no networks configured for placement: " + mPlacementID));
             } else {
@@ -391,6 +406,12 @@ public class PubnativeNetworkRequest implements PubnativeNetworkAdapter.Listener
     public enum Gender {
         MALE,
         FEMALE
+    }
+
+    public void addKeyword(String keyword) {
+
+        Log.v(TAG, "addKeyword: " + keyword);
+        mTrackingModel.addKeyword(keyword);
     }
 
     public void setGender(Gender gender) {

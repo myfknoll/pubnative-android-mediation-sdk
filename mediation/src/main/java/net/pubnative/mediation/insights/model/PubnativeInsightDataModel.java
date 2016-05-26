@@ -34,14 +34,16 @@ import android.util.Log;
 import net.pubnative.mediation.R;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
+import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PubnativeInsightDataModel {
 
-    private static final String TAG = PubnativeInsightDataModel.class.getName();
-
+    private static final   String TAG                      = PubnativeInsightDataModel.class.getName();
     protected static final String CONNECTION_TYPE_CELLULAR = "cellular";
     protected static final String CONNECTION_TYPE_WIFI     = "wifi";
     // Tracking info
@@ -68,11 +70,33 @@ public class PubnativeInsightDataModel {
     public String                             education;
     public List<String>                       interests;
     public String                             gender;
+    public List<String>                       keywords;
     public Boolean                            iap; // In app purchase enabled, Just open it for the user to fill
     public Float                              iap_total; // In app purchase total spent, just open for the user to fill
     //==============================================================================================
     // Object
     //==============================================================================================
+
+    public Map<String, String> getTrackingParameters() {
+
+        Map<String, String> result = new HashMap<String, String>();
+        if(age != null) {
+            result.put("age", String.valueOf(age));
+        }
+        if(education != null) {
+            result.put("education", education);
+        }
+        if(gender != null) {
+            result.put("gender", gender);
+        }
+        if(interests != null) {
+            result.put("interests", String.join(",", interests));
+        }
+        if(age != null) {
+            result.put("age", String.valueOf(age));
+        }
+        return result;
+    }
 
     @Override
     public boolean equals(Object object) {
@@ -154,6 +178,7 @@ public class PubnativeInsightDataModel {
     //==============================================================================================
     // Private
     //----------------------------------------------------------------------------------------------
+
     /**
      * This method takes two Objects "first" and "second" as arguments and does a comparison.
      * Returns true if they are equal.
@@ -180,6 +205,17 @@ public class PubnativeInsightDataModel {
                 this.interests = new ArrayList<String>();
             }
             this.interests.add(interest);
+        }
+    }
+
+    public void addKeyword(String keyword) {
+
+        Log.v(TAG, "addKeyword: " + keyword);
+        if (!TextUtils.isEmpty(keyword)) {
+            if (keywords == null) {
+                keywords = new ArrayList<String>();
+            }
+            keywords.add(keyword);
         }
     }
 

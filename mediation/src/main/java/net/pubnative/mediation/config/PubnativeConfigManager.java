@@ -34,11 +34,14 @@ import net.pubnative.mediation.config.model.PubnativeConfigAPIResponseModel;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
+import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
 import net.pubnative.mediation.task.PubnativeHttpTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -89,7 +92,7 @@ public class PubnativeConfigManager {
      * @param appToken unique identification key provided by Pubnative for mediation sdk
      * @param listener listener to be used for tracking the config loaded callback
      */
-    public synchronized static void getConfig(Context context, String appToken, PubnativeConfigManager.Listener listener) {
+    public synchronized static void getConfig(Context context, String appToken, Map<String, String> requestParameter, PubnativeInsightDataModel trackingModel, PubnativeConfigManager.Listener listener) {
 
         Log.v(TAG, "getConfig: " + appToken);
         if (context != null && !TextUtils.isEmpty(appToken)) {
@@ -98,6 +101,9 @@ public class PubnativeConfigManager {
                 item.context = context;
                 item.appToken = appToken;
                 item.listener = listener;
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.putAll(requestParameter);
+                parameters.put("keywords", )
                 enqueueRequest(item);
                 doNextConfigRequest();
             }
