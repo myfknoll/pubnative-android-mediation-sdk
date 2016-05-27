@@ -26,29 +26,49 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.flurry.android.FlurryAgent;
-import com.flurry.android.ads.FlurryAdBanner;
-import com.flurry.android.ads.FlurryAdBannerListener;
 import com.flurry.android.ads.FlurryAdErrorType;
+import com.flurry.android.ads.FlurryAdNative;
+import com.flurry.android.ads.FlurryAdNativeListener;
 import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
+import com.squareup.picasso.Picasso;
 
+import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
+import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAdapter
-        implements FlurryAdBannerListener {
+        implements FlurryAdNativeListener {
 
     private static final String TAG = YahooNetworkFeedBannerAdapter.class.getSimpleName();
 
-    private FlurryAdBanner mFeedBanner = null;
-    private RelativeLayout mAd         = null;
-    private boolean        mIsLoaded   = false;
+    private   FlurryAdNative mFeedBanner = null;
+    private   RelativeLayout mAd         = null;
+    protected boolean        mIsLoading  = false;
+    protected Context        mContext;
+    protected FlurryNativeAdModel mAdModel;
+
+    // InFeed Banner view
+    protected RelativeLayout mInFeedBannerView;
+    protected TextView       mTitle;
+    protected TextView       mDescription;
+    protected ImageView      mIconImage;
+    protected ImageView      mBannerImage;
+    protected Button         mCallToAction;
+    protected RatingBar      mRating;
 
     /**
      * Creates a new instance of YahooNetworkFeedBannerAdapter
@@ -72,6 +92,9 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
             if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
+                mContext = context;
+                mIsLoading = true;
+                initialize();
                 FlurryAgent.setLogEnabled(true);
                 FlurryAgent.setLogLevel(Log.VERBOSE);
                 // initialize flurry with new apiKey
@@ -84,7 +107,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
                     mAd = new RelativeLayout(context);
                     mAd.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
-                mFeedBanner = new FlurryAdBanner(context, mAd, adSpaceName);
+                mFeedBanner = new FlurryAdNative(context, adSpaceName);
                 mFeedBanner.setListener(this);
                 // Add targeting
                 FlurryAdTargeting targeting = getTargeting();
@@ -126,7 +149,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         Log.v(TAG, "isReady");
         boolean result = false;
         if (mFeedBanner != null) {
-            result = mIsLoaded;
+            result = mFeedBanner.isReady();
         }
         return result;
     }
@@ -135,9 +158,12 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mFeedBanner != null && isReady()) {
-            mFeedBanner.displayAd();
-        }
+        container.removeAllViews();
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        container.addView(mInFeedBannerView, params);
+        mFeedBanner.setExpandableTrackingView(mInFeedBannerView, mCallToAction);
+        invokeShow();
     }
 
     @Override
@@ -149,59 +175,100 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         }
     }
 
+    private void initialize() {
+
+        Log.v(TAG, "initialize");
+        if(mInFeedBannerView == null) {
+            LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mInFeedBannerView = (RelativeLayout) inflater.inflate(R.layout.yahoo_feed_banner, null);
+            mTitle = (TextView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_title);
+            mRating = (RatingBar) mInFeedBannerView.findViewById(R.id.pubnative_infeed_rating);
+            mDescription = (TextView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_description);
+            mIconImage = (ImageView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_iconImage);
+            mBannerImage = (ImageView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_bannerImage);
+            mCallToAction = (Button) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_button);
+        }
+    }
+
+    private void render() {
+
+        Log.v(TAG, "render");
+        mTitle.setText(mAdModel.getTitle());
+        mDescription.setText(mAdModel.getDescription());
+        mCallToAction.setText(mAdModel.getCallToAction());
+        Picasso.with(mContext).load(mAdModel.getIconUrl()).into(mIconImage);
+        Picasso.with(mContext).load(mAdModel.getBannerUrl()).into(mBannerImage);
+        if(mAdModel.getStarRating() > 0) {
+            mRating.setRating(mAdModel.getStarRating());
+            mRating.setVisibility(View.VISIBLE);
+        } else {
+            mRating.setVisibility(View.GONE);
+        }
+    }
+
     //==============================================================================================
     // Callabacks
     //==============================================================================================
     // FlurryAdBannerListener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onFetched(FlurryAdBanner flurryAdBanner) {
+    public void onFetched(FlurryAdNative flurryAdNative) {
 
         Log.v(TAG, "onFetched");
-        mIsLoaded = true;
+        mIsLoading = false;
+        mAdModel = new FlurryNativeAdModel(flurryAdNative);
+        render();
         invokeLoadFinish(this);
     }
 
     @Override
-    public void onRendered(FlurryAdBanner flurryAdBanner) {
+    public void onShowFullscreen(FlurryAdNative flurryAdNative) {
 
-        Log.v(TAG, "onRendered");
-        invokeShow();
-    }
-
-    @Override
-    public void onShowFullscreen(FlurryAdBanner flurryAdBanner) {
         Log.v(TAG, "onShowFullscreen");
     }
 
     @Override
-    public void onCloseFullscreen(FlurryAdBanner flurryAdBanner) {
+    public void onCloseFullscreen(FlurryAdNative flurryAdNative) {
+
         Log.v(TAG, "onCloseFullscreen");
     }
 
     @Override
-    public void onAppExit(FlurryAdBanner flurryAdBanner) {
+    public void onAppExit(FlurryAdNative flurryAdNative) {
 
         Log.v(TAG, "onAppExit");
     }
 
     @Override
-    public void onClicked(FlurryAdBanner flurryAdBanner) {
+    public void onClicked(FlurryAdNative flurryAdNative) {
 
         Log.v(TAG, "onClicked");
         invokeClick();
     }
 
     @Override
-    public void onVideoCompleted(FlurryAdBanner flurryAdBanner) {
+    public void onImpressionLogged(FlurryAdNative flurryAdNative) {
 
-        Log.v(TAG, "onVideoCompleted");
+        Log.v(TAG, "onImpressionLogged");
     }
 
     @Override
-    public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int errorCode) {
+    public void onExpanded(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onExpanded");
+    }
+
+    @Override
+    public void onCollapsed(FlurryAdNative flurryAdNative) {
+
+        Log.v(TAG, "onCollapsed");
+    }
+
+    @Override
+    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errorCode) {
 
         Log.v(TAG, "onError: " + errorCode);
+        mIsLoading = false;
         Map errorData = new HashMap();
         errorData.put("errorCode", errorCode);
         errorData.put("flurryAdErrorType", flurryAdErrorType);
