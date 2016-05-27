@@ -163,7 +163,6 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFinish(feedBanner);
         }
-        mLoadListener = null;
     }
 
     protected void invokeLoadFail(Exception exception) {

@@ -57,7 +57,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
 
     private   FlurryAdNative mFeedBanner = null;
     private   RelativeLayout mAd         = null;
-    protected boolean        mIsLoading  = false;
     protected Context        mContext;
     protected FlurryNativeAdModel mAdModel;
 
@@ -93,7 +92,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 mContext = context;
-                mIsLoading = true;
                 initialize();
                 FlurryAgent.setLogEnabled(true);
                 FlurryAgent.setLogLevel(Log.VERBOSE);
@@ -180,7 +178,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         Log.v(TAG, "initialize");
         if(mInFeedBannerView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mInFeedBannerView = (RelativeLayout) inflater.inflate(R.layout.yahoo_feed_banner, null);
+            mInFeedBannerView = (RelativeLayout) inflater.inflate(R.layout.pubnative_feed_banner, null);
             mTitle = (TextView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_title);
             mRating = (RatingBar) mInFeedBannerView.findViewById(R.id.pubnative_infeed_rating);
             mDescription = (TextView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_description);
@@ -215,7 +213,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     public void onFetched(FlurryAdNative flurryAdNative) {
 
         Log.v(TAG, "onFetched");
-        mIsLoading = false;
         mAdModel = new FlurryNativeAdModel(flurryAdNative);
         render();
         invokeLoadFinish(this);
@@ -250,6 +247,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     public void onImpressionLogged(FlurryAdNative flurryAdNative) {
 
         Log.v(TAG, "onImpressionLogged");
+        invokeImpressionConfirmed();
     }
 
     @Override
@@ -268,7 +266,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errorCode) {
 
         Log.v(TAG, "onError: " + errorCode);
-        mIsLoading = false;
         Map errorData = new HashMap();
         errorData.put("errorCode", errorCode);
         errorData.put("flurryAdErrorType", flurryAdErrorType);

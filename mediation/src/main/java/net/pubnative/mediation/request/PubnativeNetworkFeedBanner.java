@@ -112,9 +112,14 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
+        if(mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper());
+        }
+
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
-        } else if (context == null ||
+        }
+        if (context == null ||
                 TextUtils.isEmpty(appToken) ||
                 TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.FEED_BANNER_PARAMETERS_INVALID);
@@ -123,7 +128,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.FEED_BANNER_SHOWN);
         } else {
-            mHandler = new Handler(Looper.getMainLooper());
+            mIsLoading = true;
             initialize(context, appToken, placement);
         }
     }
@@ -147,10 +152,14 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     public synchronized void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mIsShown) {
-            Log.e(TAG, "show - the ad is already shown");
+        if(container == null) {
+            Log.e(TAG, "show - passed container argument cannot be null");
+        } else if (mIsLoading) {
+            Log.w(TAG, "show - the ad is loading");
+        } else if (mIsShown) {
+            Log.w(TAG, "show - the ad is already shown");
         } else if (!isReady()) {
-            Log.i(TAG, "show - the ad is not loaded yet");
+            Log.w(TAG, "show - the ad is not loaded yet");
         } else {
             mAdapter.show(container);
         }
@@ -282,6 +291,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     public void onAdapterLoadFinish(PubnativeNetworkFeedBannerAdapter feedBanner) {
 
         Log.v(TAG, "onAdapterLoadFinish");
+        mIsLoading = false;
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         feedBanner.setAdListener(this);
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
@@ -292,6 +302,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     public void onAdapterLoadFail(PubnativeNetworkFeedBannerAdapter feedBanner, Exception exception) {
 
         Log.v(TAG, "onAdapterLoadFail");
+        mIsLoading = false;
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         if (exception == PubnativeException.ADAPTER_TIMEOUT) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
