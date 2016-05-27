@@ -23,17 +23,10 @@
 
 package net.pubnative.mediation.request.model;
 
-import net.pubnative.mediation.BuildConfig;
-
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.annotation.Config;
 
 import static org.mockito.Mockito.spy;
 
-@RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
 public class PubnativeAdModelTest {
 
     @Test
