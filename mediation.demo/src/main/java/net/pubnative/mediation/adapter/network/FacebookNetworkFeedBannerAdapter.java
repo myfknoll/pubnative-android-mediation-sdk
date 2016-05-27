@@ -91,9 +91,8 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mFeedBanner != null && isReady()) {
-            container.addView(mFeedBanner);
-        }
+        container.addView(mFeedBanner);
+        invokeShow();
     }
 
     @Override
