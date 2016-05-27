@@ -26,30 +26,34 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
+import com.facebook.ads.AdListener;
+import com.facebook.ads.AdSize;
+import com.facebook.ads.AdView;
 import com.facebook.ads.ImpressionListener;
-import com.facebook.ads.InterstitialAd;
-import com.facebook.ads.InterstitialAdListener;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkInterstitialAdapter
-        implements InterstitialAdListener,
+public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAdapter
+        implements AdListener,
                    ImpressionListener {
 
     private static final String TAG = FacebookNetworkFeedBannerAdapter.class.getSimpleName();
-    private InterstitialAd mInterstitial;
+    private AdView mFeedBanner;
+    private boolean mIsLoaded;
 
     /**
-     * Creates a new instance of FacebookNetworkInterstitialAdapter
+     * Creates a new instance of FacebookNetworkFeedBannerAdapter
      *
      * @param data server configured data for the current adapter network.
      */
-    public FacebookNetworkInterstitialAdapter(Map data) {
+    public FacebookNetworkFeedBannerAdapter(Map data) {
 
         super(data);
     }
@@ -61,9 +65,9 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkInterstiti
         if (context != null && mData != null) {
             String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
-                mInterstitial = new InterstitialAd(context, placementId);
-                mInterstitial.setAdListener(this);
-                mInterstitial.loadAd();
+                mFeedBanner = new AdView(context, placementId, AdSize.RECTANGLE_HEIGHT_250);
+                mFeedBanner.setAdListener(this);
+                mFeedBanner.loadAd();
             } else {
                 invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
             }
@@ -77,49 +81,34 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkInterstiti
 
         Log.v(TAG, "isReady");
         boolean result = false;
-        if (mInterstitial != null) {
-            result = mInterstitial.isAdLoaded();
+        if (mFeedBanner != null) {
+            result = mIsLoaded;
         }
         return result;
     }
 
     @Override
-    public void show() {
+    public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mInterstitial != null) {
-            mInterstitial.show();
-        }
+        container.addView(mFeedBanner);
+        invokeShow();
     }
 
     @Override
     public void destroy() {
 
         Log.v(TAG, "destroy");
-        if (mInterstitial != null) {
-            mInterstitial.destroy();
+        if (mFeedBanner != null) {
+            mFeedBanner.destroy();
         }
     }
 
     //==============================================================================================
     // Callabacks
     //==============================================================================================
-    // InterstitialAdListener
+    // AdListener
     //----------------------------------------------------------------------------------------------
-    @Override
-    public void onInterstitialDisplayed(Ad ad) {
-
-        Log.v(TAG, "onInterstitialDisplayed");
-        invokeShow();
-    }
-
-    @Override
-    public void onInterstitialDismissed(Ad ad) {
-
-        Log.v(TAG, "onInterstitialDismissed");
-        invokeHide();
-    }
-
     @Override
     public void onError(Ad ad, AdError adError) {
 
@@ -134,7 +123,10 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkInterstiti
                     invokeLoadFinish(null);
                     break;
                 default:
-                    invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+                    Map errorData = new HashMap();
+                    errorData.put("errorCode", adError.getErrorCode());
+                    errorData.put("message", adError.getErrorMessage());
+                    invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
             }
         }
     }
@@ -143,7 +135,8 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkInterstiti
     public void onAdLoaded(Ad ad) {
 
         Log.v(TAG, "onAdLoaded");
-        mInterstitial.setImpressionListener(this);
+        mIsLoaded = true;
+        mFeedBanner.setImpressionListener(this);
         invokeLoadFinish(this);
     }
 
