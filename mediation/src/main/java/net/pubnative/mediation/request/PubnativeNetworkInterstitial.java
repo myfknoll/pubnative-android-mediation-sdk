@@ -214,6 +214,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
                 if (mListener != null) {
                     mListener.onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial.this);
                 }
+                mListener = null;
             }
         });
     }
