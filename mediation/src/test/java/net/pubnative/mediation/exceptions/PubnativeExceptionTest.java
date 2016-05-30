@@ -21,43 +21,40 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.insights;
-
-import android.content.Context;
+package net.pubnative.mediation.exceptions;
 
 import net.pubnative.mediation.BuildConfig;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
         sdk = 21)
-public class PubnativeInsightsManagerTest {
+public class PubnativeExceptionTest {
 
     @Test
-    public void pendingAndFailedQueueIsEmptyAtBeginning() {
-
-        Context context = RuntimeEnvironment.application.getApplicationContext();
-        // assert that the failed items queue is empty at the beginning
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(context, PubnativeInsightsManager.INSIGHTS_FAILED_DATA)).isNull();
-        // assert that the pending items queue is empty at the beginning
-        assertThat(PubnativeInsightsManager.dequeueInsightItem(context, PubnativeInsightsManager.INSIGHTS_PENDING_DATA)).isNull();
+    public void extraException_withValidExtraData_extraMapIsNotNull() {
+        Map mockExtraMap = mock(Map.class);
+        PubnativeException extraException = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
+        assertThat(extraException.mExtraMap).isEqualTo(mockExtraMap);
     }
 
     @Test
-    public void trackData_withNullContext_pass() {
-        PubnativeInsightsManager.trackData(null, null, null, null);
-    }
-
-    @Test
-    public void trackData_withInvalidUrl_pass() {
-
-        PubnativeInsightsManager.trackData(RuntimeEnvironment.application.getApplicationContext(), null, null, null);
+    public void extraException_withValidExtraData_extraDataIsNotNull() throws JSONException{
+        Map mockExtraMap = mock(Map.class);
+        PubnativeException exception = PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, mockExtraMap);
+        String exceptionString = exception.toString();
+        JSONObject exceptionJSON = new JSONObject(exceptionString);
+        assertThat(exceptionJSON.get("extraData")).isNotNull();
     }
 }

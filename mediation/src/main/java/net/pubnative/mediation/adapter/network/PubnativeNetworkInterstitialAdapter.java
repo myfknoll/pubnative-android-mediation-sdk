@@ -167,6 +167,7 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
     protected void invokeLoadFinish(PubnativeNetworkInterstitialAdapter interstitial) {
 
         Log.v(TAG, "invokeLoadFinish");
+        cancelTimeout();
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFinish(interstitial);
         }
@@ -176,6 +177,7 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
     protected void invokeLoadFail(Exception exception) {
 
         Log.v(TAG, "invokeLoadFail", exception);
+        cancelTimeout();
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFail(this, exception);
         }

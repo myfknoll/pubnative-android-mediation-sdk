@@ -31,11 +31,14 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 
+import java.util.Arrays;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
 @RunWith(RobolectricGradleTestRunner.class)
-@Config(constants = BuildConfig.class)
+@Config(constants = BuildConfig.class,
+        sdk = 21)
 public class PubnativeInsightDataModelTest {
 
     private final String validString = "sampleText";
@@ -109,26 +112,44 @@ public class PubnativeInsightDataModelTest {
     }
 
     @Test
-    public void addAttemptedNetworkWithDifferentValues() {
-        PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
+    public void addAttemptedNetwork_withValidString_createsArray() {
 
-        // the list is null at the beginning
-        assertThat(dataModelSpy.attempted_networks).isNull();
+        PubnativeInsightDataModel model = spy(PubnativeInsightDataModel.class);
+        model.addAttemptedNetwork("valid string");
+        assertThat(model.attempted_networks).isNotNull();
+    }
 
-        // valid string
-        dataModelSpy.addAttemptedNetwork(validString);
-        assertThat(dataModelSpy.attempted_networks).isNotNull();
-        assertThat(dataModelSpy.attempted_networks.size()).isNotZero();
+    @Test
+    public void addAttemptedNetwork_withValidString_addsItem() {
 
-        // resets attempted_networks
-        dataModelSpy.reset();
+        PubnativeInsightDataModel model = spy(PubnativeInsightDataModel.class);
+        String validString = "valid string";
+        model.addAttemptedNetwork(validString);
+        assertThat(model.attempted_networks.size()).isNotZero();
+        assertThat(model.attempted_networks.get(0)).isEqualTo(validString);
+    }
 
-        // network as empty string
-        dataModelSpy.addAttemptedNetwork("");
-        assertThat(dataModelSpy.attempted_networks).isNull();
+    @Test
+    public void addAttemptedNetwork_withEmptyString_doesNothing() {
 
-        // network as null
-        dataModelSpy.addAttemptedNetwork(null);
-        assertThat(dataModelSpy.attempted_networks).isNull();
+        PubnativeInsightDataModel model = spy(PubnativeInsightDataModel.class);
+        model.addAttemptedNetwork("");
+        assertThat(model.attempted_networks).isNull();
+    }
+
+    @Test
+    public void addAttemptedNetwork_withNullString_doesNothing() {
+
+        PubnativeInsightDataModel model = spy(PubnativeInsightDataModel.class);
+        model.addAttemptedNetwork(null);
+        assertThat(model.attempted_networks).isNull();
+    }
+
+    @Test
+    public void reset_shouldNullifyAttemptedNetworks() {
+        PubnativeInsightDataModel model = spy(PubnativeInsightDataModel.class);
+        model.attempted_networks = Arrays.asList("attempted_network");
+        model.reset();
+        assertThat(model.attempted_networks).isNull();
     }
 }

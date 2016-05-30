@@ -36,7 +36,7 @@ public class YahooNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
 
-        return null;
+        return new YahooNetworkInterstitialAdapter(mNetworkData);
     }
 
     @Override

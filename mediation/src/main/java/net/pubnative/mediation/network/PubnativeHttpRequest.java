@@ -30,16 +30,18 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PubnativeHttpRequest {
 
@@ -135,7 +137,7 @@ public class PubnativeHttpRequest {
                 }
             }).start();
         } else {
-            invokeFail(new Exception("PubnativeHttpRequest - Error: internet connection not detected, dropping call"));
+            invokeFail(PubnativeException.NETWORK_NO_INTERNET);
         }
     }
 
@@ -168,9 +170,10 @@ public class PubnativeHttpRequest {
                 connection.setRequestMethod("POST");
                 connection.setUseCaches(false);
                 connection.setDoOutput(true);
+                connection.setRequestProperty("Content-Length", Integer.toString(mPOSTString.getBytes().length));
                 OutputStream connectionOutputStream = connection.getOutputStream();
-                DataOutputStream wr = new DataOutputStream(connectionOutputStream);
-                wr.writeBytes(mPOSTString);
+                OutputStreamWriter wr = new OutputStreamWriter(connectionOutputStream, "UTF-8");
+                wr.write(mPOSTString);
                 wr.flush();
                 wr.close();
             }
@@ -179,14 +182,20 @@ public class PubnativeHttpRequest {
             int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
-                String resultString = stringFromInputString(inputStream);
-                if (resultString == null) {
-                    invokeFail(new Exception("PubnativeHttpRequest - Error: invalid response from server"));
-                } else {
-                    invokeFinish(resultString);
+                try {
+                    invokeFinish(stringFromInputStream(inputStream));
+                } catch (PubnativeException ex) {
+                    invokeFail(ex);
                 }
             } else {
-                invokeFail(new Exception("PubnativeHttpRequest - Error: invalid status code: " + responseCode));
+                Map errorData = new HashMap();
+                errorData.put("statusCode", responseCode+"");
+                try {
+                    errorData.put("errorString", stringFromInputStream(connection.getErrorStream()));
+                } catch (PubnativeException ex) {
+                    errorData.put("parsingException", ex.toString());
+                }
+                invokeFail(PubnativeException.extraException(PubnativeException.NETWORK_INVALID_STATUS_CODE, errorData));
             }
         } catch (Exception exception) {
             invokeFail(exception);
@@ -197,32 +206,31 @@ public class PubnativeHttpRequest {
         }
     }
 
-    protected String stringFromInputString(InputStream inputStream) {
+    protected String stringFromInputStream(InputStream inputStream) throws PubnativeException {
 
-        Log.v(TAG, "stringFromInputString");
+        Log.v(TAG, "stringFromInputStream");
         String result = null;
-        BufferedReader bufferReader = null;
-        StringBuilder stringBuilder = new StringBuilder();
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        int length;
         try {
-            String line;
-            bufferReader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((line = bufferReader.readLine()) != null) {
-                stringBuilder.append(line);
+            byte[] buffer = new byte[1024];
+            while ((length = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, length);
             }
+            byteArrayOutputStream.flush();
+            result = byteArrayOutputStream.toString();
+            byteArrayOutputStream.close();
         } catch (IOException e) {
-            Log.e(TAG, "stringFromInputString - Error:" + e);
-            stringBuilder = null;
-        } finally {
-            if (bufferReader != null) {
-                try {
-                    bufferReader.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "stringFromInputString - Error:" + e);
-                }
+            Log.e(TAG, "stringFromInputStream - Error:" + e);
+
+            Map errorData = new HashMap();
+            if(result == null) {
+                result = byteArrayOutputStream.toString();
             }
-        }
-        if (stringBuilder != null) {
-            result = stringBuilder.toString();
+            errorData.put("serverResponse", result);
+            errorData.put("IOException", e.getMessage());
+            throw PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, errorData);
         }
         return result;
     }
