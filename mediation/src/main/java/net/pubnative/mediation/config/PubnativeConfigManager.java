@@ -63,8 +63,6 @@ public class PubnativeConfigManager {
     protected static final String                            APP_TOKEN_KEY             = "app_token";
     protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
     protected static       boolean                           sIdle                     = true;
-    //TODO this shit befor commit
-    protected static       Context                           sContext;
 
     //==============================================================================================
     // Listener
@@ -117,8 +115,6 @@ public class PubnativeConfigManager {
             Log.e(TAG, "getConfig - Error: app token is null");
             invokeLoaded(null, listener);
         } else {
-            //TODO this shit befor commit
-            sContext = context;
             PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
             item.context = context;
             item.appToken = appToken;
@@ -248,20 +244,7 @@ public class PubnativeConfigManager {
             serveStoredConfig(request);
         } else {
             try {
-                //TODO this shit befor commit
-                String json = null;
-                try {
-                    InputStream is = sContext.getAssets().open("test_config.json");
-                    int size = is.available();
-                    byte[] buffer = new byte[size];
-                    is.read(buffer);
-                    is.close();
-                    json = new String(buffer, "UTF-8");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-
-                PubnativeConfigAPIResponseModel response = new Gson().fromJson(json, PubnativeConfigAPIResponseModel.class);
+                PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                     // Update delivery manager's tracking data
                     updateDeliveryManagerCache(request.context, response.config);
@@ -276,26 +259,6 @@ public class PubnativeConfigManager {
                 serveStoredConfig(request);
             }
         }
-    }
-
-    public static String convertStreamToString(InputStream is) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        reader.close();
-        return sb.toString();
-    }
-
-    public static String getStringFromFile (String filePath) throws Exception {
-        File fl = new File(filePath);
-        FileInputStream fin = new FileInputStream(fl);
-        String ret = convertStreamToString(fin);
-        //Make sure you close all streams.
-        fin.close();
-        return ret;
     }
 
     protected static boolean configNeedsUpdate(PubnativeConfigRequestModel request) {

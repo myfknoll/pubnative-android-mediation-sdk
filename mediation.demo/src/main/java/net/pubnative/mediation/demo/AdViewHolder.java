@@ -25,9 +25,11 @@ package net.pubnative.mediation.demo;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -35,6 +37,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
+import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.squareup.picasso.Picasso;
 
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
@@ -57,7 +61,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     // Behaviour
     protected ProgressBar      mAdLoading;
     protected RelativeLayout   mAdContainer;
-    protected RelativeLayout   mAdViewContainer;
+    protected FrameLayout      mAdMobContainer;
     protected Button           mRequestButton;
     // Ad info
     protected ViewGroup        mAdDisclosure;
@@ -74,17 +78,17 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mContext = context;
         mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
         mAdContainer = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
-        mAdViewContainer = (RelativeLayout) convertView.findViewById(R.id.ad_view_container);
+        mAdMobContainer = (FrameLayout) convertView.findViewById(R.id.admob_container);
         mRequestButton = (Button) convertView.findViewById(R.id.request_button);
         mRequestButton.setOnClickListener(this);
         mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
         mAdapterName = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
-        mTitle = (TextView) convertView.findViewById(R.id.ad_headline);
-        mDescription = (TextView) convertView.findViewById(R.id.ad_body);
+        mTitle = (TextView) convertView.findViewById(R.id.ad_title_text);
+        mDescription = (TextView) convertView.findViewById(R.id.ad_description_text);
         mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
-        mIcon = (ImageView) convertView.findViewById(R.id.ad_icon);
-        mBanner = (ImageView) convertView.findViewById(R.id.ad_banner);
+        mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
+        mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
     }
 
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
@@ -103,6 +107,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         Log.v(TAG, "cleanView");
         mAdDisclosure.removeAllViews();
         mAdContainer.removeAllViews();
+        mAdMobContainer.removeAllViews();
         mTitle.setText("");
         mDescription.setText("");
         mAdapterName.setText("");
@@ -120,13 +125,13 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mPlacementID.setText("Placement ID: " + mCellRequestModel.placementID);
         PubnativeAdModel model = mCellRequestModel.adModel;
         mAdContainer.removeAllViews();
+        mAdMobContainer.removeAllViews();
         if (model != null) {
             // Privacy container
             String adapterNameText = model.getClass().getSimpleName();
             mAdapterName.setText(adapterNameText);
             if (model instanceof AdMobNativeContentAdModel || model instanceof AdMobNativeAppInstallAdModel) {
-                mAdContainer.removeAllViews();
-                model.startTracking(mContext, mAdViewContainer);
+                prepareAdMobView(mAdMobContainer, model);
             } else {
                 // Ad content
                 mTitle.setText(model.getTitle());
@@ -142,6 +147,27 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                 // Tracking
                 model.startTracking(mContext, mAdContainer);
             }
+        }
+    }
+
+    /**
+     * Method prepare view for AdMob depends from model type.
+     *
+     * @param parent container for AdMob Ads
+     * @param model data model
+     */
+    private void prepareAdMobView(ViewGroup parent, PubnativeAdModel model) {
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (model instanceof AdMobNativeAppInstallAdModel) {
+            NativeAppInstallAdView adView = (NativeAppInstallAdView) inflater.inflate(R.layout.ad_app_install, null);
+            model.startTracking(mContext, adView);
+            parent.removeAllViews();
+            parent.addView(adView);
+        } else {
+            NativeContentAdView adView = (NativeContentAdView) inflater.inflate(R.layout.ad_content, null);
+            model.startTracking(mContext, adView);
+            parent.removeAllViews();
+            parent.addView(adView);
         }
     }
 

@@ -27,9 +27,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
     protected static final String ADMOB_UNIT_ID   = "unit_id";
     protected static final String ADMOB_APP_ID   = "app_id";
 
-    private static final String ADMOB_AD_UNIT_ID = "ca-app-pub-9176690371168943/1280919715";
-    private static final String ADMOB_AD_APP_ID = "ca-app-pub-9176690371168943~8804186516";
-
     public AdMobNetworkRequestAdapter(Map data) {
 
         super(data);
@@ -52,17 +49,17 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
     private void createRequest(Context context, String unitId, String appId) {
 
-        Log.d(TAG, "createRequest() called with: " + "unitId = [" + unitId + "], appId = [" + appId + "]");
+        Log.v(TAG, "createRequest");
 
-        MobileAds.initialize(context, ADMOB_AD_APP_ID);
+        MobileAds.initialize(context, appId);
 
-        AdLoader adLoader = new AdLoader.Builder(context, ADMOB_AD_UNIT_ID)
+        AdLoader adLoader = new AdLoader.Builder(context, unitId)
                 .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
 
                     @Override
                     public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
 
-                        Log.d(TAG, "onAppInstallAdLoaded() called with: " + "nativeAppInstallAd = [" + nativeAppInstallAd + "]");
+                        Log.v(TAG, "onAppInstallAdLoaded");
                         AdMobNativeAppInstallAdModel wrapper = new AdMobNativeAppInstallAdModel(nativeAppInstallAd);
                         invokeLoaded(wrapper);
                     }
@@ -72,7 +69,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
                     @Override
                     public void onContentAdLoaded(NativeContentAd nativeContentAd) {
 
-                        Log.d(TAG, "onContentAdLoaded() called with: " + "nativeContentAd = [" + nativeContentAd + "]");
+                        Log.v(TAG, "onContentAdLoaded");
                         AdMobNativeContentAdModel wrapper = new AdMobNativeContentAdModel(nativeContentAd);
                         invokeLoaded(wrapper);
                     }
@@ -82,8 +79,9 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
                     @Override
                     public void onAdFailedToLoad(int i) {
 
-                        Log.e(TAG, "onAdFailedToLoad with code " + String.valueOf(i));
+                        Log.v(TAG, "onAdFailedToLoad");
                         super.onAdFailedToLoad(i);
+                        invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
                     }
                 })
                 .withNativeAdOptions(new NativeAdOptions.Builder()
@@ -102,7 +100,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
         int year = Calendar.getInstance().get(Calendar.YEAR);
 
         if (targeting == null) {
-            return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
+            return builder.build();
         }
 
         if (targeting.age != null && targeting.age > 0) {
@@ -113,6 +111,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
             builder.setGender(targeting.gender.equalsIgnoreCase("male") ? AdRequest.GENDER_MALE : AdRequest.GENDER_FEMALE);
         }
 
-        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
+        return builder.build();
     }
 }

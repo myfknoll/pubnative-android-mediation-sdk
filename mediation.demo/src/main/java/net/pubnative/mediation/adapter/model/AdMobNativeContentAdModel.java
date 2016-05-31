@@ -147,40 +147,37 @@ public class AdMobNativeContentAdModel extends PubnativeAdModel {
 
         Log.v(TAG, "startTracking");
 
-        NativeContentAdView contentAdView = new NativeContentAdView(context);
-
-        ViewGroup parent = (ViewGroup) adView.getParent();
-        int index = parent.indexOfChild(adView);
-        parent.removeView(adView);
-        contentAdView.addView(adView);
-
-        contentAdView.setHeadlineView(adView.findViewById(R.id.ad_headline));
-        contentAdView.setImageView(adView.findViewById(R.id.ad_banner));
-        contentAdView.setBodyView(adView.findViewById(R.id.ad_body));
-        contentAdView.setLogoView(adView.findViewById(R.id.ad_icon));
+        ((NativeContentAdView)adView).setHeadlineView(adView.findViewById(R.id.contentad_headline));
+        ((NativeContentAdView)adView).setImageView(adView.findViewById(R.id.contentad_image));
+        ((NativeContentAdView)adView).setBodyView(adView.findViewById(R.id.contentad_body));
+        ((NativeContentAdView)adView).setCallToActionView(adView.findViewById(R.id.contentad_call_to_action));
+        ((NativeContentAdView)adView).setLogoView(adView.findViewById(R.id.contentad_logo));
+        ((NativeContentAdView)adView).setAdvertiserView(adView.findViewById(R.id.contentad_advertiser));
 
         // Some assets are guaranteed to be in every NativeContentAd.
-        ((TextView) contentAdView.getHeadlineView()).setText(mNativeAd.getHeadline());
-        ((TextView) contentAdView.getBodyView()).setText(mNativeAd.getBody());
+        ((TextView) ((NativeContentAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
+        ((TextView) ((NativeContentAdView)adView).getBodyView()).setText(mNativeAd.getBody());
+        ((TextView) ((NativeContentAdView)adView).getCallToActionView()).setText(mNativeAd.getCallToAction());
+        ((TextView) ((NativeContentAdView)adView).getAdvertiserView()).setText(mNativeAd.getAdvertiser());
 
         List<NativeAd.Image> images = mNativeAd.getImages();
 
         if (images.size() > 0) {
-            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) contentAdView.getImageView());
+            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) ((NativeContentAdView)adView).getImageView());
         }
 
         // Some aren't guaranteed, however, and should be checked.
         NativeAd.Image logoImage = mNativeAd.getLogo();
 
         if (logoImage == null) {
-            contentAdView.getLogoView().setVisibility(View.INVISIBLE);
+            ((NativeContentAdView)adView).getLogoView().setVisibility(View.INVISIBLE);
         } else {
-            Picasso.with(context).load(logoImage.getUri()).into((ImageView) contentAdView.getLogoView());
-            contentAdView.getLogoView().setVisibility(View.VISIBLE);
+            Picasso.with(context).load(logoImage.getUri()).into((ImageView) ((NativeContentAdView)adView).getLogoView());
+            ((NativeContentAdView)adView).getLogoView().setVisibility(View.VISIBLE);
         }
 
-        contentAdView.setNativeAd(mNativeAd);
-        parent.addView(contentAdView, index);
+        // Assign native ad object to the native view.
+        ((NativeContentAdView)adView).setNativeAd(mNativeAd);
 
     }
 

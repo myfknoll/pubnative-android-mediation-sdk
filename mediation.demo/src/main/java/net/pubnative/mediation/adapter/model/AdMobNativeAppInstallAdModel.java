@@ -148,41 +148,53 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
         Log.v(TAG, "startTracking");
 
-        NativeAppInstallAdView contentAdView = new NativeAppInstallAdView(context);
-
-        ViewGroup parent = (ViewGroup) adView.getParent();
-        int index = parent.indexOfChild(adView);
-        parent.removeView(adView);
-        contentAdView.addView(adView);
-
-        contentAdView.setHeadlineView(adView.findViewById(R.id.ad_headline));
-        contentAdView.setImageView(adView.findViewById(R.id.ad_banner));
-        contentAdView.setBodyView(adView.findViewById(R.id.ad_body));
-        contentAdView.setIconView(adView.findViewById(R.id.ad_icon));
-        contentAdView.setStarRatingView(adView.findViewById(R.id.ad_rating));
+        ((NativeAppInstallAdView)adView).setHeadlineView(adView.findViewById(R.id.appinstall_headline));
+        ((NativeAppInstallAdView)adView).setImageView(adView.findViewById(R.id.appinstall_image));
+        ((NativeAppInstallAdView)adView).setBodyView(adView.findViewById(R.id.appinstall_body));
+        ((NativeAppInstallAdView)adView).setCallToActionView(adView.findViewById(R.id.appinstall_call_to_action));
+        ((NativeAppInstallAdView)adView).setIconView(adView.findViewById(R.id.appinstall_app_icon));
+        ((NativeAppInstallAdView)adView).setPriceView(adView.findViewById(R.id.appinstall_price));
+        ((NativeAppInstallAdView)adView).setStarRatingView(adView.findViewById(R.id.appinstall_stars));
+        ((NativeAppInstallAdView)adView).setStoreView(adView.findViewById(R.id.appinstall_store));
 
         // Some assets are guaranteed to be in every NativeAppInstallAd.
-        ((TextView) contentAdView.getHeadlineView()).setText(mNativeAd.getHeadline());
-        ((TextView) contentAdView.getBodyView()).setText(mNativeAd.getBody());
+        ((TextView) ((NativeAppInstallAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
+        ((TextView) ((NativeAppInstallAdView)adView).getBodyView()).setText(mNativeAd.getBody());
+        ((Button) ((NativeAppInstallAdView)adView).getCallToActionView()).setText(mNativeAd.getCallToAction());
 
-        Picasso.with(context).load(mNativeAd.getIcon().getUri()).into((ImageView) contentAdView.getIconView());
-
-        if (mNativeAd.getStarRating() == null) {
-            contentAdView.getStarRatingView().setVisibility(View.INVISIBLE);
-        } else {
-            ((RatingBar) contentAdView.getStarRatingView())
-                    .setRating(mNativeAd.getStarRating().floatValue());
-            contentAdView.getStarRatingView().setVisibility(View.VISIBLE);
-        }
+        Picasso.with(context).load(mNativeAd.getIcon().getUri()).into((ImageView) ((NativeAppInstallAdView)adView).getIconView());
 
         List<NativeAd.Image> images = mNativeAd.getImages();
 
         if (images.size() > 0) {
-            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) contentAdView.getImageView());
+            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) ((NativeAppInstallAdView)adView).getImageView());
         }
 
-        contentAdView.setNativeAd(mNativeAd);
-        parent.addView(contentAdView, index);
+        // Some aren't guaranteed, however, and should be checked.
+        if (mNativeAd.getPrice() == null) {
+            ((NativeAppInstallAdView)adView).getPriceView().setVisibility(View.INVISIBLE);
+        } else {
+            ((NativeAppInstallAdView)adView).getPriceView().setVisibility(View.VISIBLE);
+            ((TextView) ((NativeAppInstallAdView)adView).getPriceView()).setText(mNativeAd.getPrice());
+        }
+
+        if (mNativeAd.getStore() == null) {
+            ((NativeAppInstallAdView)adView).getStoreView().setVisibility(View.INVISIBLE);
+        } else {
+            ((NativeAppInstallAdView)adView).getStoreView().setVisibility(View.VISIBLE);
+            ((TextView) ((NativeAppInstallAdView)adView).getStoreView()).setText(mNativeAd.getStore());
+        }
+
+        if (mNativeAd.getStarRating() == null) {
+            ((NativeAppInstallAdView)adView).getStarRatingView().setVisibility(View.INVISIBLE);
+        } else {
+            ((RatingBar) ((NativeAppInstallAdView)adView).getStarRatingView())
+                    .setRating(mNativeAd.getStarRating().floatValue());
+            ((NativeAppInstallAdView)adView).getStarRatingView().setVisibility(View.VISIBLE);
+        }
+
+        // Assign native ad object to the native view.
+        ((NativeAppInstallAdView)adView).setNativeAd(mNativeAd);
 
     }
 
