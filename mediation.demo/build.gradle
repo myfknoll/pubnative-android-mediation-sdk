@@ -1,8 +1,8 @@
 //==================================================================================================
 // PROJECT
 //==================================================================================================
-version=project.version?:"BETA"
-group=project.group?:"net.pubnative"
+version = project.version ?: "BETA"
+group = project.group ?: "net.pubnative"
 buildscript {
     repositories {
         jcenter()
@@ -31,8 +31,8 @@ android {
         applicationId "net.pubnative.mediation.demo"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode System.getenv("CIRCLE_BUILD_NUM")?System.getenv("CIRCLE_BUILD_NUM").toInteger():1
-        versionName project.version?:"BETA"
+        versionCode System.getenv("CIRCLE_BUILD_NUM") ? System.getenv("CIRCLE_BUILD_NUM").toInteger() : 1
+        versionName project.version ?: "BETA"
     }
     buildTypes {
         release {
@@ -49,8 +49,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.1.0'
     compile 'com.facebook.android:audience-network-sdk:4.11.0'
     // FLURRY
-    compile 'com.flurry.android:analytics:6.2.0'
-    compile 'com.flurry.android:ads:6.2.0'
+    compile 'com.flurry.android:analytics:6.3.1'
+    compile 'com.flurry.android:ads:6.3.1'
 }
 //==================================================================================================
 // FABRIC

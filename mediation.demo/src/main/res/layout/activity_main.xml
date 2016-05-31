@@ -5,46 +5,55 @@
                 tools:context=".activities.MainActivity">
 
     <Button
+        android:id="@+id/button_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SETTINGS"
         android:layout_alignParentTop="true"
-        android:onClick="onSettingsClick"
         android:background="#650067"
+        android:onClick="onSettingsClick"
+        android:padding="20dp"
+        android:text="SETTINGS"
         android:textColor="@android:color/white"
-        android:id="@+id/button_settings"
         android:textSize="20dp"
-        android:textStyle="bold"
-        android:padding="20dp"/>
+        android:textStyle="bold"/>
 
     <TextView
+        android:id="@+id/activity_main_separator"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:text="Formats"
-        android:id="@+id/activity_main_separator"
         android:layout_below="@+id/button_settings"
+        android:background="#4b4b4b"
         android:gravity="center"
-        android:textSize="20dp"
-        android:textStyle="bold"
+        android:text="Formats"
         android:textColor="@android:color/white"
-        android:background="#4b4b4b"/>
+        android:textSize="20dp"
+        android:textStyle="bold"/>
 
     <Button
+        android:id="@+id/btn_native_ad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Native"
+        android:layout_below="@id/activity_main_separator"
         android:layout_centerHorizontal="true"
         android:onClick="onNativeClick"
-        android:id="@+id/btn_native_ad"
-        android:layout_below="@id/activity_main_separator" />
+        android:text="Native"/>
 
     <Button
+        android:id="@+id/buttonInterstitial"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Interstitial"
+        android:layout_below="@id/btn_native_ad"
         android:layout_centerHorizontal="true"
         android:onClick="onInterstitialClick"
-        android:id="@+id/buttonInterstitial"
-        android:layout_below="@id/btn_native_ad"/>
+        android:text="Interstitial"/>
+
+    <Button
+        android:id="@+id/buttonBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonInterstitial"
+        android:layout_centerHorizontal="true"
+        android:onClick="onBannerClick"
+        android:text="Banner"/>
 
 </RelativeLayout>

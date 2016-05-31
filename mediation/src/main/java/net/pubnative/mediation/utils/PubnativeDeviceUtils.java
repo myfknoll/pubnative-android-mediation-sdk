@@ -25,6 +25,7 @@ package net.pubnative.mediation.utils;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -78,5 +79,16 @@ public class PubnativeDeviceUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * Check size of the screen
+     * @param context
+     * @return true if screen large or extra large
+     */
+    public static boolean isTablet(Context context) {
+        boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        return (xlarge || large);
     }
 }

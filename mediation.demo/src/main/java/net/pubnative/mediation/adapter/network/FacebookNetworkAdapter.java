@@ -42,6 +42,6 @@ public class FacebookNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkBannerAdapter getBannerAdapter() {
 
-        return null;
+        return new FacebookNetworkBannerAdapter(mNetworkData);
     }
 }

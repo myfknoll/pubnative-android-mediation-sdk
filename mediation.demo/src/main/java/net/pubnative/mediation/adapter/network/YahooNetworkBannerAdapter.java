@@ -2,27 +2,36 @@ package net.pubnative.mediation.adapter.network;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
+import com.flurry.android.FlurryAds;
 import com.flurry.android.FlurryAgent;
+import com.flurry.android.FlurryAgentListener;
 import com.flurry.android.ads.FlurryAdBanner;
 import com.flurry.android.ads.FlurryAdBannerListener;
 import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter implements FlurryAdBannerListener {
+public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter implements FlurryAdBannerListener,
+                                                                                        FlurryAgentListener {
 
     public static final String TAG = YahooNetworkBannerAdapter.class.getSimpleName();
     protected FlurryAdBanner mAdBanner;
-
+    private Context mContext;
     /**
      * Creates a new instance of PubnativeNetworkRequestAdapter
      *
@@ -36,6 +45,7 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
     @Override
     public void load(Context context) {
         Log.v(TAG, "load");
+        mContext = context;
         if (context == null || mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
@@ -44,16 +54,23 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
             if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                FlurryAgent.setLogEnabled(true);
-                FlurryAgent.setLogLevel(Log.VERBOSE);
                 // initialize flurry with new apiKey
-                FlurryAgent.init(context, apiKey);
+                new FlurryAgent.Builder()
+                           .withLogEnabled(true)
+                           .withLogLevel(Log.VERBOSE)
+                           .withListener(this)
+                           .build(mContext, apiKey);
+
                 // execute/resume session
                 if (!FlurryAgent.isSessionActive()) {
                     FlurryAgent.onStartSession(context);
                 }
-                ViewGroup rootView = (ViewGroup)((Activity) context).findViewById(android.R.id.content);
-                mAdBanner = new FlurryAdBanner(context, rootView, adSpaceName);
+                ViewGroup rootView = (ViewGroup)((Activity) mContext).findViewById(android.R.id.content);
+                RelativeLayout container = new RelativeLayout(mContext);
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                container.setLayoutParams(params);
+                rootView.addView(container);
+                mAdBanner = new FlurryAdBanner(mContext, container, adSpaceName);
                 mAdBanner.setListener(this);
                 // Add targeting
                 FlurryAdTargeting targeting = getTargeting();
@@ -91,22 +108,21 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
 
     @Override
     public void show() {
+        Log.v(TAG, "show");
         mAdBanner.displayAd();
     }
 
     @Override
     public void destroy() {
-
         Log.v(TAG, "destroy");
         if (mAdBanner != null) {
-            //FlurryAgent.onEndSession(this);
+            FlurryAgent.onEndSession(mContext);
             mAdBanner.destroy();
         }
     }
 
     @Override
     public boolean isReady() {
-
         Log.v(TAG, "isReady");
         boolean result = false;
         if (mAdBanner != null) {
@@ -117,37 +133,41 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
 
     @Override
     public void onFetched(FlurryAdBanner flurryAdBanner) {
+        Log.v(TAG, "onFetched");
         invokeLoadFinish(this);
     }
 
     @Override
     public void onRendered(FlurryAdBanner flurryAdBanner) {
+        Log.v(TAG, "onRendered");
         invokeShow();
     }
 
     @Override
     public void onShowFullscreen(FlurryAdBanner flurryAdBanner) {
-
+        Log.v(TAG, "onShowFullscreen");
     }
 
     @Override
     public void onCloseFullscreen(FlurryAdBanner flurryAdBanner) {
-
+        Log.v(TAG, "onCloseFullscreen");
+        destroy();
     }
 
     @Override
     public void onAppExit(FlurryAdBanner flurryAdBanner) {
-
+        Log.v(TAG, "onAppExit");
     }
 
     @Override
     public void onClicked(FlurryAdBanner flurryAdBanner) {
+        Log.v(TAG, "onClicked");
         invokeClick();
     }
 
     @Override
     public void onVideoCompleted(FlurryAdBanner flurryAdBanner) {
-
+        Log.v(TAG, "onVideoCompleted");
     }
 
     @Override
@@ -156,4 +176,8 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
         invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
     }
 
+    @Override
+    public void onSessionStarted() {
+        Log.v(TAG, "onSessionStarted");
+    }
 }

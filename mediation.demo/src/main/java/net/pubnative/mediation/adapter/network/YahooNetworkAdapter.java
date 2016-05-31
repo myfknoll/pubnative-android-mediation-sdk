@@ -42,6 +42,6 @@ public class YahooNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkBannerAdapter getBannerAdapter() {
 
-        return null;
+        return new YahooNetworkBannerAdapter(mNetworkData);
     }
 }

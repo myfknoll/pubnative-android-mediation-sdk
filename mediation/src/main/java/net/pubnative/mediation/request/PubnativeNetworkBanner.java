@@ -70,6 +70,12 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
         void onPubnativeNetworkBannerHide(PubnativeNetworkBanner banner);
     }
 
+    public void setListener(Listener listener) {
+
+        Log.v(TAG, "setListener");
+        mListener = listener;
+    }
+
     /**
      * Loads the interstitial ads before being shown
      */
@@ -262,24 +268,28 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
     public void onAdapterShow(PubnativeNetworkBannerAdapter banner) {
 
         Log.v(TAG, "onPubnativeBannerShowLoadFail");
+        invokeShow();
     }
 
     @Override
     public void onAdapterImpressionConfirmed(PubnativeNetworkBannerAdapter banner) {
 
         Log.v(TAG, "onPubnativeBannerImpressionConfirmed");
+        invokeImpressionConfirmed();
     }
 
     @Override
     public void onAdapterClick(PubnativeNetworkBannerAdapter banner) {
 
         Log.v(TAG, "onPubnativeBannerClick");
+        invokeClick();
     }
 
     @Override
     public void onAdapterHide(PubnativeNetworkBannerAdapter banner) {
 
         Log.v(TAG, "onPubnativeBannerHide");
+        invokeHide();
     }
 
     // PubnativeNetworkBannerAdapter.LoadListener

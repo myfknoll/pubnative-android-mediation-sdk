@@ -74,6 +74,14 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onBannerClick(View view) {
+
+        Log.v(TAG, "onBannerClick");
+        // Launch banner activity
+        Intent intent = new Intent(this, BannerAdActivity.class);
+        startActivity(intent);
+    }
+
     protected void setDefaults() {
 
         Log.v(TAG, "setDefaults");
