@@ -2,32 +2,24 @@ package net.pubnative.mediation.adapter.network;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.flurry.android.FlurryAds;
 import com.flurry.android.FlurryAgent;
-import com.flurry.android.FlurryAgentListener;
 import com.flurry.android.ads.FlurryAdBanner;
 import com.flurry.android.ads.FlurryAdBannerListener;
 import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
-import com.google.android.gms.ads.identifier.AdvertisingIdClient;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter implements FlurryAdBannerListener,
-                                                                                        FlurryAgentListener {
+public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter implements FlurryAdBannerListener {
 
     public static final String TAG = YahooNetworkBannerAdapter.class.getSimpleName();
     protected FlurryAdBanner mAdBanner;
@@ -58,7 +50,6 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
                 new FlurryAgent.Builder()
                            .withLogEnabled(true)
                            .withLogLevel(Log.VERBOSE)
-                           .withListener(this)
                            .build(mContext, apiKey);
 
                 // execute/resume session
@@ -131,6 +122,12 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
         return result;
     }
 
+    //==============================================================================================
+    // Callabacks
+    //==============================================================================================
+    // FlurryAdBannerListener
+    //----------------------------------------------------------------------------------------------
+
     @Override
     public void onFetched(FlurryAdBanner flurryAdBanner) {
         Log.v(TAG, "onFetched");
@@ -174,10 +171,5 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
     public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int i) {
         Log.v(TAG, "onError: " + i);
         invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-    }
-
-    @Override
-    public void onSessionStarted() {
-        Log.v(TAG, "onSessionStarted");
     }
 }

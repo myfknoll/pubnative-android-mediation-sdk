@@ -1,11 +1,8 @@
 package net.pubnative.mediation.demo.activities;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.demo.Settings;
 import net.pubnative.mediation.request.PubnativeNetworkBanner;
 
@@ -24,7 +21,7 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
 
     @Override
     public void onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner banner) {
-        Log.v(TAG, "onPubnativeNetworkInterstitialLoadFinish");
+        Log.v(TAG, "onPubnativeNetworkBannerLoadFinish");
         mLoaderContainer.setVisibility(View.GONE);
         banner.show();
         showToast("Banner ad loaded");
@@ -32,7 +29,7 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
 
     @Override
     public void onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner banner, Exception exception) {
-        Log.v(TAG, "onPubnativeNetworkInterstitialLoadFail", exception);
+        Log.v(TAG, "onPubnativeNetworkBannerLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
         showToast(exception.getMessage());
         showToast("Banner ad loading failed");
@@ -40,26 +37,26 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
 
     @Override
     public void onPubnativeNetworkBannerShow(PubnativeNetworkBanner banner) {
-        Log.v(TAG, "onPubnativeNetworkInterstitialShow");
+        Log.v(TAG, "onPubnativeNetworkBannerShow");
         mLoaderContainer.setVisibility(View.GONE);
         showToast("Banner show");
     }
 
     @Override
     public void onPubnativeNetworkBannerImpressionConfirmed(PubnativeNetworkBanner banner) {
-        Log.v(TAG, "onPubnativeNetworkInterstitialImpressionConfirmed");
+        Log.v(TAG, "onPubnativeNetworkBannerImpressionConfirmed");
         showToast("Banner impression confirmed");
     }
 
     @Override
     public void onPubnativeNetworkBannerClick(PubnativeNetworkBanner banner) {
-        Log.v(TAG, "onPubnativeNetworkInterstitialClick");
+        Log.v(TAG, "onPubnativeNetworkBannerClick");
         showToast("Banner click");
     }
 
     @Override
     public void onPubnativeNetworkBannerHide(PubnativeNetworkBanner banner) {
-        Log.v(TAG, "onPubnativeNetworkInterstitialHide");
+        Log.v(TAG, "onPubnativeNetworkBannerHide");
         showToast("Banner hide");
     }
 }

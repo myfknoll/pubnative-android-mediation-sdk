@@ -82,16 +82,21 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
     public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
+        if (mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper());
+        }
+
         if (mListener == null) {
-            Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
-        } else if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
+            Log.w(TAG, "initialize - Warning: listener was not set, have you configured one using setListener()?");
+        }
+
+        if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.BANNER_PARAMETERS_INVALID);
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.BANNER_LOADING);
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.BANNER_SHOWN);
         } else {
-            mHandler = new Handler(Looper.getMainLooper());
             initialize(context, appToken, placement);
         }
 

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.facebook.ads.Ad;
@@ -88,6 +87,12 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter 
         Log.v(TAG, "isReady");
         return true;
     }
+
+    //==============================================================================================
+    // Callabacks
+    //==============================================================================================
+    // AdListener
+    //----------------------------------------------------------------------------------------------
 
     @Override
     public void onError(Ad ad, AdError adError) {
