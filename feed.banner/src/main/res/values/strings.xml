@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">In-feed banner</string>
+    <string name="pubnative_interstitial_sponsored_text">sponsored</string>
+</resources>

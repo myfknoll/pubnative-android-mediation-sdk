@@ -44,7 +44,7 @@ import com.flurry.android.ads.FlurryGender;
 import com.squareup.picasso.Picasso;
 
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
-import net.pubnative.mediation.demo.R;
+import net.pubnative.library.feed.banner.R;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.HashMap;

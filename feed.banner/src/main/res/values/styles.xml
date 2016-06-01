@@ -6,4 +6,9 @@
         <item name="android:background">@drawable/pubnative_feed_banner_grey_box</item>
     </style>
 
+    <style name="ratingBarStyle" parent="android:Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/pubnative_ratingbar_small_material</item>
+        <item name="android:indeterminateDrawable">@drawable/pubnative_ratingbar_small_material</item>
+    </style>
+
 </resources>

@@ -9,6 +9,4 @@
     <string name="placement_id">Placement Id</string>
     <string name="update">Update</string>
     <string name="action_settings">Settings</string>
-
-    <string name="pubnative_interstitial_sponsored_text">sponsored</string>
 </resources>

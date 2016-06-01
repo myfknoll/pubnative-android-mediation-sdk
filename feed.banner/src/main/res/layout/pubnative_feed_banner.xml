@@ -75,9 +75,9 @@
                 android:id="@+id/pubnative_feed_banner_button"
                 android:layout_width="wrap_content"
                 android:layout_height="26dp"
-                android:textSize="12sp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:textSize="12sp"
                 android:background="@drawable/pubnative_cta_button"
                 android:textColor="@color/pubnative_infeed_white" />
 
