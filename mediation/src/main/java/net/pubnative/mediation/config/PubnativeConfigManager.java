@@ -38,6 +38,12 @@ import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
 import net.pubnative.mediation.network.PubnativeHttpRequest;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +62,7 @@ public class PubnativeConfigManager {
     protected static final String                            APP_TOKEN_KEY             = "app_token";
     protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
     protected static       boolean                           sIdle                     = true;
-
+    protected static Context sContext;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -73,7 +79,6 @@ public class PubnativeConfigManager {
          */
         void onConfigLoaded(PubnativeConfigModel configModel);
     }
-
     //==============================================================================================
     // PubnativeConfigManager
     //==============================================================================================
@@ -83,7 +88,6 @@ public class PubnativeConfigManager {
     private PubnativeConfigManager() {
         // do some initialization here may be.
     }
-
     //----------------------------------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------------------------------
@@ -108,6 +112,7 @@ public class PubnativeConfigManager {
             Log.e(TAG, "getConfig - Error: app token is null");
             invokeLoaded(null, listener);
         } else {
+            sContext = context;
             PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
             item.context = context;
             item.appToken = appToken;
@@ -131,7 +136,6 @@ public class PubnativeConfigManager {
         setStoredRefresh(context, null);
         setStoredConfig(context, null);
     }
-
     //----------------------------------------------------------------------------------------------
     // Private
     //----------------------------------------------------------------------------------------------
@@ -184,7 +188,7 @@ public class PubnativeConfigManager {
     protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel) {
 
         Log.v(TAG, "updateConfig");
-        if(context != null) {
+        if (context != null) {
             if (TextUtils.isEmpty(appToken) || configModel == null || configModel.isEmpty()) {
                 clean(context);
             } else {
@@ -237,7 +241,18 @@ public class PubnativeConfigManager {
             serveStoredConfig(request);
         } else {
             try {
-                PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
+                String json = null;
+                try {
+                    InputStream is = sContext.getAssets().open("test_config.json");
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    json = new String(buffer, "UTF-8");
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                PubnativeConfigAPIResponseModel response = new Gson().fromJson(json, PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                     // Update delivery manager's tracking data
                     updateDeliveryManagerCache(request.context, response.config);
@@ -284,13 +299,12 @@ public class PubnativeConfigManager {
 
         Log.v(TAG, "updateDeliveryManagerCache");
         PubnativeConfigModel storedConfig = getStoredConfig(context);
-        if(storedConfig != null) {
+        if (storedConfig != null) {
             Set<String> storePlacementIds = storedConfig.placements.keySet();
             for (String placementId : storePlacementIds) {
                 // check if new config contains that placement.
                 PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
                 PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
-
                 // Check if impression cap (hour) changed
                 if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
                     PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
@@ -320,7 +334,6 @@ public class PubnativeConfigManager {
         sIdle = true;
         doNextConfigRequest();
     }
-
     //==============================================================================================
     // QUEUE
     //==============================================================================================
@@ -377,7 +390,6 @@ public class PubnativeConfigManager {
         }
         return uriBuilder.build().toString();
     }
-
     //----------------------------------------------------------------------------------------------
     // CONFIG
     //----------------------------------------------------------------------------------------------
@@ -395,7 +407,6 @@ public class PubnativeConfigManager {
         String configString = (config != null) ? new Gson().toJson(config) : null;
         setStringSharedPreference(context, CONFIG_STRING_KEY, configString);
     }
-
     //----------------------------------------------------------------------------------------------
     // APP_TOKEN
     //----------------------------------------------------------------------------------------------
@@ -411,7 +422,6 @@ public class PubnativeConfigManager {
         Log.v(TAG, "getStoredAppToken");
         setStringSharedPreference(context, APP_TOKEN_STRING_KEY, appToken);
     }
-
     //----------------------------------------------------------------------------------------------
     // TIMESTAMP
     //----------------------------------------------------------------------------------------------
@@ -427,7 +437,6 @@ public class PubnativeConfigManager {
         Log.v(TAG, "getStoredTimestamp");
         setLongSharedPreference(context, TIMESTAMP_LONG_KEY, timestamp);
     }
-
     //----------------------------------------------------------------------------------------------
     // REFRESH
     //----------------------------------------------------------------------------------------------
@@ -443,7 +452,6 @@ public class PubnativeConfigManager {
         Log.v(TAG, "setStoredRefresh");
         setLongSharedPreference(context, REFRESH_LONG_KEY, refresh);
     }
-
     //----------------------------------------------------------------------------------------------
     // String
     //----------------------------------------------------------------------------------------------
@@ -474,7 +482,6 @@ public class PubnativeConfigManager {
             editor.apply();
         }
     }
-
     //----------------------------------------------------------------------------------------------
     // Long
     //----------------------------------------------------------------------------------------------
@@ -508,7 +515,6 @@ public class PubnativeConfigManager {
             }
         }
     }
-
     //----------------------------------------------------------------------------------------------
     // BASE SharedPreferences item
     //----------------------------------------------------------------------------------------------
