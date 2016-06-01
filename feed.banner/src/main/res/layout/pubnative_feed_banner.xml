@@ -11,8 +11,7 @@
         android:layout_height="250dp"
         android:layout_centerInParent="true"
         android:gravity="center_horizontal"
-        android:paddingBottom="2dp"
-        android:paddingTop="2dp">
+        android:paddingBottom="2dp">
 
         <ImageView
             android:id="@+id/pubnative_feed_banner_iconImage"

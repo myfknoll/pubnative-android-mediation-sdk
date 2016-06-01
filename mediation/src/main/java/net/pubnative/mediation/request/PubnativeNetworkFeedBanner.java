@@ -165,6 +165,15 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         }
     }
 
+    /**
+     * Destroy the current Feed banner
+     */
+    public void destroy() {
+
+        Log.v(TAG, "destroy");
+        mAdapter.destroy();
+    }
+
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================

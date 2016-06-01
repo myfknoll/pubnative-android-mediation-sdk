@@ -8,12 +8,12 @@ import android.widget.RelativeLayout;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.demo.Settings;
 import net.pubnative.mediation.request.PubnativeNetworkFeedBanner;
-import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
 
 public class FeedBannerActivity extends StandardAdUnitActivity implements PubnativeNetworkFeedBanner.Listener {
 
     private static final String TAG = FeedBannerActivity.class.getSimpleName();
     private RelativeLayout mFeedBannerView;
+    private PubnativeNetworkFeedBanner mFeedBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +26,9 @@ public class FeedBannerActivity extends StandardAdUnitActivity implements Pubnat
 
         Log.v(TAG, "onRequestClick");
         mLoaderContainer.setVisibility(View.VISIBLE);
-        PubnativeNetworkFeedBanner feedBanner = new PubnativeNetworkFeedBanner();
-        feedBanner.setListener(this);
-        feedBanner.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        mFeedBanner = new PubnativeNetworkFeedBanner();
+        mFeedBanner.setListener(this);
+        mFeedBanner.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
     }
 
     //==============================================================================================
@@ -41,7 +41,7 @@ public class FeedBannerActivity extends StandardAdUnitActivity implements Pubnat
         Log.v(TAG, "onPubnativeNetworkFeedBannerLoadFinish");
         mLoaderContainer.setVisibility(View.GONE);
         feedBanner.show(mFeedBannerView);
-        showToast("Feed Banner ad loaded");
+        showToast("Feed Banner loaded");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FeedBannerActivity extends StandardAdUnitActivity implements Pubnat
         Log.v(TAG, "onPubnativeNetworkFeedBannerLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
         showToast(exception.getMessage());
-        showToast("Feed Banner ad loading failed");
+        showToast("Feed Banner loading failed");
     }
 
     @Override
@@ -68,6 +68,6 @@ public class FeedBannerActivity extends StandardAdUnitActivity implements Pubnat
     @Override
     public void onPubnativeNetworkFeedBannerClick(PubnativeNetworkFeedBanner feedBanner) {
         Log.v(TAG, "onPubnativeNetworkFeedBannerClick");
-        showToast("Feed Banner click");
+        showToast("Feed Banner clicked");
     }
 }
