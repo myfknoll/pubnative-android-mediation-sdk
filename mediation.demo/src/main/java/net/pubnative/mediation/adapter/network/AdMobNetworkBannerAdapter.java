@@ -19,7 +19,7 @@ import java.util.Map;
 public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
 
     private static final String TAG = AdMobNetworkBannerAdapter.class.getSimpleName();
-    protected AdView mAdView;
+    protected AdView  mAdView;
     protected Context mContext;
     protected boolean mIsLoaded = false;
 
@@ -45,12 +45,10 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
                 mAdView.setAdSize(AdSize.SMART_BANNER);
                 mAdView.setAdUnitId(unitId);
                 mAdView.setAdListener(listener);
-
                 AdRequest adRequest = new AdRequest.Builder()
                         .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                         .addTestDevice("16F5F25826CB21FCB488335014973DA7")
                         .build();
-
                 mAdView.loadAd(adRequest);
             }
         }
@@ -58,9 +56,10 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
 
     @Override
     public void show() {
+
         Log.v(TAG, "show");
         if (mAdView != null) {
-            ViewGroup rootView = (ViewGroup)((Activity) mContext).findViewById(android.R.id.content);
+            ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
             RelativeLayout container = new RelativeLayout(mContext);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             container.setLayoutParams(params);
@@ -73,6 +72,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
 
     @Override
     public void destroy() {
+
         Log.v(TAG, "destroy");
         if (mAdView != null) {
             mAdView.destroy();
@@ -81,6 +81,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
 
     @Override
     public boolean isReady() {
+
         Log.v(TAG, "isReady");
         boolean result = false;
         if (mAdView != null) {
@@ -91,6 +92,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
 
     @Override
     public void hide() {
+
         Log.v(TAG, "hide");
         if (mAdView.getParent() != null) {
             ((ViewGroup) mAdView.getParent()).removeAllViews();
@@ -105,15 +107,24 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
             Log.v(TAG, "onAdClosed");
             destroy();
             super.onAdClosed();
-
         }
 
         @Override
-        public void onAdFailedToLoad(int i) {
+        public void onAdFailedToLoad(int errorCode) {
 
-            Log.v(TAG, "onError: " + i);
-            super.onAdFailedToLoad(i);
-            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+            Log.v(TAG, "onError: " + errorCode);
+            super.onAdFailedToLoad(errorCode);
+            switch (errorCode) {
+                case AdRequest.ERROR_CODE_INTERNAL_ERROR:
+                case AdRequest.ERROR_CODE_INVALID_REQUEST:
+                case AdRequest.ERROR_CODE_NETWORK_ERROR:
+                case AdRequest.ERROR_CODE_NO_FILL:
+                    invokeLoadFail(null);
+                    break;
+                default:
+                    invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+                    break;
+            }
         }
 
         @Override
@@ -123,7 +134,6 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
             super.onAdLoaded();
             mIsLoaded = true;
             invokeLoadFinish(AdMobNetworkBannerAdapter.this);
-
         }
 
         @Override
@@ -133,6 +143,5 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
             super.onAdOpened();
             invokeClick();
         }
-
     };
 }
