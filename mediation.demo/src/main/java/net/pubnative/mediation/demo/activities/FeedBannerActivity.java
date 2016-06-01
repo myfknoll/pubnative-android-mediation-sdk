@@ -69,5 +69,6 @@ public class FeedBannerActivity extends StandardAdUnitActivity implements Pubnat
     public void onPubnativeNetworkFeedBannerClick(PubnativeNetworkFeedBanner feedBanner) {
         Log.v(TAG, "onPubnativeNetworkFeedBannerClick");
         showToast("Feed Banner clicked");
+        mFeedBanner.hide();
     }
 }

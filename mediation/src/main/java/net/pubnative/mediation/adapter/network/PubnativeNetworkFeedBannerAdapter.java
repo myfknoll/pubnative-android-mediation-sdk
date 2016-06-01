@@ -153,6 +153,11 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
      */
     public abstract void destroy();
 
+    /**
+     * Hides the current feedBanner for the adapted network
+     */
+    public abstract void hide();
+
     //==============================================================================================
     // Callback helpers
     //==============================================================================================

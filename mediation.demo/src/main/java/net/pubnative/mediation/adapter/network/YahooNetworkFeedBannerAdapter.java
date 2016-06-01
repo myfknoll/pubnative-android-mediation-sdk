@@ -173,6 +173,13 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         }
     }
 
+    @Override
+    public void hide() {
+        if(mInFeedBannerView.getParent() != null) {
+            ((ViewGroup)mInFeedBannerView.getParent()).removeAllViews();
+        }
+    }
+
     private void initialize() {
 
         Log.v(TAG, "initialize");

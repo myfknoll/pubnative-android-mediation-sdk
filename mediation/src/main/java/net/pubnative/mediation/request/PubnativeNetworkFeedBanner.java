@@ -161,6 +161,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         } else if (!isReady()) {
             Log.w(TAG, "show - the ad is not loaded yet");
         } else {
+            mIsShown = true;
             mAdapter.show(container);
         }
     }
@@ -172,6 +173,17 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "destroy");
         mAdapter.destroy();
+    }
+
+    /**
+     * Hides the current InFeed banner
+     */
+    public void hide() {
+
+        Log.v(TAG, "hide");
+        if(mIsShown) {
+            mAdapter.hide();
+        }
     }
 
     //==============================================================================================

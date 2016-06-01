@@ -104,6 +104,13 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
         }
     }
 
+    @Override
+    public void hide() {
+        if(mFeedBanner.getParent() != null) {
+            ((ViewGroup)mFeedBanner.getParent()).removeAllViews();
+        }
+    }
+
     //==============================================================================================
     // Callabacks
     //==============================================================================================

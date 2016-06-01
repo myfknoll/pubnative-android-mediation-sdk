@@ -75,4 +75,11 @@ public class PubnativeLibraryNetworkFeedBannerAdapter extends PubnativeNetworkFe
         Log.v(TAG, "destroy");
         // TODO: Add once library is released
     }
+
+    @Override
+    public void hide() {
+
+        Log.v(TAG, "destroy");
+        // TODO: Add once library is released
+    }
 }
