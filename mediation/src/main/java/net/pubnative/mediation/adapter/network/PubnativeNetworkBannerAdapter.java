@@ -134,6 +134,8 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
      */
     public abstract boolean isReady();
 
+    public abstract void hide();
+
     //==============================================================================================
     // Callback helpers
     //==============================================================================================

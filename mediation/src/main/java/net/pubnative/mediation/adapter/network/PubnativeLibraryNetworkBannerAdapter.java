@@ -54,4 +54,11 @@ public class PubnativeLibraryNetworkBannerAdapter extends PubnativeNetworkBanner
         //TODO: implement isReady method functional
         return false;
     }
+
+    @Override
+    public void hide() {
+
+        Log.v(TAG, "hide");
+        //TODO: implement isReady method functional
+    }
 }

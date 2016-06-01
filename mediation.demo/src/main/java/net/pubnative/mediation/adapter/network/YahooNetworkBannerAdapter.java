@@ -122,6 +122,10 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter imp
         return result;
     }
 
+    @Override
+    public void hide() {
+        Log.v(TAG, "hide");
+    }
     //==============================================================================================
     // Callabacks
     //==============================================================================================

@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
+import com.facebook.ads.AdSettings;
 import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.ImpressionListener;
@@ -21,10 +22,14 @@ import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.Map;
 
-public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter implements AdListener, ImpressionListener {
+public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
+        implements AdListener,
+                   ImpressionListener {
 
     public static final String TAG = FacebookNetworkBannerAdapter.class.getSimpleName();
-    protected AdView mBannerView;
+    protected AdView  mBannerView;
+    protected Context mContext;
+    protected boolean mIsLoaded = false;
 
     /**
      * Creates a new instance of PubnativeNetworkRequestAdapter
@@ -41,19 +46,13 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter 
 
         Log.d(TAG, "load");
         if (context != null && mData != null) {
+            mContext = context;
             String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
             AdSize bannerSize = PubnativeDeviceUtils.isTablet(context) ? AdSize.BANNER_HEIGHT_90 : AdSize.BANNER_HEIGHT_50;
             if (!TextUtils.isEmpty(placementId)) {
-                ViewGroup rootView = (ViewGroup)((Activity) context).findViewById(android.R.id.content);
-                RelativeLayout container = new RelativeLayout(context);
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                container.setLayoutParams(params);
                 mBannerView = new AdView(context, placementId, bannerSize);
-                mBannerView.setVisibility(View.INVISIBLE);
                 mBannerView.setAdListener(this);
-                container.addView(mBannerView);
-                rootView.addView(container);
-                container.setGravity(Gravity.BOTTOM);
+                AdSettings.addTestDevice("e356e5959d9062f96086af6250f3ead8");
                 mBannerView.loadAd();
             } else {
                 invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
@@ -68,7 +67,14 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter 
 
         Log.v(TAG, "show");
         if (mBannerView != null) {
-            mBannerView.setVisibility(View.VISIBLE);
+            ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
+            RelativeLayout container = new RelativeLayout(mContext);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            container.setLayoutParams(params);
+            container.setGravity(Gravity.BOTTOM);
+            rootView.addView(container);
+            container.addView(mBannerView);
+            invokeShow();
         }
     }
 
@@ -85,9 +91,21 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter 
     public boolean isReady() {
 
         Log.v(TAG, "isReady");
-        return true;
+        boolean result = false;
+               if (mBannerView != null) {
+                      result = mIsLoaded;
+                   }
+               return result;
     }
 
+    @Override
+    public void hide() {
+    
+        Log.v(TAG, "hide");
+        if (mBannerView.getParent() != null) {
+            ((ViewGroup) mBannerView.getParent()).removeAllViews();
+        }
+    }
     //==============================================================================================
     // Callabacks
     //==============================================================================================
@@ -115,13 +133,16 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter 
 
     @Override
     public void onAdLoaded(Ad ad) {
+
         Log.v(TAG, "onAdLoaded");
+        mIsLoaded = true;
         mBannerView.setImpressionListener(this);
         invokeLoadFinish(this);
     }
 
     @Override
     public void onAdClicked(Ad ad) {
+
         Log.v(TAG, "onAdClicked");
         invokeClick();
         destroy();
@@ -129,8 +150,8 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter 
 
     @Override
     public void onLoggingImpression(Ad ad) {
+
         Log.v(TAG, "onLoggingImpression");
         invokeImpressionConfirmed();
     }
-
 }

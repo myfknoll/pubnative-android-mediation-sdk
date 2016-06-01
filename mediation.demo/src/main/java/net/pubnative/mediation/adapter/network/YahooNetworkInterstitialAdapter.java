@@ -70,7 +70,6 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
                 new FlurryAgent.Builder()
                         .withLogEnabled(true)
                         .withLogLevel(Log.VERBOSE)
-                        .withCaptureUncaughtExceptions(true)
                         .build(context, apiKey);
                 if (!FlurryAgent.isSessionActive()) {
                     FlurryAgent.onStartSession(context);
