@@ -76,8 +76,8 @@ public class MainActivity extends Activity {
 
     public void onFeedBannerClick(View view) {
 
-        Log.v(TAG, "onInterstitialClick");
-        // Launch interstitial activity
+        Log.v(TAG, "onFeedBannerClick");
+        // Launch Feed Banner activity
         Intent intent = new Intent(this, FeedBannerActivity.class);
         startActivity(intent);
     }

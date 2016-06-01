@@ -56,7 +56,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     private static final String TAG = YahooNetworkFeedBannerAdapter.class.getSimpleName();
 
     private   FlurryAdNative mFeedBanner = null;
-    private   RelativeLayout mAd         = null;
     protected Context        mContext;
     protected FlurryNativeAdModel mAdModel;
 
@@ -100,10 +99,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
                 // execute/resume session
                 if (!FlurryAgent.isSessionActive()) {
                     FlurryAgent.onStartSession(context);
-                }
-                if(mAd == null) {
-                    mAd = new RelativeLayout(context);
-                    mAd.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                 }
                 mFeedBanner = new FlurryAdNative(context, adSpaceName);
                 mFeedBanner.setListener(this);
