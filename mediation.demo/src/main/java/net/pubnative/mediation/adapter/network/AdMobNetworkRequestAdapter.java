@@ -7,7 +7,6 @@ import android.util.Log;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeContentAd;
@@ -25,7 +24,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
     public static final String    TAG       = AdMobNetworkRequestAdapter.class.getSimpleName();
     protected static final String ADMOB_UNIT_ID   = "unit_id";
-    protected static final String ADMOB_APP_ID   = "app_id";
 
     public AdMobNetworkRequestAdapter(Map data) {
 
@@ -38,20 +36,17 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
         Log.v(TAG, "request");
         if (context != null && mData != null) {
             String placementId = (String) mData.get(ADMOB_UNIT_ID);
-            String appId = (String) mData.get(ADMOB_APP_ID);
             if (TextUtils.isEmpty(placementId)) {
                 invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
             } else {
-                createRequest(context, placementId, appId);
+                createRequest(context, placementId);
             }
         }
     }
 
-    private void createRequest(Context context, String unitId, String appId) {
+    private void createRequest(Context context, String unitId) {
 
         Log.v(TAG, "createRequest");
-
-        MobileAds.initialize(context, appId);
 
         AdLoader adLoader = new AdLoader.Builder(context, unitId)
                 .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {

@@ -25,16 +25,11 @@ package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.formats.NativeAd;
-import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.formats.NativeContentAdView;
 import com.squareup.picasso.Picasso;
@@ -42,7 +37,6 @@ import com.squareup.picasso.Picasso;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AdMobNativeContentAdModel extends PubnativeAdModel {
