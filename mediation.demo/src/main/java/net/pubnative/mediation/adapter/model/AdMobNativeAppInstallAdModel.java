@@ -145,15 +145,6 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
         Log.v(TAG, "startTracking");
 
-        ((NativeAppInstallAdView)adView).setHeadlineView(adView.findViewById(R.id.appinstall_headline));
-        ((NativeAppInstallAdView)adView).setImageView(adView.findViewById(R.id.appinstall_image));
-        ((NativeAppInstallAdView)adView).setBodyView(adView.findViewById(R.id.appinstall_body));
-        ((NativeAppInstallAdView)adView).setCallToActionView(adView.findViewById(R.id.appinstall_call_to_action));
-        ((NativeAppInstallAdView)adView).setIconView(adView.findViewById(R.id.appinstall_app_icon));
-        ((NativeAppInstallAdView)adView).setPriceView(adView.findViewById(R.id.appinstall_price));
-        ((NativeAppInstallAdView)adView).setStarRatingView(adView.findViewById(R.id.appinstall_stars));
-        ((NativeAppInstallAdView)adView).setStoreView(adView.findViewById(R.id.appinstall_store));
-
         // Some assets are guaranteed to be in every NativeAppInstallAd.
         ((TextView) ((NativeAppInstallAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
         ((TextView) ((NativeAppInstallAdView)adView).getBodyView()).setText(mNativeAd.getBody());

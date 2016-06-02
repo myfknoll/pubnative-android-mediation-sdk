@@ -9,10 +9,8 @@ import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeContentAd;
 
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
-import net.pubnative.mediation.adapter.model.AdMobNativeContentAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
@@ -56,16 +54,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
                         Log.v(TAG, "onAppInstallAdLoaded");
                         AdMobNativeAppInstallAdModel wrapper = new AdMobNativeAppInstallAdModel(nativeAppInstallAd);
-                        invokeLoaded(wrapper);
-                    }
-                })
-                .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
-
-                    @Override
-                    public void onContentAdLoaded(NativeContentAd nativeContentAd) {
-
-                        Log.v(TAG, "onContentAdLoaded");
-                        AdMobNativeContentAdModel wrapper = new AdMobNativeContentAdModel(nativeContentAd);
                         invokeLoaded(wrapper);
                     }
                 })
