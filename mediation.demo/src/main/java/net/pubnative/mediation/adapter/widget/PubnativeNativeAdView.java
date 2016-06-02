@@ -13,6 +13,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import com.squareup.picasso.Picasso;
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
@@ -77,7 +78,7 @@ public class PubnativeNativeAdView extends RelativeLayout{
 
     public void updateAdView(PubnativeAdModel model) {
         if (model instanceof AdMobNativeAppInstallAdModel) {
-            prepareAdMobView(mAdMobContainer, model);
+            prepareAdMobView(mAdMobContainer);
         } else {
             // Ad content
             mTitle.setText(model.getTitle());
@@ -97,14 +98,12 @@ public class PubnativeNativeAdView extends RelativeLayout{
      * Method prepare view for AdMob depends from model type.
      *
      * @param adView container for AdMob Ads
-     * @param model data model
      */
-    private void prepareAdMobView(NativeAppInstallAdView adView, PubnativeAdModel model) {
+    private void prepareAdMobView(NativeAppInstallAdView adView) {
 
         adView.setHeadlineView(mTitle);
         adView.setImageView(mBanner);
         adView.setBodyView(mDescription);
-        adView.setCallToActionView(adView.findViewById(R.id.appinstall_call_to_action));
         adView.setIconView(mIcon);
         adView.setStarRatingView(mRating);
         adView.setPriceView(mPrice);
@@ -113,16 +112,45 @@ public class PubnativeNativeAdView extends RelativeLayout{
 
     }
 
-    public void cleanAdView() {
+    public void cleanAdView(Context context) {
 
-        mAdLoading.setVisibility(GONE);
-        mAdContainer.removeAllViews();
-        mAdDisclosure.removeAllViews();
-        mTitle.setText("");
-        mDescription.setText("");
-        mRating.setRating(0f);
-        mRating.setVisibility(GONE);
-        mIcon.setImageDrawable(null);
-        mBanner.setImageDrawable(null);
+        this.removeAllViews();
+        initLayout(context);
+    }
+
+    public View getHeadlineView() {
+        return mAdMobContainer.getHeadlineView();
+    }
+
+    public View getBodyView() {
+        return mAdMobContainer.getBodyView();
+    }
+
+    public View getCallToActionView(){
+        return mAdMobContainer.getCallToActionView();
+    }
+
+    public View getIconView() {
+        return mAdMobContainer.getIconView();
+    }
+
+    public View getImageView() {
+        return mAdMobContainer.getImageView();
+    }
+
+    public View getPriceView() {
+        return mAdMobContainer.getPriceView();
+    }
+
+    public View getStoreView() {
+        return mAdMobContainer.getStoreView();
+    }
+
+    public View getStarRatingView() {
+        return mAdMobContainer.getStarRatingView();
+    }
+
+    public void setNativeAd(NativeAd nativeAd) {
+        mAdMobContainer.setNativeAd(nativeAd);
     }
 }

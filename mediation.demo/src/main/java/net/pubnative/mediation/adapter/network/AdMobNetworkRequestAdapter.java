@@ -83,7 +83,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
         int year = Calendar.getInstance().get(Calendar.YEAR);
 
         if (targeting == null) {
-            return builder.build();
+            return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
         }
 
         if (targeting.age != null && targeting.age > 0) {
@@ -94,6 +94,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
             builder.setGender(targeting.gender.equalsIgnoreCase("male") ? AdRequest.GENDER_MALE : AdRequest.GENDER_FEMALE);
         }
 
-        return builder.build();
+        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
     }
 }

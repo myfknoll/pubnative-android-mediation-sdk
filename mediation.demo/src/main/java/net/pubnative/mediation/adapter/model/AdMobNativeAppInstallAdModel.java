@@ -36,6 +36,7 @@ import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import com.squareup.picasso.Picasso;
 
+import net.pubnative.mediation.adapter.widget.PubnativeNativeAdView;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -146,43 +147,43 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         Log.v(TAG, "startTracking");
 
         // Some assets are guaranteed to be in every NativeAppInstallAd.
-        ((TextView) ((NativeAppInstallAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
-        ((TextView) ((NativeAppInstallAdView)adView).getBodyView()).setText(mNativeAd.getBody());
-        ((Button) ((NativeAppInstallAdView)adView).getCallToActionView()).setText(mNativeAd.getCallToAction());
+        ((TextView) ((PubnativeNativeAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
+        ((TextView) ((PubnativeNativeAdView)adView).getBodyView()).setText(mNativeAd.getBody());
+        ((Button) ((PubnativeNativeAdView)adView).getCallToActionView()).setText(mNativeAd.getCallToAction());
 
-        Picasso.with(context).load(mNativeAd.getIcon().getUri()).into((ImageView) ((NativeAppInstallAdView)adView).getIconView());
+        Picasso.with(context).load(mNativeAd.getIcon().getUri()).into((ImageView) ((PubnativeNativeAdView)adView).getIconView());
 
         List<NativeAd.Image> images = mNativeAd.getImages();
 
         if (images.size() > 0) {
-            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) ((NativeAppInstallAdView)adView).getImageView());
+            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) ((PubnativeNativeAdView)adView).getImageView());
         }
 
         // Some aren't guaranteed, however, and should be checked.
         if (mNativeAd.getPrice() == null) {
-            ((NativeAppInstallAdView)adView).getPriceView().setVisibility(View.INVISIBLE);
+            ((PubnativeNativeAdView)adView).getPriceView().setVisibility(View.INVISIBLE);
         } else {
-            ((NativeAppInstallAdView)adView).getPriceView().setVisibility(View.VISIBLE);
-            ((TextView) ((NativeAppInstallAdView)adView).getPriceView()).setText(mNativeAd.getPrice());
+            ((PubnativeNativeAdView)adView).getPriceView().setVisibility(View.VISIBLE);
+            ((TextView) ((PubnativeNativeAdView)adView).getPriceView()).setText(mNativeAd.getPrice());
         }
 
         if (mNativeAd.getStore() == null) {
-            ((NativeAppInstallAdView)adView).getStoreView().setVisibility(View.INVISIBLE);
+            ((PubnativeNativeAdView)adView).getStoreView().setVisibility(View.INVISIBLE);
         } else {
-            ((NativeAppInstallAdView)adView).getStoreView().setVisibility(View.VISIBLE);
-            ((TextView) ((NativeAppInstallAdView)adView).getStoreView()).setText(mNativeAd.getStore());
+            ((PubnativeNativeAdView)adView).getStoreView().setVisibility(View.VISIBLE);
+            ((TextView) ((PubnativeNativeAdView)adView).getStoreView()).setText(mNativeAd.getStore());
         }
 
         if (mNativeAd.getStarRating() == null) {
-            ((NativeAppInstallAdView)adView).getStarRatingView().setVisibility(View.INVISIBLE);
+            ((PubnativeNativeAdView)adView).getStarRatingView().setVisibility(View.INVISIBLE);
         } else {
-            ((RatingBar) ((NativeAppInstallAdView)adView).getStarRatingView())
+            ((RatingBar) ((PubnativeNativeAdView)adView).getStarRatingView())
                     .setRating(mNativeAd.getStarRating().floatValue());
-            ((NativeAppInstallAdView)adView).getStarRatingView().setVisibility(View.VISIBLE);
+            ((PubnativeNativeAdView)adView).getStarRatingView().setVisibility(View.VISIBLE);
         }
 
         // Assign native ad object to the native view.
-        ((NativeAppInstallAdView)adView).setNativeAd(mNativeAd);
+        ((PubnativeNativeAdView)adView).setNativeAd(mNativeAd);
 
     }
 

@@ -45,18 +45,9 @@
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@+id/ad_icon"
                 android:isIndicator="true"
+                android:visibility="gone"
                 android:numStars="5"
                 android:stepSize="0.1"/>
-
-            <ProgressBar
-                android:id="@+id/ad_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/ad_description"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/ad_banner"

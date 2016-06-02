@@ -49,6 +49,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/ad_adapter_name_text"/>
 
+        <ProgressBar
+            android:id="@+id/ad_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:minHeight="256dp"
+            android:minWidth="256dp"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
 </RelativeLayout>

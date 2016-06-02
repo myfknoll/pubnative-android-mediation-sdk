@@ -89,7 +89,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     public void cleanView() {
 
         Log.v(TAG, "cleanView");
-        mAdContainer.cleanAdView();
+        mAdContainer.cleanAdView(mContext);
         mAdapterName.setText("");
         mAdLoading.setVisibility(View.GONE);
     }
@@ -100,7 +100,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         // Placement data
         mPlacementID.setText("Placement ID: " + mCellRequestModel.placementID);
         PubnativeAdModel model = mCellRequestModel.adModel;
-        mAdContainer.cleanAdView();
+        mAdContainer.cleanAdView(mContext);
         if (model != null) {
             // Privacy container
             String adapterNameText = model.getClass().getSimpleName();
