@@ -80,20 +80,22 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
     private AdRequest prepareTargetingData(PubnativeAdTargetingModel targeting) {
 
         AdRequest.Builder builder = new AdRequest.Builder();
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-
-        if (targeting == null) {
-            return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
+        if (mTargeting != null) {
+            if (mTargeting.age != null && mTargeting.age > 0) {
+                int year = Calendar.getInstance().get(Calendar.YEAR) - mTargeting.age;
+                builder.setBirthday(new GregorianCalendar(year, 1, 1).getTime());
+            }
+            if (TextUtils.isEmpty(mTargeting.gender)) {
+                builder.setGender(AdRequest.GENDER_UNKNOWN);
+            } else if ("male".equals(mTargeting.gender)) {
+                builder.setGender(AdRequest.GENDER_MALE);
+            } else if ("female".equals(mTargeting.gender)) {
+                builder.setGender(AdRequest.GENDER_FEMALE);
+            } else {
+                builder.setGender(AdRequest.GENDER_UNKNOWN);
+            }
         }
 
-        if (targeting.age != null && targeting.age > 0) {
-            builder.setBirthday(new GregorianCalendar(year - targeting.age, 1, 1).getTime());
-        }
-
-        if (!TextUtils.isEmpty(targeting.gender)){
-            builder.setGender(targeting.gender.equalsIgnoreCase("male") ? AdRequest.GENDER_MALE : AdRequest.GENDER_FEMALE);
-        }
-
-        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
+        return builder.build();
     }
 }
