@@ -3,10 +3,10 @@ package net.pubnative.mediation.adapter.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -23,19 +23,17 @@ import net.pubnative.mediation.request.model.PubnativeAdModel;
 public class PubnativeNativeAdView extends RelativeLayout{
 
     // Behaviour
-    protected ProgressBar    mAdLoading;
-    protected RelativeLayout mAdContainer;
-    protected NativeAppInstallAdView    mAdMobContainer;
+    private NativeAppInstallAdView    mAdMobContainer;
     // Ad info
-    protected ViewGroup      mAdDisclosure;
-    protected TextView       mDescription;
-    protected TextView       mTitle;
-    protected RatingBar      mRating;
-    protected ImageView      mIcon;
-    protected ImageView      mBanner;
-    protected Button         mCallToAction;
-    protected TextView       mPrice;
-    protected TextView       mStore;
+    private ViewGroup      mAdDisclosure;
+    private TextView       mDescription;
+    private TextView       mTitle;
+    private RatingBar      mRating;
+    private ImageView      mIcon;
+    private ImageView      mBanner;
+    private Button         mCallToAction;
+    private TextView       mPrice;
+    private TextView       mStore;
 
     public PubnativeNativeAdView(Context context) {
 
@@ -55,14 +53,19 @@ public class PubnativeNativeAdView extends RelativeLayout{
         initLayout(context);
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+
+        onTouchEvent(ev);
+        return false;
+    }
+
     private void initLayout(Context context) {
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         inflater.inflate(R.layout.pubnative_ad_view, this);
 
-        mAdLoading = (ProgressBar) findViewById(R.id.ad_spinner);
-        mAdContainer = (RelativeLayout) findViewById(R.id.ad_clickable);
         mAdMobContainer = (NativeAppInstallAdView) findViewById(R.id.ad_admob_container);
         mAdDisclosure = (ViewGroup) findViewById(R.id.ad_disclosure);
         mTitle = (TextView) findViewById(R.id.ad_title);

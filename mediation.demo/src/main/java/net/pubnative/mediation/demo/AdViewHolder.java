@@ -105,6 +105,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             // Privacy container
             String adapterNameText = model.getClass().getSimpleName();
             mAdapterName.setText(adapterNameText);
+            // Populate data in view
             mAdContainer.updateAdView(model);
             // Tracking
             model.startTracking(mContext, mAdContainer);
@@ -131,7 +132,6 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mAdLoading.setVisibility(View.GONE);
         if (mCellRequestModel.adModel != null) {
             mCellRequestModel.adModel.stopTracking();
-            ;
         }
         mCellRequestModel.adModel = ad;
         renderAd();
