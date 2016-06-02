@@ -25,21 +25,12 @@ package net.pubnative.mediation.demo;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.formats.NativeAppInstallAdView;
-import com.google.android.gms.ads.formats.NativeContentAdView;
-
-import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
 import net.pubnative.mediation.adapter.widget.PubnativeNativeAdView;
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;

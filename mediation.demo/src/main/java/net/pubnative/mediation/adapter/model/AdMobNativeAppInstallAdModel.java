@@ -33,11 +33,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import com.squareup.picasso.Picasso;
 
 import net.pubnative.mediation.adapter.widget.PubnativeNativeAdView;
-import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.List;
