@@ -308,18 +308,24 @@ public class PubnativeConfigManager {
                 PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
                 PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
 
-                // Check if impression cap (hour) changed
-                if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
+                if(newPlacement == null) {
                     PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
-                }
-                // check if impression cap (day) changed
-                if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
                     PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
-                }
-                // check if pacing cap changed
-                if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
-                    || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
                     PubnativeDeliveryManager.resetPacingCalendar(placementId);
+                } else {
+                    // Check if impression cap (hour) changed
+                    if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
+                        PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
+                    }
+                    // check if impression cap (day) changed
+                    if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
+                        PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
+                    }
+                    // check if pacing cap changed
+                    if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
+                        || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
+                        PubnativeDeliveryManager.resetPacingCalendar(placementId);
+                    }
                 }
             }
         }
