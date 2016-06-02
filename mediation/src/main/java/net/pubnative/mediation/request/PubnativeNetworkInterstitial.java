@@ -303,7 +303,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     @Override
     public void onAdapterLoadFinish(PubnativeNetworkInterstitialAdapter interstitial) {
 
-        Log.v(TAG, "onPubnativePlacementLoadFail");
+        Log.v(TAG, "onAdapterLoadFinish");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         interstitial.setAdListener(this);
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
@@ -313,7 +313,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     @Override
     public void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial, Exception exception) {
 
-        Log.v(TAG, "onPubnativePlacementLoadFail");
+        Log.v(TAG, "onAdapterLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         if (exception == PubnativeException.ADAPTER_TIMEOUT) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
@@ -328,28 +328,28 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     @Override
     public void onAdapterShow(PubnativeNetworkInterstitialAdapter interstitial) {
 
-        Log.v(TAG, "onPubnativePlacementLoadFail");
+        Log.v(TAG, "onAdapterShow");
         invokeShow();
     }
 
     @Override
     public void onAdapterImpressionConfirmed(PubnativeNetworkInterstitialAdapter interstitial) {
 
-        Log.v(TAG, "onPubnativePlacementLoadFail");
+        Log.v(TAG, "onAdapterImpressionConfirmed");
         invokeImpressionConfirmed();
     }
 
     @Override
     public void onAdapterClick(PubnativeNetworkInterstitialAdapter interstitial) {
 
-        Log.v(TAG, "onPubnativePlacementLoadFail");
+        Log.v(TAG, "onAdapterClick");
         invokeClick();
     }
 
     @Override
     public void onAdapterHide(PubnativeNetworkInterstitialAdapter interstitial) {
 
-        Log.v(TAG, "onPubnativePlacementLoadFail");
+        Log.v(TAG, "onAdapterHide");
         invokeHide();
     }
 }
