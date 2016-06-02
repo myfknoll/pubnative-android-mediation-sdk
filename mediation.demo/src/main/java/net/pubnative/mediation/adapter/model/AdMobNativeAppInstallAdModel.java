@@ -147,6 +147,7 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         // Some assets are guaranteed to be in every NativeAppInstallAd.
         ((TextView) ((PubnativeNativeAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
         ((TextView) ((PubnativeNativeAdView)adView).getBodyView()).setText(mNativeAd.getBody());
+        (((PubnativeNativeAdView)adView).getCallToActionView()).setVisibility(View.VISIBLE);
         ((Button) ((PubnativeNativeAdView)adView).getCallToActionView()).setText(mNativeAd.getCallToAction());
 
         Picasso.with(context).load(mNativeAd.getIcon().getUri()).into((ImageView) ((PubnativeNativeAdView)adView).getIconView());
