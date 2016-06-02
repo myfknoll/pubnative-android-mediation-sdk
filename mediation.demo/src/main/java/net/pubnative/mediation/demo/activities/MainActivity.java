@@ -93,6 +93,7 @@ public class MainActivity extends Activity {
             placements.add("pacing_cap_hour_1");
             placements.add("pacing_cap_min_1");
             placements.add("disabled");
+            placements.add("inlocomedia_only");
             Settings.setPlacements(this, placements);
         }
     }
