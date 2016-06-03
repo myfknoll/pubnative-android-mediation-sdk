@@ -68,7 +68,6 @@ public class PubnativeNativeAdView extends RelativeLayout {
         onTouchEvent(ev);
         return false;
     }
-
     //==============================================================================================
     // PubnativeNativeAdView methods
     //==============================================================================================
@@ -80,7 +79,6 @@ public class PubnativeNativeAdView extends RelativeLayout {
         Log.v(TAG, "initLayout");
         mContext = context;
     }
-
     // Population data
     //----------------------------------------------------------------------------------------------
 
@@ -93,52 +91,77 @@ public class PubnativeNativeAdView extends RelativeLayout {
 
         Log.v(TAG, "setModel");
         mAdModel = model;
-
-        populateAdView();
-
-        if (model instanceof AdMobNativeAppInstallAdModel) {
-            mAdMobContainer = new NativeAppInstallAdView(mContext);
-            addView(mAdMobContainer);
-            populateAppInstallAdView();
-
-        } else {
-            removeView(mAdMobContainer);
+        if (model != null) {
+            populateAdView();
+            if (model instanceof AdMobNativeAppInstallAdModel) {
+                mAdMobContainer = new NativeAppInstallAdView(mContext);
+                addView(mAdMobContainer);
+                populateAppInstallAdView();
+            } else {
+                removeView(mAdMobContainer);
+            }
         }
     }
 
     protected void populateAppInstallAdView() {
 
         Log.v(TAG, "populateAppInstallAdView");
-
-        mAdMobContainer.setHeadlineView(mTitle);
-        mAdMobContainer.setImageView(mBanner);
-        mAdMobContainer.setBodyView(mDescription);
-        mAdMobContainer.setCallToActionView(mCallToAction);
-        mAdMobContainer.setIconView(mIcon);
-        mAdMobContainer.setPriceView(mPrice);
-        mAdMobContainer.setStarRatingView(mRating);
-        mAdMobContainer.setStoreView(mStore);
+        if (mTitle != null) {
+            mAdMobContainer.setHeadlineView(mTitle);
+        }
+        if (mBanner != null) {
+            mAdMobContainer.setImageView(mBanner);
+        }
+        if (mDescription != null) {
+            mAdMobContainer.setBodyView(mDescription);
+        }
+        if (mCallToAction != null) {
+            mAdMobContainer.setCallToActionView(mCallToAction);
+        }
+        if (mIcon != null) {
+            mAdMobContainer.setIconView(mIcon);
+        }
+        if (mPrice != null) {
+            mAdMobContainer.setPriceView(mPrice);
+        }
+        if (mRating != null) {
+            mAdMobContainer.setStarRatingView(mRating);
+        }
+        if (mStore != null) {
+            mAdMobContainer.setStoreView(mStore);
+        }
         // Assign native ad object to the native view.
-        mAdMobContainer.setNativeAd((NativeAd) mAdModel.getNativeAd());
+        if (mAdModel != null) {
+            mAdMobContainer.setNativeAd((NativeAd) mAdModel.getNativeAd());
+        }
     }
 
     protected void populateAdView() {
 
         Log.v(TAG, "populateAdView");
-        mTitle.setText(mAdModel.getTitle());
-        mDescription.setText(mAdModel.getDescription());
-        mCallToAction.setText(mAdModel.getCallToAction());
-        mRating.setRating(mAdModel.getStarRating());
-        Picasso.with(getContext()).load(mAdModel.getIconUrl()).into(mIcon);
-        Picasso.with(getContext()).load(mAdModel.getBannerUrl()).into(mBanner);
-
+        if (mTitle != null) {
+            mTitle.setText(mAdModel.getTitle());
+        }
+        if (mDescription != null) {
+            mDescription.setText(mAdModel.getDescription());
+        }
+        if (mCallToAction != null) {
+            mCallToAction.setText(mAdModel.getCallToAction());
+        }
+        if (mRating != null) {
+            mRating.setRating(mAdModel.getStarRating());
+        }
+        if (mIcon != null) {
+            Picasso.with(getContext()).load(mAdModel.getIconUrl()).into(mIcon);
+        }
+        if (mBanner != null) {
+            Picasso.with(getContext()).load(mAdModel.getBannerUrl()).into(mBanner);
+        }
         View sponsorView = mAdModel.getAdvertisingDisclosureView(mContext);
-        if (sponsorView != null) {
+        if (sponsorView != null && mAdDisclosure != null) {
             mAdDisclosure.addView(sponsorView);
         }
-
     }
-
     // Fields
     //----------------------------------------------------------------------------------------------
 

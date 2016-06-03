@@ -41,11 +41,11 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
 
         Log.v(TAG, "request");
         if (context != null && mData != null) {
-            String placementId = (String) mData.get(ADMOB_UNIT_ID);
-            if (TextUtils.isEmpty(placementId)) {
+            String unitId = (String) mData.get(ADMOB_UNIT_ID);
+            if (TextUtils.isEmpty(unitId)) {
                 invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                createRequest(context, placementId);
+                createRequest(context, unitId);
             }
         } else {
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
