@@ -55,18 +55,18 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
 
     private static final String TAG = YahooNetworkFeedBannerAdapter.class.getSimpleName();
 
-    private   FlurryAdNative mFeedBanner = null;
-    protected Context        mContext;
+    private   FlurryAdNative      mFeedBanner = null;
+    protected Context             mContext;
     protected FlurryNativeAdModel mAdModel;
 
-    // InFeed Banner view
-    protected RelativeLayout mInFeedBannerView;
-    protected TextView       mTitle;
-    protected TextView       mDescription;
-    protected ImageView      mIconImage;
-    protected ImageView      mBannerImage;
-    protected Button         mCallToAction;
-    protected RatingBar      mRating;
+    // Feed Banner view
+    protected RelativeLayout      mInFeedBannerView;
+    protected TextView            mTitle;
+    protected TextView            mDescription;
+    protected ImageView           mIconImage;
+    protected ImageView           mBannerImage;
+    protected Button              mCallToAction;
+    protected RatingBar           mRating;
 
     /**
      * Creates a new instance of YahooNetworkFeedBannerAdapter
@@ -92,15 +92,11 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
             } else {
                 mContext = context;
                 initialize();
-                FlurryAgent.setLogEnabled(true);
-                FlurryAgent.setLogLevel(Log.VERBOSE);
-                // initialize flurry with new apiKey
-                FlurryAgent.init(context, apiKey);
-                // execute/resume session
+                new FlurryAgent.Builder().build(mContext, apiKey);
                 if (!FlurryAgent.isSessionActive()) {
-                    FlurryAgent.onStartSession(context);
+                    FlurryAgent.onStartSession(mContext);
                 }
-                mFeedBanner = new FlurryAdNative(context, adSpaceName);
+                mFeedBanner = new FlurryAdNative(mContext, adSpaceName);
                 mFeedBanner.setListener(this);
                 // Add targeting
                 FlurryAdTargeting targeting = getTargeting();
@@ -163,6 +159,9 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     public void destroy() {
 
         Log.v(TAG, "destroy");
+        if (!FlurryAgent.isSessionActive()) {
+            FlurryAgent.onEndSession(mContext);
+        }
         if (mFeedBanner != null) {
             mFeedBanner.destroy();
         }
@@ -170,15 +169,15 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
 
     @Override
     public void hide() {
-        if(mInFeedBannerView.getParent() != null) {
-            ((ViewGroup)mInFeedBannerView.getParent()).removeAllViews();
+        if (mInFeedBannerView.getParent() != null) {
+            ((ViewGroup) mInFeedBannerView.getParent()).removeAllViews();
         }
     }
 
     private void initialize() {
 
         Log.v(TAG, "initialize");
-        if(mInFeedBannerView == null) {
+        if (mInFeedBannerView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mInFeedBannerView = (RelativeLayout) inflater.inflate(R.layout.pubnative_feed_banner, null);
             mTitle = (TextView) mInFeedBannerView.findViewById(R.id.pubnative_feed_banner_title);
@@ -198,7 +197,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         mCallToAction.setText(mAdModel.getCallToAction());
         Picasso.with(mContext).load(mAdModel.getIconUrl()).into(mIconImage);
         Picasso.with(mContext).load(mAdModel.getBannerUrl()).into(mBannerImage);
-        if(mAdModel.getStarRating() > 0) {
+        if (mAdModel.getStarRating() > 0) {
             mRating.setRating(mAdModel.getStarRating());
             mRating.setVisibility(View.VISIBLE);
         } else {

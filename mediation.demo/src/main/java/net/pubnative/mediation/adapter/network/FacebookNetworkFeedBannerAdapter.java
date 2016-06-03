@@ -41,11 +41,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAdapter
-        implements AdListener,
-                   ImpressionListener {
+        implements AdListener, ImpressionListener {
 
-    private static final String TAG = FacebookNetworkFeedBannerAdapter.class.getSimpleName();
-    private AdView mFeedBanner;
+    private static final String  TAG = FacebookNetworkFeedBannerAdapter.class.getSimpleName();
+
+    private AdView  mFeedBanner;
     private boolean mIsLoaded;
 
     /**
@@ -62,17 +62,17 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void load(Context context) {
 
         Log.v(TAG, "load");
-        if (context != null && mData != null) {
+        if (context == null || mData == null) {
+            invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+        } else {
             String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
-            if (!TextUtils.isEmpty(placementId)) {
+            if (TextUtils.isEmpty(placementId)) {
+                invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
+            } else {
                 mFeedBanner = new AdView(context, placementId, AdSize.RECTANGLE_HEIGHT_250);
                 mFeedBanner.setAdListener(this);
                 mFeedBanner.loadAd();
-            } else {
-                invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
             }
-        } else {
-            invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
         }
     }
 
@@ -106,8 +106,8 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
 
     @Override
     public void hide() {
-        if(mFeedBanner.getParent() != null) {
-            ((ViewGroup)mFeedBanner.getParent()).removeAllViews();
+        if (mFeedBanner.getParent() != null) {
+            ((ViewGroup) mFeedBanner.getParent()).removeView(mFeedBanner);
         }
     }
 
