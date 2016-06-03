@@ -133,24 +133,16 @@ public class PubnativeNativeAdView extends RelativeLayout {
         Log.v(TAG, "populateAdView");
         mTitle.setText(mAdModel.getTitle());
         mDescription.setText(mAdModel.getDescription());
+        mCallToAction.setText(mAdModel.getCallToAction());
+        mRating.setRating(mAdModel.getStarRating());
         Picasso.with(getContext()).load(mAdModel.getIconUrl()).into(mIcon);
         Picasso.with(getContext()).load(mAdModel.getBannerUrl()).into(mBanner);
-        if (mAdModel.getStarRating() == 0f) {
-            mRating.setVisibility(INVISIBLE);
-        } else {
-            mRating.setRating(mAdModel.getStarRating());
-            mRating.setVisibility(VISIBLE);
-        }
+
         View sponsorView = mAdModel.getAdvertisingDisclosureView(mContext);
         if (sponsorView != null) {
             mAdDisclosure.addView(sponsorView);
         }
-        if (!TextUtils.isEmpty(mAdModel.getCallToAction())) {
-            mCallToAction.setVisibility(VISIBLE);
-            mCallToAction.setText(mAdModel.getCallToAction());
-        } else {
-            mCallToAction.setVisibility(GONE);
-        }
+
     }
 
     // Fields
