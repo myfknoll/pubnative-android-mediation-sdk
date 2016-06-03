@@ -100,6 +100,8 @@ public class PubnativeNativeAdView extends RelativeLayout {
             } else {
                 removeView(mAdMobContainer);
             }
+        } else {
+            Log.w(TAG, "setModel: model is null");
         }
     }
 

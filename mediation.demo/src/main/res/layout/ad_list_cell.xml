@@ -115,7 +115,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:visibility="gone"
                         android:textSize="12sp"/>
 
                     <TextView
@@ -123,7 +122,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingRight="5dp"
-                        android:visibility="gone"
                         android:textSize="12sp"/>
 
                     <Button
@@ -131,7 +129,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:visibility="gone"
                         android:textSize="12sp"/>
                 </LinearLayout>
 
