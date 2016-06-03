@@ -40,15 +40,15 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
     protected void request(Context context) {
 
         Log.v(TAG, "request");
-        if (context != null && mData != null) {
+        if (context == null && mData == null) {
+            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+        } else {
             String unitId = (String) mData.get(ADMOB_UNIT_ID);
             if (TextUtils.isEmpty(unitId)) {
                 invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 createRequest(context, unitId);
             }
-        } else {
-            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         }
     }
     //==============================================================================================
