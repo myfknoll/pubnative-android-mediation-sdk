@@ -54,7 +54,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
         adLoader.loadAd(getAdRequest());
     }
 
-    private AdRequest getAdRequest() {
+    protected AdRequest getAdRequest() {
 
         AdRequest.Builder builder = new AdRequest.Builder();
         if (mTargeting != null) {

@@ -41,6 +41,7 @@ public abstract class PubnativeAdModel {
     protected            PubnativeInsightModel mInsightModel      = null;
     protected            boolean               mImpressionTracked = false;
     protected            boolean               mClickTracked      = false;
+
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -131,6 +132,8 @@ public abstract class PubnativeAdModel {
      * @return Disclosure view to be added on top of the ad.
      */
     public abstract View getAdvertisingDisclosureView(Context context);
+
+    public abstract Object getNativeAd();
     //----------------------------------------------------------------------------------------------
     // TRACKING
     //----------------------------------------------------------------------------------------------

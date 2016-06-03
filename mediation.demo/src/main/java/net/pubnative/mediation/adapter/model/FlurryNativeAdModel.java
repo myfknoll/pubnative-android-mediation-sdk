@@ -129,6 +129,12 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
 
         return null;
     }
+
+    @Override
+    public Object getNativeAd() {
+
+        return mFlurryAdNative;
+    }
     // Tracking
     //----------------------------------------------------------------------------------------------
 

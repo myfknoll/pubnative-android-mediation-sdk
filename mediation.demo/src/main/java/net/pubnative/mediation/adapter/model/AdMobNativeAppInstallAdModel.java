@@ -140,49 +140,15 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
     }
 
     @Override
+    public Object getNativeAd() {
+
+        return mNativeAd;
+    }
+
+    @Override
     public void startTracking(Context context, View adView) {
 
         Log.v(TAG, "startTracking");
-
-        // Some assets are guaranteed to be in every NativeAppInstallAd.
-        ((TextView) ((PubnativeNativeAdView)adView).getHeadlineView()).setText(mNativeAd.getHeadline());
-        ((TextView) ((PubnativeNativeAdView)adView).getBodyView()).setText(mNativeAd.getBody());
-        (((PubnativeNativeAdView)adView).getCallToActionView()).setVisibility(View.VISIBLE);
-        ((Button) ((PubnativeNativeAdView)adView).getCallToActionView()).setText(mNativeAd.getCallToAction());
-
-        Picasso.with(context).load(mNativeAd.getIcon().getUri()).into((ImageView) ((PubnativeNativeAdView)adView).getIconView());
-
-        List<NativeAd.Image> images = mNativeAd.getImages();
-
-        if (images.size() > 0) {
-            Picasso.with(context).load(images.get(0).getUri()).into((ImageView) ((PubnativeNativeAdView)adView).getImageView());
-        }
-
-        // Some aren't guaranteed, however, and should be checked.
-        if (mNativeAd.getPrice() == null) {
-            ((PubnativeNativeAdView)adView).getPriceView().setVisibility(View.INVISIBLE);
-        } else {
-            ((PubnativeNativeAdView)adView).getPriceView().setVisibility(View.VISIBLE);
-            ((TextView) ((PubnativeNativeAdView)adView).getPriceView()).setText(mNativeAd.getPrice());
-        }
-
-        if (mNativeAd.getStore() == null) {
-            ((PubnativeNativeAdView)adView).getStoreView().setVisibility(View.INVISIBLE);
-        } else {
-            ((PubnativeNativeAdView)adView).getStoreView().setVisibility(View.VISIBLE);
-            ((TextView) ((PubnativeNativeAdView)adView).getStoreView()).setText(mNativeAd.getStore());
-        }
-
-        if (mNativeAd.getStarRating() == null) {
-            ((PubnativeNativeAdView)adView).getStarRatingView().setVisibility(View.INVISIBLE);
-        } else {
-            ((RatingBar) ((PubnativeNativeAdView)adView).getStarRatingView())
-                    .setRating(mNativeAd.getStarRating().floatValue());
-            ((PubnativeNativeAdView)adView).getStarRatingView().setVisibility(View.VISIBLE);
-        }
-
-        // Assign native ad object to the native view.
-        ((PubnativeNativeAdView)adView).setNativeAd(mNativeAd);
 
     }
 

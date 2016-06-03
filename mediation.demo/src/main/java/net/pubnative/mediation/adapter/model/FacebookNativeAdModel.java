@@ -139,6 +139,13 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         }
         return result;
     }
+
+    @Override
+    public Object getNativeAd() {
+
+        return mNativeAd;
+    }
+
     // Tracking
     //----------------------------------------------------------------------------------------------
 

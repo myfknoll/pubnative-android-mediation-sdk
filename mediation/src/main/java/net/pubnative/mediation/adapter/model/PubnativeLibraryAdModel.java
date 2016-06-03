@@ -113,6 +113,11 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
         return null;
     }
 
+    @Override
+    public Object getNativeAd() {
+
+        return mAdModel;
+    }
     //----------------------------------------------------------------------------------------------
     // Tracking
     //----------------------------------------------------------------------------------------------

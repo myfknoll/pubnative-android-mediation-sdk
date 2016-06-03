@@ -1,6 +1,7 @@
 package net.pubnative.mediation.adapter.widget;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import com.squareup.picasso.Picasso;
 
@@ -21,22 +23,25 @@ import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-public class PubnativeNativeAdView extends RelativeLayout{
+import java.util.List;
+
+public class PubnativeNativeAdView extends RelativeLayout {
 
     private static final String TAG = PubnativeNativeAdView.class.getSimpleName();
-
+    protected Context                mContext;
+    protected PubnativeAdModel       mAdModel;
     // Behaviour
-    private NativeAppInstallAdView    mAdMobContainer;
+    protected NativeAppInstallAdView mAdMobContainer;
     // Ad info
-    private ViewGroup      mAdDisclosure;
-    private TextView       mDescription;
-    private TextView       mTitle;
-    private RatingBar      mRating;
-    private ImageView      mIcon;
-    private ImageView      mBanner;
-    private Button         mCallToAction;
-    private TextView       mPrice;
-    private TextView       mStore;
+    protected ViewGroup              mAdDisclosure;
+    protected TextView               mDescription;
+    protected TextView               mTitle;
+    protected RatingBar              mRating;
+    protected ImageView              mIcon;
+    protected ImageView              mBanner;
+    protected Button                 mCallToAction;
+    protected TextView               mPrice;
+    protected TextView               mStore;
 
     public PubnativeNativeAdView(Context context) {
 
@@ -64,140 +69,122 @@ public class PubnativeNativeAdView extends RelativeLayout{
         return false;
     }
 
-    /**
-     * Initialize layout
-     * @param context context of activity
-     */
-    private void initLayout(Context context) {
+    protected void setModel(PubnativeAdModel model) {
+
+        mAdModel = model;
+
+        populateAdView();
+
+        if (model instanceof AdMobNativeAppInstallAdModel) {
+            mAdMobContainer = new NativeAppInstallAdView(mContext);
+            addView(mAdMobContainer);
+            populateAppInstallAdView();
+
+        } else {
+            removeView(mAdMobContainer);
+        }
+    }
+
+    protected void initLayout(Context context) {
 
         Log.v(TAG, "initLayout");
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        inflater.inflate(R.layout.pubnative_ad_view, this);
-
-        mAdMobContainer = (NativeAppInstallAdView) findViewById(R.id.ad_admob_container);
-        mAdDisclosure = (ViewGroup) findViewById(R.id.ad_disclosure);
-        mTitle = (TextView) findViewById(R.id.ad_title);
-        mDescription = (TextView) findViewById(R.id.ad_description);
-        mRating = (RatingBar) findViewById(R.id.ad_rating);
-        mIcon = (ImageView) findViewById(R.id.ad_icon);
-        mBanner = (ImageView) findViewById(R.id.ad_banner);
-        mPrice = (TextView) findViewById(R.id.ad_price);
-        mStore = (TextView) findViewById(R.id.ad_store);
-        mCallToAction = (Button) findViewById(R.id.ad_call_to_action);
-
+        mContext = context;
     }
 
     /**
      * Populate data in view
+     *
      * @param model Native Ad model
      */
     public void updateAdView(PubnativeAdModel model) {
 
         Log.v(TAG, "updateAdView");
-        if (model instanceof AdMobNativeAppInstallAdModel) {
-            prepareAdMobView(mAdMobContainer);
+        // Ad content
+        setModel(model);
+    }
+
+    protected void populateAppInstallAdView() {
+
+        Log.v(TAG, "populateAppInstallAdView");
+        mAdMobContainer.setHeadlineView(mTitle);
+        mAdMobContainer.setImageView(mBanner);
+        mAdMobContainer.setBodyView(mDescription);
+        mAdMobContainer.setCallToActionView(mCallToAction);
+        mAdMobContainer.setIconView(mIcon);
+        mAdMobContainer.setPriceView(mPrice);
+        mAdMobContainer.setStarRatingView(mRating);
+        mAdMobContainer.setStoreView(mStore);
+        // Assign native ad object to the native view.
+        mAdMobContainer.setNativeAd((NativeAd) mAdModel.getNativeAd());
+    }
+
+    protected void populateAdView() {
+
+        Log.v(TAG, "populateAdView");
+        mTitle.setText(mAdModel.getTitle());
+        mDescription.setText(mAdModel.getDescription());
+        Picasso.with(getContext()).load(mAdModel.getIconUrl()).into(mIcon);
+        Picasso.with(getContext()).load(mAdModel.getBannerUrl()).into(mBanner);
+        if (mAdModel.getStarRating() == 0f) {
+            mRating.setVisibility(INVISIBLE);
         } else {
-            // Ad content
-            mTitle.setText(model.getTitle());
-            mDescription.setText(model.getDescription());
-            mRating.setRating(model.getStarRating());
-            mRating.setVisibility(View.VISIBLE);
-            Picasso.with(getContext()).load(model.getIconUrl()).into(mIcon);
-            Picasso.with(getContext()).load(model.getBannerUrl()).into(mBanner);
-            View sponsorView = model.getAdvertisingDisclosureView(getContext());
-            if (sponsorView != null) {
-                mAdDisclosure.addView(sponsorView);
-            }
+            mRating.setRating(mAdModel.getStarRating());
+            mRating.setVisibility(VISIBLE);
+        }
+        View sponsorView = mAdModel.getAdvertisingDisclosureView(mContext);
+        if (sponsorView != null) {
+            mAdDisclosure.addView(sponsorView);
+        }
+        if (!TextUtils.isEmpty(mAdModel.getCallToAction())) {
+            mCallToAction.setVisibility(VISIBLE);
+            mCallToAction.setText(mAdModel.getCallToAction());
+        } else {
+            mCallToAction.setVisibility(GONE);
         }
     }
 
-    /**
-     * Method prepare view for AdMob depends from model type.
-     *
-     * @param adView container for AdMob Ads
-     */
-    private void prepareAdMobView(NativeAppInstallAdView adView) {
+    public void setBodyView(TextView view) {
 
-        Log.v(TAG, "prepareAdMobView");
-        adView.setHeadlineView(mTitle);
-        adView.setImageView(mBanner);
-        adView.setBodyView(mDescription);
-        adView.setIconView(mIcon);
-        adView.setStarRatingView(mRating);
-        adView.setPriceView(mPrice);
-        adView.setStoreView(mStore);
-        adView.setCallToActionView(mCallToAction);
-
+        mDescription = view;
     }
 
-    /**
-     * Removed all old views and recreate view from scratch.
-     * @param context activity context
-     */
-    public void cleanAdView(Context context) {
+    public void setHeadlineView(TextView view) {
 
-        Log.v(TAG, "cleanAdView");
-        this.removeAllViews();
-        initLayout(context);
+        mTitle = view;
     }
 
-    //==============================================================================================
-    // AdMob Helpers
-    //==============================================================================================
+    public void setStarRatingView(RatingBar view) {
 
-    public View getHeadlineView() {
-
-        Log.v(TAG, "getHeadlineView");
-        return mAdMobContainer.getHeadlineView();
+        mRating = view;
     }
 
-    public View getBodyView() {
+    public void setIconView(ImageView view) {
 
-        Log.v(TAG, "getBodyView");
-        return mAdMobContainer.getBodyView();
+        mIcon = view;
     }
 
-    public View getCallToActionView(){
+    public void setImageView(ImageView view) {
 
-        Log.v(TAG, "getCallToActionView");
-        return mAdMobContainer.getCallToActionView();
+        mBanner = view;
     }
 
-    public View getIconView() {
+    public void setCallToActionView(Button view) {
 
-        Log.v(TAG, "getIconView");
-        return mAdMobContainer.getIconView();
+        mCallToAction = view;
     }
 
-    public View getImageView() {
+    public void setPriceView(TextView view) {
 
-        Log.v(TAG, "getImageView");
-        return mAdMobContainer.getImageView();
+        mPrice = view;
     }
 
-    public View getPriceView() {
+    public void setStoreView(TextView view) {
 
-        Log.v(TAG, "getPriceView");
-        return mAdMobContainer.getPriceView();
+        mStore = view;
     }
 
-    public View getStoreView() {
+    public void setAdDisclosure(ViewGroup view) {
 
-        Log.v(TAG, "getStoreView");
-        return mAdMobContainer.getStoreView();
-    }
-
-    public View getStarRatingView() {
-
-        Log.v(TAG, "getStarRatingView");
-        return mAdMobContainer.getStarRatingView();
-    }
-
-    public void setNativeAd(NativeAd nativeAd) {
-
-        Log.v(TAG, "setNativeAd");
-        mAdMobContainer.setNativeAd(nativeAd);
+        mAdDisclosure = view;
     }
 }

@@ -26,8 +26,11 @@ package net.pubnative.mediation.demo;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,16 +47,26 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                                      View.OnClickListener {
 
     private static final String TAG = AdViewHolder.class.getSimpleName();
-    protected Context               mContext;
+    protected     Context               mContext;
     // Data
-    protected CellRequestModel      mCellRequestModel;
+    protected     CellRequestModel      mCellRequestModel;
     // Behaviour
-    protected ProgressBar           mAdLoading;
-    protected PubnativeNativeAdView mAdContainer;
-    protected Button                mRequestButton;
+    protected     ProgressBar           mAdLoading;
+    protected     PubnativeNativeAdView mAdContainer;
+    protected     Button                mRequestButton;
     // Ad info
-    protected TextView              mPlacementID;
-    protected TextView              mAdapterName;
+    protected     TextView              mPlacementID;
+    protected     TextView              mAdapterName;
+
+    protected     ViewGroup             mAdDisclosure;
+    protected     TextView              mDescription;
+    protected     TextView              mTitle;
+    protected     RatingBar             mRating;
+    protected     ImageView             mIcon;
+    protected     ImageView             mBanner;
+    protected     Button                mCallToAction;
+    protected     TextView              mPrice;
+    protected     TextView              mStore;
 
     public AdViewHolder(Context context, View convertView) {
 
@@ -64,6 +77,17 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mRequestButton.setOnClickListener(this);
         mAdapterName = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
         mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
+
+        mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
+        mTitle = (TextView) convertView.findViewById(R.id.ad_title);
+        mDescription = (TextView) convertView.findViewById(R.id.ad_description);
+        mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
+        mIcon = (ImageView) convertView.findViewById(R.id.ad_icon);
+        mBanner = (ImageView) convertView.findViewById(R.id.ad_banner);
+        mPrice = (TextView) convertView.findViewById(R.id.ad_price);
+        mStore = (TextView) convertView.findViewById(R.id.ad_store);
+        mCallToAction = (Button) convertView.findViewById(R.id.ad_call_to_action);
+
     }
 
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
@@ -80,9 +104,22 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     public void cleanView() {
 
         Log.v(TAG, "cleanView");
-        mAdContainer.cleanAdView(mContext);
         mAdapterName.setText("");
         mAdLoading.setVisibility(View.GONE);
+
+        mAdDisclosure.removeAllViews();
+        mTitle.setText("");
+        mDescription.setText("");
+        mRating.setRating(0f);
+        mRating.setVisibility(View.INVISIBLE);
+        mIcon.setImageDrawable(null);
+        mBanner.setImageDrawable(null);
+        mPrice.setText("");
+        mPrice.setVisibility(View.GONE);
+        mStore.setText("");
+        mStore.setVisibility(View.GONE);
+        mCallToAction.setText("");
+        mCallToAction.setVisibility(View.GONE);
     }
 
     public void renderAd() {
@@ -91,11 +128,20 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         // Placement data
         mPlacementID.setText("Placement ID: " + mCellRequestModel.placementID);
         PubnativeAdModel model = mCellRequestModel.adModel;
-        mAdContainer.cleanAdView(mContext);
         if (model != null) {
             // Privacy container
             String adapterNameText = model.getClass().getSimpleName();
             mAdapterName.setText(adapterNameText);
+            //Initialize fields of view
+            mAdContainer.setHeadlineView(mTitle);
+            mAdContainer.setBodyView(mDescription);
+            mAdContainer.setIconView(mIcon);
+            mAdContainer.setImageView(mBanner);
+            mAdContainer.setStarRatingView(mRating);
+            mAdContainer.setPriceView(mPrice);
+            mAdContainer.setStoreView(mStore);
+            mAdContainer.setCallToActionView(mCallToAction);
+            mAdContainer.setAdDisclosure(mAdDisclosure);
             // Populate data in view
             mAdContainer.updateAdView(model);
             // Tracking
