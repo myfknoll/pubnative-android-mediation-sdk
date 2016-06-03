@@ -27,34 +27,23 @@ import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdChoicesView;
-import com.facebook.ads.AdError;
-import com.facebook.ads.AdListener;
-import com.facebook.ads.ImpressionListener;
-import com.facebook.ads.NativeAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-public class FacebookNativeAdModel extends PubnativeAdModel implements ImpressionListener,
-                                                                       AdListener {
+public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
-    private static String TAG = FacebookNativeAdModel.class.getSimpleName();
-    protected NativeAd mNativeAd;
+    public static final String TAG = AdMobNativeAppInstallAdModel.class.getSimpleName();
+    protected NativeAppInstallAd mNativeAd;
 
-    public FacebookNativeAdModel(NativeAd nativeAd) {
+    public AdMobNativeAppInstallAdModel(NativeAppInstallAd nativeAd) {
 
-        if (nativeAd != null) {
-            mNativeAd = nativeAd;
-            mNativeAd.setAdListener(this);
-            mNativeAd.setImpressionListener(this);
-        }
+        mNativeAd = nativeAd;
     }
 
     //==============================================================================================
     // PubnativeAdModel methods
     //==============================================================================================
-
     // Fields
     //----------------------------------------------------------------------------------------------
     @Override
@@ -63,7 +52,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         Log.v(TAG, "getTitle");
         String result = null;
         if (mNativeAd != null) {
-            result = mNativeAd.getAdTitle();
+            result = String.valueOf(mNativeAd.getHeadline());
         }
         return result;
     }
@@ -74,7 +63,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         Log.v(TAG, "getDescription");
         String result = null;
         if (mNativeAd != null) {
-            result = mNativeAd.getAdBody();
+            result = String.valueOf(mNativeAd.getBody());
         }
         return result;
     }
@@ -83,22 +72,24 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     public String getIconUrl() {
 
         Log.v(TAG, "getIconUrl");
-        String iconUrl = null;
-        if (mNativeAd != null && mNativeAd.getAdIcon() != null) {
-            iconUrl = mNativeAd.getAdIcon().getUrl();
+        String result = null;
+        if (mNativeAd != null && mNativeAd.getIcon() != null) {
+            result = mNativeAd.getIcon().getUri().toString();
         }
-        return iconUrl;
+        return result;
     }
 
     @Override
     public String getBannerUrl() {
 
         Log.v(TAG, "getBannerUrl");
-        String bannerUrl = null;
-        if (mNativeAd != null && mNativeAd.getAdCoverImage() != null) {
-            bannerUrl = mNativeAd.getAdCoverImage().getUrl();
+        String result = null;
+        if (mNativeAd != null
+            && mNativeAd.getImages() != null
+            && mNativeAd.getImages().size() > 0) {
+            result = mNativeAd.getImages().get(0).getUri().toString();
         }
-        return bannerUrl;
+        return result;
     }
 
     @Override
@@ -107,7 +98,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         Log.v(TAG, "getCallToAction");
         String result = null;
         if (mNativeAd != null) {
-            result = mNativeAd.getAdCallToAction();
+            result = mNativeAd.getCallToAction().toString();
         }
         return result;
     }
@@ -118,12 +109,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         Log.v(TAG, "getStarRating");
         float starRating = 0;
         if (mNativeAd != null) {
-            NativeAd.Rating rating = mNativeAd.getAdStarRating();
-            if (rating != null) {
-                double ratingScale = rating.getScale();
-                double ratingValue = rating.getValue();
-                starRating = (float) ((ratingValue / ratingScale) * 5);
-            }
+            starRating = mNativeAd.getStarRating().floatValue();
         }
         return starRating;
     }
@@ -132,12 +118,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     public View getAdvertisingDisclosureView(Context context) {
 
         Log.v(TAG, "getAdvertisingDisclosureView");
-        View result = null;
-        if (context != null && mNativeAd != null) {
-            this.mContext = context;
-            return new AdChoicesView(this.mContext, mNativeAd);
-        }
-        return result;
+        return null;
     }
 
     @Override
@@ -149,58 +130,17 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
 
     // Tracking
     //----------------------------------------------------------------------------------------------
-
     @Override
     public void startTracking(Context context, View adView) {
 
         Log.v(TAG, "startTracking");
-        if (context != null && mNativeAd != null && adView != null) {
-            this.mContext = context;
-            mNativeAd.registerViewForInteraction(adView);
-        }
+        // Do nothing
     }
 
     @Override
     public void stopTracking() {
 
         Log.v(TAG, "stopTracking");
-        if (mNativeAd != null) {
-            mNativeAd.unregisterView();
-        }
-    }
-    //==============================================================================================
-    // Callbacks
-    //==============================================================================================
-
-    // ImpressionListener
-    //----------------------------------------------------------------------------------------------
-    @Override
-    public void onLoggingImpression(Ad ad) {
-
-        Log.v(TAG, "onLoggingImpression");
-        invokeOnAdImpressionConfirmed();
-    }
-
-    // AdListener
-    //----------------------------------------------------------------------------------------------
-    @Override
-    public void onError(Ad ad, AdError adError) {
-
-        Log.v(TAG, "onError");
         // Do nothing
-    }
-
-    @Override
-    public void onAdLoaded(Ad ad) {
-
-        Log.v(TAG, "onAdLoaded");
-        // Do nothing
-    }
-
-    @Override
-    public void onAdClicked(Ad ad) {
-
-        Log.v(TAG, "onAdClicked");
-        invokeOnAdClick();
     }
 }

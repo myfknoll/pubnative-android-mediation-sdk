@@ -127,8 +127,17 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     @Override
     public View getAdvertisingDisclosureView(Context context) {
 
+        Log.v(TAG, "getAdvertisingDisclosureView");
         return null;
     }
+
+    @Override
+    public Object getNativeAd() {
+
+        Log.v(TAG, "getNativeAd");
+        return mFlurryAdNative;
+    }
+
     // Tracking
     //----------------------------------------------------------------------------------------------
 

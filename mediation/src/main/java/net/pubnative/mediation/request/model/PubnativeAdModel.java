@@ -138,6 +138,13 @@ public abstract class PubnativeAdModel {
      */
     public abstract View getAdvertisingDisclosureView(Context context);
 
+    /**
+     * gets the inner native ad being wrapped
+     *
+     * @return the native ad being wrapped
+     */
+    public abstract Object getNativeAd();
+
     //----------------------------------------------------------------------------------------------
     // TRACKING
     //----------------------------------------------------------------------------------------------
