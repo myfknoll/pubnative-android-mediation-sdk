@@ -143,7 +143,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             mAdContainer.setCallToActionView(mCallToAction);
             mAdContainer.setAdDisclosure(mAdDisclosure);
             // Populate data in view
-            mAdContainer.updateAdView(model);
+            mAdContainer.setModel(model);
             // Tracking
             model.startTracking(mContext, mAdContainer);
         }

@@ -89,15 +89,9 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @param model Native Ad model
      */
-    public void updateAdView(PubnativeAdModel model) {
+    public void setModel(PubnativeAdModel model) {
 
-        Log.v(TAG, "updateAdView");
-        // Ad content
-        setModel(model);
-    }
-
-    protected void setModel(PubnativeAdModel model) {
-
+        Log.v(TAG, "setModel");
         mAdModel = model;
 
         populateAdView();
