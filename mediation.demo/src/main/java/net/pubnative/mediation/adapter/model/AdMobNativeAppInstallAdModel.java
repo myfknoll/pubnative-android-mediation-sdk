@@ -104,10 +104,8 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         Log.v(TAG, "getBannerUrl");
 
         String result = null;
-        if (mNativeAd != null && mNativeAd.getImages() != null) {
-            if (mNativeAd.getImages().size() > 0) {
-                result = mNativeAd.getImages().get(0).getUri().toString();
-            }
+        if (mNativeAd != null && mNativeAd.getImages() != null && mNativeAd.getImages().size() > 0) {
+            result = mNativeAd.getImages().get(0).getUri().toString();
         }
 
         return result;

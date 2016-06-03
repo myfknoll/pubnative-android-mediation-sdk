@@ -20,8 +20,8 @@ import java.util.Map;
 
 public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements NativeAppInstallAd.OnAppInstallAdLoadedListener {
 
-    public static final String    TAG       = AdMobNetworkRequestAdapter.class.getSimpleName();
-    protected static final String ADMOB_UNIT_ID   = "unit_id";
+    public static final    String TAG           = AdMobNetworkRequestAdapter.class.getSimpleName();
+    protected static final String ADMOB_UNIT_ID = "unit_id";
 
     /**
      * Creates a new instance of AdMobNetworkRequestAdapter
@@ -32,7 +32,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
 
         super(data);
     }
-
     //==============================================================================================
     // PubnativeNetworkAdapter methods
     //==============================================================================================
@@ -44,13 +43,14 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
         if (context != null && mData != null) {
             String placementId = (String) mData.get(ADMOB_UNIT_ID);
             if (TextUtils.isEmpty(placementId)) {
-                invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+                invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 createRequest(context, placementId);
             }
+        } else {
+            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         }
     }
-
     //==============================================================================================
     // AdMobNetworkAdapter methods
     //==============================================================================================
@@ -58,12 +58,10 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
     protected void createRequest(Context context, String unitId) {
 
         Log.v(TAG, "createRequest");
-
         AdLoader adLoader = new AdLoader.Builder(context, unitId)
                 .forAppInstallAd(this)
                 .withAdListener(new NativeAdListener())
                 .build();
-
         adLoader.loadAd(getAdRequest());
     }
 
@@ -85,7 +83,6 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
                 builder.setGender(AdRequest.GENDER_UNKNOWN);
             }
         }
-
         return builder.build();
     }
 
@@ -102,17 +99,15 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
             Log.v(TAG, "onAdFailedToLoad");
             invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         }
-
     }
-
     // NativeAppInstallAd.OnAppInstallAdLoadedListener
     //----------------------------------------------------------------------------------------------
 
     @Override
     public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
+
         Log.v(TAG, "onAppInstallAdLoaded");
         AdMobNativeAppInstallAdModel wrapper = new AdMobNativeAppInstallAdModel(nativeAppInstallAd);
         invokeLoaded(wrapper);
     }
-
 }
