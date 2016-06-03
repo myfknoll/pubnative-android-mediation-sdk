@@ -165,46 +165,82 @@ public class PubnativeNativeAdView extends RelativeLayout {
     // Fields
     //----------------------------------------------------------------------------------------------
 
+    /**
+     * Set view as a BodyView
+     * @param view TextView where will Ad description will be shown
+     */
     public void setBodyView(TextView view) {
 
         mDescription = view;
     }
 
+    /**
+     * Set view as a HeadlineView
+     * @param view TextView where will Ad headline will be shown
+     */
     public void setHeadlineView(TextView view) {
 
         mTitle = view;
     }
 
+    /**
+     * Set view as a StarRatingView
+     * @param view RatingBar where will Ad rating will be shown
+     */
     public void setStarRatingView(RatingBar view) {
 
         mRating = view;
     }
 
+    /**
+     * Set view as a IconView
+     * @param view ImageView where will Ad icon will be shown
+     */
     public void setIconView(ImageView view) {
 
         mIcon = view;
     }
 
+    /**
+     * Set view as a ImageView
+     * @param view ImageView where will Ad banner will be shown
+     */
     public void setImageView(ImageView view) {
 
         mBanner = view;
     }
 
+    /**
+     * Set view as a CallToActionView
+     * @param view Button where will Ad Call-To-Action text will be shown
+     */
     public void setCallToActionView(Button view) {
 
         mCallToAction = view;
     }
 
+    /**
+     * Set view as a PriceView
+     * @param view TextView where will Ad price info will be shown
+     */
     public void setPriceView(TextView view) {
 
         mPrice = view;
     }
 
+    /**
+     * Set view as a StoreView
+     * @param view TextView where will Ad store info will be shown
+     */
     public void setStoreView(TextView view) {
 
         mStore = view;
     }
 
+    /**
+     * Set view as a AdDisclosure
+     * @param view ViewGroup where will Ad disclosure will be shown
+     */
     public void setAdDisclosure(ViewGroup view) {
 
         mAdDisclosure = view;
