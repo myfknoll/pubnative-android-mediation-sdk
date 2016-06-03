@@ -36,7 +36,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import net.pubnative.mediation.adapter.widget.PubnativeAdView;
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -54,7 +53,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     protected CellRequestModel mCellRequestModel;
     // Behaviour
     protected ProgressBar      mAdLoading;
-    protected PubnativeAdView  mAdViewContainer;
+    protected ViewGroup        mAdViewContainer;
     protected Button           mRequestButton;
     // Ad info
     protected ViewGroup        mAdDisclosure;
@@ -70,7 +69,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
         this.mContext = context;
         mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        mAdViewContainer = (PubnativeAdView) convertView.findViewById(R.id.ad_view_container);
+        mAdViewContainer = (ViewGroup) convertView.findViewById(R.id.ad_view_container);
         mRequestButton = (Button) convertView.findViewById(R.id.request_button);
         mRequestButton.setOnClickListener(this);
         mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
@@ -81,11 +80,6 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
         mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
-        mAdViewContainer.withTitle(mTitle)
-                        .withDescription(mDescription)
-                        .withIcon(mIcon)
-                        .withBanner(mBanner)
-                        .withRating(mRating);
     }
 
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
@@ -135,8 +129,12 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                 mAdDisclosure.addView(sponsorView);
             }
             // Tracking
-            model.startTracking(mContext, mAdViewContainer);
-            mAdViewContainer.setModel(mContext, model);
+            model.withTitle(mTitle)
+                 .withDescription(mDescription)
+                 .withIcon(mIcon)
+                 .withBanner(mBanner)
+                 .withRating(mRating)
+                 .startTracking(mContext, mAdViewContainer);
         }
     }
 

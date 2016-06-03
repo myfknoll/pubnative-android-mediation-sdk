@@ -26,15 +26,20 @@ package net.pubnative.mediation.adapter.model;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
     public static final String TAG = AdMobNativeAppInstallAdModel.class.getSimpleName();
-    protected NativeAppInstallAd mNativeAd;
+    protected NativeAppInstallAdView mNativeAdView;
+    protected NativeAppInstallAd     mNativeAd;
+    // Tracking view
+    protected ViewGroup              mAdView;
 
     public AdMobNativeAppInstallAdModel(NativeAppInstallAd nativeAd) {
 
@@ -121,19 +126,23 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         return null;
     }
 
-    @Override
-    public Object getNativeAd() {
-
-        Log.v(TAG, "getNativeAd");
-        return mNativeAd;
-    }
-
     // Tracking
     //----------------------------------------------------------------------------------------------
     @Override
-    public void startTracking(Context context, View adView) {
+    public void startTracking(Context context, ViewGroup adView) {
 
         Log.v(TAG, "startTracking");
+        mAdView = adView;
+        mNativeAdView = new NativeAppInstallAdView(context);
+        mNativeAdView.setHeadlineView(mTitleView);
+        mNativeAdView.setBodyView(mDescriptionView);
+        mNativeAdView.setIconView(mIconView);
+        mNativeAdView.setImageView(mBannerView);
+        mNativeAdView.setCallToActionView(mCallToActionView);
+        mNativeAdView.setStarRatingView(mRatingView);
+        // Assign native ad object to the native view.
+        mNativeAdView.setNativeAd(mNativeAd);
+        mAdView.addView(mNativeAdView);
         // Do nothing
     }
 
@@ -141,6 +150,8 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
     public void stopTracking() {
 
         Log.v(TAG, "stopTracking");
-        // Do nothing
+        if (mAdView != null) {
+            mAdView.removeView(mNativeAdView);
+        }
     }
 }

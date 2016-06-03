@@ -40,16 +40,17 @@ public class AdMobNetworkAdapter extends PubnativeNetworkAdapter
 
         Log.v(TAG, "request");
         if (context == null || mData == null) {
-            invokeFailed(new Exception(TAG+" - error: invalid arguments"));
+            invokeFailed(new Exception(TAG + " - error: invalid arguments"));
         } else {
             String unitID = (String) mData.get(ADMOB_UNIT_ID);
             if (TextUtils.isEmpty(unitID)) {
-                invokeFailed(new Exception(TAG+" - error: missing argument unit_id"));
+                invokeFailed(new Exception(TAG + " - error: missing argument unit_id"));
             } else {
-                createRequest(context, unitID );
+                createRequest(context, unitID);
             }
         }
     }
+
     //==============================================================================================
     // AdMobNetworkAdapter methods
     //==============================================================================================
@@ -65,9 +66,10 @@ public class AdMobNetworkAdapter extends PubnativeNetworkAdapter
 
     protected AdRequest getAdRequest() {
 
-        AdRequest.Builder builder = new AdRequest.Builder();
-        builder.addTestDevice(AdRequest.DEVICE_ID_EMULATOR);
-        return builder.build();
+        return new AdRequest.Builder()
+                            .addTestDevice("5169CE50DEC340749C2DD17F6B6BCEBB")
+                            .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                            .build();
     }
 
     //==============================================================================================
@@ -81,7 +83,7 @@ public class AdMobNetworkAdapter extends PubnativeNetworkAdapter
         public void onAdFailedToLoad(int var1) {
 
             Log.v(TAG, "onAdFailedToLoad");
-            invokeFailed(new Exception(TAG+" - error loading the ad with code:" + String.valueOf(var1)));
+            invokeFailed(new Exception(TAG + " - error loading the ad with code:" + String.valueOf(var1)));
         }
     }
     // NativeAppInstallAd.OnAppInstallAdLoadedListener

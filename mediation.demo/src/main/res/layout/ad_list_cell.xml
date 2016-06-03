@@ -43,10 +43,9 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentLeft="true"/>
 
-        <net.pubnative.mediation.adapter.widget.PubnativeAdView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:id="@+id/ad_view_container"
             android:layout_below="@+id/ad_adapter_name_text">
 
@@ -108,7 +107,7 @@
                 android:layout_alignParentBottom="false"
                 android:layout_margin="5dp" />
 
-        </net.pubnative.mediation.adapter.widget.PubnativeAdView>
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
