@@ -48,9 +48,7 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
     public AdMobNativeAppInstallAdModel(NativeAppInstallAd nativeAd) {
 
-        if (nativeAd != null) {
             mNativeAd = nativeAd;
-        }
     }
 
     //==============================================================================================
