@@ -37,15 +37,4 @@ public class PubnativePriorityRuleModel {
     //==============================================================================================
     // PubnativePriorityRuleModel
     //==============================================================================================
-
-    @Override
-    public String toString() {
-
-        return "PubnativePriorityRuleModel{" +
-               "id=" + id +
-               ", network_code='" + network_code + '\'' +
-               ", params=" + params +
-               ", segment_ids=" + segment_ids +
-               '}';
-    }
 }
