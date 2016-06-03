@@ -31,12 +31,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import net.pubnative.mediation.adapter.widget.PubnativeAdView;
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -54,7 +54,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     protected CellRequestModel mCellRequestModel;
     // Behaviour
     protected ProgressBar      mAdLoading;
-    protected RelativeLayout   mAdContainer;
+    protected PubnativeAdView  mAdViewContainer;
     protected Button           mRequestButton;
     // Ad info
     protected ViewGroup        mAdDisclosure;
@@ -70,7 +70,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
         this.mContext = context;
         mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        mAdContainer = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
+        mAdViewContainer = (PubnativeAdView) convertView.findViewById(R.id.ad_view_container);
         mRequestButton = (Button) convertView.findViewById(R.id.request_button);
         mRequestButton.setOnClickListener(this);
         mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
@@ -81,6 +81,11 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
         mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
+        mAdViewContainer.withTitle(mTitle)
+                        .withDescription(mDescription)
+                        .withIcon(mIcon)
+                        .withBanner(mBanner)
+                        .withRating(mRating);
     }
 
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
@@ -130,7 +135,8 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                 mAdDisclosure.addView(sponsorView);
             }
             // Tracking
-            model.startTracking(mContext, mAdContainer);
+            model.startTracking(mContext, mAdViewContainer);
+            mAdViewContainer.setModel(mContext, model);
         }
     }
 
@@ -158,8 +164,8 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
         Log.d(TAG, "onPubnativeNetworkRequestLoaded");
         mAdLoading.setVisibility(View.GONE);
-        if(mCellRequestModel.adModel != null) {
-            mCellRequestModel.adModel.stopTracking();;
+        if (mCellRequestModel.adModel != null) {
+            mCellRequestModel.adModel.stopTracking();
         }
         mCellRequestModel.adModel = ad;
         renderAd();
@@ -177,6 +183,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
     @Override
     public void onClick(View v) {
+
         onRequestClick(v);
     }
 }

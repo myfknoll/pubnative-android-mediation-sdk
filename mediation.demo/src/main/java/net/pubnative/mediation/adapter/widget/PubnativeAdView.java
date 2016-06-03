@@ -13,10 +13,9 @@ import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-public class PubnativeNativeAdView extends RelativeLayout {
+public class PubnativeAdView extends RelativeLayout {
 
-    private static final String TAG = PubnativeNativeAdView.class.getSimpleName();
-
+    private static final String TAG = PubnativeAdView.class.getSimpleName();
     // Behaviour
     protected NativeAppInstallAdView mAdMobContainer;
     // Ad info
@@ -27,7 +26,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
     protected View                   mBanner;
     protected View                   mCallToAction;
 
-    public PubnativeNativeAdView(Context context) {
+    public PubnativeAdView(Context context) {
 
         super(context);
     }
@@ -42,7 +41,6 @@ public class PubnativeNativeAdView extends RelativeLayout {
         onTouchEvent(ev);
         return false;
     }
-
     //==============================================================================================
     // PubnativeNativeAdView
     //==============================================================================================
@@ -69,7 +67,6 @@ public class PubnativeNativeAdView extends RelativeLayout {
             addView(mAdMobContainer);
         } else {
             removeView(mAdMobContainer);
-
         }
     }
 
@@ -80,7 +77,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @return this item
      */
-    public PubnativeNativeAdView withDescription(View view) {
+    public PubnativeAdView withDescription(View view) {
 
         mDescription = view;
         return this;
@@ -93,7 +90,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @return this item
      */
-    public PubnativeNativeAdView withTitle(View view) {
+    public PubnativeAdView withTitle(View view) {
 
         mTitle = view;
         return this;
@@ -106,7 +103,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @return this item
      */
-    public PubnativeNativeAdView withRating(View view) {
+    public PubnativeAdView withRating(View view) {
 
         mRating = view;
         return this;
@@ -119,7 +116,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @return this item
      */
-    public PubnativeNativeAdView withIcon(View view) {
+    public PubnativeAdView withIcon(View view) {
 
         mIcon = view;
         return this;
@@ -132,7 +129,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @return this item
      */
-    public PubnativeNativeAdView withBanner(View view) {
+    public PubnativeAdView withBanner(View view) {
 
         mBanner = view;
         return this;
@@ -145,7 +142,7 @@ public class PubnativeNativeAdView extends RelativeLayout {
      *
      * @return this item
      */
-    public PubnativeNativeAdView withCallToAction(Button view) {
+    public PubnativeAdView withCallToAction(Button view) {
 
         mCallToAction = view;
         return this;
