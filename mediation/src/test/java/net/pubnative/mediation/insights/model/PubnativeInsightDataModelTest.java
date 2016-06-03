@@ -88,7 +88,7 @@ public class PubnativeInsightDataModelTest {
     }
 
     @Test
-    public void addUnreachableNetworkWithDifferentValues() {
+    public void addUnreachableNetwork_withValidValue_isNotNull() {
         PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
 
         // the list is null at the beginning
@@ -99,11 +99,25 @@ public class PubnativeInsightDataModelTest {
         assertThat(dataModelSpy.unreachable_networks).isNotNull();
         assertThat(dataModelSpy.unreachable_networks.size()).isNotZero();
 
-        // resets attempted_networks
-        dataModelSpy.reset();
+    }
+
+    @Test
+    public void addUnreachableNetwork_withEmptyValue_isNull() {
+        PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
+
+        // the list is null at the beginning
+        assertThat(dataModelSpy.unreachable_networks).isNull();
 
         // network as empty string
         dataModelSpy.addUnreachableNetwork("");
+        assertThat(dataModelSpy.unreachable_networks).isNull();
+    }
+
+    @Test
+    public void addUnreachableNetwork_withNullValue_isNull() {
+        PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
+
+        // the list is null at the beginning
         assertThat(dataModelSpy.unreachable_networks).isNull();
 
         // network as null
