@@ -69,6 +69,33 @@ public class PubnativeNativeAdView extends RelativeLayout {
         return false;
     }
 
+    //==============================================================================================
+    // PubnativeNativeAdView methods
+    //==============================================================================================
+    // Initializing
+    //----------------------------------------------------------------------------------------------
+
+    protected void initLayout(Context context) {
+
+        Log.v(TAG, "initLayout");
+        mContext = context;
+    }
+
+    // Population data
+    //----------------------------------------------------------------------------------------------
+
+    /**
+     * Populate data in view
+     *
+     * @param model Native Ad model
+     */
+    public void updateAdView(PubnativeAdModel model) {
+
+        Log.v(TAG, "updateAdView");
+        // Ad content
+        setModel(model);
+    }
+
     protected void setModel(PubnativeAdModel model) {
 
         mAdModel = model;
@@ -85,27 +112,10 @@ public class PubnativeNativeAdView extends RelativeLayout {
         }
     }
 
-    protected void initLayout(Context context) {
-
-        Log.v(TAG, "initLayout");
-        mContext = context;
-    }
-
-    /**
-     * Populate data in view
-     *
-     * @param model Native Ad model
-     */
-    public void updateAdView(PubnativeAdModel model) {
-
-        Log.v(TAG, "updateAdView");
-        // Ad content
-        setModel(model);
-    }
-
     protected void populateAppInstallAdView() {
 
         Log.v(TAG, "populateAppInstallAdView");
+
         mAdMobContainer.setHeadlineView(mTitle);
         mAdMobContainer.setImageView(mBanner);
         mAdMobContainer.setBodyView(mDescription);
@@ -142,6 +152,9 @@ public class PubnativeNativeAdView extends RelativeLayout {
             mCallToAction.setVisibility(GONE);
         }
     }
+
+    // Fields
+    //----------------------------------------------------------------------------------------------
 
     public void setBodyView(TextView view) {
 

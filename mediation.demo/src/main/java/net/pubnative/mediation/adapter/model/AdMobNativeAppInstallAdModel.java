@@ -53,6 +53,12 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         }
     }
 
+    //==============================================================================================
+    // PubnativeAdModel methods
+    //==============================================================================================
+    // Fields
+    //----------------------------------------------------------------------------------------------
+
     @Override
     public String getTitle() {
 
@@ -145,11 +151,13 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         return mNativeAd;
     }
 
+    // Tracking
+    //----------------------------------------------------------------------------------------------
+
     @Override
     public void startTracking(Context context, View adView) {
 
         Log.v(TAG, "startTracking");
-
     }
 
     @Override

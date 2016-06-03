@@ -19,6 +19,11 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     protected static final String ADMOB_UNIT_ID = "unit_id";
     protected InterstitialAd mInterstitial;
 
+    /**
+     * Creates a new instance of AdMobNetworkRequestAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
     public AdMobNetworkInterstitialAdapter(Map data) {
 
         super(data);

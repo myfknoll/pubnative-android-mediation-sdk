@@ -23,10 +23,19 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
     public static final String    TAG       = AdMobNetworkRequestAdapter.class.getSimpleName();
     protected static final String ADMOB_UNIT_ID   = "unit_id";
 
+    /**
+     * Creates a new instance of AdMobNetworkRequestAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
     public AdMobNetworkRequestAdapter(Map data) {
 
         super(data);
     }
+
+    //==============================================================================================
+    // PubnativeNetworkAdapter methods
+    //==============================================================================================
 
     @Override
     protected void request(Context context) {
@@ -42,7 +51,11 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
         }
     }
 
-    private void createRequest(Context context, String unitId) {
+    //==============================================================================================
+    // AdMobNetworkAdapter methods
+    //==============================================================================================
+
+    protected void createRequest(Context context, String unitId) {
 
         Log.v(TAG, "createRequest");
 
