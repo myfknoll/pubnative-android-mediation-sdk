@@ -83,7 +83,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
                 builder.setGender(AdRequest.GENDER_UNKNOWN);
             }
         }
-        return builder.build();
+        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
     }
 
     //==============================================================================================
