@@ -18,7 +18,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
-public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
+public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements NativeAppInstallAd.OnAppInstallAdLoadedListener {
 
     public static final String    TAG       = AdMobNetworkRequestAdapter.class.getSimpleName();
     protected static final String ADMOB_UNIT_ID   = "unit_id";
@@ -47,37 +47,14 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
         Log.v(TAG, "createRequest");
 
         AdLoader adLoader = new AdLoader.Builder(context, unitId)
-                .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
-
-                    @Override
-                    public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
-
-                        Log.v(TAG, "onAppInstallAdLoaded");
-                        AdMobNativeAppInstallAdModel wrapper = new AdMobNativeAppInstallAdModel(nativeAppInstallAd);
-                        invokeLoaded(wrapper);
-                    }
-                })
-                .withAdListener(new AdListener() {
-
-                    @Override
-                    public void onAdFailedToLoad(int i) {
-
-                        Log.v(TAG, "onAdFailedToLoad");
-                        super.onAdFailedToLoad(i);
-                        invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-                    }
-                })
-                .withNativeAdOptions(new NativeAdOptions.Builder()
-                        .setReturnUrlsForImageAssets(true)
-                        .build())
+                .forAppInstallAd(this)
+                .withAdListener(new NativeAdListener())
                 .build();
 
-        AdRequest request = prepareTargetingData(mTargeting);
-
-        adLoader.loadAd(request);
+        adLoader.loadAd(getAdRequest());
     }
 
-    private AdRequest prepareTargetingData(PubnativeAdTargetingModel targeting) {
+    private AdRequest getAdRequest() {
 
         AdRequest.Builder builder = new AdRequest.Builder();
         if (mTargeting != null) {
@@ -98,4 +75,31 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
         return builder.build();
     }
+
+    //==============================================================================================
+    // CALLBACKS
+    //==============================================================================================
+    // AdListener
+    //----------------------------------------------------------------------------------------------
+    protected class NativeAdListener extends com.google.android.gms.ads.AdListener {
+
+        @Override
+        public void onAdFailedToLoad(int var1) {
+
+            Log.v(TAG, "onAdFailedToLoad");
+            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        }
+
+    }
+
+    // NativeAppInstallAd.OnAppInstallAdLoadedListener
+    //----------------------------------------------------------------------------------------------
+
+    @Override
+    public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
+        Log.v(TAG, "onAppInstallAdLoaded");
+        AdMobNativeAppInstallAdModel wrapper = new AdMobNativeAppInstallAdModel(nativeAppInstallAd);
+        invokeLoaded(wrapper);
+    }
+
 }

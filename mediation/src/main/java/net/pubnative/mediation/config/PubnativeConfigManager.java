@@ -58,7 +58,6 @@ public class PubnativeConfigManager {
     protected static final String                            APP_TOKEN_KEY             = "app_token";
     protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
     protected static       boolean                           sIdle                     = true;
-    protected static Context    sContext;
 
     //==============================================================================================
     // Listener
@@ -111,7 +110,6 @@ public class PubnativeConfigManager {
             Log.e(TAG, "getConfig - Error: app token is null");
             invokeLoaded(null, listener);
         } else {
-            sContext = context;
             PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
             item.context = context;
             item.appToken = appToken;
@@ -241,20 +239,7 @@ public class PubnativeConfigManager {
             serveStoredConfig(request);
         } else {
             try {
-                String json = null;
-                try {
-                    InputStream is = sContext.getAssets().open("test.json");
-                    int size = is.available();
-                    byte[] buffer = new byte[size];
-                    is.read(buffer);
-                    is.close();
-                    json = new String(buffer, "UTF-8");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-
-                PubnativeConfigAPIResponseModel response = new Gson().fromJson(json, PubnativeConfigAPIResponseModel.class);
-
+                PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                     // Update delivery manager's tracking data
                     updateDeliveryManagerCache(request.context, response.config);
