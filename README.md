@@ -132,10 +132,6 @@ ad.setListener(new PubnativeAdModel.Listener() {
 });
 ```
 
-####Advanced
-
-
-
 <a name="networks"></a>
 # Third party networks
 
