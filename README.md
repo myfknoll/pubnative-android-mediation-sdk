@@ -106,7 +106,7 @@ request.start(context, "<APP_TOKEN>", "<PLACEMENT_NAME>", new PubnativeNetworkRe
 For confirming impressions of the ad and handling clicks, the `PubnativeadModel` has methods to automatically track the ad view items for confirming the impression, and handling to open the offer when the user interacts, you just need to specify the view that contains the ad along with each item to the `startTracking` method. (you just need to specify the views for the items that you are using)
 
 ```java
-ad.withTitle(<TITlE_VIEW>).
+ad.withTitle(<TITlE_VIEW>)
   .withDescription(<DESCRIPTION_VIEW>)
   .withIcon(<ICON_VIEW>)
   .withBanner(<BANNER_VIEW>)
