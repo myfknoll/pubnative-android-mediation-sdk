@@ -154,7 +154,8 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
         mNativeAdView.setStarRatingView(mRatingView);
         // Assign native ad object to the native view.
         mNativeAdView.setNativeAd(mNativeAd);
-        mAdView.addView(mNativeAdView);
+        mAdView.addView(mNativeAdView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                  ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     @Override
