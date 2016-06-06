@@ -127,7 +127,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             mRating.setVisibility(View.VISIBLE);
             Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
             Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
-            View sponsorView = model.getAdvertisingDisclosureView(this.mContext);
+            View sponsorView = model.getAdvertisingDisclosureView(mContext);
             if (sponsorView != null) {
                 mAdDisclosure.addView(sponsorView);
             }
