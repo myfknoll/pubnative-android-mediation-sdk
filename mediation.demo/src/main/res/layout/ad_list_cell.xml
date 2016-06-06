@@ -2,25 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#484D51"
-                android:padding="5dp">
+                android:padding="5dp"
+                android:background="#484D51">
 
     <Button
         android:id="@+id/request_button"
+        android:background="@android:color/transparent"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:layout_alignParentRight="true"
-        android:background="@android:color/transparent"
-        android:onClick="onRequestClick"
+        android:textStyle="bold"
         android:text="Request"
-        android:textStyle="bold"/>
+        android:onClick="onRequestClick"
+        android:layout_alignParentRight="true"/>
 
     <TextView
         android:id="@+id/placement_id_text"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_toLeftOf="@id/request_button"
-        android:gravity="center_vertical"/>
+        android:gravity="center_vertical"
+        android:layout_toLeftOf="@id/request_button"/>
 
     <RelativeLayout
         android:id="@+id/ad_container"
@@ -33,125 +33,91 @@
             android:id="@+id/ad_adapter_name_text"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="16sp"
             android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
             android:background="#6a006e"
             android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"/>
 
-        <net.pubnative.mediation.adapter.widget.PubnativeNativeAdView
-            android:id="@+id/ad_view"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/ad_adapter_name_text">
+            android:layout_height="wrap_content"
+            android:id="@+id/ad_view_container"
+            android:layout_below="@+id/ad_adapter_name_text">
 
-                <ImageView
-                    android:id="@+id/ad_icon"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:scaleType="centerCrop"/>
+            <ImageView
+                android:id="@+id/ad_icon_image"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true" />
 
-                <TextView
-                    android:id="@+id/ad_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_toRightOf="@id/ad_icon"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"/>
+            <TextView
+                android:id="@+id/ad_title_text"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:gravity="center_vertical"
+                android:layout_toRightOf="@id/ad_icon_image"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="20dp" />
 
-                <RatingBar
-                    android:id="@+id/ad_rating"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_below="@+id/ad_title"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@+id/ad_icon"
-                    android:isIndicator="true"
-                    android:visibility="gone"
-                    android:numStars="5"
-                    android:stepSize="0.1"/>
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:id="@+id/ad_rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:numStars="5"
+                android:isIndicator="true"
+                android:layout_marginLeft="5dp"
+                android:stepSize="0.1"
+                android:layout_below="@+id/ad_title_text"
+                android:layout_toRightOf="@+id/ad_icon_image" />
 
-                <ImageView
-                    android:id="@+id/ad_banner"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_below="@+id/ad_icon"
-                    android:layout_marginTop="5dp"/>
-
-                <TextView
-                    android:id="@+id/ad_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="false"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/ad_banner"
-                    android:layout_margin="5dp"
-                    android:gravity="center_vertical"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/ad_description"
-                    android:paddingBottom="10dp"
-                    android:paddingTop="10dp">
-
-                    <TextView
-                        android:id="@+id/ad_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="5dp"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:id="@+id/ad_store"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingRight="5dp"
-                        android:textSize="12sp"/>
-
-                    <Button
-                        android:id="@+id/ad_call_to_action"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-
-            <RelativeLayout
-                android:id="@+id/ad_disclosure"
+            <ProgressBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/ad_view_container"
-                android:layout_alignRight="@+id/ad_view_container"
-                android:layout_alignTop="@+id/ad_view_container"
-                android:gravity="right|top"
-                android:padding="5dp"/>
+                android:id="@+id/ad_spinner"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@+id/ad_description_text"
+                android:layout_alignParentTop="true" />
 
-        </net.pubnative.mediation.adapter.widget.PubnativeNativeAdView>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:id="@+id/ad_banner_image"
+                android:layout_below="@+id/ad_icon_image"
+                android:layout_marginTop="5dp"/>
 
-        <ProgressBar
-            android:id="@+id/ad_spinner"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ad_description_text"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/ad_banner_image"
+                android:layout_alignParentRight="true"
+                android:gravity="center_vertical"
+                android:layout_alignParentBottom="false"
+                android:layout_margin="5dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:minHeight="256dp"
-            android:minWidth="256dp"
-            android:visibility="gone"/>
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/ad_view_container"
+            android:layout_alignLeft="@+id/ad_view_container"
+            android:layout_alignRight="@+id/ad_view_container"
+            android:gravity="right|top"
+            android:id="@+id/ad_disclosure"
+            android:padding="5dp"></RelativeLayout>
 
     </RelativeLayout>
 

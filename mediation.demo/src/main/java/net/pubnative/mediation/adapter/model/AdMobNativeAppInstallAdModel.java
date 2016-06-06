@@ -26,25 +26,20 @@ package net.pubnative.mediation.adapter.model;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
-import com.squareup.picasso.Picasso;
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 
-import net.pubnative.mediation.adapter.widget.PubnativeNativeAdView;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
-
-import java.util.List;
 
 public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
     public static final String TAG = AdMobNativeAppInstallAdModel.class.getSimpleName();
 
-    protected NativeAppInstallAd mNativeAd;
+    protected NativeAppInstallAdView mNativeAdView;
+    protected NativeAppInstallAd     mNativeAd;
+    protected ViewGroup              mAdView;
 
     public AdMobNativeAppInstallAdModel(NativeAppInstallAd nativeAd) {
 
@@ -138,28 +133,37 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
     @Override
     public View getAdvertisingDisclosureView(Context context) {
 
+        Log.v(TAG, "getAdvertisingDisclosureView");
         return null;
-    }
-
-    @Override
-    public Object getNativeAd() {
-
-        return mNativeAd;
     }
 
     // Tracking
     //----------------------------------------------------------------------------------------------
 
     @Override
-    public void startTracking(Context context, View adView) {
+    public void startTracking(Context context, ViewGroup adView) {
 
         Log.v(TAG, "startTracking");
+        mAdView = adView;
+        mNativeAdView = new NativeAppInstallAdView(context);
+        mNativeAdView.setHeadlineView(mTitleView);
+        mNativeAdView.setBodyView(mDescriptionView);
+        mNativeAdView.setIconView(mIconView);
+        mNativeAdView.setImageView(mBannerView);
+        mNativeAdView.setCallToActionView(mCallToActionView);
+        mNativeAdView.setStarRatingView(mRatingView);
+        // Assign native ad object to the native view.
+        mNativeAdView.setNativeAd(mNativeAd);
+        mAdView.addView(mNativeAdView);
     }
 
     @Override
     public void stopTracking() {
 
         Log.v(TAG, "stopTracking");
+        if (mAdView != null) {
+            mAdView.removeView(mNativeAdView);
+        }
     }
 
 }

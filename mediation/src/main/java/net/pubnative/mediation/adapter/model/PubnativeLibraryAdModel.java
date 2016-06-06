@@ -25,6 +25,7 @@ package net.pubnative.mediation.adapter.model;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import net.pubnative.library.request.model.PubnativeAdModel;
 
@@ -113,17 +114,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
         return null;
     }
 
-    @Override
-    public Object getNativeAd() {
-
-        return mAdModel;
-    }
     //----------------------------------------------------------------------------------------------
     // Tracking
     //----------------------------------------------------------------------------------------------
 
     @Override
-    public void startTracking(Context context, View adView) {
+    public void startTracking(Context context, ViewGroup adView) {
 
         Log.v(TAG, "startTracking");
         if (mAdModel != null && context != null && adView != null) {

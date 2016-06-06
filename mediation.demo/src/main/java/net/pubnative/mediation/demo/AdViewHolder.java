@@ -34,7 +34,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.pubnative.mediation.adapter.widget.PubnativeNativeAdView;
+import com.squareup.picasso.Picasso;
+
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -52,7 +53,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     protected     CellRequestModel      mCellRequestModel;
     // Behaviour
     protected     ProgressBar           mAdLoading;
-    protected     PubnativeNativeAdView mAdContainer;
+    protected     ViewGroup             mAdViewContainer;
     protected     Button                mRequestButton;
     // Ad info
     protected     TextView              mPlacementID;
@@ -64,29 +65,23 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     protected     RatingBar             mRating;
     protected     ImageView             mIcon;
     protected     ImageView             mBanner;
-    protected     Button                mCallToAction;
-    protected     TextView              mPrice;
-    protected     TextView              mStore;
 
     public AdViewHolder(Context context, View convertView) {
 
         mContext = context;
         mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        mAdContainer = (PubnativeNativeAdView) convertView.findViewById(R.id.ad_view);
+        mAdViewContainer = (ViewGroup) convertView.findViewById(R.id.ad_view_container);
         mRequestButton = (Button) convertView.findViewById(R.id.request_button);
         mRequestButton.setOnClickListener(this);
         mAdapterName = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
         mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
-
         mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
-        mTitle = (TextView) convertView.findViewById(R.id.ad_title);
-        mDescription = (TextView) convertView.findViewById(R.id.ad_description);
+        mTitle = (TextView) convertView.findViewById(R.id.ad_title_text);
+        mDescription = (TextView) convertView.findViewById(R.id.ad_description_text);
+        mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
-        mIcon = (ImageView) convertView.findViewById(R.id.ad_icon);
-        mBanner = (ImageView) convertView.findViewById(R.id.ad_banner);
-        mPrice = (TextView) convertView.findViewById(R.id.ad_price);
-        mStore = (TextView) convertView.findViewById(R.id.ad_store);
-        mCallToAction = (Button) convertView.findViewById(R.id.ad_call_to_action);
+        mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
+        mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
 
     }
 
@@ -104,22 +99,15 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     public void cleanView() {
 
         Log.v(TAG, "cleanView");
-        mAdapterName.setText("");
-        mAdLoading.setVisibility(View.GONE);
-
         mAdDisclosure.removeAllViews();
         mTitle.setText("");
         mDescription.setText("");
+        mAdapterName.setText("");
         mRating.setRating(0f);
-        mRating.setVisibility(View.INVISIBLE);
-        mIcon.setImageDrawable(null);
+        mRating.setVisibility(View.GONE);
         mBanner.setImageDrawable(null);
-        mPrice.setText("");
-        mPrice.setVisibility(View.GONE);
-        mStore.setText("");
-        mStore.setVisibility(View.GONE);
-        mCallToAction.setText("");
-        mCallToAction.setVisibility(View.GONE);
+        mIcon.setImageDrawable(null);
+        mAdLoading.setVisibility(View.GONE);
     }
 
     public void renderAd() {
@@ -132,20 +120,24 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             // Privacy container
             String adapterNameText = model.getClass().getSimpleName();
             mAdapterName.setText(adapterNameText);
-            //Initialize fields of view
-            mAdContainer.setHeadlineView(mTitle);
-            mAdContainer.setBodyView(mDescription);
-            mAdContainer.setIconView(mIcon);
-            mAdContainer.setImageView(mBanner);
-            mAdContainer.setStarRatingView(mRating);
-            mAdContainer.setPriceView(mPrice);
-            mAdContainer.setStoreView(mStore);
-            mAdContainer.setCallToActionView(mCallToAction);
-            mAdContainer.setAdDisclosure(mAdDisclosure);
-            // Populate data in view
-            mAdContainer.setModel(model);
+            // Ad content
+            mTitle.setText(model.getTitle());
+            mDescription.setText(model.getDescription());
+            mRating.setRating(model.getStarRating());
+            mRating.setVisibility(View.VISIBLE);
+            Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
+            Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
+            View sponsorView = model.getAdvertisingDisclosureView(this.mContext);
+            if (sponsorView != null) {
+                mAdDisclosure.addView(sponsorView);
+            }
             // Tracking
-            model.startTracking(mContext, mAdContainer);
+            model.withTitle(mTitle)
+                 .withDescription(mDescription)
+                 .withIcon(mIcon)
+                 .withBanner(mBanner)
+                 .withRating(mRating)
+                 .startTracking(mContext, mAdViewContainer);
         }
     }
 

@@ -4,15 +4,12 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -83,7 +80,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
                 builder.setGender(AdRequest.GENDER_UNKNOWN);
             }
         }
-        return builder.build();
+        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
     }
 
     //==============================================================================================
