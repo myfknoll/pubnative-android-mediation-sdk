@@ -31,7 +31,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,38 +48,41 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                                      View.OnClickListener {
 
     private static final String TAG = AdViewHolder.class.getSimpleName();
-    protected Context          mContext;
+    protected     Context               mContext;
     // Data
-    protected CellRequestModel mCellRequestModel;
+    protected     CellRequestModel      mCellRequestModel;
     // Behaviour
-    protected ProgressBar      mAdLoading;
-    protected RelativeLayout   mAdContainer;
-    protected Button           mRequestButton;
+    protected     ProgressBar           mAdLoading;
+    protected     ViewGroup             mAdViewContainer;
+    protected     Button                mRequestButton;
     // Ad info
-    protected ViewGroup        mAdDisclosure;
-    protected TextView         mPlacementID;
-    protected TextView         mAdapterName;
-    protected TextView         mDescription;
-    protected TextView         mTitle;
-    protected RatingBar        mRating;
-    protected ImageView        mIcon;
-    protected ImageView        mBanner;
+    protected     TextView              mPlacementID;
+    protected     TextView              mAdapterName;
+
+    protected     ViewGroup             mAdDisclosure;
+    protected     TextView              mDescription;
+    protected     TextView              mTitle;
+    protected     RatingBar             mRating;
+    protected     ImageView             mIcon;
+    protected     ImageView             mBanner;
 
     public AdViewHolder(Context context, View convertView) {
 
         mContext = context;
         mAdLoading = (ProgressBar) convertView.findViewById(R.id.ad_spinner);
-        mAdContainer = (RelativeLayout) convertView.findViewById(R.id.ad_clickable);
+        mAdViewContainer = (ViewGroup) convertView.findViewById(R.id.ad_view_container);
         mRequestButton = (Button) convertView.findViewById(R.id.request_button);
         mRequestButton.setOnClickListener(this);
-        mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
         mAdapterName = (TextView) convertView.findViewById(R.id.ad_adapter_name_text);
+        mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
+        mAdDisclosure = (ViewGroup) convertView.findViewById(R.id.ad_disclosure);
         mTitle = (TextView) convertView.findViewById(R.id.ad_title_text);
         mDescription = (TextView) convertView.findViewById(R.id.ad_description_text);
         mPlacementID = (TextView) convertView.findViewById(R.id.placement_id_text);
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
         mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
+
     }
 
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
@@ -130,7 +132,12 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
                 mAdDisclosure.addView(sponsorView);
             }
             // Tracking
-            model.startTracking(mContext, mAdContainer);
+            model.withTitle(mTitle)
+                 .withDescription(mDescription)
+                 .withIcon(mIcon)
+                 .withBanner(mBanner)
+                 .withRating(mRating)
+                 .startTracking(mContext, mAdViewContainer);
         }
     }
 
@@ -152,8 +159,8 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
         Log.d(TAG, "onPubnativeNetworkRequestLoaded");
         mAdLoading.setVisibility(View.GONE);
-        if(mCellRequestModel.adModel != null) {
-            mCellRequestModel.adModel.stopTracking();;
+        if (mCellRequestModel.adModel != null) {
+            mCellRequestModel.adModel.stopTracking();
         }
         mCellRequestModel.adModel = ad;
         renderAd();
@@ -171,6 +178,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
 
     @Override
     public void onClick(View v) {
+
         onRequestClick(v);
     }
 }

@@ -50,7 +50,6 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     public void load(Context context) {
 
         Log.v(TAG, "load");
-        // TODO: Add once library is released
     }
 
     @Override
@@ -58,19 +57,16 @@ public class PubnativeLibraryNetworkInterstitialAdapter
 
         Log.v(TAG, "isReady");
         boolean result = false;
-        // TODO: Add once library is released
         return result;
     }
 
     @Override
     public void show() {
-        // TODO: Add once library is released
         Log.v(TAG, "show");
     }
 
     @Override
     public void destroy() {
-        // TODO: Add once library is released
         Log.v(TAG, "destroy");
     }
 }
