@@ -107,6 +107,7 @@ task sourcesJar(type: Jar) {
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    failOnError false
 }
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
@@ -129,4 +130,22 @@ bintray {
             vcsTag = project.version?:"BETA"
         }
     }
+}
+
+//==================================================================================================
+// JAR
+//==================================================================================================
+if (System.getenv("CIRCLECI")) {
+    task createJar(type: Copy) {
+        from('build/intermediates/bundles/release/')
+        into("${System.getenv("CIRCLE_ARTIFACTS")}/")
+        include('classes.jar')
+        rename('classes.jar', "${project.name}_${version}.jar")
+    }
+
+    task deleteJar(type: Delete) {
+        delete "${System.getenv("CIRCLE_ARTIFACTS")}/${project.name}_${version}.jar"
+    }
+
+    createJar.dependsOn(deleteJar, build)
 }
