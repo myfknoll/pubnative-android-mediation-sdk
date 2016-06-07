@@ -66,6 +66,9 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     protected     ImageView             mIcon;
     protected     ImageView             mBanner;
 
+    //custom ad view
+    protected     ViewGroup             mCustomAdView;
+
     public AdViewHolder(Context context, View convertView) {
 
         mContext = context;
@@ -82,7 +85,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
         mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
-
+        mCustomAdView = (ViewGroup) convertView.findViewById(R.id.customAdView);
     }
 
     public void setCellRequestModel(CellRequestModel cellRequestModel) {
@@ -108,6 +111,8 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mBanner.setImageDrawable(null);
         mIcon.setImageDrawable(null);
         mAdLoading.setVisibility(View.GONE);
+        mCustomAdView.removeAllViews();
+        mCustomAdView.setVisibility(View.GONE);
     }
 
     public void renderAd() {
@@ -121,23 +126,30 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             String adapterNameText = model.getClass().getSimpleName();
             mAdapterName.setText(adapterNameText);
             // Ad content
-            mTitle.setText(model.getTitle());
-            mDescription.setText(model.getDescription());
-            mRating.setRating(model.getStarRating());
-            mRating.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
-            Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
-            View sponsorView = model.getAdvertisingDisclosureView(mContext);
-            if (sponsorView != null) {
-                mAdDisclosure.addView(sponsorView);
+            mCustomAdView.removeAllViews();
+            mCustomAdView.setVisibility(View.GONE);
+            if(model.getAdView() != null) {
+                mCustomAdView.addView(model.getAdView(), 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                mCustomAdView.setVisibility(View.VISIBLE);
+            } else {
+                mTitle.setText(model.getTitle());
+                mDescription.setText(model.getDescription());
+                mRating.setRating(model.getStarRating());
+                mRating.setVisibility(View.VISIBLE);
+                Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
+                Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
+                View sponsorView = model.getAdvertisingDisclosureView(mContext);
+                if (sponsorView != null) {
+                    mAdDisclosure.addView(sponsorView);
+                }
+                // Tracking
+                model.withTitle(mTitle)
+                        .withDescription(mDescription)
+                        .withIcon(mIcon)
+                        .withBanner(mBanner)
+                        .withRating(mRating)
+                        .startTracking(mContext, mAdViewContainer);
             }
-            // Tracking
-            model.withTitle(mTitle)
-                 .withDescription(mDescription)
-                 .withIcon(mIcon)
-                 .withBanner(mBanner)
-                 .withRating(mRating)
-                 .startTracking(mContext, mAdViewContainer);
         }
     }
 

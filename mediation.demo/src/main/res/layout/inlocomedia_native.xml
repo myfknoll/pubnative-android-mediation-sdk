@@ -62,9 +62,7 @@
             android:id="@id/ilm_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:minHeight="150dip"
-            android:scaleType="centerInside" />
+            android:layout_gravity="center" />
 
         <FrameLayout
             android:layout_width="match_parent"

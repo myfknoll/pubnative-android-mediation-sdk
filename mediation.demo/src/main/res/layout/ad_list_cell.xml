@@ -49,6 +49,13 @@
             android:id="@+id/ad_view_container"
             android:layout_below="@+id/ad_adapter_name_text">
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/customAdView"
+                android:layout_alignParentTop="true"
+                android:visibility="gone"/>
+
             <ImageView
                 android:id="@+id/ad_icon_image"
                 android:layout_width="80dp"

@@ -42,12 +42,12 @@ public abstract class PubnativeAdModel {
     protected            boolean               mImpressionTracked = false;
     protected            boolean               mClickTracked      = false;
     // View
-    protected            View                      mTitleView             = null;
-    protected            View                      mDescriptionView       = null;
-    protected            View                      mIconView              = null;
-    protected            View                      mBannerView            = null;
-    protected            View                      mRatingView            = null;
-    protected            View                      mCallToActionView      = null;
+    protected            View                  mTitleView         = null;
+    protected            View                  mDescriptionView   = null;
+    protected            View                  mIconView          = null;
+    protected            View                  mBannerView        = null;
+    protected            View                  mRatingView        = null;
+    protected            View                  mCallToActionView  = null;
 
     //==============================================================================================
     // Listener
@@ -139,6 +139,15 @@ public abstract class PubnativeAdModel {
      * @return Disclosure view to be added on top of the ad.
      */
     public abstract View getAdvertisingDisclosureView(Context context);
+
+    /**
+     * gets the ad view
+     *
+     * @return Ad view.
+     */
+    public ViewGroup getAdView() {
+        return null;
+    }
 
     //----------------------------------------------------------------------------------------------
     // VIEW TRACKING
