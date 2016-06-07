@@ -322,9 +322,13 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         Log.v(TAG, "onAdapterLoadFinish");
         mIsLoading = false;
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        feedBanner.setAdListener(this);
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
-        invokeLoadFinish();
+        if(feedBanner == null) {
+            invokeLoadFail(PubnativeException.PLACEMENT_NO_FILL);
+        } else {
+            feedBanner.setAdListener(this);
+            invokeLoadFinish();
+        }
     }
 
     @Override
