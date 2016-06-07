@@ -69,7 +69,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
          * Called whenever the feedBanner failed loading an ad
          *
          * @param feedBanner feedBanner that failed the initialize
-         * @param exception    exception with the description of the initialize error
+         * @param exception  exception with the description of the initialize error
          */
         void onPubnativeNetworkFeedBannerLoadFail(PubnativeNetworkFeedBanner feedBanner, Exception exception);
 
@@ -94,10 +94,10 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
          */
         void onPubnativeNetworkFeedBannerClick(PubnativeNetworkFeedBanner feedBanner);
     }
-
     //==============================================================================================
     // Public methods
     //==============================================================================================
+
     /**
      * Sets a callback listener for this feedBanner object
      *
@@ -111,20 +111,22 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
     /**
      * Loads the feedBanner ads before being shown
+     * @param context valid context
+     * @param appToken valid app token string
+     * @param placement valid placement string
      */
     public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
-        if(mHandler == null) {
+        if (mHandler == null) {
             mHandler = new Handler(Looper.getMainLooper());
         }
-
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
         }
         if (context == null ||
-                TextUtils.isEmpty(appToken) ||
-                TextUtils.isEmpty(placement)) {
+            TextUtils.isEmpty(appToken) ||
+            TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.FEED_BANNER_PARAMETERS_INVALID);
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.FEED_BANNER_LOADING);
@@ -138,6 +140,8 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
     /**
      * Tells if the feedBanner is ready to be shown
+     *
+     * @return true if ready, false if not
      */
     public synchronized boolean isReady() {
 
@@ -151,11 +155,13 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
     /**
      * This method will show the feedBanner if the ad is available
+     *
+     * @param container valid view group container for the banner
      */
     public synchronized void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if(container == null) {
+        if (container == null) {
             Log.e(TAG, "show - passed container argument cannot be null");
         } else if (mIsLoading) {
             Log.w(TAG, "show - the ad is loading");
@@ -184,7 +190,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     public void hide() {
 
         Log.v(TAG, "hide");
-        if(mIsShown) {
+        if (mIsShown) {
             mAdapter.hide();
         }
     }
@@ -216,7 +222,6 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         mAdapter = hub.getFeedBannerAdapter();
         if (mAdapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
-
             getNextNetwork();
         } else {
             mStartTimestamp = System.currentTimeMillis();
