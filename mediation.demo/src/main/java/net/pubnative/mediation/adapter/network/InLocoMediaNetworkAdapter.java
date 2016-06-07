@@ -30,7 +30,7 @@ public class InLocoMediaNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkRequestAdapter getRequestAdapter() {
 
-        return new FacebookNetworkRequestAdapter(mNetworkData);
+        return new InLocoMediaNetworkRequestAdapter(mNetworkData);
     }
 
     @Override

@@ -27,28 +27,23 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.AdListener;
-import com.facebook.ads.NativeAd;
 import com.inlocomedia.android.InLocoMedia;
 import com.inlocomedia.android.InLocoMediaOptions;
 import com.inlocomedia.android.ads.AdRequest;
 import com.inlocomedia.android.ads.AdView;
+import com.inlocomedia.android.ads.AdViewListener;
 
-import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
+import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
-        implements AdListener {
+public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
     private static         String   TAG                         = InLocoMediaNetworkRequestAdapter.class.getSimpleName();
     protected static final String   KEY_PLACEMENT_ID            = "placement_id";
-    protected static final int      FACEBOOK_ERROR_NO_FILL_1203 = 1203;
-    protected              NativeAd mNativeAd                   = null;
     private                AdView   mAdView;
 
     /**
@@ -70,7 +65,7 @@ public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAda
         Log.v(TAG, "request");
         if (context != null && mData != null) {
             String placementId = (String) mData.get(KEY_PLACEMENT_ID);
-            if (!TextUtils.isEmpty(placementId)) {
+            if (TextUtils.isEmpty(placementId)) {
                 createRequest(context, placementId);
             } else {
                 invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
@@ -87,61 +82,35 @@ public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAda
 
         Log.v(TAG, "createRequest");
         InLocoMediaOptions options = InLocoMediaOptions.getInstance(context);
-        options.setAdsKey("46cdb49a530d3976c31a4729fc6cea7ea1bb650f56379d7c83a1e6047a7acbca");
-        options.setLogEnabled(true);
-        options.setDevelopmentDevices("<Devices_ids>");
+        options.setAdsKey("48278de5099d4832f2f6e048e1b5981675c0c758e17f585b0aec30a11a1126c3");
+        //options.setLogEnabled(true);
+        options.setDevelopmentDevices("F6855A5FD44796EBD1A76E69318657D");
 
         InLocoMedia.init(context, options);
 
         AdRequest adRequest = new AdRequest();
-        adRequest.setAdUnitId("a82300094e4dfb1a80ab8368316661e1b9329be8c181b5e6dade7f95807f8928");
+        adRequest.setAdUnitId("322021666fad75102a9d2b75bf25a41a550812c7328115cf8ae4b7ea9a5a6b6e");
+        //322021666fad75102a9d2b75bf25a41a550812c7328115cf8ae4b7ea9a5a6b6e
+        mAdView = (AdView) ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.inlocomedia_native, null);
 
-        mAdView = (AdView) ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(com.inlocomedia.android.R.layout.native_ad_large, parent, false);
-        adRequest.
-
-        /*mNativeAd = new NativeAd(context, placementId);
-        mNativeAd.setAdListener(this);
-        mNativeAd.loadAd();*/
-    }
-
-    //==============================================================================================
-    // Callback
-    //==============================================================================================
-    // AdListener
-    //----------------------------------------------------------------------------------------------
-    @Override
-    public void onError(Ad ad, AdError adError) {
-
-        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        if (adError == null) {
-            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else {
-            switch (adError.getErrorCode()) {
-                case AdError.NO_FILL_ERROR_CODE:
-                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
-                case FACEBOOK_ERROR_NO_FILL_1203:
-                    invokeLoaded(null);
-                    break;
-                default:
-                    invokeFailed(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+        mAdView.setAdListener(new AdViewListener() {
+            public void onAdViewReady(AdView adView) {
+                /**
+                 * The AdView is ready to be shown
+                 */
+                mAdView.setVisibility(View.VISIBLE);
             }
-        }
-    }
 
-    @Override
-    public void onAdLoaded(Ad ad) {
+            @Override
+            public void onAdError(AdView adView, com.inlocomedia.android.ads.AdError adError) {
+                /**
+                 * The AdView load has failed. Check the AdErrors to discover the reason
+                 */
+                // Show the DisplayAdActivity with the AdError
+                Log.v(TAG, "testing");
+            }
+        });
 
-        Log.v(TAG, "onAdLoaded");
-        if (ad == mNativeAd) {
-            FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
-            invokeLoaded(wrapModel);
-        }
-    }
-
-    @Override
-    public void onAdClicked(Ad ad) {
-
-        Log.v(TAG, "onAdClicked");
-        // Do nothing
+        mAdView.loadAd(adRequest);
     }
 }
