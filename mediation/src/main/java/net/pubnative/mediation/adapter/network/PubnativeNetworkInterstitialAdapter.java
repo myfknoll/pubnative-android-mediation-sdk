@@ -139,15 +139,13 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
      * Starts loading the interstitial ad
      *
      * @param context valid Context
-     *
-     * @return true if it's ready, false if it's not
      */
     public abstract void load(Context context);
 
     /**
      * Tells if the interstitial is ready to be shown in the screen
      *
-     * @return true if it's ready, false if it's not
+     * @return true if ready, false if not
      */
     public abstract boolean isReady();
 

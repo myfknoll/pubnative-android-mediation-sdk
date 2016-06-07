@@ -159,8 +159,9 @@ public class PubnativeInsightModel {
 
     /**
      * Sets the current network as unreachable due to the passed exception
-     *
-     * @param exception exception with the details of the unreachability
+     * @param priorityRuleModel valid model
+     * @param responseTime time in milliseconds that this network took to fail
+     * @param exception exception with the details
      */
     public void trackUnreachableNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime, Exception exception) {
 
@@ -174,8 +175,9 @@ public class PubnativeInsightModel {
 
     /**
      * Sets the current network as attempted but failed
-     *
-     * @param exception exception with the details
+     * @param priorityRuleModel valid model
+     * @param responseTime time in milliseconds that this attempt took to fail
+     * @param exception exception with details
      */
     public void trackAttemptedNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime, Exception exception) {
 
@@ -189,6 +191,8 @@ public class PubnativeInsightModel {
 
     /**
      * Sets the current network as succeded
+     * @param priorityRuleModel valid model
+     * @param responseTime time in milliseconds that it took this request to be success
      */
     public void trackSuccededNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime) {
 
