@@ -42,6 +42,9 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
                    PubnativeNetworkFeedBannerAdapter.LoadListener {
 
     private static final String TAG = PubnativeNetworkFeedBanner.class.getSimpleName();
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
     protected Listener                          mListener;
     protected Handler                           mHandler;
     protected boolean                           mIsLoading;
@@ -158,11 +161,11 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
             Log.w(TAG, "show - the ad is loading");
         } else if (mIsShown) {
             Log.w(TAG, "show - the ad is already shown");
-        } else if (!isReady()) {
-            Log.w(TAG, "show - the ad is not loaded yet");
-        } else {
+        } else if (isReady()) {
             mIsShown = true;
             mAdapter.show(container);
+        } else {
+            Log.w(TAG, "show - the ad is not loaded yet");
         }
     }
 

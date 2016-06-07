@@ -54,7 +54,9 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         implements FlurryAdNativeListener {
 
     private static final String TAG = YahooNetworkFeedBannerAdapter.class.getSimpleName();
-
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
     private   FlurryAdNative      mFeedBanner = null;
     protected Context             mContext;
     protected FlurryNativeAdModel mAdModel;
@@ -77,6 +79,10 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
 
         super(data);
     }
+
+    //==============================================================================================
+    // Public
+    //==============================================================================================
 
     @Override
     public void load(Context context) {
@@ -106,30 +112,6 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
                 mFeedBanner.fetchAd();
             }
         }
-    }
-
-    protected FlurryAdTargeting getTargeting() {
-
-        FlurryAdTargeting result = null;
-        if (mTargeting != null) {
-            result = new FlurryAdTargeting();
-            result.setAge(mTargeting.age);
-            if (mTargeting.gender == null) {
-                result.setGender(FlurryGender.UNKNOWN);
-            } else if (mTargeting.gender.equals("female")) {
-                result.setGender(FlurryGender.FEMALE);
-            } else if (mTargeting.gender.equals("male")) {
-                result.setGender(FlurryGender.MALE);
-            } else {
-                result.setGender(FlurryGender.UNKNOWN);
-            }
-            if (mTargeting.interests != null) {
-                Map interests = new HashMap();
-                interests.put("interest", TextUtils.join(",", mTargeting.interests));
-                result.setKeywords(interests);
-            }
-        }
-        return result;
     }
 
     @Override
@@ -169,12 +151,42 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
 
     @Override
     public void hide() {
+
+        Log.v(TAG, "hide");
         if (mInFeedBannerView.getParent() != null) {
-            ((ViewGroup) mInFeedBannerView.getParent()).removeAllViews();
+            ((ViewGroup) mInFeedBannerView.getParent()).removeView(mInFeedBannerView);
         }
     }
 
-    private void initialize() {
+    //==============================================================================================
+    // Private
+    //==============================================================================================
+
+    protected FlurryAdTargeting getTargeting() {
+
+        FlurryAdTargeting result = null;
+        if (mTargeting != null) {
+            result = new FlurryAdTargeting();
+            result.setAge(mTargeting.age);
+            if (mTargeting.gender == null) {
+                result.setGender(FlurryGender.UNKNOWN);
+            } else if (mTargeting.gender.equals("female")) {
+                result.setGender(FlurryGender.FEMALE);
+            } else if (mTargeting.gender.equals("male")) {
+                result.setGender(FlurryGender.MALE);
+            } else {
+                result.setGender(FlurryGender.UNKNOWN);
+            }
+            if (mTargeting.interests != null) {
+                Map interests = new HashMap();
+                interests.put("interest", TextUtils.join(",", mTargeting.interests));
+                result.setKeywords(interests);
+            }
+        }
+        return result;
+    }
+
+    protected void initialize() {
 
         Log.v(TAG, "initialize");
         if (mInFeedBannerView == null) {
@@ -189,7 +201,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
         }
     }
 
-    private void render() {
+    protected void render() {
 
         Log.v(TAG, "render");
         mTitle.setText(mAdModel.getTitle());
@@ -208,7 +220,7 @@ public class YahooNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAda
     //==============================================================================================
     // Callabacks
     //==============================================================================================
-    // FlurryAdBannerListener
+    // FlurryAdNativeListener
     //----------------------------------------------------------------------------------------------
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {

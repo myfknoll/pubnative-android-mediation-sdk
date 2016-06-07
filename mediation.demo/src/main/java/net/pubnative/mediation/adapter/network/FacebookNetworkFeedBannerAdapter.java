@@ -44,7 +44,9 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
         implements AdListener, ImpressionListener {
 
     private static final String  TAG = FacebookNetworkFeedBannerAdapter.class.getSimpleName();
-
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
     private AdView  mFeedBanner;
     private boolean mIsLoaded;
 
@@ -57,6 +59,10 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
 
         super(data);
     }
+
+    //==============================================================================================
+    // Public
+    //==============================================================================================
 
     @Override
     public void load(Context context) {
@@ -91,7 +97,7 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        container.addView(mFeedBanner);
+        container.addView(mFeedBanner, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         invokeShow();
     }
 
