@@ -38,9 +38,7 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
 
-        // TODO: Return when library supports it
-//        return new PubnativeLibraryNetworkInterstitialAdapter(mNetworkData);
-        return null;
+        return new PubnativeLibraryNetworkInterstitialAdapter(mNetworkData);
     }
 
     @Override
