@@ -74,6 +74,14 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onFeedBannerClick(View view) {
+
+        Log.v(TAG, "onFeedBannerClick");
+        // Launch Feed Banner activity
+        Intent intent = new Intent(this, FeedBannerActivity.class);
+        startActivity(intent);
+    }
+
     protected void setDefaults() {
 
         Log.v(TAG, "setDefaults");
@@ -87,6 +95,7 @@ public class MainActivity extends Activity {
             placements.add("pubnative_only");
             placements.add("yahoo_only");
             placements.add("yahoo_interstitial");
+            placements.add("admob_only");
             placements.add("waterfall");
             placements.add("imp_day_cap_10");
             placements.add("imp_hour_cap_10");

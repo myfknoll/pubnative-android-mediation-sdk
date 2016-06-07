@@ -23,8 +23,6 @@
 
 package net.pubnative.mediation.demo;
 
-import android.util.Log;
-
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 

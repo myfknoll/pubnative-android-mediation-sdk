@@ -41,13 +41,11 @@ import static org.mockito.Mockito.spy;
         sdk = 21)
 public class PubnativeInsightDataModelTest {
 
-    private final String validString = "sampleText";
-
     @Test
     public void resetClearsLists() {
         PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
-        dataModelSpy.network = validString;
-        dataModelSpy.addAttemptedNetwork(validString);
+        dataModelSpy.network = "sampleText";
+        dataModelSpy.addAttemptedNetwork("sampleText");
         // lists are not null.
         assertThat(dataModelSpy.network).isNotNull();
         assertThat(dataModelSpy.attempted_networks).isNotNull();
@@ -66,7 +64,7 @@ public class PubnativeInsightDataModelTest {
 
         // valid string
         PubnativeAdTargetingModel targeting = new PubnativeAdTargetingModel();
-        targeting.addInterest(validString);
+        targeting.addInterest("sampleText");
         dataModelSpy.setTargetting(targeting);
         assertThat(dataModelSpy.interests).isNotNull();
         assertThat(dataModelSpy.interests.size()).isNotZero();
@@ -85,6 +83,35 @@ public class PubnativeInsightDataModelTest {
         nullInterest.addInterest(null);
         dataModelSpy.setTargetting(nullInterest);
         assertThat(dataModelSpy.interests).isNull();
+    }
+
+    @Test
+    public void addUnreachableNetwork_withValidValue_isNotNull() {
+        PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
+
+        // valid string
+        dataModelSpy.addUnreachableNetwork("sampleText");
+        assertThat(dataModelSpy.unreachable_networks).isNotNull();
+        assertThat(dataModelSpy.unreachable_networks.size()).isNotZero();
+
+    }
+
+    @Test
+    public void addUnreachableNetwork_withEmptyValue_isNull() {
+        PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
+
+        // network as empty string
+        dataModelSpy.addUnreachableNetwork("");
+        assertThat(dataModelSpy.unreachable_networks).isNull();
+    }
+
+    @Test
+    public void addUnreachableNetwork_withNullValue_isNull() {
+        PubnativeInsightDataModel dataModelSpy = spy(PubnativeInsightDataModel.class);
+
+        // network as null
+        dataModelSpy.addUnreachableNetwork(null);
+        assertThat(dataModelSpy.unreachable_networks).isNull();
     }
 
     @Test

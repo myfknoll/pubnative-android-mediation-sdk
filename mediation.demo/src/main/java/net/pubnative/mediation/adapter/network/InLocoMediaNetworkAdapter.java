@@ -38,4 +38,9 @@ public class InLocoMediaNetworkAdapter extends PubnativeNetworkHub {
 
         return new FacebookNetworkInterstitialAdapter(mNetworkData);
     }
+
+    @Override
+    public PubnativeNetworkFeedBannerAdapter getFeedBannerAdapter() {
+        return null;
+    }
 }

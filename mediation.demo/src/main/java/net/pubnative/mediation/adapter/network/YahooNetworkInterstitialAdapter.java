@@ -149,7 +149,7 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     public void onFetched(FlurryAdInterstitial flurryAdInterstitial) {
 
         Log.v(TAG, "onFetched");
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

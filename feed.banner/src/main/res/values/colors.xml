@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pubnative_infeed_white">@android:color/white</color>
+    <color name="pubnative_infeed_title_color">#1d2129</color>
+    <color name="pubnative_infeed_btn_green">#779C43</color>
+    <color name="pubnative_infeed_sponsored_text_color">@android:color/white</color>
+    <color name="pubnative_infeed_sponsored_background_color">#D966006A</color>
+    <color name="pubnative_infeed_black">@android:color/black</color>
+    <color name="pubnative_infeed_description">#323232</color>
+</resources>
