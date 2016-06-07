@@ -114,6 +114,9 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
 
     /**
      * Loads the interstitial ads before being shown
+     * @param context valid Context
+     * @param appToken valid app token string
+     * @param placement valid placement string
      */
     public synchronized void load(Context context, String appToken, String placement) {
 
@@ -136,6 +139,8 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
 
     /**
      * Tells if the interstitial is ready to be shown
+     *
+     * @return true if ready, false if not
      */
     public synchronized boolean isReady() {
 
