@@ -77,6 +77,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
      * @param context       valid context
      * @param appToken      app token string
      * @param placementName placement name string
+     * @param extras        valid Map with extra request details
      * @param listener      valid listener to callback when the placement is ready
      */
     public void load(Context context, String appToken, String placementName, Map extras, final Listener listener) {
@@ -244,7 +245,6 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
             }
         }
     }
-
 
     protected boolean isDisabled() {
 

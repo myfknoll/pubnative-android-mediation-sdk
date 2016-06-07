@@ -132,19 +132,19 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
      *
      * @param context valid Context
      *
-     * @return true if it's ready, false if it's not
      */
     public abstract void load(Context context);
 
     /**
      * Tells if the feedBanner is ready to be shown in the screen
      *
-     * @return true if it's ready, false if it's not
+     * @return true if ready, false if not
      */
     public abstract boolean isReady();
 
     /**
      * Starts showing the feedBanner for the adapted network
+     * @param container valid container for the feed banner
      */
     public abstract void show(ViewGroup container);
 
