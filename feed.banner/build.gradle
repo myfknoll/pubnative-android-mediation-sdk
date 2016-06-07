@@ -121,3 +121,21 @@ bintray {
         }
     }
 }
+
+//==================================================================================================
+// JAR
+//==================================================================================================
+if (System.getenv("CIRCLECI")) {
+    task createJar(type: Copy) {
+        from('build/intermediates/bundles/release/')
+        into("${System.getenv("CIRCLE_ARTIFACTS")}/")
+        include('classes.jar')
+        rename('classes.jar', "${project.name}_${version}.jar")
+    }
+
+    task deleteJar(type: Delete) {
+        delete "${System.getenv("CIRCLE_ARTIFACTS")}/${project.name}_${version}.jar"
+    }
+
+    createJar.dependsOn(deleteJar, build)
+}
