@@ -18,6 +18,7 @@ public class StandardAdUnitActivity extends Activity {
     private static final String         TAG                = StandardAdUnitActivity.class.getSimpleName();
     protected            Spinner        mPlacementSpinner;
     protected            RelativeLayout mLoaderContainer;
+    protected            RelativeLayout mBlankContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +28,7 @@ public class StandardAdUnitActivity extends Activity {
         setContentView(R.layout.activity_standard_ad_unit);
         mPlacementSpinner = (Spinner) findViewById(R.id.spinner_standard_unit_placement);
         mLoaderContainer = (RelativeLayout) findViewById(R.id.container_standard_ad_unit_loader);
+        mBlankContainer = (RelativeLayout) findViewById(R.id.rl_blankContainer);
         loadSpinnerData();
     }
 

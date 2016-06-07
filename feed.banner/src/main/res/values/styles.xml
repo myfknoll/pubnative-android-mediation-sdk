@@ -1,0 +1,14 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="pubnative_infeed_description_background">
+        <item name="android:textColor">@color/pubnative_infeed_description</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:background">@drawable/pubnative_feed_banner_grey_box</item>
+    </style>
+
+    <style name="ratingBarStyle" parent="android:Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/pubnative_ratingbar_small_material</item>
+        <item name="android:indeterminateDrawable">@drawable/pubnative_ratingbar_small_material</item>
+    </style>
+
+</resources>

@@ -74,6 +74,14 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onFeedBannerClick(View view) {
+
+        Log.v(TAG, "onFeedBannerClick");
+        // Launch Feed Banner activity
+        Intent intent = new Intent(this, FeedBannerActivity.class);
+        startActivity(intent);
+    }
+
     protected void setDefaults() {
 
         Log.v(TAG, "setDefaults");

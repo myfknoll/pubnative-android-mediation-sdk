@@ -1,1 +1,1 @@
-include ':mediation', ':mediation.demo'
+include ':mediation', ':mediation.demo', ':feed.banner'
