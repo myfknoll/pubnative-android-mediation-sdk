@@ -53,7 +53,7 @@ Optionally but not necessary for better tracking
 Add the following dependency to your project `build.gradle` file
 
 ```
-compile 'net.pubnative:mediation:1.0.3'
+compile 'net.pubnative:mediation:1.0.4'
 ```
 
 <a name="install_manual"></a>
