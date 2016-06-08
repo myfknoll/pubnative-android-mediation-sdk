@@ -38,12 +38,6 @@ import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
 import net.pubnative.mediation.network.PubnativeHttpRequest;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +56,6 @@ public class PubnativeConfigManager {
     protected static final String                            APP_TOKEN_KEY             = "app_token";
     protected static       List<PubnativeConfigRequestModel> sQueue                    = null;
     protected static       boolean                           sIdle                     = true;
-    protected static Context sContext;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -79,6 +72,7 @@ public class PubnativeConfigManager {
          */
         void onConfigLoaded(PubnativeConfigModel configModel);
     }
+
     //==============================================================================================
     // PubnativeConfigManager
     //==============================================================================================
@@ -88,6 +82,7 @@ public class PubnativeConfigManager {
     private PubnativeConfigManager() {
         // do some initialization here may be.
     }
+
     //----------------------------------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------------------------------
@@ -97,6 +92,7 @@ public class PubnativeConfigManager {
      *
      * @param context  valid context object
      * @param appToken unique identification key provided by Pubnative for mediation sdk
+     * @param extras   valid extras map with parameters for the request
      * @param listener listener to be used for tracking the config loaded callback
      */
     public synchronized static void getConfig(Context context, String appToken, Map extras, PubnativeConfigManager.Listener listener) {
@@ -112,7 +108,6 @@ public class PubnativeConfigManager {
             Log.e(TAG, "getConfig - Error: app token is null");
             invokeLoaded(null, listener);
         } else {
-            sContext = context;
             PubnativeConfigRequestModel item = new PubnativeConfigRequestModel();
             item.context = context;
             item.appToken = appToken;
@@ -241,18 +236,7 @@ public class PubnativeConfigManager {
             serveStoredConfig(request);
         } else {
             try {
-                String json = null;
-                try {
-                    InputStream is = sContext.getAssets().open("test_config.json");
-                    int size = is.available();
-                    byte[] buffer = new byte[size];
-                    is.read(buffer);
-                    is.close();
-                    json = new String(buffer, "UTF-8");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-                PubnativeConfigAPIResponseModel response = new Gson().fromJson(json, PubnativeConfigAPIResponseModel.class);
+                PubnativeConfigAPIResponseModel response = new Gson().fromJson(result, PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                     // Update delivery manager's tracking data
                     updateDeliveryManagerCache(request.context, response.config);
@@ -305,18 +289,24 @@ public class PubnativeConfigManager {
                 // check if new config contains that placement.
                 PubnativePlacementModel newPlacement = downloadedConfig.placements.get(placementId);
                 PubnativePlacementModel storedPlacement = storedConfig.placements.get(placementId);
-                // Check if impression cap (hour) changed
-                if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
+                if (newPlacement == null) {
                     PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
-                }
-                // check if impression cap (day) changed
-                if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
                     PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
-                }
-                // check if pacing cap changed
-                if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
-                    || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
                     PubnativeDeliveryManager.resetPacingCalendar(placementId);
+                } else {
+                    // Check if impression cap (hour) changed
+                    if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
+                        PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
+                    }
+                    // check if impression cap (day) changed
+                    if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
+                        PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
+                    }
+                    // check if pacing cap changed
+                    if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
+                        || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
+                        PubnativeDeliveryManager.resetPacingCalendar(placementId);
+                    }
                 }
             }
         }

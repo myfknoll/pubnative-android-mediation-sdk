@@ -19,6 +19,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+//
 
 package net.pubnative.mediation.adapter.model;
 
@@ -27,16 +28,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.pubnative.library.request.model.PubnativeAdModel;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
 
-public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.model.PubnativeAdModel implements PubnativeAdModel.Listener {
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
-    private static String        TAG            = PubnativeLibraryAdModel.class.getSimpleName();
-    protected net.pubnative.library.request.model.PubnativeAdModel mAdModel = null;
+public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
 
-    public PubnativeLibraryAdModel(PubnativeAdModel model) {
+    public static final String TAG = AdMobNativeAppInstallAdModel.class.getSimpleName();
 
-        mAdModel = model;
+    protected NativeAppInstallAdView mNativeAdView;
+    protected NativeAppInstallAd     mNativeAd;
+    protected ViewGroup              mAdView;
+
+    public AdMobNativeAppInstallAdModel(NativeAppInstallAd nativeAd) {
+
+            mNativeAd = nativeAd;
     }
 
     //==============================================================================================
@@ -49,10 +56,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public String getTitle() {
 
         Log.v(TAG, "getTitle");
+
         String result = null;
-        if (mAdModel != null) {
-            result = mAdModel.getTitle();
+        if (mNativeAd != null) {
+            result = String.valueOf(mNativeAd.getHeadline());
         }
+
         return result;
     }
 
@@ -60,10 +69,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public String getDescription() {
 
         Log.v(TAG, "getDescription");
+
         String result = null;
-        if (mAdModel != null) {
-            result = mAdModel.getDescription();
+        if (mNativeAd != null) {
+            result = String.valueOf(mNativeAd.getBody());
         }
+
         return result;
     }
 
@@ -71,10 +82,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public String getIconUrl() {
 
         Log.v(TAG, "getIconUrl");
+
         String result = null;
-        if (mAdModel != null) {
-            result = mAdModel.getIconUrl();
+        if (mNativeAd != null && mNativeAd.getIcon() != null) {
+            result = mNativeAd.getIcon().getUri().toString();
         }
+
         return result;
     }
 
@@ -82,10 +95,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public String getBannerUrl() {
 
         Log.v(TAG, "getBannerUrl");
+
         String result = null;
-        if (mAdModel != null) {
-            result = mAdModel.getBannerUrl();
+        if (mNativeAd != null && mNativeAd.getImages() != null && mNativeAd.getImages().size() > 0) {
+            result = mNativeAd.getImages().get(0).getUri().toString();
         }
+
         return result;
     }
 
@@ -93,10 +108,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public String getCallToAction() {
 
         Log.v(TAG, "getCallToAction");
+
         String result = null;
-        if (mAdModel != null) {
-            result = mAdModel.getCtaText();
+        if (mNativeAd != null) {
+            result = mNativeAd.getCallToAction().toString();
         }
+
         return result;
     }
 
@@ -104,7 +121,13 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public float getStarRating() {
 
         Log.v(TAG, "getStarRating");
-        return 0;
+
+        float starRating = 0;
+        if (mNativeAd != null) {
+            starRating = mNativeAd.getStarRating().floatValue();
+        }
+
+        return starRating;
     }
 
     @Override
@@ -114,7 +137,6 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
         return null;
     }
 
-    //----------------------------------------------------------------------------------------------
     // Tracking
     //----------------------------------------------------------------------------------------------
 
@@ -122,40 +144,27 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
     public void startTracking(Context context, ViewGroup adView) {
 
         Log.v(TAG, "startTracking");
-        if (mAdModel != null && context != null && adView != null) {
-            mContext = context;
-            mAdModel.startTracking(adView, this);
-        }
+        mAdView = adView;
+        mNativeAdView = new NativeAppInstallAdView(context);
+        mNativeAdView.setHeadlineView(mTitleView);
+        mNativeAdView.setBodyView(mDescriptionView);
+        mNativeAdView.setIconView(mIconView);
+        mNativeAdView.setImageView(mBannerView);
+        mNativeAdView.setCallToActionView(mCallToActionView);
+        mNativeAdView.setStarRatingView(mRatingView);
+        // Assign native ad object to the native view.
+        mNativeAdView.setNativeAd(mNativeAd);
+        mAdView.addView(mNativeAdView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                  ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     @Override
     public void stopTracking() {
 
         Log.v(TAG, "stopTracking");
-        mAdModel.stopTracking();
-        // Do nothing
+        if (mAdView != null) {
+            mAdView.removeView(mNativeAdView);
+        }
     }
 
-    //==============================================================================================
-    // Callbacks
-    //==============================================================================================
-    // PubnativeAdModel.Listener
-    //----------------------------------------------------------------------------------------------
-
-    @Override
-    public void onPubnativeAdModelImpression(PubnativeAdModel pubnativeAdModel, View view) {
-        Log.v(TAG, "onPubnativeAdModelImpression");
-        invokeOnAdImpressionConfirmed();
-    }
-
-    @Override
-    public void onPubnativeAdModelClick(PubnativeAdModel pubnativeAdModel, View view) {
-        Log.v(TAG, "onPubnativeAdModelClick");
-        invokeOnAdClick();
-    }
-
-    @Override
-    public void onPubnativeAdModelOpenOffer(PubnativeAdModel pubnativeAdModel) {
-        Log.v(TAG, "onPubnativeAdModelOpenOffer");
-    }
 }

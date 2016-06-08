@@ -24,6 +24,12 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_blankContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/container_standard_unit_btn"/>
+
+    <RelativeLayout
         android:id="@+id/container_standard_ad_unit_loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

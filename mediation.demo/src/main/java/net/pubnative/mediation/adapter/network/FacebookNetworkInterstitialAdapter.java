@@ -131,7 +131,7 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
                 case AdError.NO_FILL_ERROR_CODE:
                 case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
                 case FacebookNetworkRequestAdapter.FACEBOOK_ERROR_NO_FILL_1203:
-                    invokeLoadFinish(null);
+                    invokeLoadFinish();
                     break;
                 default:
                     invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
@@ -144,7 +144,7 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
 
         Log.v(TAG, "onAdLoaded");
         mInterstitial.setImpressionListener(this);
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

@@ -55,11 +55,17 @@ public class PubnativeException extends Exception {
     public static final PubnativeException NETWORK_INVALID_RESPONSE        = new PubnativeException(5002, "Invalid response from server");
     public static final PubnativeException NETWORK_INVALID_STATUS_CODE     = new PubnativeException(5003, "Invalid status code from server");
     //==============================================================================================
+    // FeedBanner Exceptions
+    //==============================================================================================
+    public static final PubnativeException FEED_BANNER_PARAMETERS_INVALID  = new PubnativeException(6000, "parameters configuring the feed banner are invalid");
+    public static final PubnativeException FEED_BANNER_LOADING             = new PubnativeException(6001, "feedBanner is currently loading");
+    public static final PubnativeException FEED_BANNER_SHOWN               = new PubnativeException(6002, "feedBanner is already shown");
+    //==============================================================================================
     // Banner Exceptions
     //==============================================================================================
-    public static final PubnativeException BANNER_PARAMETERS_INVALID       = new PubnativeException(6000, "parameters configuring the banner are invalid");
-    public static final PubnativeException BANNER_LOADING                  = new PubnativeException(6001, "banner is currently loading");
-    public static final PubnativeException BANNER_SHOWN                    = new PubnativeException(6002, "banner is already shown");
+    public static final PubnativeException BANNER_PARAMETERS_INVALID       = new PubnativeException(7000, "parameters configuring the banner are invalid");
+    public static final PubnativeException BANNER_LOADING                  = new PubnativeException(7001, "banner is currently loading");
+    public static final PubnativeException BANNER_SHOWN                    = new PubnativeException(7002, "banner is already shown");
 
     /**
      * Constructor

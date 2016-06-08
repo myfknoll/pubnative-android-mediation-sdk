@@ -56,4 +56,13 @@
         android:onClick="onBannerClick"
         android:text="Banner"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="FeedBanner"
+        android:layout_centerHorizontal="true"
+        android:onClick="onFeedBannerClick"
+        android:id="@+id/buttonFeedBanner"
+        android:layout_below="@id/buttonInterstitial"/>
+
 </RelativeLayout>

@@ -25,151 +25,149 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetworkAdapter {
+public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetworkAdapter {
 
-    private static final String TAG = PubnativeNetworkInterstitialAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeNetworkFeedBannerAdapter.class.getSimpleName();
     protected AdListener   mAdListener;
     protected LoadListener mLoadListener;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
-     *
-     * @param data server configured data for the current adapter network.
-     */
-    public PubnativeNetworkInterstitialAdapter(Map data) {
-
-        super(data);
-    }
-
-    /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour
      */
     public interface LoadListener {
 
         /**
-         * Called whenever the interstitial finished loading an ad
+         * Called whenever the feedBanner finished loading an ad
          *
-         * @param interstitial interstitial that finished the initialize
+         * @param feedBanner feedBanner that finished the initialize
          */
-        void onAdapterLoadFinish(PubnativeNetworkInterstitialAdapter interstitial);
+        void onAdapterLoadFinish(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called whenever the interstitial failed loading an ad
+         * Called whenever the feedBanner failed loading an ad
          *
-         * @param interstitial interstitial that failed the initialize
+         * @param feedBanner feedBanner that failed the initialize
          * @param exception    exception with the description of the initialize error
          */
-        void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial, Exception exception);
+        void onAdapterLoadFail(PubnativeNetworkFeedBannerAdapter feedBanner, Exception exception);
     }
-
+    
     /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour
      */
     public interface AdListener {
 
         /**
-         * Called when the interstitial was just shown on the screen
+         * Called when the feedBanner was just shown on the screen
          *
-         * @param interstitial interstitial that was shown in the screen
+         * @param feedBanner feedBanner that was shown in the screen
          */
-        void onAdapterShow(PubnativeNetworkInterstitialAdapter interstitial);
+        void onAdapterShow(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called when the interstitial impression was confrimed
+         * Called when the feedBanner impression was confirmed
          *
-         * @param interstitial interstitial which impression was confirmed
+         * @param feedBanner feedBanner which impression was confirmed
          */
-        void onAdapterImpressionConfirmed(PubnativeNetworkInterstitialAdapter interstitial);
+        void onAdapterImpressionConfirmed(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called whenever the interstitial was clicked by the user
+         * Called whenever the feedBanner was clicked by the user
          *
-         * @param interstitial interstitial that was clicked
+         * @param feedBanner feedBanner that was clicked
          */
-        void onAdapterClick(PubnativeNetworkInterstitialAdapter interstitial);
-
-        /**
-         * Called whenever the interstitial was removed from the screen
-         *
-         * @param interstitial interstitial that was hidden
-         */
-        void onAdapterHide(PubnativeNetworkInterstitialAdapter interstitial);
+        void onAdapterClick(PubnativeNetworkFeedBannerAdapter feedBanner);
     }
+
     //==============================================================================================
     // Overridable methods
     //==============================================================================================
-
-    public void setLoadListener(PubnativeNetworkInterstitialAdapter.LoadListener listener) {
+    public void setLoadListener(PubnativeNetworkFeedBannerAdapter.LoadListener listener) {
 
         Log.v(TAG, "setLoadListener");
         mLoadListener = listener;
     }
 
-    public void setAdListener(PubnativeNetworkInterstitialAdapter.AdListener listener) {
+    public void setAdListener(PubnativeNetworkFeedBannerAdapter.AdListener listener) {
 
         Log.v(TAG, "setAdListener");
         mAdListener = listener;
+    }
+    
+    /**
+     * Creates a new instance of PubnativeNetworkFeedBannerAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
+    public PubnativeNetworkFeedBannerAdapter(Map data) {
+
+        super(data);
     }
 
     //==============================================================================================
     // PubnativeNetworkAdapter
     //==============================================================================================
     @Override
-    protected void onTimeout() {
-
-        invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
-    }
-
-    @Override
     public void execute(Context context, int timeoutInMillis) {
-
         startTimeout(timeoutInMillis);
         load(context);
     }
+
+    @Override
+    protected void onTimeout() {
+        invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
+    }
+
     //==============================================================================================
     // Abstract
     //==============================================================================================
-
     /**
-     * Starts loading the interstitial ad
+     * Starts loading the feedBanner ad
      *
      * @param context valid Context
+     *
      */
     public abstract void load(Context context);
 
     /**
-     * Tells if the interstitial is ready to be shown in the screen
+     * Tells if the feedBanner is ready to be shown in the screen
      *
      * @return true if ready, false if not
      */
     public abstract boolean isReady();
 
     /**
-     * Starts showing the interstitial for the adapted network
+     * Starts showing the feedBanner for the adapted network
+     * @param container valid container for the feed banner
      */
-    public abstract void show();
+    public abstract void show(ViewGroup container);
 
     /**
-     * Destroys the current interstitial for the adapted network
+     * Destroys the current feedBanner for the adapted network
      */
     public abstract void destroy();
+
+    /**
+     * Hides the current feedBanner for the adapted network
+     */
+    public abstract void hide();
 
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeLoadFinish() {
+    protected void invokeLoadFinish(PubnativeNetworkFeedBannerAdapter feedBanner) {
 
         Log.v(TAG, "invokeLoadFinish");
         cancelTimeout();
         if (mLoadListener != null) {
-            mLoadListener.onAdapterLoadFinish(this);
+            mLoadListener.onAdapterLoadFinish(feedBanner);
         }
-        mLoadListener = null;
     }
 
     protected void invokeLoadFail(Exception exception) {
@@ -203,14 +201,6 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
         Log.v(TAG, "invokeClick");
         if (mAdListener != null) {
             mAdListener.onAdapterClick(this);
-        }
-    }
-
-    protected void invokeHide() {
-
-        Log.v(TAG, "invokeHide");
-        if (mAdListener != null) {
-            mAdListener.onAdapterHide(this);
         }
     }
 }

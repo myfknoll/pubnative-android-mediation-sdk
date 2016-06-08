@@ -56,7 +56,7 @@ public class PubnativeDeviceUtils {
     /**
      * Checks if the current network is available and connected to internet
      *
-     * @param context
+     * @param context valid context
      *
      * @return true if it's available and connected
      */
@@ -71,7 +71,7 @@ public class PubnativeDeviceUtils {
             result = false;
         } else {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-            if(info == null) {
+            if (info == null) {
                 Log.e(TAG, "ERROR: Couldn't retrieve valid NetworkInfo, please ensure that you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
                 result = false;
             } else {
