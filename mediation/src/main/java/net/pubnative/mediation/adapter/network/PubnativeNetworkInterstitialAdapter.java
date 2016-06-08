@@ -169,7 +169,6 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFinish(this);
         }
-        mLoadListener = null;
     }
 
     protected void invokeLoadFail(Exception exception) {

@@ -86,11 +86,10 @@ public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAda
         Log.v(TAG, "createRequest");
         InLocoMediaOptions options = InLocoMediaOptions.getInstance(context);
         options.setAdsKey(appId);
-        //options.setDevelopmentDevices("F6855A5FD44796EBD1A76E69318657D"); //5BBCFBB28C19F6F6E4CD8E7BA854788A
         InLocoMedia.init(context, options);
+
         AdRequest adRequest = new AdRequest();
         adRequest.setAdUnitId(adUnitId);
-
         mAdView = (AdView) ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.inlocomedia_native, null);
         mAdView.setAdListener(new NativeAdListener());
         mAdView.loadAd(adRequest);

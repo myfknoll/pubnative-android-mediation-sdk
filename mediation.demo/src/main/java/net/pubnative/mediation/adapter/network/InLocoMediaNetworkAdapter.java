@@ -36,7 +36,7 @@ public class InLocoMediaNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
 
-        return null;
+        return new InLocoMediaNetworkInterstitialAdapter(mNetworkData);
     }
 
     @Override
