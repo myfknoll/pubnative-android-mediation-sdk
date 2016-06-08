@@ -31,6 +31,9 @@
         <activity android:name=".activities.FeedBannerActivity"
             android:label="@string/title_activity_feed_banner" />
 
+        <activity android:name=".activities.BannerAdActivity"
+                  android:label="@string/title_activity_banner" />
+
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_setting" />

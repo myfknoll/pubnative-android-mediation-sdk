@@ -40,24 +40,18 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         super(data);
     }
 
+    //==============================================================================================
+    // Public
+    //==============================================================================================
+
     @Override
     public void load(Context context) {
 
         Log.d(TAG, "load");
         if (context != null && mData != null) {
-            mContext = context;
-            String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
-            AdSize bannerSize = PubnativeDeviceUtils.isTablet(context) ? AdSize.BANNER_HEIGHT_90 : AdSize.BANNER_HEIGHT_50;
-            if (!TextUtils.isEmpty(placementId)) {
-                mBannerView = new AdView(context, placementId, bannerSize);
-                mBannerView.setAdListener(this);
-                AdSettings.addTestDevice("e356e5959d9062f96086af6250f3ead8");
-                mBannerView.loadAd();
-            } else {
-                invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
-            }
+            invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
-            invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
+            createRequest(context);
         }
     }
 
@@ -91,20 +85,40 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
 
         Log.v(TAG, "isReady");
         boolean result = false;
-               if (mBannerView != null) {
-                      result = mIsLoaded;
-                   }
-               return result;
+        if (mBannerView != null) {
+            result = mIsLoaded;
+        }
+        return result;
     }
 
     @Override
     public void hide() {
-    
+
         Log.v(TAG, "hide");
         if (mBannerView.getParent() != null) {
             ((ViewGroup) mBannerView.getParent()).removeAllViews();
         }
     }
+
+    //==============================================================================================
+    // Private
+    //==============================================================================================
+
+    protected void createRequest(Context context) {
+
+        Log.v(TAG, "createRequest");
+        mContext = context;
+        String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
+        AdSize bannerSize = PubnativeDeviceUtils.isTablet(context) ? AdSize.BANNER_HEIGHT_90 : AdSize.BANNER_HEIGHT_50;
+        if (TextUtils.isEmpty(placementId)) {
+            invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
+        } else {
+            mBannerView = new AdView(context, placementId, bannerSize);
+            mBannerView.setAdListener(this);
+            mBannerView.loadAd();
+        }
+    }
+
     //==============================================================================================
     // Callabacks
     //==============================================================================================

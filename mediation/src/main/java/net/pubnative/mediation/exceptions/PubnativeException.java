@@ -63,9 +63,10 @@ public class PubnativeException extends Exception {
     //==============================================================================================
     // Banner Exceptions
     //==============================================================================================
-    public static final PubnativeException BANNER_PARAMETERS_INVALID       = new PubnativeException(7000, "parameters configuring the banner are invalid");
-    public static final PubnativeException BANNER_LOADING                  = new PubnativeException(7001, "banner is currently loading");
-    public static final PubnativeException BANNER_SHOWN                    = new PubnativeException(7002, "banner is already shown");
+    public static final PubnativeException BANNER_PARAMETERS_INVALID       = new PubnativeException(7000, "Parameters configuring the banner are invalid");
+    public static final PubnativeException BANNER_LOADING                  = new PubnativeException(7001, "Banner is currently loading");
+    public static final PubnativeException BANNER_SHOWN                    = new PubnativeException(7002, "Banner is already shown");
+    public static final PubnativeException BANNER_LOAD_FAILED              = new PubnativeException(7003, "Banner failed on load");
 
     /**
      * Constructor

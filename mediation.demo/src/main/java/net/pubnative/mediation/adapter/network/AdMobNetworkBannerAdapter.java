@@ -11,9 +11,12 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.NativeExpressAdView;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Map;
 
 public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
@@ -33,24 +36,18 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
         super(data);
     }
 
+    //==============================================================================================
+    // Public
+    //==============================================================================================
+
     @Override
     public void load(Context context) {
 
         Log.v(TAG, "load");
         if (context != null && mData != null) {
-            String unitId = (String) mData.get(AdMobNetworkRequestAdapter.ADMOB_UNIT_ID);
-            if (!TextUtils.isEmpty(unitId)) {
-                mContext = context;
-                mAdView = new AdView(mContext);
-                mAdView.setAdSize(AdSize.SMART_BANNER);
-                mAdView.setAdUnitId(unitId);
-                mAdView.setAdListener(listener);
-                AdRequest adRequest = new AdRequest.Builder()
-                        .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                        .addTestDevice("16F5F25826CB21FCB488335014973DA7")
-                        .build();
-                mAdView.loadAd(adRequest);
-            }
+            invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+        } else {
+            createRequest(context);
         }
     }
 
@@ -98,7 +95,51 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
             ((ViewGroup) mAdView.getParent()).removeAllViews();
         }
     }
+    //==============================================================================================
+    // Private
+    //==============================================================================================
 
+    protected void createRequest(Context context) {
+
+        Log.v(TAG, "createRequest");
+        String unitId = (String) mData.get(AdMobNetworkRequestAdapter.ADMOB_UNIT_ID);
+        if (TextUtils.isEmpty(unitId)) {
+            invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
+        } else {
+            mContext = context;
+            mAdView = new AdView(mContext);
+            mAdView.setAdSize(AdSize.SMART_BANNER);
+            mAdView.setAdUnitId(unitId);
+            mAdView.setAdListener(listener);
+            mAdView.loadAd(getAdRequest());
+        }
+    }
+
+    protected AdRequest getAdRequest() {
+
+        AdRequest.Builder builder = new AdRequest.Builder();
+        if (mTargeting != null) {
+            if (mTargeting.age != null && mTargeting.age > 0) {
+                int year = Calendar.getInstance().get(Calendar.YEAR) - mTargeting.age;
+                builder.setBirthday(new GregorianCalendar(year, 1, 1).getTime());
+            }
+            if (TextUtils.isEmpty(mTargeting.gender)) {
+                builder.setGender(AdRequest.GENDER_UNKNOWN);
+            } else if ("male".equals(mTargeting.gender)) {
+                builder.setGender(AdRequest.GENDER_MALE);
+            } else if ("female".equals(mTargeting.gender)) {
+                builder.setGender(AdRequest.GENDER_FEMALE);
+            } else {
+                builder.setGender(AdRequest.GENDER_UNKNOWN);
+            }
+        }
+        return builder.build();
+    }
+    //==============================================================================================
+    // CALLBACKS
+    //==============================================================================================
+    // AdListener
+    //----------------------------------------------------------------------------------------------
     private com.google.android.gms.ads.AdListener listener = new com.google.android.gms.ads.AdListener() {
 
         @Override
@@ -119,7 +160,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
                 case AdRequest.ERROR_CODE_INVALID_REQUEST:
                 case AdRequest.ERROR_CODE_NETWORK_ERROR:
                 case AdRequest.ERROR_CODE_NO_FILL:
-                    invokeLoadFail(null);
+                    invokeLoadFail(PubnativeException.BANNER_LOAD_FAILED);
                     break;
                 default:
                     invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
