@@ -48,7 +48,7 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     public void load(Context context) {
 
         Log.d(TAG, "load");
-        if (context != null && mData != null) {
+        if (context == null && mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             createRequest(context);
