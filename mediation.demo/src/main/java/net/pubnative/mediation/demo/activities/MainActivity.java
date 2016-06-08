@@ -104,6 +104,7 @@ public class MainActivity extends Activity {
             placements.add("disabled");
             placements.add("inlocomedia_only");
             placements.add("inlocomedia_interstitial");
+            placements.add("inlocomedia_feedBanner");
             Settings.setPlacements(this, placements);
         }
     }
