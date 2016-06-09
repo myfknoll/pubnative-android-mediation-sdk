@@ -2,6 +2,7 @@ package net.pubnative.mediation.demo.activities;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import net.pubnative.mediation.demo.Settings;
 import net.pubnative.mediation.request.PubnativeNetworkBanner;
@@ -24,39 +25,39 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
         Log.v(TAG, "onPubnativeNetworkBannerLoadFinish");
         mLoaderContainer.setVisibility(View.GONE);
         banner.show();
-        showToast("Banner ad loaded");
+        Toast.makeText(this, "Banner ad loaded", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner banner, Exception exception) {
         Log.v(TAG, "onPubnativeNetworkBannerLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
-        showToast(exception.getMessage());
-        showToast("Banner ad loading failed");
+        Toast.makeText(this, exception.getMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Banner ad loading failed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPubnativeNetworkBannerShow(PubnativeNetworkBanner banner) {
         Log.v(TAG, "onPubnativeNetworkBannerShow");
         mLoaderContainer.setVisibility(View.GONE);
-        showToast("Banner show");
+        Toast.makeText(this, "Banner show", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPubnativeNetworkBannerImpressionConfirmed(PubnativeNetworkBanner banner) {
         Log.v(TAG, "onPubnativeNetworkBannerImpressionConfirmed");
-        showToast("Banner impression confirmed");
+        Toast.makeText(this, "Banner impression confirmed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPubnativeNetworkBannerClick(PubnativeNetworkBanner banner) {
         Log.v(TAG, "onPubnativeNetworkBannerClick");
-        showToast("Banner click");
+        Toast.makeText(this, "Banner click", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPubnativeNetworkBannerHide(PubnativeNetworkBanner banner) {
         Log.v(TAG, "onPubnativeNetworkBannerHide");
-        showToast("Banner hide");
+        Toast.makeText(this, "Banner hide", Toast.LENGTH_SHORT).show();
     }
 }
