@@ -47,6 +47,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
         if (context == null && mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
+            mIsLoaded = false;
             createRequest(context);
         }
     }
