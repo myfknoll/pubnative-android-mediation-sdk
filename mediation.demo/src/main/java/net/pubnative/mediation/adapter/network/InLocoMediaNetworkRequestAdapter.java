@@ -33,17 +33,23 @@ import com.inlocomedia.android.InLocoMediaOptions;
 import com.inlocomedia.android.ads.AdRequest;
 import com.inlocomedia.android.ads.AdView;
 import com.inlocomedia.android.ads.AdViewListener;
+import com.inlocomedia.android.profile.UserProfile;
 
 import net.pubnative.mediation.adapter.model.InLocoMediaNativeAdModel;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAdapter {
 
     private   static       String   TAG            = InLocoMediaNetworkRequestAdapter.class.getSimpleName();
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
     protected static final String   KEY_APP_ID     = "app_id";
     protected static final String   KEY_AD_UNIT_ID = "ad_unit_id";
     protected              AdView   mAdView;
@@ -65,34 +71,61 @@ public class InLocoMediaNetworkRequestAdapter extends PubnativeNetworkRequestAda
     protected void request(Context context) {
 
         Log.v(TAG, "request");
-        if (context != null && mData != null) {
+        if (context == null || mData == null) {
+            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+        } else {
             String appId = (String) mData.get(KEY_APP_ID);
             String adUnitId = (String) mData.get(KEY_AD_UNIT_ID);
             if (TextUtils.isEmpty(appId) || TextUtils.isEmpty(adUnitId)) {
-                invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+                invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 createRequest(context, appId, adUnitId);
             }
-        } else {
-            invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
         }
     }
 
     //==============================================================================================
-    // InLocoMediaNetworkAdapter methods
+    // Private
     //==============================================================================================
+
     protected void createRequest(Context context, String appId, String adUnitId) {
 
         Log.v(TAG, "createRequest");
         InLocoMediaOptions options = InLocoMediaOptions.getInstance(context);
         options.setAdsKey(appId);
+        options.setDevelopmentDevices("5BBCFBB28C19F6F6E4CD8E7BA854788A");
         InLocoMedia.init(context, options);
 
-        AdRequest adRequest = new AdRequest();
-        adRequest.setAdUnitId(adUnitId);
         mAdView = (AdView) ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.inlocomedia_native, null);
         mAdView.setAdListener(new NativeAdListener());
-        mAdView.loadAd(adRequest);
+        mAdView.loadAd(getAdRequest(adUnitId));
+    }
+
+    protected AdRequest getAdRequest(String adUnitId) {
+
+        AdRequest adRequest = new AdRequest();
+        if (mTargeting != null) {
+
+            UserProfile.Gender gender;
+            if (TextUtils.isEmpty(mTargeting.gender)) {
+                gender = UserProfile.Gender.UNDEFINED;
+            } else if ("male".equals(mTargeting.gender)) {
+                gender = UserProfile.Gender.MALE;
+            } else if ("female".equals(mTargeting.gender)) {
+                gender = UserProfile.Gender.FEMALE;
+            } else {
+                gender = UserProfile.Gender.UNDEFINED;
+            }
+
+            if (mTargeting.age != null && mTargeting.age > 0) {
+                int year = Calendar.getInstance().get(Calendar.YEAR) - mTargeting.age;
+                adRequest.setUserProfile(new UserProfile(gender, new GregorianCalendar(year, 1, 1).getTime()));
+            } else {
+                adRequest.setUserProfile(new UserProfile(gender, null));
+            }
+        }
+        adRequest.setAdUnitId(adUnitId);
+        return adRequest;
     }
 
     //==============================================================================================

@@ -32,15 +32,21 @@ import com.inlocomedia.android.InLocoMediaOptions;
 import com.inlocomedia.android.ads.AdError;
 import com.inlocomedia.android.ads.AdRequest;
 import com.inlocomedia.android.ads.interstitial.InterstitialAd;
+import com.inlocomedia.android.profile.UserProfile;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class InLocoMediaNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
 
     private   static final String         TAG            = InLocoMediaNetworkInterstitialAdapter.class.getSimpleName();
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
     protected static final String         KEY_APP_ID     = "app_id";
     protected static final String         KEY_AD_UNIT_ID = "ad_unit_id";
     private                InterstitialAd mInterstitial;
@@ -59,7 +65,9 @@ public class InLocoMediaNetworkInterstitialAdapter extends PubnativeNetworkInter
     public void load(Context context) {
 
         Log.v(TAG, "load");
-        if (context != null && mData != null) {
+        if (context == null || mData == null) {
+            invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
+        } else {
             String appId = (String) mData.get(KEY_APP_ID);
             String adUnitId = (String) mData.get(KEY_AD_UNIT_ID);
             if (TextUtils.isEmpty(appId) || TextUtils.isEmpty(adUnitId)) {
@@ -71,12 +79,8 @@ public class InLocoMediaNetworkInterstitialAdapter extends PubnativeNetworkInter
 
                 mInterstitial = new InterstitialAd(context);
                 mInterstitial.setInterstitialAdListener(new InterstitialAdListener());
-                AdRequest adRequest = new AdRequest();
-                adRequest.setAdUnitId(adUnitId);
-                mInterstitial.loadAd(adRequest);
+                mInterstitial.loadAd(getAdRequest(adUnitId));
             }
-        } else {
-            invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         }
     }
 
@@ -104,6 +108,37 @@ public class InLocoMediaNetworkInterstitialAdapter extends PubnativeNetworkInter
     public void destroy() {
 
         Log.v(TAG, "destroy");
+    }
+
+    //==============================================================================================
+    // Private
+    //==============================================================================================
+
+    protected AdRequest getAdRequest(String adUnitId) {
+
+        AdRequest adRequest = new AdRequest();
+        if (mTargeting != null) {
+
+            UserProfile.Gender gender;
+            if (TextUtils.isEmpty(mTargeting.gender)) {
+                gender = UserProfile.Gender.UNDEFINED;
+            } else if ("male".equals(mTargeting.gender)) {
+                gender = UserProfile.Gender.MALE;
+            } else if ("female".equals(mTargeting.gender)) {
+                gender = UserProfile.Gender.FEMALE;
+            } else {
+                gender = UserProfile.Gender.UNDEFINED;
+            }
+
+            if (mTargeting.age != null && mTargeting.age > 0) {
+                int year = Calendar.getInstance().get(Calendar.YEAR) - mTargeting.age;
+                adRequest.setUserProfile(new UserProfile(gender, new GregorianCalendar(year, 1, 1).getTime()));
+            } else {
+                adRequest.setUserProfile(new UserProfile(gender, null));
+            }
+        }
+        adRequest.setAdUnitId(adUnitId);
+        return adRequest;
     }
 
     //==============================================================================================
