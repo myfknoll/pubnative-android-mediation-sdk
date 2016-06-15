@@ -20,8 +20,7 @@ public class PubnativeException extends Exception {
     // Request Exceptions
     //==============================================================================================
     public static final PubnativeException REQUEST_NO_INTERNET             = new PubnativeException(1000, "Internet connection is not available");
-    public static final PubnativeException REQUEST_PARAMETERS_INVALID      = new PubnativeException(1001, "Invalid execute parameters");
-    public static final PubnativeException REQUEST_NO_FILL                 = new PubnativeException(1002, "No fill");
+    public static final PubnativeException REQUEST_NO_FILL                 = new PubnativeException(1001, "No fill");
     //==============================================================================================
     // Adapter Exceptions
     //==============================================================================================

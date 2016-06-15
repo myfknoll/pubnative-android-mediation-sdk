@@ -72,7 +72,7 @@ public abstract class PubnativeNetworkWaterfall {
 
         Log.v(TAG, "initialize");
         if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placementName)) {
-            onWaterfallError(PubnativeException.REQUEST_PARAMETERS_INVALID);
+            onWaterfallError(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             mContext = context;
             mPlacement = new PubnativePlacement();
