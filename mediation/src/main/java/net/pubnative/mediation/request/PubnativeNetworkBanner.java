@@ -13,7 +13,9 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements PubnativeNetworkBannerAdapter.AdListener, PubnativeNetworkBannerAdapter.LoadListener {
+public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
+        implements PubnativeNetworkBannerAdapter.AdListener,
+                   PubnativeNetworkBannerAdapter.LoadListener {
 
     public static final String TAG = PubnativeNetworkBanner.class.getSimpleName();
     protected Listener                      mListener;
@@ -36,8 +38,8 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
         /**
          * Called whenever the banner failed loading an ad
          *
-         * @param banner banner that failed the initialize
-         * @param exception    exception with the description of the initialize error
+         * @param banner    banner that failed the initialize
+         * @param exception exception with the description of the initialize error
          */
         void onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner banner, Exception exception);
 
@@ -85,11 +87,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
         if (mHandler == null) {
             mHandler = new Handler(Looper.getMainLooper());
         }
-
         if (mListener == null) {
             Log.w(TAG, "initialize - Warning: listener was not set, have you configured one using setListener()?");
         }
-
         if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.BANNER_PARAMETERS_INVALID);
         } else if (mIsLoading) {
@@ -99,7 +99,6 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
         } else {
             initialize(context, appToken, placement);
         }
-
     }
 
     /**
@@ -108,20 +107,21 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
     public synchronized void show() {
 
         Log.v(TAG, "show");
-        if (mIsShown) {
-            Log.v(TAG, "show - the ad is already shown");
-        } else if (!isReady()) {
-            Log.v(TAG, "show - the ad is still not loaded");
-        } else {
+        if (mIsLoading) {
+            Log.w(TAG, "The ad is still loading, shown cannot be completed, dropping call");
+        } else if (mIsShown) {
+            Log.w(TAG, "The ad is already shown, dropping call");
+        } else if (isReady()) {
             mAdapter.show();
+        } else {
+            Log.w(TAG, "The ad is still not loaded");
         }
-
     }
 
     /**
      * Tells if the banner is ready to be shown
      */
-    public synchronized boolean isReady(){
+    public synchronized boolean isReady() {
 
         Log.v(TAG, "isReady");
         boolean result = false;
@@ -129,15 +129,14 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
             result = mAdapter.isReady();
         }
         return result;
-
     }
-
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================
 
     @Override
     protected void onWaterfallLoadFinish(boolean pacingActive) {
+
         if (pacingActive && mAdapter == null) {
             invokeLoadFail(PubnativeException.PLACEMENT_PACING_CAP);
         } else if (pacingActive) {
@@ -149,11 +148,13 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
 
     @Override
     protected void onWaterfallError(Exception exception) {
+
         invokeLoadFail(exception);
     }
 
     @Override
     protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+
         mAdapter = hub.getBannerAdapter();
         if (mAdapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
@@ -166,7 +167,6 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
             mAdapter.execute(mContext, network.timeout);
         }
     }
-
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
@@ -262,7 +262,6 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
             }
         });
     }
-
     //==============================================================================================
     // Callbacks
     //==============================================================================================
@@ -296,7 +295,6 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall implements
         Log.v(TAG, "onPubnativeBannerHide");
         invokeHide();
     }
-
     // PubnativeNetworkBannerAdapter.LoadListener
     //----------------------------------------------------------------------------------------------
 
