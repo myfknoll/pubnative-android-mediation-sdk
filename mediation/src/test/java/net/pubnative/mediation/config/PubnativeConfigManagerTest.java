@@ -110,4 +110,21 @@ public class PubnativeConfigManagerTest {
         assertThat(PubnativeConfigManager.getStoredAppToken(RuntimeEnvironment.application.getApplicationContext())).isNull();
         assertThat(PubnativeConfigManager.getStoredRefresh(RuntimeEnvironment.application.getApplicationContext())).isNull();
     }
+
+    @Test
+    public void getStoredConfig_withValidConfig_pass() {
+
+        PubnativeConfigModel model = PubnativeConfigTestUtils.getTestConfig("valid_config.json");
+        PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), TEST_APP_TOKEN_VALUE, model);
+        PubnativeConfigModel result = PubnativeConfigManager.getStoredConfig(RuntimeEnvironment.application.getApplicationContext());
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    public void getStoredConfig_withNullConfig_isNull() {
+
+        PubnativeConfigManager.updateConfig(RuntimeEnvironment.application.getApplicationContext(), "", null);
+        PubnativeConfigModel result = PubnativeConfigManager.getStoredConfig(RuntimeEnvironment.application.getApplicationContext());
+        assertThat(result).isNull();
+    }
 }

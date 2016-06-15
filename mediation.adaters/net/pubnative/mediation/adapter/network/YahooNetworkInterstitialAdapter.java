@@ -67,11 +67,10 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
             if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                FlurryAgent.setLogEnabled(true);
-                FlurryAgent.setLogLevel(Log.VERBOSE);
-                // initialize flurry with new apiKey
-                FlurryAgent.init(context, apiKey);
-                // execute/resume session
+                new FlurryAgent.Builder()
+                        .withLogEnabled(true)
+                        .withLogLevel(Log.VERBOSE)
+                        .build(context, apiKey);
                 if (!FlurryAgent.isSessionActive()) {
                     FlurryAgent.onStartSession(context);
                 }

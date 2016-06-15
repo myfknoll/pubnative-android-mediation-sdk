@@ -1,8 +1,8 @@
 //==================================================================================================
 // PROJECT
 //==================================================================================================
-version=project.version?:"BETA"
-group=project.group?:"net.pubnative"
+version = project.version ?: "BETA"
+group = project.group ?: "net.pubnative"
 buildscript {
     repositories {
         jcenter()
@@ -32,8 +32,8 @@ android {
         applicationId "net.pubnative.mediation.demo"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode System.getenv("CIRCLE_BUILD_NUM")?System.getenv("CIRCLE_BUILD_NUM").toInteger():1
-        versionName project.version?:"BETA"
+        versionCode System.getenv("CIRCLE_BUILD_NUM") ? System.getenv("CIRCLE_BUILD_NUM").toInteger() : 1
+        versionName project.version ?: "BETA"
     }
     buildTypes {
         release {

@@ -86,9 +86,11 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
 
         Log.v(TAG, "createRequest");
         // configure flurry
-        FlurryAgent.setLogEnabled(true);
-        // initialize flurry with new apiKey
-        FlurryAgent.init(mContext, apiKey);
+        new FlurryAgent.Builder()
+                .withLogEnabled(true)
+                .withLogLevel(Log.VERBOSE)
+                .withCaptureUncaughtExceptions(true)
+                .build(mContext, apiKey);
         // execute/resume session
         if (!FlurryAgent.isSessionActive()) {
             FlurryAgent.onStartSession(mContext);

@@ -23,6 +23,7 @@
 
 package net.pubnative.mediation.adapter;
 
+import net.pubnative.mediation.adapter.network.PubnativeNetworkBannerAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedBannerAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
@@ -63,4 +64,11 @@ public abstract class PubnativeNetworkHub {
      * @return valid PubnativeNetworkFeedBannerAdapter
      */
     public abstract PubnativeNetworkFeedBannerAdapter getFeedBannerAdapter();
+
+    /**
+     * Gets the network dependent adapter for banner
+     *
+     * @return valid PubnativeNetworkBannerAdapter
+     */
+    public abstract PubnativeNetworkBannerAdapter getBannerAdapter();
 }

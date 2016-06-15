@@ -72,6 +72,7 @@ public class PubnativeConfigManager {
          */
         void onConfigLoaded(PubnativeConfigModel configModel);
     }
+
     //==============================================================================================
     // PubnativeConfigManager
     //==============================================================================================
@@ -81,6 +82,7 @@ public class PubnativeConfigManager {
     private PubnativeConfigManager() {
         // do some initialization here may be.
     }
+
     //----------------------------------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------------------------------

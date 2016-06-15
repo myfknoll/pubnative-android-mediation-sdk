@@ -49,4 +49,13 @@ public class PubnativeNetworkHubFactoryTest {
         PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(model);
         assertThat(hub).isNull();
     }
+
+    @Test
+    public void createHub_withNormalAdapterName_returnsNotNull() {
+
+        PubnativeNetworkModel model = spy(PubnativeNetworkModel.class);
+        model.adapter = "PubnativeLibraryNetworkAdapter";
+        PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(model);
+        assertThat(hub).isNotNull();
+    }
 }
