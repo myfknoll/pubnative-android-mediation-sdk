@@ -32,8 +32,7 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
     public void onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner banner, Exception exception) {
         Log.v(TAG, "onPubnativeNetworkBannerLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
-        Toast.makeText(this, exception.getMessage(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, "Banner ad loading failed", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Banner ad loading failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
