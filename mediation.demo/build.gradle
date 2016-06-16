@@ -54,6 +54,8 @@ dependencies {
     compile 'com.flurry.android:ads:6.3.1'
     //  ADMOB
     compile 'com.google.firebase:firebase-ads:9.0.0'
+    // OpenRTB
+    compile 'com.google.openrtb:openrtb-core:1.0.4'
 }
 //==================================================================================================
 // FABRIC
