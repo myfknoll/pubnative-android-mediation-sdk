@@ -47,6 +47,13 @@ public class PubnativeNetworkInterstitialAdapterTest {
     }
 
     @Test
+    public void invokehide_withNullListener_pass() {
+        PubnativeNetworkInterstitialAdapter adapter = mock(PubnativeNetworkInterstitialAdapter.class);
+        doCallRealMethod().when(adapter).invokeHide();
+        adapter.invokeHide();
+    }
+
+    @Test
     public void invokeLoadFinish_withValidListener_callbackLoadFinish() {
         PubnativeNetworkInterstitialAdapter adapter = mock(PubnativeNetworkInterstitialAdapter.class);
         doCallRealMethod().when(adapter).invokeLoadFinish();
