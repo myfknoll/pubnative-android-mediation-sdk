@@ -160,19 +160,6 @@ public class PubnativeNetworkInterstitialTest {
     }
 
     @Test
-    public void load_withNullParams_callBackLoadFail() {
-
-        PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
-        PubnativeNetworkInterstitial.Listener listener = spy(PubnativeNetworkInterstitial.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-
-        request.load(null, null, null);
-
-        verify(listener).onPubnativeNetworkInterstitialLoadFail(eq(request), eq(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID));
-    }
-
-    @Test
     public void load_withNullContext_callBackLoadFail() {
 
         PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);

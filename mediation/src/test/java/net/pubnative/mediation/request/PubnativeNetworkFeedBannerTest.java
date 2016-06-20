@@ -155,19 +155,6 @@ public class PubnativeNetworkFeedBannerTest {
     }
 
     @Test
-    public void load_withNullParams_callBackLoadFail() {
-
-        PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
-        PubnativeNetworkFeedBanner.Listener listener = spy(PubnativeNetworkFeedBanner.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-
-        request.load(null, null, null);
-
-        verify(listener).onPubnativeNetworkFeedBannerLoadFail(eq(request), eq(PubnativeException.FEED_BANNER_PARAMETERS_INVALID));
-    }
-
-    @Test
     public void load_withNullContext_callBackLoadFail() {
 
         PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
