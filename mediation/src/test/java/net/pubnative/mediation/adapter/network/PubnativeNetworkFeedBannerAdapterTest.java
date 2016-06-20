@@ -33,6 +33,13 @@ public class PubnativeNetworkFeedBannerAdapterTest {
     }
 
     @Test
+    public void invokehide_withNullListener_pass() {
+        PubnativeNetworkFeedBannerAdapter adapter = mock(PubnativeNetworkFeedBannerAdapter.class);
+        doCallRealMethod().when(adapter).invokeHide();
+        adapter.invokeHide();
+    }
+
+    @Test
     public void invokeImpressionConfirmed_withNullListener_pass() {
         PubnativeNetworkFeedBannerAdapter adapter = mock(PubnativeNetworkFeedBannerAdapter.class);
         doCallRealMethod().when(adapter).invokeImpressionConfirmed();
@@ -75,6 +82,16 @@ public class PubnativeNetworkFeedBannerAdapterTest {
         adapter.mAdListener = listener;
         adapter.invokeShow();
         verify(listener).onAdapterShow(eq(adapter));
+    }
+
+    @Test
+    public void invokeHide_withValidListener_callbackHide() {
+        PubnativeNetworkFeedBannerAdapter adapter = mock(PubnativeNetworkFeedBannerAdapter.class);
+        doCallRealMethod().when(adapter).invokeHide();
+        PubnativeNetworkFeedBannerAdapter.AdListener listener = spy(PubnativeNetworkFeedBannerAdapter.AdListener.class);
+        adapter.mAdListener = listener;
+        adapter.invokeHide();
+        verify(listener).onAdapterHide(eq(adapter));
     }
 
     @Test

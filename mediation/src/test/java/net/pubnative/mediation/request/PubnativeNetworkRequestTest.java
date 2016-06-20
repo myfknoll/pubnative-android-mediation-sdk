@@ -44,14 +44,11 @@ import static org.mockito.Mockito.verify;
         sdk = 21)
 public class PubnativeNetworkRequestTest {
 
-    final static String        TEST_PLACEMENT_ID_INVALID = "mPlacementName";
-    final static String        TEST_APP_TOKEN            = "app_token";
-
     @Test
     public void start_withNullListener_pass() {
         // This should not crash
         PubnativeNetworkRequest request = spy(PubnativeNetworkRequest.class);
-        request.start(RuntimeEnvironment.application.getApplicationContext(), TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID, null);
+        request.start(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName", null);
     }
 
     @Test
