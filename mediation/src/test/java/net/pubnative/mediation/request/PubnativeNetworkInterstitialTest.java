@@ -160,6 +160,19 @@ public class PubnativeNetworkInterstitialTest {
     }
 
     @Test
+    public void load_withNullParams_callBackLoadFail() {
+
+        PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
+        PubnativeNetworkInterstitial.Listener listener = spy(PubnativeNetworkInterstitial.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+
+        request.load(null, null, null);
+
+        verify(listener).onPubnativeNetworkInterstitialLoadFail(eq(request), eq(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID));
+    }
+
+    @Test
     public void load_withNullContext_callBackLoadFail() {
 
         PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
@@ -168,6 +181,32 @@ public class PubnativeNetworkInterstitialTest {
         request.mListener = listener;
 
         request.load(null, "app_token", "testPlacementName");
+
+        verify(listener).onPubnativeNetworkInterstitialLoadFail(eq(request), eq(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID));
+    }
+
+    @Test
+    public void load_withNullAppToken_callBackLoadFail() {
+
+        PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
+        PubnativeNetworkInterstitial.Listener listener = spy(PubnativeNetworkInterstitial.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
+
+        verify(listener).onPubnativeNetworkInterstitialLoadFail(eq(request), eq(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID));
+    }
+
+    @Test
+    public void load_withNullPlacementName_callBackLoadFail() {
+
+        PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
+        PubnativeNetworkInterstitial.Listener listener = spy(PubnativeNetworkInterstitial.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
 
         verify(listener).onPubnativeNetworkInterstitialLoadFail(eq(request), eq(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID));
     }
@@ -186,11 +225,29 @@ public class PubnativeNetworkInterstitialTest {
     }
 
     @Test
-    public void load_withNullContextNullListener_Pass() {
+    public void load_withNullContextNullListener_pass() {
 
         PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
         request.mHandler = new Handler();
 
         request.load(null, "app_token", "testPlacementName");
+    }
+
+    @Test
+    public void load_withNullAppTokenNullListener_pass() {
+
+        PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
+        request.mHandler = new Handler();
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
+    }
+
+    @Test
+    public void load_withNullPlacementNameNullListener_pass() {
+
+        PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
+        request.mHandler = new Handler();
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
     }
 }
