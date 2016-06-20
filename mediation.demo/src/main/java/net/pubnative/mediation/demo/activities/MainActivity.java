@@ -91,6 +91,7 @@ public class MainActivity extends Activity {
             Settings.setAppToken(this, APP_TOKEN);
             // Placements
             List<String> placements = new ArrayList<>();
+            placements.add("rtb_poc");
             placements.add("facebook_only");
             placements.add("pubnative_only");
             placements.add("yahoo_only");

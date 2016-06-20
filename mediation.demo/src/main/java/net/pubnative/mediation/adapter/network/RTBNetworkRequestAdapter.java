@@ -2,36 +2,42 @@ package net.pubnative.mediation.adapter.network;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 import android.webkit.WebView;
 
+import com.google.openrtb.OpenRtb;
 import com.google.openrtb.OpenRtb.BidRequest;
 import com.google.openrtb.OpenRtb.BidRequest.Imp.Native;
 import com.google.openrtb.OpenRtb.NativeRequest;
 import com.google.openrtb.OpenRtb.NativeRequest.Asset;
+import com.google.openrtb.json.OpenRtbJsonFactory;
 
 import net.pubnative.AdvertisingIdClient;
 import net.pubnative.advertising_id_client.BuildConfig;
+import net.pubnative.mediation.adapter.model.RTBNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.network.PubnativeHttpRequest;
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -75,7 +81,7 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         }
     }
 
-    protected void createRequest(Context context, final String endpoint) {
+    protected void createRequest(final Context context, final String endpoint) {
 
         Log.v(TAG, "createRequest: " + endpoint);
         AdvertisingIdClient.getAdvertisingId(context, new AdvertisingIdClient.Listener() {
@@ -83,44 +89,15 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
             @Override
             public void onAdvertisingIdClientFinish(AdvertisingIdClient.AdInfo adInfo) {
 
-                startBid(adInfo, endpoint);
+                startBid(context, adInfo, endpoint);
             }
 
             @Override
             public void onAdvertisingIdClientFail(Exception exception) {
 
-                startBid(null, endpoint);
+                startBid(context, null, endpoint);
             }
         });
-    }
-
-    @Override
-    public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
-
-        Log.v(TAG, "onPubnativeHttpRequestStart");
-    }
-
-    @Override
-    public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
-
-        Log.v(TAG, "onPubnativeHttpRequestStart");
-        if (TextUtils.isEmpty(result)) {
-            invokeFailed(PubnativeException.REQUEST_NO_FILL);
-        } else {
-            // TODO: Use Google's openrtb repository to generate the response JSON
-            // TODO: Send the necessary data about the bid IN BACKGROUND so it doesn't affects the
-            // TODO: adapter response time
-            // TODO: Parse json into model
-            // TODO:
-            invokeLoaded(null);
-        }
-    }
-
-    @Override
-    public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
-
-        Log.v(TAG, "onPubnativeHttpRequestFail");
-        invokeFailed(exception);
     }
 
     //==============================================================================================
@@ -128,52 +105,83 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     //==============================================================================================
     protected void startBid(Context context, AdvertisingIdClient.AdInfo info, String endpoint) {
 
-        String json = getBidRequest(context, info).toString();
-        // TODO: Test creation of this
-        PubnativeHttpRequest request = new PubnativeHttpRequest();
-        request.setPOSTString(json);
-        request.start(context, endpoint, this);
+        Log.v(TAG, "startBid");
+        try {
+            BidRequest request = getBidRequest(context, info);
+            String requestJSON = OpenRtbJsonFactory.create()
+                                                   .newWriter()
+                                                   .writeBidRequest(request);
+            PubnativeHttpRequest http = new PubnativeHttpRequest();
+            http.setPOSTString(requestJSON);
+            http.start(context, endpoint, this);
+        } catch (IOException e) {
+            invokeFailed(e);
+        }
     }
 
     // BID composition
     //----------------------------------------------------------------------------------------------
     protected BidRequest getBidRequest(Context context, AdvertisingIdClient.AdInfo info) {
+
+        Log.v(TAG, "getBidRequest");
         // Obtain ID
         String id = UUID.randomUUID().toString();
+        double bidFloor = 0.01;
+        String bidFloorCur = "USD";
+        BidRequest.AuctionType auctionType = BidRequest.AuctionType.FIRST_PRICE;
+        int timeout = 1000;
+        List<String> wseats = new ArrayList<>();
+        wseats.add("");
+        List<String> currencies = new ArrayList<>();
+        currencies.add("USD");
         // Return request
-        return BidRequest.newBuilder()
-                         .setId(id)
-                         .addImp(getImpression(id))
-                         .setApp(getApp(context))
-                         .setDevice(getDevice(context, info))
-                         .build();
+        BidRequest.Builder builder = BidRequest.newBuilder();
+        builder.setId(id)
+               .addImp(getImpression(id, bidFloor, bidFloorCur))
+               .setApp(getApp(context))
+               .setDevice(getDevice(context, info))
+               .setUser(getUser(context, info))
+               .setAt(auctionType)
+               .setTmax(timeout);
+        for (String wseat : wseats) {
+            builder.addWseat(wseat);
+        }
+        for (String currency : currencies) {
+            builder.addCur(currency);
+        }
+        return builder.build();
+    }
+
+    private BidRequest.User.Builder getUser(Context context, AdvertisingIdClient.AdInfo info) {
+
+        BidRequest.User.Builder builder = BidRequest.User.newBuilder();
+        if (info != null && !info.isLimitAdTrackingEnabled()) {
+            builder.setId(info.getId());
+        }
+        return builder;
     }
 
     @SuppressWarnings({"MissingPermission"})
-    protected BidRequest.Device getDevice(Context context, AdvertisingIdClient.AdInfo info) {
+    protected BidRequest.Device.Builder getDevice(Context context,
+            AdvertisingIdClient.AdInfo info) {
 
-        BidRequest.Device device = BidRequest.Device.newBuilder().build();
+        BidRequest.Device.Builder builder = BidRequest.Device.newBuilder();
         // IP
         String ip = getIP(context);
         if (!TextUtils.isEmpty(ip)) {
-            device = BidRequest.Device.newBuilder(device)
-                                      .setIp(ip)
-                                      .build();
+            builder.setIp(ip);
         }
         // Carrier
-        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        String carrierName = manager.getNetworkOperatorName();
+        String carrierName = getTelephonyManager(context).getNetworkOperatorName();
         if (!TextUtils.isEmpty(carrierName)) {
-            device = BidRequest.Device.newBuilder(device)
-                                      .setCarrier(carrierName)
-                                      .build();
+            builder.setCarrier(carrierName);
         }
         // IFA
-        if(info != null) {
-            device = BidRequest.Device.newBuilder(device)
-                                      .setIfa(info.getId())
-                                      .setLmt(info.isLimitAdTrackingEnabled())
-                                      .build();
+        if (info != null) {
+            builder.setLmt(info.isLimitAdTrackingEnabled());
+            if (!info.isLimitAdTrackingEnabled()) {
+                builder.setIfa(info.getId());
+            }
         }
         // Others
         String ua = new WebView(context).getSettings().getUserAgentString();
@@ -182,84 +190,54 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
             deviceType = BidRequest.Device.DeviceType.TABLET;
         }
         DisplayMetrics displayMetrics = new DisplayMetrics();
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        wm.getDefaultDisplay().getMetrics(displayMetrics);
-        device = BidRequest.Device.newBuilder(device)
-                                  .setUa(ua)
-                                  .setGeo(getGeo(context))
-                                  .setDnt(true)
-                                  // (LMT) set before
-                                  // (IP) set before
-                                  // ipv6
-                                  .setDevicetype(deviceType)
-                                  .setMake(Build.MANUFACTURER)
-                                  .setModel(Build.MODEL)
-                                  .setOs("android")
-                                  .setOsv(String.valueOf(Build.VERSION.SDK_INT))
-                                  // hwv
-                                  .setH(displayMetrics.heightPixels)
-                                  .setW(displayMetrics.widthPixels)
-                                  // ppi
-                                  // pxratio
-                                  // js
-                                  // flashver
-                                  .setLanguage(Locale.getDefault().getDisplayLanguage())
-                                  // (CARRIER) set before
-                                  .setConnectiontype(getConnectionType(context))
-                                  // (IFA) set before
-                                  // didsha1
-                                  // didmd5
-                                  // dpidsha1
-                                  // dpidmd5
-                                  // macsha1
-                                  // macmd5
-                                  .build();
-        return device;
+        getWindowServiceManager(context).getDefaultDisplay().getMetrics(displayMetrics);
+        builder.setUa(ua)
+               .setGeo(getGeo(context))
+               .setDnt(true)
+               .setDevicetype(deviceType)
+               .setMake(Build.MANUFACTURER)
+               .setModel(Build.MODEL)
+               .setOs("android")
+               .setOsv(String.valueOf(Build.VERSION.SDK_INT))
+               .setH(displayMetrics.heightPixels)
+               .setW(displayMetrics.widthPixels)
+               .setLanguage(Locale.getDefault().getDisplayLanguage())
+               .setConnectiontype(getConnectionType(context));
+        return builder;
     }
 
-    protected BidRequest.Geo getGeo(Context context) {
+    protected BidRequest.Geo.Builder getGeo(Context context) {
 
-        BidRequest.Geo geo = BidRequest.Geo.newBuilder().build();
+        BidRequest.Geo.Builder builder = BidRequest.Geo.newBuilder();
         // LOCATION
         Location location = getLastLocation(context);
         if (location != null) {
-            geo = BidRequest.Geo.newBuilder(geo)
-                                .setLat(location.getLatitude())
-                                .setLon(location.getLongitude())
-                                .setType(BidRequest.Geo.LocationType.GPS_LOCATION)
-                                .build();
+            builder.setLat(location.getLatitude())
+                   .setLon(location.getLongitude())
+                   .setType(BidRequest.Geo.LocationType.GPS_LOCATION)
+                   .build();
         }
-        // Other
-        TelephonyManager manager = getTelephonyManager(context);
-        geo = BidRequest.Geo.newBuilder(geo)
-                            // lat
-                            // long
-                            // type
-                            .setCountry(manager.getNetworkCountryIso())
-                            // region
-                            // regionfips104
-                            // metro
-                            // city
-                            // zip
-                            // utcoffset
-                            .build();
-        return geo;
+        builder.setCountry(getTelephonyManager(context).getNetworkCountryIso());
+        return builder;
     }
 
     protected BidRequest.App getApp(Context context) {
 
+        ApplicationInfo app = context.getApplicationInfo();
         return BidRequest.App.newBuilder()
                              .setBundle(BuildConfig.APPLICATION_ID)
                              .setVer(BuildConfig.VERSION_NAME)
-                             .setName(context.getApplicationInfo().name)
+//                             .setName(app.name)
                              .build();
     }
 
-    protected BidRequest.Imp getImpression(String id) {
+    protected BidRequest.Imp getImpression(String id, double bidFloor, String bidFloorCur) {
 
         return BidRequest.Imp.newBuilder()
                              .setId(id)
                              .setNative(getNative())
+                             .setBidfloor(bidFloor)
+                             .setBidfloorcur(bidFloorCur)
                              .build();
     }
 
@@ -284,11 +262,14 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         List<Asset> result = new ArrayList<>();
         // Title
         result.add(Asset.newBuilder()
+                        .setId(RTBNetworkModel.RTBAssetTitleID)
                         .setRequired(true)
-                        .setTitle(Asset.Title.newBuilder())
+                        .setTitle(Asset.Title.newBuilder()
+                                             .setLen(50))
                         .build());
         // Description
         result.add(Asset.newBuilder()
+                        .setId(RTBNetworkModel.RTBAssetDescriptionlID)
                         .setRequired(true)
                         .setData(Asset.Data.newBuilder()
                                            .setLen(100)
@@ -296,13 +277,14 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
                         .build());
         // CTA
         result.add(Asset.newBuilder()
+                        .setId(RTBNetworkModel.RTBAssetCTAID)
                         .setRequired(true)
                         .setData(Asset.Data.newBuilder()
-                                           .setType(Asset.Data.DataAssetType.CTATEXT)
-                                           .setLen(50))
+                                           .setType(Asset.Data.DataAssetType.CTATEXT))
                         .build());
         // ICON
         result.add(Asset.newBuilder()
+                        .setId(RTBNetworkModel.RTBAssetIconID)
                         .setRequired(true)
                         .setImg(Asset.Image.newBuilder()
                                            .setType(Asset.Image.ImageAssetType.ICON)
@@ -311,6 +293,7 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
                         .build());
         // BANNER
         result.add(Asset.newBuilder()
+                        .setId(RTBNetworkModel.RTBAssetBannerID)
                         .setRequired(true)
                         .setImg(Asset.Image.newBuilder()
                                            .setType(Asset.Image.ImageAssetType.MAIN)
@@ -319,6 +302,7 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
                         .build());
         // Rating
         result.add(Asset.newBuilder()
+                        .setId(RTBNetworkModel.RTBAssetRatingID)
                         .setRequired(false)
                         .setData(Asset.Data.newBuilder()
                                            .setType(Asset.Data.DataAssetType.RATING))
@@ -327,46 +311,7 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     }
     // HELPERS
     //----------------------------------------------------------------------------------------------
-    //    /**
-//     * Get the IP of current Wi-Fi connection
-//     * @return IP as string
-//     */
-//    private String getIP() {
-//        try {
-//            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-//            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-//            int ipAddress = wifiInfo.getIpAddress();
-//            return String.format(Locale.getDefault(), "%d.%d.%d.%d",
-//                                 (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
-//                                 (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
-//        } catch (Exception ex) {
-//            Log.e(TAG, ex.getMessage());
-//            return null;
-//        }
-//    }
-//
-//
-//    /**
-//     * Get IP For mobile
-//     */
-//    public static String getMobileIP() {
-//
-//        try {
-//            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-//                NetworkInterface intf = en.nextElement();
-//                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-//                    InetAddress inetAddress = enumIpAddr.nextElement();
-//                    if (!inetAddress.isLoopbackAddress()) {
-//                        String ipaddress = inetAddress.getHostAddress().toString();
-//                        return ipaddress;
-//                    }
-//                }
-//            }
-//        } catch (Exception ex) {
-//            Log.e(TAG, "Exception in Get IP Address: " + ex.toString());
-//        }
-//        return null;
-//    }
+    //
 
     protected boolean isTablet(Context context) {
 
@@ -392,19 +337,51 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         return result;
     }
 
-    @SuppressWarnings({"MissingPermission"})
     protected String getIP(Context context) {
 
         String result = null;
-        if (isPermissionGranted(context, Manifest.permission.ACCESS_WIFI_STATE)) {
-            try {
-                InetAddress.getLocalHost().getHostAddress();
-            } catch (Exception e) {
-            }
-            result = Formatter.formatIpAddress(getWifiServiceManager(context).getConnectionInfo()
-                                                                             .getIpAddress());
+        switch (getNetworkType(context)) {
+            case ConnectivityManager.TYPE_WIFI:
+                result = getWifiIP(context);
+                break;
+            case ConnectivityManager.TYPE_MOBILE:
+                result = getMobileIP();
+                break;
         }
         return result;
+    }
+
+    protected String getWifiIP(Context context) {
+
+        String result = null;
+        try {
+            WifiInfo wifiInfo = getWifiServiceManager(context).getConnectionInfo();
+            int ipAddress = wifiInfo.getIpAddress();
+            result = String.format(Locale.getDefault(), "%d.%d.%d.%d",
+                                   (ipAddress & 0xff), (ipAddress >> 8 & 0xff),
+                                   (ipAddress >> 16 & 0xff), (ipAddress >> 24 & 0xff));
+        } catch (Exception ex) {
+            // Do nothing
+        }
+        return result;
+    }
+
+    protected String getMobileIP() {
+
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                NetworkInterface intf = en.nextElement();
+                for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        return inetAddress.getHostAddress().toString();
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "Exception in Get IP Address: " + ex.toString());
+        }
+        return null;
     }
 
     protected BidRequest.Device.ConnectionType getConnectionType(Context context) {
@@ -419,7 +396,6 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
                 result = getMobileConnection(context);
             }
             break;
-            default:
         }
         return result;
     }
@@ -427,7 +403,6 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     protected BidRequest.Device.ConnectionType getMobileConnection(Context context) {
 
         BidRequest.Device.ConnectionType result = BidRequest.Device.ConnectionType.CELL_UNKNOWN;
-
         switch (getTelephonyManager(context).getNetworkType()) {
             case TelephonyManager.NETWORK_TYPE_GPRS:
             case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -486,23 +461,59 @@ public class RTBNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         return ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
-    protected TelephonyManager getTelephonyManager (Context context) {
+    protected TelephonyManager getTelephonyManager(Context context) {
 
         return (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
     }
 
-    protected WifiManager getWifiServiceManager (Context context) {
+    protected WifiManager getWifiServiceManager(Context context) {
 
         return (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
     }
 
-    protected WindowManager getWindowServiceManager (Context context) {
+    protected WindowManager getWindowServiceManager(Context context) {
 
         return (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     }
 
-    protected ConnectivityManager getConnectivityManager (Context context) {
+    protected ConnectivityManager getConnectivityManager(Context context) {
 
         return (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    }
+
+    //==============================================================================================
+    // CALLBACKS
+    //==============================================================================================
+    // PubnativeHttpRequest.Listener
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
+
+        Log.v(TAG, "onPubnativeHttpRequestStart");
+    }
+
+    @Override
+    public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
+
+        Log.v(TAG, "onPubnativeHttpRequestStart");
+        if (TextUtils.isEmpty(result)) {
+            invokeFailed(PubnativeException.REQUEST_NO_FILL);
+        } else {
+            try {
+                OpenRtb.BidResponse response = OpenRtbJsonFactory.create()
+                                                                 .newReader()
+                                                                 .readBidResponse(result);
+                invokeLoaded(new RTBNetworkModel(response));
+            } catch (IOException e) {
+                invokeFailed(e);
+            }
+        }
+    }
+
+    @Override
+    public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
+
+        Log.v(TAG, "onPubnativeHttpRequestFail");
+        invokeFailed(exception);
     }
 }
