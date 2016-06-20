@@ -45,9 +45,6 @@ import static org.mockito.Mockito.verify;
         sdk = 21)
 public class PubnativeNetworkInterstitialTest {
 
-    final static String TEST_PLACEMENT_ID_INVALID = "mPlacementName";
-    final static String TEST_APP_TOKEN            = "app_token";
-
     @Test
     public void invokeLoadFinish_withNullListener_pass() {
 
@@ -170,7 +167,7 @@ public class PubnativeNetworkInterstitialTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(null, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID);
+        request.load(null, "app_token", "testPlacementName");
 
         verify(listener).onPubnativeNetworkInterstitialLoadFail(eq(request), eq(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID));
     }
@@ -194,6 +191,6 @@ public class PubnativeNetworkInterstitialTest {
         PubnativeNetworkInterstitial request = spy(PubnativeNetworkInterstitial.class);
         request.mHandler = new Handler();
 
-        request.load(null, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID);
+        request.load(null, "app_token", "testPlacementName");
     }
 }

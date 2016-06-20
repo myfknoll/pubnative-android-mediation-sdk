@@ -93,6 +93,13 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
          * @param feedBanner feedBanner that was clicked
          */
         void onPubnativeNetworkFeedBannerClick(PubnativeNetworkFeedBanner feedBanner);
+
+        /**
+         * Called whenever the feedBanner was removed from the screen
+         *
+         * @param feedBanner feedBanner that was hidden
+         */
+        void onPubnativeNetworkFeedBannerHide(PubnativeNetworkFeedBanner feedBanner);
     }
     //==============================================================================================
     // Public methods
@@ -311,6 +318,21 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         });
     }
 
+    protected void invokeHide() {
+
+        Log.v(TAG, "invokeHide");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkFeedBannerHide(PubnativeNetworkFeedBanner.this);
+                }
+            }
+        });
+    }
+
     //==============================================================================================
     // Callbacks
     //==============================================================================================
@@ -366,5 +388,12 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onAdapterClick");
         invokeClick();
+    }
+
+    @Override
+    public void onAdapterHide(PubnativeNetworkFeedBannerAdapter feedBanner) {
+
+        Log.v(TAG, "onAdapterHide");
+        invokeHide();
     }
 }

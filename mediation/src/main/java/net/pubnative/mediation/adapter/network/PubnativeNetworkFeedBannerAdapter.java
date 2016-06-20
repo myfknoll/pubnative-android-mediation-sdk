@@ -83,6 +83,13 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
          * @param feedBanner feedBanner that was clicked
          */
         void onAdapterClick(PubnativeNetworkFeedBannerAdapter feedBanner);
+
+        /**
+         * Called whenever the feed banner was removed from the screen
+         *
+         * @param feedBanner feedBanner that was hidden
+         */
+        void onAdapterHide(PubnativeNetworkFeedBannerAdapter feedBanner);
     }
 
     //==============================================================================================
@@ -201,6 +208,14 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
         Log.v(TAG, "invokeClick");
         if (mAdListener != null) {
             mAdListener.onAdapterClick(this);
+        }
+    }
+
+    protected void invokeHide() {
+
+        Log.v(TAG, "invokeHide");
+        if (mAdListener != null) {
+            mAdListener.onAdapterHide(this);
         }
     }
 }

@@ -47,9 +47,6 @@ import static org.mockito.Mockito.when;
         sdk = 21)
 public class PubnativeNetworkBannerTest {
 
-    final static String TEST_PLACEMENT_ID_INVALID = "mPlacementName";
-    final static String TEST_APP_TOKEN            = "app_token";
-
     @Test
     public void invokeLoadFinish_withNullListener_pass() {
 
@@ -172,7 +169,7 @@ public class PubnativeNetworkBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(null, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID);
+        request.load(null, "app_token", "testPlacementName");
 
         verify(listener).onPubnativeNetworkBannerLoadFail(eq(request), eq(PubnativeException.BANNER_PARAMETERS_INVALID));
     }
@@ -196,7 +193,7 @@ public class PubnativeNetworkBannerTest {
         PubnativeNetworkBanner request = spy(PubnativeNetworkBanner.class);
         request.mHandler = new Handler();
 
-        request.load(null, TEST_APP_TOKEN, TEST_PLACEMENT_ID_INVALID);
+        request.load(null, "app_token", "testPlacementName");
     }
 
     @Test
