@@ -81,6 +81,7 @@ public class PubnativeInsightsManager {
                     uriBuilder.appendQueryParameter(key, extras.get(key));
                 }
             }
+            dataModel.generated_at = System.currentTimeMillis()*1000;
             PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
             // Enqueue failed
             List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
