@@ -166,6 +166,7 @@ public class PubnativeInsightsManager {
         Log.v(TAG, "trackingFailed");
         // Add a retry
         model.dataModel.retry = model.dataModel.retry + 1;
+        model.dataModel.retry_error = message;
         enqueueInsightItem(context, INSIGHTS_FAILED_DATA, model);
         sIdle = true;
         trackNext(context);
