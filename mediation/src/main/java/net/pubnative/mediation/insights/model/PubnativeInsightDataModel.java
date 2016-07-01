@@ -62,6 +62,7 @@ public class PubnativeInsightDataModel {
     public Boolean                            video_start;
     public Boolean                            video_complete;
     public int                                retry;
+    public String                             retry_error;
     // User info
     public Integer                            age;
     public String                             education;
@@ -237,6 +238,7 @@ public class PubnativeInsightDataModel {
 
         Log.v(TAG, "reset");
         retry = 0;
+        retry_error = null;
         network = null;
         networks = null;
         delivery_segment_ids = null;
