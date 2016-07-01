@@ -40,7 +40,7 @@ public class PubnativeLibraryNetworkBannerAdapter
     protected PubnativeBanner mBanner;
 
     /**
-     * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
+     * Creates a new instance of PubnativeLibraryNetworkBannerAdapter
      *
      * @param data server configured data for the current adapter network.
      */

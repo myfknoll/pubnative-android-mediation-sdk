@@ -41,7 +41,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     protected PubnativeFeedBanner mFeedBanner;
 
     /**
-     * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
+     * Creates a new instance of PubnativeLibraryNetworkFeedBannerAdapter
      *
      * @param data server configured data for the current adapter network.
      */
