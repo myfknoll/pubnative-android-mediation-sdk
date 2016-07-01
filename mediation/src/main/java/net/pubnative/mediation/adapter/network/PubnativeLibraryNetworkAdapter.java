@@ -44,12 +44,12 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
     @Override
     public PubnativeNetworkFeedBannerAdapter getFeedBannerAdapter() {
 
-        return null;
+        return new PubnativeLibraryNetworkFeedBannerAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkBannerAdapter getBannerAdapter() {
 
-        return null;
+        return new PubnativeLibraryNetworkBannerAdapter(mNetworkData);
     }
 }

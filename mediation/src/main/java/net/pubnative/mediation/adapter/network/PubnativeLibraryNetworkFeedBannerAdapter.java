@@ -26,25 +26,26 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewGroup;
 
-import net.pubnative.library.interstitial.PubnativeInterstitial;
+import net.pubnative.library.feed.banner.PubnativeFeedBanner;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeLibraryNetworkInterstitialAdapter
-        extends PubnativeNetworkInterstitialAdapter implements PubnativeInterstitial.Listener {
+public class PubnativeLibraryNetworkFeedBannerAdapter
+        extends PubnativeNetworkFeedBannerAdapter implements PubnativeFeedBanner.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkInterstitialAdapter.class.getSimpleName();
+    private static String TAG = PubnativeLibraryNetworkFeedBannerAdapter.class.getSimpleName();
 
-    protected PubnativeInterstitial mInterstitial;
+    protected PubnativeFeedBanner mFeedBanner;
 
     /**
      * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
      *
      * @param data server configured data for the current adapter network.
      */
-    public PubnativeLibraryNetworkInterstitialAdapter(Map data) {
+    public PubnativeLibraryNetworkFeedBannerAdapter(Map data) {
 
         super(data);
     }
@@ -63,9 +64,9 @@ public class PubnativeLibraryNetworkInterstitialAdapter
             if (TextUtils.isEmpty(appToken)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                mInterstitial = new PubnativeInterstitial();
-                mInterstitial.setListener(this);
-                mInterstitial.load(context, appToken);
+                mFeedBanner = new PubnativeFeedBanner();
+                mFeedBanner.setListener(this);
+                mFeedBanner.load(context, appToken);
             }
         }
     }
@@ -75,18 +76,18 @@ public class PubnativeLibraryNetworkInterstitialAdapter
 
         Log.v(TAG, "isReady");
         boolean result = false;
-        if (mInterstitial != null) {
-            result = mInterstitial.isReady();
+        if (mFeedBanner != null) {
+            result = mFeedBanner.isReady();
         }
         return result;
     }
 
     @Override
-    public void show() {
+    public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mInterstitial != null) {
-            mInterstitial.show();
+        if (mFeedBanner != null) {
+            mFeedBanner.show(container);
         }
     }
 
@@ -94,55 +95,57 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     public void destroy() {
 
         Log.v(TAG, "destroy");
-        if (mInterstitial != null) {
-            mInterstitial.destroy();
+        if (mFeedBanner != null) {
+            mFeedBanner.destroy();
+        }
+    }
+
+    @Override
+    public void hide() {
+
+        Log.v(TAG, "hide");
+        if (mFeedBanner != null) {
+            mFeedBanner.hide();
         }
     }
 
     //==============================================================================================
     // Callabacks
     //==============================================================================================
-    // PubnativeInterstitial.Listener
+    // PubnativeFeedBanner.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeInterstitialLoadFinish(PubnativeInterstitial interstitial) {
+    public void onPubnativeFeedBannerLoadFinish(PubnativeFeedBanner feedBanner) {
 
-        Log.v(TAG, "onPubnativeInterstitialLoadFinish");
-        invokeLoadFinish();
+        Log.v(TAG, "onPubnativeFeedBannerLoadFinish");
+        invokeLoadFinish(this);
     }
 
     @Override
-    public void onPubnativeInterstitialLoadFail(PubnativeInterstitial interstitial, Exception exception) {
+    public void onPubnativeFeedBannerLoadFailed(PubnativeFeedBanner feedBanner, Exception exception) {
 
-        Log.v(TAG, "onPubnativeInterstitialLoadFail", exception);
+        Log.v(TAG, "onPubnativeFeedBannerLoadFailed");
         invokeLoadFail(exception);
     }
 
     @Override
-    public void onPubnativeInterstitialShow(PubnativeInterstitial interstitial) {
+    public void onPubnativeFeedBannerShow(PubnativeFeedBanner feedBanner) {
 
-        Log.v(TAG, "onPubnativeInterstitialShow");
+        Log.v(TAG, "onPubnativeFeedBannerShow");
         invokeShow();
     }
 
     @Override
-    public void onPubnativeInterstitialImpressionConfirmed(PubnativeInterstitial interstitial) {
+    public void onPubnativeFeedBannerImpressionConfirmed(PubnativeFeedBanner feedBanner) {
 
-        Log.v(TAG, "onPubnativeInterstitialImpressionConfirmed");
+        Log.v(TAG, "onPubnativeFeedBannerImpressionConfirmed");
         invokeImpressionConfirmed();
     }
 
     @Override
-    public void onPubnativeInterstitialClick(PubnativeInterstitial interstitial) {
+    public void onPubnativeFeedBannerClick(PubnativeFeedBanner feedBanner) {
 
-        Log.v(TAG, "onPubnativeInterstitialClick");
+        Log.v(TAG, "onPubnativeFeedBannerClick");
         invokeClick();
-    }
-
-    @Override
-    public void onPubnativeInterstitialHide(PubnativeInterstitial interstitial) {
-
-        Log.v(TAG, "onPubnativeInterstitialHide");
-        invokeHide();
     }
 }

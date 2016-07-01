@@ -27,24 +27,24 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-import net.pubnative.library.interstitial.PubnativeInterstitial;
+import net.pubnative.library.banner.PubnativeBanner;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeLibraryNetworkInterstitialAdapter
-        extends PubnativeNetworkInterstitialAdapter implements PubnativeInterstitial.Listener {
+public class PubnativeLibraryNetworkBannerAdapter
+        extends PubnativeNetworkBannerAdapter implements PubnativeBanner.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkInterstitialAdapter.class.getSimpleName();
+    private static String TAG = PubnativeLibraryNetworkBannerAdapter.class.getSimpleName();
 
-    protected PubnativeInterstitial mInterstitial;
+    protected PubnativeBanner mBanner;
 
     /**
      * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
      *
      * @param data server configured data for the current adapter network.
      */
-    public PubnativeLibraryNetworkInterstitialAdapter(Map data) {
+    public PubnativeLibraryNetworkBannerAdapter(Map data) {
 
         super(data);
     }
@@ -63,9 +63,9 @@ public class PubnativeLibraryNetworkInterstitialAdapter
             if (TextUtils.isEmpty(appToken)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                mInterstitial = new PubnativeInterstitial();
-                mInterstitial.setListener(this);
-                mInterstitial.load(context, appToken);
+                mBanner = new PubnativeBanner();
+                mBanner.setListener(this);
+                mBanner.load(context, appToken, PubnativeBanner.Size.BANNER_50, PubnativeBanner.Position.BOTTOM);
             }
         }
     }
@@ -75,8 +75,8 @@ public class PubnativeLibraryNetworkInterstitialAdapter
 
         Log.v(TAG, "isReady");
         boolean result = false;
-        if (mInterstitial != null) {
-            result = mInterstitial.isReady();
+        if (mBanner != null) {
+            result = mBanner.isReady();
         }
         return result;
     }
@@ -85,8 +85,8 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     public void show() {
 
         Log.v(TAG, "show");
-        if (mInterstitial != null) {
-            mInterstitial.show();
+        if (mBanner != null) {
+            mBanner.show();
         }
     }
 
@@ -94,55 +94,58 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     public void destroy() {
 
         Log.v(TAG, "destroy");
-        if (mInterstitial != null) {
-            mInterstitial.destroy();
+        if (mBanner != null) {
+            mBanner.destroy();
+        }
+    }
+
+    @Override
+    public void hide() {
+
+        Log.v(TAG, "hide");
+        if (mBanner != null) {
+            mBanner.destroy();
         }
     }
 
     //==============================================================================================
     // Callabacks
     //==============================================================================================
-    // PubnativeInterstitial.Listener
+    // PubnativeFeedBanner.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeInterstitialLoadFinish(PubnativeInterstitial interstitial) {
-
-        Log.v(TAG, "onPubnativeInterstitialLoadFinish");
-        invokeLoadFinish();
+    public void onPubnativeBannerLoadFinish(PubnativeBanner banner) {
+        Log.v(TAG, "onPubnativeBannerLoadFinish");
+        invokeLoadFinish(this);
     }
 
     @Override
-    public void onPubnativeInterstitialLoadFail(PubnativeInterstitial interstitial, Exception exception) {
-
-        Log.v(TAG, "onPubnativeInterstitialLoadFail", exception);
+    public void onPubnativeBannerLoadFail(PubnativeBanner banner, Exception exception) {
+        Log.v(TAG, "onPubnativeBannerLoadFail", exception);
         invokeLoadFail(exception);
     }
 
     @Override
-    public void onPubnativeInterstitialShow(PubnativeInterstitial interstitial) {
-
-        Log.v(TAG, "onPubnativeInterstitialShow");
+    public void onPubnativeBannerShow(PubnativeBanner banner) {
+        Log.v(TAG, "onPubnativeBannerShow");
         invokeShow();
     }
 
     @Override
-    public void onPubnativeInterstitialImpressionConfirmed(PubnativeInterstitial interstitial) {
-
-        Log.v(TAG, "onPubnativeInterstitialImpressionConfirmed");
+    public void onPubnativeBannerImpressionConfirmed(PubnativeBanner banner) {
+        Log.v(TAG, "onPubnativeBannerImpressionConfirmed");
         invokeImpressionConfirmed();
     }
 
     @Override
-    public void onPubnativeInterstitialClick(PubnativeInterstitial interstitial) {
-
-        Log.v(TAG, "onPubnativeInterstitialClick");
+    public void onPubnativeBannerClick(PubnativeBanner banner) {
+        Log.v(TAG, "onPubnativeBannerClick");
         invokeClick();
     }
 
     @Override
-    public void onPubnativeInterstitialHide(PubnativeInterstitial interstitial) {
-
-        Log.v(TAG, "onPubnativeInterstitialHide");
+    public void onPubnativeBannerHide(PubnativeBanner banner) {
+        Log.v(TAG, "onPubnativeBannerHide");
         invokeHide();
     }
 }
