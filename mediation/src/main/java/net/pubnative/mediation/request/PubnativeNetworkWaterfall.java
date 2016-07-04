@@ -50,6 +50,7 @@ public abstract class PubnativeNetworkWaterfall {
     protected PubnativePlacement        mPlacement;
     protected PubnativeInsightModel     mInsight;
     protected PubnativeAdTargetingModel mTargeting;
+    protected Map<String, String>       mRequestParameters;
     //==============================================================================================
     // Tracking data
     //==============================================================================================
@@ -65,6 +66,19 @@ public abstract class PubnativeNetworkWaterfall {
         mTargeting = targeting;
     }
 
+    /**
+     * Add additional and customisable request parameters for API requests
+     * @param key valid key String
+     * @param value valid key Value
+     */
+    public void setRequestParameter(String key, String value) {
+
+        if(mRequestParameters == null){
+            mRequestParameters = new HashMap<String, String>();
+        }
+        mRequestParameters.put(key, value);
+    }
+
     //==============================================================================================
     // Private methods
     //==============================================================================================
@@ -76,9 +90,12 @@ public abstract class PubnativeNetworkWaterfall {
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             mContext = context;
             mPlacement = new PubnativePlacement();
-            Map extras = null;
+            Map extras = new HashMap();
             if (mTargeting != null) {
-                extras = mTargeting.toDictionary();
+                extras.putAll(mTargeting.toDictionary());
+            }
+            if(mRequestParameters != null) {
+                extras.putAll(mRequestParameters);
             }
             mPlacement.load(mContext, appToken, placementName, extras, new PubnativePlacement.Listener() {
 
@@ -151,6 +168,16 @@ public abstract class PubnativeNetworkWaterfall {
             } else {
                 Map<String, String> extras = new HashMap<String, String>();
                 extras.put(TRACKING_PARAMETER_REQUEST_ID, mPlacement.getTrackingUUID());
+                if (mTargeting != null) {
+                    extras.putAll(mTargeting.toDictionary());
+                }
+                if(mPlacement.getConfig().request_params != null) {
+                    extras.putAll(mPlacement.getConfig().request_params);
+                }
+                if(mRequestParameters != null) {
+                    extras.putAll(mRequestParameters);
+                }
+
                 onWaterfallNextNetwork(hub, network, extras);
             }
         }
