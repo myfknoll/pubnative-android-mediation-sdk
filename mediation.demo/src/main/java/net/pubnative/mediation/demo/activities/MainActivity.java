@@ -90,6 +90,14 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onVideoClick(View view) {
+
+        Log.v(TAG, "onBannerClick");
+        // Launch banner activity
+        Intent intent = new Intent(this, VideoAdActivity.class);
+        startActivity(intent);
+    }
+
     protected void setDefaults() {
 
         Log.v(TAG, "setDefaults");

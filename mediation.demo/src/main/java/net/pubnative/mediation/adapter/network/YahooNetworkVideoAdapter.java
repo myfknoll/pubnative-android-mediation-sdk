@@ -43,10 +43,10 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
         implements FlurryAdInterstitialListener {
 
     private static String TAG = YahooNetworkVideoAdapter.class.getSimpleName();
-    private FlurryAdInterstitial mInterstitial;
+    private FlurryAdInterstitial mVideo;
 
     /**
-     * Creates a new instance of YahooNetworkInterstitialAdapter
+     * Creates a new instance of YahooNetworkVideoAdapter
      *
      * @param data server configured data for the current adapter network.
      */
@@ -70,23 +70,18 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
                 new FlurryAgent.Builder()
                         .withLogEnabled(true)
                         .withLogLevel(Log.VERBOSE)
-                        .build(context, "JQVT87W7TGN5W7SWY2FH");
+                        .build(context, apiKey);
                 if (!FlurryAgent.isSessionActive()) {
                     FlurryAgent.onStartSession(context);
                 }
-                mInterstitial = new FlurryAdInterstitial(context, "TestModeVideoTest");
-                mInterstitial.setListener(this);
+                mVideo = new FlurryAdInterstitial(context, adSpaceName);
+                mVideo.setListener(this);
                 // Add targeting
-                /*FlurryAdTargeting targeting = getTargeting();
+                FlurryAdTargeting targeting = getTargeting();
                 if (targeting != null) {
-                    mInterstitial.setTargeting(targeting);
-                }*/
-
-                FlurryAdTargeting testTarget = new FlurryAdTargeting();
-                testTarget.setEnableTestAds(true);
-                mInterstitial.setTargeting(testTarget);
-
-                mInterstitial.fetchAd();
+                    mVideo.setTargeting(targeting);
+                }
+                mVideo.fetchAd();
             }
         }
     }
@@ -120,8 +115,8 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
 
         Log.v(TAG, "isReady");
         boolean result = false;
-        if (mInterstitial != null) {
-            result = mInterstitial.isReady();
+        if (mVideo != null) {
+            result = mVideo.isReady();
         }
         return result;
     }
@@ -130,8 +125,8 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
     public void show() {
 
         Log.v(TAG, "show");
-        if (mInterstitial != null) {
-            mInterstitial.displayAd();
+        if (mVideo != null) {
+            mVideo.displayAd();
         }
     }
 
@@ -139,8 +134,8 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
     public void destroy() {
 
         Log.v(TAG, "destroy");
-        if (mInterstitial != null) {
-            mInterstitial.destroy();
+        if (mVideo != null) {
+            mVideo.destroy();
         }
     }
 
