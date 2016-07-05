@@ -4,9 +4,10 @@ import android.util.Log;
 import android.view.View;
 
 import net.pubnative.mediation.demo.Settings;
-import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
+import net.pubnative.mediation.request.PubnativeNetworkVideo;
+import net.pubnative.mediation.request.PubnativeNetworkVideo;
 
-public class InterstitialAdActivity extends StandardAdUnitActivity implements PubnativeNetworkInterstitial.Listener {
+public class InterstitialAdActivity extends StandardAdUnitActivity implements PubnativeNetworkVideo.Listener {
 
     private static final String TAG = InterstitialAdActivity.class.getSimpleName();
 
@@ -14,7 +15,7 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
 
         Log.v(TAG, "onRequestClick");
         mLoaderContainer.setVisibility(View.VISIBLE);
-        PubnativeNetworkInterstitial interstitial = new PubnativeNetworkInterstitial();
+        PubnativeNetworkVideo interstitial = new PubnativeNetworkVideo();
         interstitial.setListener(this);
         interstitial.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
     }
@@ -22,10 +23,10 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-    // PubnativeNetworkInterstitial.Listener
+    // PubnativeNetworkVideo.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial interstitial) {
+    public void onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkVideo interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialLoadFinish");
         mLoaderContainer.setVisibility(View.GONE);
         interstitial.show();
@@ -33,7 +34,7 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
     }
 
     @Override
-    public void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial, Exception exception) {
+    public void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkVideo interstitial, Exception exception) {
         Log.v(TAG, "onPubnativeNetworkInterstitialLoadFail", exception);
         mLoaderContainer.setVisibility(View.GONE);
         showToast(exception.getMessage());
@@ -41,26 +42,26 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
     }
 
     @Override
-    public void onPubnativeNetworkInterstitialShow(PubnativeNetworkInterstitial interstitial) {
+    public void onPubnativeNetworkInterstitialShow(PubnativeNetworkVideo interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialShow");
         mLoaderContainer.setVisibility(View.GONE);
         showToast("Interstitial show");
     }
 
     @Override
-    public void onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial interstitial) {
+    public void onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkVideo interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialImpressionConfirmed");
         showToast("Interstitial impression confirmed");
     }
 
     @Override
-    public void onPubnativeNetworkInterstitialClick(PubnativeNetworkInterstitial interstitial) {
+    public void onPubnativeNetworkInterstitialClick(PubnativeNetworkVideo interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialClick");
         showToast("Interstitial click");
     }
 
     @Override
-    public void onPubnativeNetworkInterstitialHide(PubnativeNetworkInterstitial interstitial) {
+    public void onPubnativeNetworkInterstitialHide(PubnativeNetworkVideo interstitial) {
         Log.v(TAG, "onPubnativeNetworkInterstitialHide");
         showToast("Interstitial hide");
     }
