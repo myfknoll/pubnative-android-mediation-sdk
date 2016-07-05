@@ -50,7 +50,7 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     }
 
     //==============================================================================================
-    // PubnativeNetworkInterstitialAdapter
+    // PubnativeLibraryNetworkInterstitialAdapter
     //==============================================================================================
     @Override
     public void load(Context context) {

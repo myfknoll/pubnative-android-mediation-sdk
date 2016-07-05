@@ -51,7 +51,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     }
 
     //==============================================================================================
-    // PubnativeNetworkInterstitialAdapter
+    // PubnativeLibraryNetworkFeedBannerAdapter
     //==============================================================================================
     @Override
     public void load(Context context) {
