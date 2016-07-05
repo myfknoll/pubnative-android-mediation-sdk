@@ -9,7 +9,8 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdapter {
 
-    private static final String TAG = PubnativeNetworkBannerAdapter.class.getSimpleName();
+    private   static final String TAG           = PubnativeNetworkBannerAdapter.class.getSimpleName();
+    protected static final String KEY_APP_TOKEN = "apptoken";
 
     protected LoadListener mLoadListener;
     protected AdListener mAdListener;

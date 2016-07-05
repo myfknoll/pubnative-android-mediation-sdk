@@ -32,7 +32,9 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetworkAdapter {
 
-    private static final String TAG = PubnativeNetworkInterstitialAdapter.class.getSimpleName();
+    private   static final String TAG           = PubnativeNetworkInterstitialAdapter.class.getSimpleName();
+    protected static final String KEY_APP_TOKEN = "apptoken";
+
     protected AdListener   mAdListener;
     protected LoadListener mLoadListener;
 

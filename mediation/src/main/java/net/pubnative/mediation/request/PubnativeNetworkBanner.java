@@ -130,6 +130,26 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         }
         return result;
     }
+
+    /**
+     * Destroy the current banner
+     */
+    public void destroy() {
+
+        Log.v(TAG, "destroy");
+        mAdapter.destroy();
+    }
+
+    /**
+     * Hides the current banner
+     */
+    public void hide() {
+
+        Log.v(TAG, "hide");
+        if (mIsShown) {
+            mAdapter.hide();
+        }
+    }
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================

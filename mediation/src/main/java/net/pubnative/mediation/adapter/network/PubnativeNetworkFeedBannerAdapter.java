@@ -33,7 +33,9 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetworkAdapter {
 
-    private static final String TAG = PubnativeNetworkFeedBannerAdapter.class.getSimpleName();
+    private   static final String TAG           = PubnativeNetworkFeedBannerAdapter.class.getSimpleName();
+    protected static final String KEY_APP_TOKEN = "apptoken";
+
     protected AdListener   mAdListener;
     protected LoadListener mLoadListener;
 

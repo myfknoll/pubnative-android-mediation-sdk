@@ -11,21 +11,28 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
 
     private static final String TAG = "BannerAdActivity";
 
+    private PubnativeNetworkBanner mBanner;
+
     public void onRequestClick(View v) {
 
         Log.v(TAG, "onRequestClick");
         mLoaderContainer.setVisibility(View.VISIBLE);
-        PubnativeNetworkBanner banner = new PubnativeNetworkBanner();
-        banner.setListener(this);
-        banner.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        if(mBanner != null) {
+            mBanner.destroy();
+        }
+        mBanner = new PubnativeNetworkBanner();
+        mBanner.setListener(this);
+        mBanner.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
     }
 
     @Override
     public void onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner banner) {
         Log.v(TAG, "onPubnativeNetworkBannerLoadFinish");
-        mLoaderContainer.setVisibility(View.GONE);
-        banner.show();
-        Toast.makeText(this, "Banner ad loaded", Toast.LENGTH_SHORT).show();
+        if(mBanner == banner) {
+            mLoaderContainer.setVisibility(View.GONE);
+            banner.show();
+            Toast.makeText(this, "Banner ad loaded", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

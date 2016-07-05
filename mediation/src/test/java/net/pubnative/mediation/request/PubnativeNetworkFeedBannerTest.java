@@ -89,6 +89,14 @@ public class PubnativeNetworkFeedBannerTest {
     }
 
     @Test
+    public void invokeHide_withNullListener_pass() {
+
+        PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
+        request.mHandler = new Handler();
+        request.invokeHide();
+    }
+
+    @Test
     public void invokeLoadFinish_withValidListener_callbackLoadFinish() {
 
         PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
