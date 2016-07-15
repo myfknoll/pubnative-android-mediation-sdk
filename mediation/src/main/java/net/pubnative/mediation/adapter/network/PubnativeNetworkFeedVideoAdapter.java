@@ -30,9 +30,9 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapter {
+public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkAdapter {
 
-    private   static final String TAG           = PubnativeNetworkVideoAdapter.class.getSimpleName();
+    private   static final String TAG           = PubnativeNetworkFeedVideoAdapter.class.getSimpleName();
     protected static final String KEY_APP_TOKEN = "apptoken";
 
     protected AdListener   mAdListener;
@@ -43,7 +43,7 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
      *
      * @param data server configured data for the current adapter network.
      */
-    public PubnativeNetworkVideoAdapter(Map data) {
+    public PubnativeNetworkFeedVideoAdapter(Map data) {
 
         super(data);
     }
@@ -58,7 +58,7 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
          *
          * @param interstitial interstitial that finished the initialize
          */
-        void onAdapterLoadFinish(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterLoadFinish(PubnativeNetworkFeedVideoAdapter interstitial);
 
         /**
          * Called whenever the interstitial failed loading an ad
@@ -66,7 +66,7 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
          * @param interstitial interstitial that failed the initialize
          * @param exception    exception with the description of the initialize error
          */
-        void onAdapterLoadFail(PubnativeNetworkVideoAdapter interstitial, Exception exception);
+        void onAdapterLoadFail(PubnativeNetworkFeedVideoAdapter interstitial, Exception exception);
     }
 
     /**
@@ -79,54 +79,54 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
          *
          * @param interstitial interstitial that was shown in the screen
          */
-        void onAdapterShow(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterShow(PubnativeNetworkFeedVideoAdapter interstitial);
 
         /**
          * Called when the interstitial impression was confrimed
          *
          * @param interstitial interstitial which impression was confirmed
          */
-        void onAdapterImpressionConfirmed(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter interstitial);
 
         /**
          * Called whenever the interstitial was clicked by the user
          *
          * @param interstitial interstitial that was clicked
          */
-        void onAdapterClick(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterClick(PubnativeNetworkFeedVideoAdapter interstitial);
 
         /**
          * Called whenever the interstitial was removed from the screen
          *
          * @param interstitial interstitial that was hidden
          */
-        void onAdapterHide(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterHide(PubnativeNetworkFeedVideoAdapter interstitial);
 
         /**
          * Called whenever the interstitial was removed from the screen
          *
          * @param interstitial interstitial that was hidden
          */
-        void onAdapterVideoStart(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterVideoStart(PubnativeNetworkFeedVideoAdapter interstitial);
 
         /**
          * Called whenever the interstitial was removed from the screen
          *
          * @param interstitial interstitial that was hidden
          */
-        void onAdapterVideoFinish(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterVideoFinish(PubnativeNetworkFeedVideoAdapter interstitial);
     }
     //==============================================================================================
     // Overridable methods
     //==============================================================================================
 
-    public void setLoadListener(PubnativeNetworkVideoAdapter.LoadListener listener) {
+    public void setLoadListener(PubnativeNetworkFeedVideoAdapter.LoadListener listener) {
 
         Log.v(TAG, "setLoadListener");
         mLoadListener = listener;
     }
 
-    public void setAdListener(PubnativeNetworkVideoAdapter.AdListener listener) {
+    public void setAdListener(PubnativeNetworkFeedVideoAdapter.AdListener listener) {
 
         Log.v(TAG, "setAdListener");
         mAdListener = listener;

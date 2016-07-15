@@ -55,6 +55,6 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
 
     @Override
     public PubnativeNetworkVideoAdapter getVideoAdapter() {
-        return new PubnativeLibraryNetworkVideoAdapter(mNetworkData);
+        return null;
     }
 }
