@@ -54,4 +54,9 @@ public class FacebookNetworkAdapter extends PubnativeNetworkHub {
     public PubnativeNetworkVideoAdapter getVideoAdapter() {
         return null;
     }
+
+    @Override
+    public PubnativeNetworkFeedVideoAdapter getFeedVideoAdapter() {
+        return null;
+    }
 }

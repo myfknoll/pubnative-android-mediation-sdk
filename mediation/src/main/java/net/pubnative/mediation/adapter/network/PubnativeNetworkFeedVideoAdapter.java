@@ -25,6 +25,7 @@ package net.pubnative.mediation.adapter.network;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
@@ -39,87 +40,77 @@ public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkA
     protected LoadListener mLoadListener;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
-     *
-     * @param data server configured data for the current adapter network.
-     */
-    public PubnativeNetworkFeedVideoAdapter(Map data) {
-
-        super(data);
-    }
-
-    /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour
      */
     public interface LoadListener {
 
         /**
-         * Called whenever the interstitial finished loading an ad
+         * Called whenever the feedBanner finished loading an ad
          *
-         * @param interstitial interstitial that finished the initialize
+         * @param feedBanner feedBanner that finished the initialize
          */
-        void onAdapterLoadFinish(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterLoadFinish(PubnativeNetworkFeedVideoAdapter feedBanner);
 
         /**
-         * Called whenever the interstitial failed loading an ad
+         * Called whenever the feedBanner failed loading an ad
          *
-         * @param interstitial interstitial that failed the initialize
+         * @param feedBanner   feedBanner that failed the initialize
          * @param exception    exception with the description of the initialize error
          */
-        void onAdapterLoadFail(PubnativeNetworkFeedVideoAdapter interstitial, Exception exception);
+        void onAdapterLoadFail(PubnativeNetworkFeedVideoAdapter feedBanner, Exception exception);
     }
 
     /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour
      */
     public interface AdListener {
 
         /**
-         * Called when the interstitial was just shown on the screen
+         * Called when the feedBanner was just shown on the screen
          *
-         * @param interstitial interstitial that was shown in the screen
+         * @param feedBanner feedBanner that was shown in the screen
          */
-        void onAdapterShow(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterShow(PubnativeNetworkFeedVideoAdapter feedBanner);
 
         /**
-         * Called when the interstitial impression was confrimed
+         * Called when the feedBanner impression was confirmed
          *
-         * @param interstitial interstitial which impression was confirmed
+         * @param feedBanner feedBanner which impression was confirmed
          */
-        void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter feedBanner);
 
         /**
-         * Called whenever the interstitial was clicked by the user
+         * Called whenever the feedBanner was clicked by the user
          *
-         * @param interstitial interstitial that was clicked
+         * @param feedBanner feedBanner that was clicked
          */
-        void onAdapterClick(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterClick(PubnativeNetworkFeedVideoAdapter feedBanner);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the feed banner was removed from the screen
          *
-         * @param interstitial interstitial that was hidden
+         * @param feedBanner feedBanner that was hidden
          */
-        void onAdapterHide(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterHide(PubnativeNetworkFeedVideoAdapter feedBanner);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the feedVideo was removed from the screen
          *
-         * @param interstitial interstitial that was hidden
+         * @param feedVideo feedVideo that was hidden
          */
-        void onAdapterVideoStart(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterVideoStart(PubnativeNetworkFeedVideoAdapter feedVideo);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the feedVideo was removed from the screen
          *
-         * @param interstitial interstitial that was hidden
+         * @param feedVideo feedVideo that was hidden
          */
-        void onAdapterVideoFinish(PubnativeNetworkFeedVideoAdapter interstitial);
+        void onAdapterVideoFinish(PubnativeNetworkFeedVideoAdapter feedVideo);
     }
+
     //==============================================================================================
     // Overridable methods
     //==============================================================================================
-
     public void setLoadListener(PubnativeNetworkFeedVideoAdapter.LoadListener listener) {
 
         Log.v(TAG, "setLoadListener");
@@ -132,60 +123,74 @@ public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkA
         mAdListener = listener;
     }
 
+    /**
+     * Creates a new instance of PubnativeNetworkFeedBannerAdapter
+     *
+     * @param data server configured data for the current adapter network.
+     */
+    public PubnativeNetworkFeedVideoAdapter(Map data) {
+
+        super(data);
+    }
+
     //==============================================================================================
     // PubnativeNetworkAdapter
     //==============================================================================================
     @Override
-    protected void onTimeout() {
-
-        invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
-    }
-
-    @Override
     public void execute(Context context, int timeoutInMillis) {
-
         startTimeout(timeoutInMillis);
         load(context);
     }
+
+    @Override
+    protected void onTimeout() {
+        invokeLoadFail(PubnativeException.ADAPTER_TIMEOUT);
+    }
+
     //==============================================================================================
     // Abstract
     //==============================================================================================
-
     /**
-     * Starts loading the interstitial ad
+     * Starts loading the feedBanner ad
      *
      * @param context valid Context
+     *
      */
     public abstract void load(Context context);
 
     /**
-     * Tells if the interstitial is ready to be shown in the screen
+     * Tells if the feedBanner is ready to be shown in the screen
      *
      * @return true if ready, false if not
      */
     public abstract boolean isReady();
 
     /**
-     * Starts showing the interstitial for the adapted network
+     * Starts showing the feedBanner for the adapted network
+     * @param container valid container for the feed banner
      */
-    public abstract void show();
+    public abstract void show(ViewGroup container);
 
     /**
-     * Destroys the current interstitial for the adapted network
+     * Destroys the current feedBanner for the adapted network
      */
     public abstract void destroy();
+
+    /**
+     * Hides the current feedBanner for the adapted network
+     */
+    public abstract void hide();
 
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeLoadFinish() {
+    protected void invokeLoadFinish(PubnativeNetworkFeedVideoAdapter feedBanner) {
 
         Log.v(TAG, "invokeLoadFinish");
         cancelTimeout();
         if (mLoadListener != null) {
-            mLoadListener.onAdapterLoadFinish(this);
+            mLoadListener.onAdapterLoadFinish(feedBanner);
         }
-        mLoadListener = null;
     }
 
     protected void invokeLoadFail(Exception exception) {

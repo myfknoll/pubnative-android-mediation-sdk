@@ -67,6 +67,18 @@ public class PubnativeException extends Exception {
     public static final PubnativeException BANNER_LOADING                  = new PubnativeException(7001, "Banner is currently loading");
     public static final PubnativeException BANNER_SHOWN                    = new PubnativeException(7002, "Banner is already shown");
     public static final PubnativeException BANNER_LOAD_FAILED              = new PubnativeException(7003, "Banner failed on load");
+    //==============================================================================================
+    // Video Exceptions
+    //==============================================================================================
+    public static final PubnativeException VIDEO_PARAMETERS_INVALID        = new PubnativeException(8000, "parameters configuring the video are invalid");
+    public static final PubnativeException VIDEO_LOADING                   = new PubnativeException(8001, "video is currently loading");
+    public static final PubnativeException VIDEO_SHOWN                     = new PubnativeException(8002, "video is already shown");
+    //==============================================================================================
+    // FeedBanner Exceptions
+    //==============================================================================================
+    public static final PubnativeException FEED_VIDEO_PARAMETERS_INVALID   = new PubnativeException(9000, "parameters configuring the feedVideo are invalid");
+    public static final PubnativeException FEED_VIDEO_LOADING              = new PubnativeException(9001, "feedVideo is currently loading");
+    public static final PubnativeException FEED_VIDEO_SHOWN                = new PubnativeException(9002, "feedVideo is already shown");
 
     /**
      * Constructor

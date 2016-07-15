@@ -35,7 +35,10 @@
                   android:label="@string/title_activity_banner" />
 
         <activity android:name=".activities.VideoAdActivity"
-            android:label="@string/title_activity_banner" />
+            android:label="@string/title_activity_video" />
+
+        <activity android:name=".activities.FeedVideoActivity"
+            android:label="@string/title_activity_feed_video" />
 
         <activity
             android:name=".SettingsActivity"

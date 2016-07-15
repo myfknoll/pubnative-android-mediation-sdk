@@ -39,7 +39,7 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
     protected LoadListener mLoadListener;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of PubnativeNetworkVideoAdapter
      *
      * @param data server configured data for the current adapter network.
      */
@@ -49,72 +49,72 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
     }
 
     /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the video view behaviour
      */
     public interface LoadListener {
 
         /**
-         * Called whenever the interstitial finished loading an ad
+         * Called whenever the video finished loading an ad
          *
-         * @param interstitial interstitial that finished the initialize
+         * @param video video that finished the initialize
          */
-        void onAdapterLoadFinish(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterLoadFinish(PubnativeNetworkVideoAdapter video);
 
         /**
-         * Called whenever the interstitial failed loading an ad
+         * Called whenever the video failed loading an ad
          *
-         * @param interstitial interstitial that failed the initialize
+         * @param video video that failed the initialize
          * @param exception    exception with the description of the initialize error
          */
-        void onAdapterLoadFail(PubnativeNetworkVideoAdapter interstitial, Exception exception);
+        void onAdapterLoadFail(PubnativeNetworkVideoAdapter video, Exception exception);
     }
 
     /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the video view behaviour
      */
     public interface AdListener {
 
         /**
-         * Called when the interstitial was just shown on the screen
+         * Called when the video was just shown on the screen
          *
-         * @param interstitial interstitial that was shown in the screen
+         * @param video video that was shown in the screen
          */
-        void onAdapterShow(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterShow(PubnativeNetworkVideoAdapter video);
 
         /**
-         * Called when the interstitial impression was confrimed
+         * Called when the video impression was confrimed
          *
-         * @param interstitial interstitial which impression was confirmed
+         * @param video video which impression was confirmed
          */
-        void onAdapterImpressionConfirmed(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterImpressionConfirmed(PubnativeNetworkVideoAdapter video);
 
         /**
-         * Called whenever the interstitial was clicked by the user
+         * Called whenever the video was clicked by the user
          *
-         * @param interstitial interstitial that was clicked
+         * @param video video that was clicked
          */
-        void onAdapterClick(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterClick(PubnativeNetworkVideoAdapter video);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the video was removed from the screen
          *
-         * @param interstitial interstitial that was hidden
+         * @param video video that was hidden
          */
-        void onAdapterHide(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterHide(PubnativeNetworkVideoAdapter video);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the video was removed from the screen
          *
-         * @param interstitial interstitial that was hidden
+         * @param video video that was hidden
          */
-        void onAdapterVideoStart(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterVideoStart(PubnativeNetworkVideoAdapter video);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the video was removed from the screen
          *
-         * @param interstitial interstitial that was hidden
+         * @param video video that was hidden
          */
-        void onAdapterVideoFinish(PubnativeNetworkVideoAdapter interstitial);
+        void onAdapterVideoFinish(PubnativeNetworkVideoAdapter video);
     }
     //==============================================================================================
     // Overridable methods
@@ -152,26 +152,26 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
     //==============================================================================================
 
     /**
-     * Starts loading the interstitial ad
+     * Starts loading the video ad
      *
      * @param context valid Context
      */
     public abstract void load(Context context);
 
     /**
-     * Tells if the interstitial is ready to be shown in the screen
+     * Tells if the video is ready to be shown in the screen
      *
      * @return true if ready, false if not
      */
     public abstract boolean isReady();
 
     /**
-     * Starts showing the interstitial for the adapted network
+     * Starts showing the video for the adapted network
      */
     public abstract void show();
 
     /**
-     * Destroys the current interstitial for the adapted network
+     * Destroys the current video for the adapted network
      */
     public abstract void destroy();
 

@@ -98,6 +98,14 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onFeedVideoClick(View view) {
+
+        Log.v(TAG, "onBannerClick");
+        // Launch banner activity
+        Intent intent = new Intent(this, FeedVideoActivity.class);
+        startActivity(intent);
+    }
+
     protected void setDefaults() {
 
         Log.v(TAG, "setDefaults");

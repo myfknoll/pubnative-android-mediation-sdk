@@ -69,9 +69,18 @@
         android:id="@+id/buttonVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buttonBanner"
+        android:layout_below="@id/buttonFeedBanner"
         android:layout_centerHorizontal="true"
         android:onClick="onVideoClick"
         android:text="Video"/>
+
+    <Button
+        android:id="@+id/buttonFeedVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonVideo"
+        android:layout_centerHorizontal="true"
+        android:onClick="onFeedVideoClick"
+        android:text="Feed Video"/>
 
 </RelativeLayout>

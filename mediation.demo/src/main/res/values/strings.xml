@@ -4,6 +4,7 @@
     <string name="title_activity_native">Native Ad</string>
     <string name="title_activity_interstitial">Interstitial Ad</string>
     <string name="title_activity_feed_banner">Feed Banner</string>
+    <string name="title_activity_feed_video">Feed Video</string>
     <string name="title_activity_banner">Banner</string>
     <string name="title_activity_video">Video</string>
 

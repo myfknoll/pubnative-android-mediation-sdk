@@ -28,91 +28,94 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedVideoAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
-        implements PubnativeNetworkVideoAdapter.LoadListener,
-                   PubnativeNetworkVideoAdapter.AdListener {
+public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
+        implements PubnativeNetworkFeedVideoAdapter.LoadListener,
+                   PubnativeNetworkFeedVideoAdapter.AdListener {
 
-    private static final String TAG = PubnativeNetworkVideo.class.getSimpleName();
+    private static final String TAG = PubnativeNetworkFeedVideo.class.getSimpleName();
+    //==============================================================================================
+    // Properties
+    //==============================================================================================
     protected Listener                            mListener;
     protected Handler                             mHandler;
     protected boolean                             mIsLoading;
     protected boolean                             mIsShown;
-    protected PubnativeNetworkVideoAdapter        mAdapter;
+    protected PubnativeNetworkFeedVideoAdapter    mAdapter;
     protected long                                mStartTimestamp;
 
     /**
-     * Interface for callbacks related to the video view behaviour
+     * Interface for callbacks related to the feedVideo view behaviour
      */
     public interface Listener {
 
         /**
-         * Called whenever the video finished loading an ad
+         * Called whenever the feedVideo finished loading an ad
          * w
          *
-         * @param video video that finished the initialize
+         * @param feedVideo feedVideo that finished the initialize
          */
-        void onPubnativeNetworkVideoLoadFinish(PubnativeNetworkVideo video);
+        void onPubnativeNetworkFeedVideoLoadFinish(PubnativeNetworkFeedVideo feedVideo);
 
         /**
-         * Called whenever the video failed loading an ad
+         * Called whenever the feedVideo failed loading an ad
          *
-         * @param video video that failed the initialize
-         * @param exception    exception with the description of the initialize error
+         * @param feedVideo feedVideo that failed the initialize
+         * @param exception exception with the description of the initialize error
          */
-        void onPubnativeNetworkVideoLoadFail(PubnativeNetworkVideo video, Exception exception);
+        void onPubnativeNetworkFeedVideoLoadFail(PubnativeNetworkFeedVideo feedVideo, Exception exception);
 
         /**
-         * Called when the video was just shown on the screen
+         * Called when the feedVideo was just shown on the screen
          *
-         * @param video video that was shown in the screen
+         * @param feedVideo feedVideo that was shown in the screen
          */
-        void onPubnativeNetworkVideoShow(PubnativeNetworkVideo video);
+        void onPubnativeNetworkFeedVideoShow(PubnativeNetworkFeedVideo feedVideo);
 
         /**
-         * Called whenever the video finishes
+         * Called whenever the feedVideo finishes
          *
-         * @param video video that has been stopped
+         * @param feedVideo feedVideo that has been stopped
          */
-        void onPubnativeNetworkVideoStart(PubnativeNetworkVideo video);
+        void onPubnativeNetworkFeedVideoFinish(PubnativeNetworkFeedVideo feedVideo);
 
         /**
-         * Called whenever the video finishes
+         * Called whenever the feedVideo starts
          *
-         * @param video video that has been stopped
+         * @param feedVideo feedVideo that has been stopped
          */
-        void onPubnativeNetworkVideoFinish(PubnativeNetworkVideo video);
+        void onPubnativeNetworkFeedVideoStart(PubnativeNetworkFeedVideo feedVideo);
 
         /**
-         * Called whenever the video was clicked by the user
+         * Called whenever the feedVideo was clicked by the user
          *
-         * @param video video that was clicked
+         * @param feedVideo feedVideo that was clicked
          */
-        void onPubnativeNetworkVideoClick(PubnativeNetworkVideo video);
+        void onPubnativeNetworkFeedVideoClick(PubnativeNetworkFeedVideo feedVideo);
 
         /**
-         * Called whenever the video was removed from the screen
+         * Called whenever the feedVideo was removed from the screen
          *
-         * @param video video that was hidden
+         * @param feedVideo feedVideo that was hidden
          */
-        void onPubnativeNetworkVideoHide(PubnativeNetworkVideo video);
+        void onPubnativeNetworkFeedVideoHide(PubnativeNetworkFeedVideo feedVideo);
     }
     //==============================================================================================
     // Public methods
     //==============================================================================================
 
     /**
-     * Sets a callback listener for this video object
+     * Sets a callback listener for this feedVideo object
      *
-     * @param listener valid PubnativeNetworkVideo.Listener object
+     * @param listener valid PubnativeNetworkFeedVideo.Listener object
      */
     public void setListener(Listener listener) {
 
@@ -121,32 +124,35 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Loads the video ads before being shown
-     * @param context valid Context
-     * @param appToken valid app token string
+     * Loads the feedVideo ads before being shown
+     * @param context   valid Context
+     * @param appToken  valid app token string
      * @param placement valid placement string
      */
     public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
+        if (mHandler == null) {
+            mHandler = new Handler(Looper.getMainLooper());
+        }
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
         } else if (context == null ||
-                   TextUtils.isEmpty(appToken) ||
-                   TextUtils.isEmpty(placement)) {
-            invokeLoadFail(PubnativeException.VIDEO_PARAMETERS_INVALID);
+                TextUtils.isEmpty(appToken) ||
+                TextUtils.isEmpty(placement)) {
+            invokeLoadFail(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID);
         } else if (mIsLoading) {
-            invokeLoadFail(PubnativeException.VIDEO_LOADING);
+            invokeLoadFail(PubnativeException.FEED_VIDEO_LOADING);
         } else if (mIsShown) {
-            invokeLoadFail(PubnativeException.VIDEO_SHOWN);
+            invokeLoadFail(PubnativeException.FEED_VIDEO_SHOWN);
         } else {
-            mHandler = new Handler(Looper.getMainLooper());
+            mIsLoading = true;
             initialize(context, appToken, placement);
         }
     }
 
     /**
-     * Tells if the video is ready to be shown
+     * Tells if the feedVideo is ready to be shown
      *
      * @return true if ready, false if not
      */
@@ -161,17 +167,33 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     }
 
     /**
-     * This method will show the video if the ad is available
+     * This method will show the feedVideo if the ad is available
      */
-    public synchronized void show() {
+    public synchronized void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mIsShown) {
-            Log.v(TAG, "show - the video ad is already shown");
-        } else if (!isReady()) {
-            Log.v(TAG, "show - the video ad is still not loaded");
+        if (container == null) {
+            Log.e(TAG, "show - passed container argument cannot be null");
+        } else if (mIsLoading) {
+            Log.w(TAG, "show - the feed video is loading");
+        } else if (mIsShown) {
+            Log.w(TAG, "show - the feed video is already shown");
+        } else if (isReady()) {
+            mIsShown = true;
+            mAdapter.show(container);
         } else {
-            mAdapter.show();
+            Log.w(TAG, "show - the ad is not loaded yet");
+        }
+    }
+
+    /**
+     * Hides the current InFeed video
+     */
+    public void hide() {
+
+        Log.v(TAG, "hide");
+        if (mIsShown) {
+            mAdapter.hide();
         }
     }
     //==============================================================================================
@@ -199,7 +221,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     @Override
     protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
 
-        mAdapter = hub.getVideoAdapter();
+        mAdapter = hub.getFeedVideoAdapter();
         if (mAdapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
 
@@ -225,7 +247,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
 
                 Log.v(TAG, "invokeLoadFinish");
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoLoadFinish(PubnativeNetworkVideo.this);
+                    mListener.onPubnativeNetworkFeedVideoLoadFinish(PubnativeNetworkFeedVideo.this);
                 }
             }
         });
@@ -240,7 +262,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoLoadFail(PubnativeNetworkVideo.this, exception);
+                    mListener.onPubnativeNetworkFeedVideoLoadFail(PubnativeNetworkFeedVideo.this, exception);
                 }
                 mListener = null;
             }
@@ -256,7 +278,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoShow(PubnativeNetworkVideo.this);
+                    mListener.onPubnativeNetworkFeedVideoShow(PubnativeNetworkFeedVideo.this);
                 }
             }
         });
@@ -271,7 +293,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoClick(PubnativeNetworkVideo.this);
+                    mListener.onPubnativeNetworkFeedVideoClick(PubnativeNetworkFeedVideo.this);
                 }
             }
         });
@@ -286,22 +308,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoHide(PubnativeNetworkVideo.this);
-                }
-            }
-        });
-    }
-
-    protected void invokeVideoStart() {
-
-        Log.v(TAG, "invokeVideoStart");
-        mHandler.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoStart(PubnativeNetworkVideo.this);
+                    mListener.onPubnativeNetworkFeedVideoHide(PubnativeNetworkFeedVideo.this);
                 }
             }
         });
@@ -316,7 +323,22 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkVideoFinish(PubnativeNetworkVideo.this);
+                    mListener.onPubnativeNetworkFeedVideoFinish(PubnativeNetworkFeedVideo.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeVideoStart() {
+
+        Log.v(TAG, "invokeVideoFinish");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkFeedVideoStart(PubnativeNetworkFeedVideo.this);
                 }
             }
         });
@@ -325,22 +347,28 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-    // PubnativeNetworkVideoAdapter.LoadListener
+    // PubnativeNetworkFeedVideoAdapter.LoadListener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onAdapterLoadFinish(PubnativeNetworkVideoAdapter video) {
+    public void onAdapterLoadFinish(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "onAdapterLoadFinish");
+        mIsLoading = false;
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        video.setAdListener(this);
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
-        invokeLoadFinish();
+        if(feedVideo == null) {
+            invokeLoadFail(PubnativeException.PLACEMENT_NO_FILL);
+        } else {
+            feedVideo.setAdListener(this);
+            invokeLoadFinish();
+        }
     }
 
     @Override
-    public void onAdapterLoadFail(PubnativeNetworkVideoAdapter video, Exception exception) {
+    public void onAdapterLoadFail(PubnativeNetworkFeedVideoAdapter feedVideo, Exception exception) {
 
         Log.v(TAG, "onAdapterLoadFail");
+        mIsLoading = false;
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         if (exception == PubnativeException.ADAPTER_TIMEOUT) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
@@ -350,45 +378,44 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
         getNextNetwork();
     }
 
-    // PubnativeNetworkVideoAdapter.AdListener
-    //----------------------------------------------------------------------------------------------
+    //==============================================================================================
+    // PubnativeNetworkFeedVideoAdapter.AdListener
+    //==============================================================================================
     @Override
-    public void onAdapterShow(PubnativeNetworkVideoAdapter video) {
+    public void onAdapterShow(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "onAdapterShow");
         invokeShow();
     }
 
     @Override
-    public void onAdapterImpressionConfirmed(PubnativeNetworkVideoAdapter video) {
+    public void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "onAdapterImpressionConfirmed");
     }
 
     @Override
-    public void onAdapterClick(PubnativeNetworkVideoAdapter video) {
+    public void onAdapterClick(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "onAdapterClick");
         invokeClick();
     }
 
     @Override
-    public void onAdapterHide(PubnativeNetworkVideoAdapter video) {
+    public void onAdapterHide(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "onAdapterHide");
         invokeHide();
     }
 
     @Override
-    public void onAdapterVideoStart(PubnativeNetworkVideoAdapter interstitial) {
-
+    public void onAdapterVideoStart(PubnativeNetworkFeedVideoAdapter feedVideo) {
         Log.v(TAG, "onAdapterVideoStart");
         invokeVideoStart();
     }
 
     @Override
-    public void onAdapterVideoFinish(PubnativeNetworkVideoAdapter interstitial) {
-
+    public void onAdapterVideoFinish(PubnativeNetworkFeedVideoAdapter feedVideo) {
         Log.v(TAG, "onAdapterVideoFinish");
         invokeVideoFinish();
     }
