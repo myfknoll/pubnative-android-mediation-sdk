@@ -82,6 +82,13 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
          *
          * @param video video that has been stopped
          */
+        void onPubnativeNetworkVideoStart(PubnativeNetworkVideo video);
+
+        /**
+         * Called whenever the video finishes
+         *
+         * @param video video that has been stopped
+         */
         void onPubnativeNetworkVideoFinish(PubnativeNetworkVideo video);
 
         /**
@@ -285,6 +292,36 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
         });
     }
 
+    protected void invokeVideoStart() {
+
+        Log.v(TAG, "invokeVideoStart");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkVideoStart(PubnativeNetworkVideo.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeVideoFinish() {
+
+        Log.v(TAG, "invokeVideoFinish");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkVideoFinish(PubnativeNetworkVideo.this);
+                }
+            }
+        });
+    }
+
     //==============================================================================================
     // Callbacks
     //==============================================================================================
@@ -340,5 +377,19 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onAdapterHide");
         invokeHide();
+    }
+
+    @Override
+    public void onAdapterVideoStart(PubnativeNetworkVideoAdapter interstitial) {
+
+        Log.v(TAG, "onAdapterVideoStart");
+        invokeVideoStart();
+    }
+
+    @Override
+    public void onAdapterVideoFinish(PubnativeNetworkVideoAdapter interstitial) {
+
+        Log.v(TAG, "onAdapterVideoFinish");
+        invokeVideoFinish();
     }
 }

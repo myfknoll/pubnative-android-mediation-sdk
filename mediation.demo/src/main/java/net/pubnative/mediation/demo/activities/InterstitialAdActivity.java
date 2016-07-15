@@ -3,10 +3,7 @@ package net.pubnative.mediation.demo.activities;
 import android.util.Log;
 import android.view.View;
 
-import net.pubnative.library.interstitial.PubnativeInterstitial;
 import net.pubnative.mediation.demo.Settings;
-import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
-import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
 import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
 
 public class InterstitialAdActivity extends StandardAdUnitActivity implements PubnativeNetworkInterstitial.Listener {
