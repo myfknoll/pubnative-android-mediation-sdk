@@ -140,6 +140,17 @@ public abstract class PubnativeAdModel {
      */
     public abstract View getAdvertisingDisclosureView(Context context);
 
+    /**
+     * set native ad that may contain video & rich media (facebook network only)
+     *
+     * @param view view
+     *
+     * @return View view that will have rich media including video.
+     */
+    public View setNativeAd(View view){
+        return null;
+    };
+
     //----------------------------------------------------------------------------------------------
     // VIEW TRACKING
     //----------------------------------------------------------------------------------------------

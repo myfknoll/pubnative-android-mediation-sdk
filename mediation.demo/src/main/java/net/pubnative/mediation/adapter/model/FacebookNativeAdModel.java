@@ -33,6 +33,7 @@ import com.facebook.ads.AdChoicesView;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
 import com.facebook.ads.ImpressionListener;
+import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.request.model.PubnativeAdModel;
@@ -140,6 +141,21 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         }
         return result;
     }
+
+    @Override
+    public View setNativeAd(View view) {
+
+        Log.v(TAG, "setNativeAd");
+        View result = null;
+        if (view != null && mNativeAd != null && view instanceof MediaView) {
+            MediaView mediaView = (MediaView) view;
+            mediaView.setNativeAd(mNativeAd);
+            return mediaView;
+        }
+        return result;
+    }
+
+    //----------------------------------------------------------------------------------------------
     // Tracking
     //----------------------------------------------------------------------------------------------
 
