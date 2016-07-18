@@ -63,8 +63,8 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
         /**
          * Called whenever the video failed loading an ad
          *
-         * @param video video that failed the initialize
-         * @param exception    exception with the description of the initialize error
+         * @param video     video that failed the initialize
+         * @param exception exception with the description of the initialize error
          */
         void onAdapterLoadFail(PubnativeNetworkVideoAdapter video, Exception exception);
     }
@@ -116,10 +116,10 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
          */
         void onAdapterVideoFinish(PubnativeNetworkVideoAdapter video);
     }
+
     //==============================================================================================
     // Overridable methods
     //==============================================================================================
-
     public void setLoadListener(PubnativeNetworkVideoAdapter.LoadListener listener) {
 
         Log.v(TAG, "setLoadListener");
@@ -147,10 +147,10 @@ public abstract class PubnativeNetworkVideoAdapter extends PubnativeNetworkAdapt
         startTimeout(timeoutInMillis);
         load(context);
     }
+
     //==============================================================================================
     // Abstract
     //==============================================================================================
-
     /**
      * Starts loading the video ad
      *

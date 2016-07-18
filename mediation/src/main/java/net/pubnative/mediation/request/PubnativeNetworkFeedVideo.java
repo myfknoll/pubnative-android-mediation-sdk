@@ -59,7 +59,6 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
 
         /**
          * Called whenever the feedVideo finished loading an ad
-         * w
          *
          * @param feedVideo feedVideo that finished the initialize
          */
@@ -189,7 +188,7 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
             mIsShown = true;
             mAdapter.show(container);
         } else {
-            Log.w(TAG, "show - the ad is not loaded yet");
+            Log.w(TAG, "show - the feed video is not loaded yet");
         }
     }
 
@@ -203,10 +202,10 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
             mAdapter.hide();
         }
     }
+
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================
-
     @Override
     protected void onWaterfallLoadFinish(boolean pacingActive) {
 
@@ -353,7 +352,7 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
 
     protected void invokeVideoStart() {
 
-        Log.v(TAG, "invokeVideoFinish");
+        Log.v(TAG, "invokeVideoStart");
         mHandler.post(new Runnable() {
 
             @Override
@@ -414,6 +413,7 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
     public void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "onAdapterImpressionConfirmed");
+        invokeImpressionConfirmed();
     }
 
     @Override

@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
 
     public void onVideoClick(View view) {
 
-        Log.v(TAG, "onBannerClick");
+        Log.v(TAG, "onVideoClick");
         // Launch video activity
         Intent intent = new Intent(this, VideoAdActivity.class);
         startActivity(intent);
@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
 
     public void onFeedVideoClick(View view) {
 
-        Log.v(TAG, "onBannerClick");
+        Log.v(TAG, "onFeedVideoClick");
         // Launch feed video activity
         Intent intent = new Intent(this, FeedVideoActivity.class);
         startActivity(intent);
