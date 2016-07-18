@@ -66,6 +66,12 @@ public class VideoAdActivity extends StandardAdUnitActivity implements Pubnative
     }
 
     @Override
+    public void onPubnativeNetworkVideoImpressionConfirmed(PubnativeNetworkVideo video) {
+        Log.v(TAG, "onPubnativeNetworkVideoImpressionConfirmed");
+        showToast("impression confirmed");
+    }
+
+    @Override
     public void onPubnativeNetworkVideoHide(PubnativeNetworkVideo video) {
         Log.v(TAG, "onPubnativeNetworkVideoHide");
         showToast("video hide");

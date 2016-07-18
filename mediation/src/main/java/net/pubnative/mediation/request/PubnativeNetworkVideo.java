@@ -56,7 +56,6 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
 
         /**
          * Called whenever the video finished loading an ad
-         * w
          *
          * @param video video that finished the initialize
          */
@@ -99,16 +98,24 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
         void onPubnativeNetworkVideoClick(PubnativeNetworkVideo video);
 
         /**
+         * Called when the impression is confirmed
+         *
+         * @param video video that was clicked
+         */
+        void onPubnativeNetworkVideoImpressionConfirmed(PubnativeNetworkVideo video);
+
+
+        /**
          * Called whenever the video was removed from the screen
          *
          * @param video video that was hidden
          */
         void onPubnativeNetworkVideoHide(PubnativeNetworkVideo video);
     }
+
     //==============================================================================================
     // Public methods
     //==============================================================================================
-
     /**
      * Sets a callback listener for this video object
      *
@@ -147,7 +154,6 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
 
     /**
      * Tells if the video is ready to be shown
-     *
      * @return true if ready, false if not
      */
     public synchronized boolean isReady() {
@@ -174,10 +180,10 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             mAdapter.show();
         }
     }
+
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================
-
     @Override
     protected void onWaterfallLoadFinish(boolean pacingActive) {
 
@@ -257,6 +263,21 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
 
                 if (mListener != null) {
                     mListener.onPubnativeNetworkVideoShow(PubnativeNetworkVideo.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeImpressionConfirmed() {
+
+        Log.v(TAG, "invokeImpressionConfirmed");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkVideoImpressionConfirmed(PubnativeNetworkVideo.this);
                 }
             }
         });
@@ -363,6 +384,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     public void onAdapterImpressionConfirmed(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterImpressionConfirmed");
+        invokeImpressionConfirmed();
     }
 
     @Override

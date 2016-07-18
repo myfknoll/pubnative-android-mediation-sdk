@@ -12,14 +12,14 @@ import net.pubnative.mediation.request.PubnativeNetworkFeedVideo;
 public class FeedVideoActivity extends StandardAdUnitActivity implements PubnativeNetworkFeedVideo.Listener {
 
     private static final String TAG = FeedVideoActivity.class.getSimpleName();
-    private RelativeLayout mFeedBannerView;
+    private RelativeLayout mFeedVideoView;
     private PubnativeNetworkFeedVideo mFeedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.layout_infeed_banner, mBlankContainer);
-        mFeedBannerView = (RelativeLayout) findViewById(R.id.infeed_banner_container);
+        mFeedVideoView = (RelativeLayout) findViewById(R.id.infeed_banner_container);
     }
 
     public void onRequestClick(View v) {
@@ -40,7 +40,7 @@ public class FeedVideoActivity extends StandardAdUnitActivity implements Pubnati
     public void onPubnativeNetworkFeedVideoLoadFinish(PubnativeNetworkFeedVideo feedVideo) {
         Log.v(TAG, "onPubnativeNetworkFeedVideoLoadFinish");
         mLoaderContainer.setVisibility(View.GONE);
-        feedVideo.show(mFeedBannerView);
+        feedVideo.show(mFeedVideoView);
         showToast("Feed Video loaded");
     }
 
@@ -61,12 +61,20 @@ public class FeedVideoActivity extends StandardAdUnitActivity implements Pubnati
 
     @Override
     public void onPubnativeNetworkFeedVideoFinish(PubnativeNetworkFeedVideo feedVideo) {
-
+        Log.v(TAG, "onPubnativeNetworkFeedVideoFinish");
+        showToast("Feed Video finished");
     }
 
     @Override
     public void onPubnativeNetworkFeedVideoStart(PubnativeNetworkFeedVideo feedVideo) {
+        Log.v(TAG, "onPubnativeNetworkFeedVideoStart");
+        showToast("Feed Video started");
+    }
 
+    @Override
+    public void onPubnativeNetworkFeedVideoImpressionConfirmed(PubnativeNetworkFeedVideo feedVideo) {
+        Log.v(TAG, "onPubnativeNetworkFeedVideoStart");
+        showToast("Feed Video impression confirmed");
     }
 
     @Override

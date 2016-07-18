@@ -40,58 +40,58 @@ public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkA
     protected LoadListener mLoadListener;
 
     /**
-     * Interface for callbacks related to the feedBanner view behaviour
+     * Interface for callbacks related to the feedVideo view behaviour
      */
     public interface LoadListener {
 
         /**
-         * Called whenever the feedBanner finished loading an ad
+         * Called whenever the feedVideo finished loading an ad
          *
-         * @param feedBanner feedBanner that finished the initialize
+         * @param feedVideo feedVideo that finished the initialize
          */
-        void onAdapterLoadFinish(PubnativeNetworkFeedVideoAdapter feedBanner);
+        void onAdapterLoadFinish(PubnativeNetworkFeedVideoAdapter feedVideo);
 
         /**
-         * Called whenever the feedBanner failed loading an ad
+         * Called whenever the feedVideo failed loading an ad
          *
-         * @param feedBanner   feedBanner that failed the initialize
+         * @param feedVideo   feedVideo that failed the initialize
          * @param exception    exception with the description of the initialize error
          */
-        void onAdapterLoadFail(PubnativeNetworkFeedVideoAdapter feedBanner, Exception exception);
+        void onAdapterLoadFail(PubnativeNetworkFeedVideoAdapter feedVideo, Exception exception);
     }
 
     /**
-     * Interface for callbacks related to the feedBanner view behaviour
+     * Interface for callbacks related to the feedVideo view behaviour
      */
     public interface AdListener {
 
         /**
-         * Called when the feedBanner was just shown on the screen
+         * Called when the feedVideo was just shown on the screen
          *
-         * @param feedBanner feedBanner that was shown in the screen
+         * @param feedVideo feedVideo that was shown in the screen
          */
-        void onAdapterShow(PubnativeNetworkFeedVideoAdapter feedBanner);
+        void onAdapterShow(PubnativeNetworkFeedVideoAdapter feedVideo);
 
         /**
-         * Called when the feedBanner impression was confirmed
+         * Called when the feedVideo impression was confirmed
          *
-         * @param feedBanner feedBanner which impression was confirmed
+         * @param feedVideo feedVideo which impression was confirmed
          */
-        void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter feedBanner);
+        void onAdapterImpressionConfirmed(PubnativeNetworkFeedVideoAdapter feedVideo);
 
         /**
-         * Called whenever the feedBanner was clicked by the user
+         * Called whenever the feedVideo was clicked by the user
          *
-         * @param feedBanner feedBanner that was clicked
+         * @param feedVideo feedVideo that was clicked
          */
-        void onAdapterClick(PubnativeNetworkFeedVideoAdapter feedBanner);
+        void onAdapterClick(PubnativeNetworkFeedVideoAdapter feedVideo);
 
         /**
-         * Called whenever the feed banner was removed from the screen
+         * Called whenever the feed video was removed from the screen
          *
-         * @param feedBanner feedBanner that was hidden
+         * @param feedVideo feedVideo that was hidden
          */
-        void onAdapterHide(PubnativeNetworkFeedVideoAdapter feedBanner);
+        void onAdapterHide(PubnativeNetworkFeedVideoAdapter feedVideo);
 
         /**
          * Called whenever the feedVideo was removed from the screen
@@ -151,7 +151,7 @@ public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkA
     // Abstract
     //==============================================================================================
     /**
-     * Starts loading the feedBanner ad
+     * Starts loading the feedVideo ad
      *
      * @param context valid Context
      *
@@ -159,37 +159,37 @@ public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkA
     public abstract void load(Context context);
 
     /**
-     * Tells if the feedBanner is ready to be shown in the screen
+     * Tells if the feedVideo is ready to be shown in the screen
      *
      * @return true if ready, false if not
      */
     public abstract boolean isReady();
 
     /**
-     * Starts showing the feedBanner for the adapted network
-     * @param container valid container for the feed banner
+     * Starts showing the feedVideo for the adapted network
+     * @param container valid container for the feed video
      */
     public abstract void show(ViewGroup container);
 
     /**
-     * Destroys the current feedBanner for the adapted network
+     * Destroys the current feedVideo for the adapted network
      */
     public abstract void destroy();
 
     /**
-     * Hides the current feedBanner for the adapted network
+     * Hides the current feedVideo for the adapted network
      */
     public abstract void hide();
 
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeLoadFinish(PubnativeNetworkFeedVideoAdapter feedBanner) {
+    protected void invokeLoadFinish(PubnativeNetworkFeedVideoAdapter feedVideo) {
 
         Log.v(TAG, "invokeLoadFinish");
         cancelTimeout();
         if (mLoadListener != null) {
-            mLoadListener.onAdapterLoadFinish(feedBanner);
+            mLoadListener.onAdapterLoadFinish(feedVideo);
         }
     }
 

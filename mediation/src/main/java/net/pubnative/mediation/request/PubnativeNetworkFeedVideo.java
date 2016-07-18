@@ -95,6 +95,13 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
         void onPubnativeNetworkFeedVideoStart(PubnativeNetworkFeedVideo feedVideo);
 
         /**
+         * Called when impression is confirmed
+         *
+         * @param feedVideo feedVideo which impression was confirmed
+         */
+        void onPubnativeNetworkFeedVideoImpressionConfirmed(PubnativeNetworkFeedVideo feedVideo);
+
+        /**
          * Called whenever the feedVideo was clicked by the user
          *
          * @param feedVideo feedVideo that was clicked
@@ -279,6 +286,21 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
 
                 if (mListener != null) {
                     mListener.onPubnativeNetworkFeedVideoShow(PubnativeNetworkFeedVideo.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeImpressionConfirmed() {
+
+        Log.v(TAG, "invokeImpressionConfirmed");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkFeedVideoImpressionConfirmed(PubnativeNetworkFeedVideo.this);
                 }
             }
         });
