@@ -39,6 +39,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class,
@@ -267,6 +268,34 @@ public class PubnativeNetworkVideoTest {
     }
 
     @Test
+    public void load_withValidListenerAndTrueIsLoading_callBackLoadFail() {
+
+        PubnativeNetworkVideo request = spy(PubnativeNetworkVideo.class);
+        PubnativeNetworkVideo.Listener listener = spy(PubnativeNetworkVideo.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+        request.mIsLoading = true;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName");
+
+        verify(listener).onPubnativeNetworkVideoLoadFail(eq(request), eq(PubnativeException.VIDEO_LOADING));
+    }
+
+    @Test
+    public void load_withValidListenerAndTrueIsShown_callBackLoadFail() {
+
+        PubnativeNetworkVideo request = spy(PubnativeNetworkVideo.class);
+        PubnativeNetworkVideo.Listener listener = spy(PubnativeNetworkVideo.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+        request.mIsShown = true;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName");
+
+        verify(listener).onPubnativeNetworkVideoLoadFail(eq(request), eq(PubnativeException.VIDEO_SHOWN));
+    }
+
+    @Test
     public void load_withNullContextNullListener_pass() {
 
         PubnativeNetworkVideo request = spy(PubnativeNetworkVideo.class);
@@ -291,5 +320,21 @@ public class PubnativeNetworkVideoTest {
         request.mHandler = new Handler();
 
         request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
+    }
+
+    @Test
+    public void show_withoutListenerAndTrueIsLoading_pass() {
+
+        PubnativeNetworkVideo request = spy(PubnativeNetworkVideo.class);
+        request.mIsLoading = true;
+        request.show();
+    }
+
+    @Test
+    public void show_withoutListenerAndFalseIsReady_pass() {
+
+        PubnativeNetworkVideo request = spy(PubnativeNetworkVideo.class);
+        when(request.isReady()).thenReturn(false);
+        request.show();
     }
 }

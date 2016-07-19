@@ -178,6 +178,19 @@ public class PubnativeNetworkFeedVideoTest {
     }
 
     @Test
+    public void invokeHide_withValidListener_callbackHide() {
+
+        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
+        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+
+        request.invokeHide();
+
+        verify(listener).onPubnativeNetworkFeedVideoHide(eq(request));
+    }
+
+    @Test
     public void invokeVideoFinish_withValidListener_callbackVideoFinish() {
 
         PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
@@ -269,6 +282,34 @@ public class PubnativeNetworkFeedVideoTest {
     }
 
     @Test
+    public void load_withValidListnerAndTrueIsLoading_callBackLoadFail() {
+
+        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
+        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+        request.mIsLoading = true;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName");
+
+        verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_LOADING));
+    }
+
+    @Test
+    public void load_withValidListnerAndTrueIsShown_callBackLoadFail() {
+
+        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
+        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+        request.mIsShown = true;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName");
+
+        verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_SHOWN));
+    }
+
+    @Test
     public void load_withNullContextNullListener_pass() {
 
         PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
@@ -297,12 +338,30 @@ public class PubnativeNetworkFeedVideoTest {
 
     @Test
     public void show_withNullContainer_pass() {
+
         PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
         request.show(null);
     }
 
     @Test
-    public void show_withNotReadyAd_pass() {
+    public void show_withoutListenerAndTrueIsLoading_pass() {
+
+        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
+        request.mIsLoading = true;
+        request.show(mock(RelativeLayout.class));
+    }
+
+    @Test
+    public void show_withoutListenerAndTrueIsShown_pass() {
+
+        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
+        request.mIsShown = true;
+        request.show(mock(RelativeLayout.class));
+    }
+
+    @Test
+    public void show_withoutListenerAndFalseIsReady_pass() {
+
         PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
         when(request.isReady()).thenReturn(false);
         request.show(mock(RelativeLayout.class));
