@@ -163,6 +163,7 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
     public void onDisplay(FlurryAdInterstitial flurryAdInterstitial) {
 
         Log.v(TAG, "onDisplay");
+        invokeVideoStart();
         invokeImpressionConfirmed();
     }
 
@@ -190,6 +191,7 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
     public void onVideoCompleted(FlurryAdInterstitial flurryAdInterstitial) {
 
         Log.v(TAG, "onVideoCompleted");
+        invokeVideoFinish();
     }
 
     @Override

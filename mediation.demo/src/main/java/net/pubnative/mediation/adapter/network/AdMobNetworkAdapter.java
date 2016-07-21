@@ -29,7 +29,7 @@ public class AdMobNetworkAdapter extends PubnativeNetworkHub {
 
     @Override
     public PubnativeNetworkVideoAdapter getVideoAdapter() {
-        return null;
+        return new AdMobNetworkVideoAdapter(mNetworkData);
     }
 
     @Override

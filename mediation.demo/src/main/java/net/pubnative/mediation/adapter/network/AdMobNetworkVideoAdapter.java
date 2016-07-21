@@ -13,18 +13,18 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 
-public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
+public class AdMobNetworkVideoAdapter extends PubnativeNetworkVideoAdapter {
 
-    private static final   String TAG           = AdMobNetworkInterstitialAdapter.class.getSimpleName();
+    private static final   String TAG           = AdMobNetworkVideoAdapter.class.getSimpleName();
     protected static final String ADMOB_UNIT_ID = "unit_id";
     protected InterstitialAd mInterstitial;
 
     /**
-     * Creates a new instance of AdMobNetworkRequestAdapter
+     * Creates a new instance of AdMobNetworkVideoAdapter
      *
      * @param data server configured data for the current adapter network.
      */
-    public AdMobNetworkInterstitialAdapter(Map data) {
+    public AdMobNetworkVideoAdapter(Map data) {
 
         super(data);
     }
@@ -78,7 +78,7 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         } else {
             mInterstitial = new InterstitialAd(context);
             mInterstitial.setAdUnitId(unitID);
-            mInterstitial.setAdListener(new InterstitialAdListener());
+            mInterstitial.setAdListener(new VideoAdListener());
             mInterstitial.loadAd(getAdRequest());
         }
     }
@@ -109,12 +109,13 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     //==============================================================================================
     // AdListener
     //----------------------------------------------------------------------------------------------
-    protected class InterstitialAdListener extends com.google.android.gms.ads.AdListener {
+    protected class VideoAdListener extends com.google.android.gms.ads.AdListener {
 
         @Override
         public void onAdClosed() {
 
             Log.v(TAG, "onAdClosed");
+            invokeVideoFinish();
             invokeHide();
         }
 
@@ -122,7 +123,7 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         public void onAdFailedToLoad(int var1) {
 
             Log.v(TAG, "onAdFailedToLoad");
-            invokeLoadFail(PubnativeException.INTERSTITIAL_LOADING);
+            invokeLoadFail(PubnativeException.VIDEO_LOADING);
         }
 
         @Override
@@ -137,6 +138,7 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
 
             Log.v(TAG, "onAdOpened");
             invokeShow();
+            invokeVideoStart();
         }
 
         @Override
