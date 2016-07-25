@@ -2,6 +2,7 @@ engines:
   checkstyle:
     enabled: true 
     config: 'config/checkstyle/checkstyle.xml'
+    channel: 'beta'
   
 exclude_paths: [
   "build/",
