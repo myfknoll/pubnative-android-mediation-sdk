@@ -16,7 +16,7 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     protected AdListener mAdListener;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of PubnativeNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -28,16 +28,16 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     public interface LoadListener {
 
         /**
-         * Called whenever the banner finished loading an ad
+         * Called whenever the banner finished loading an ad.
          *
          * @param banner banner that finished the initialize.
          */
         void onAdapterLoadFinish(PubnativeNetworkBannerAdapter banner);
 
         /**
-         * Called whenever the banner failed loading an ad
+         * Called whenever the banner failed loading an ad.
          *
-         * @param banner banner that failed the initialize
+         * @param banner banner that failed the initialize.
          * @param exception    exception with the description of the initialize error.
          */
         void onAdapterLoadFail(PubnativeNetworkBannerAdapter banner, Exception exception);
@@ -47,21 +47,21 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     public interface AdListener {
 
         /**
-         * Called when the banner was just shown on the screen
+         * Called when the banner was just shown on the screen.
          *
          * @param banner banner that was shown in the screen.
          */
         void onAdapterShow(PubnativeNetworkBannerAdapter banner);
 
         /**
-         * Called when the banner impression was confrimed
+         * Called when the banner impression was confrimed.
          *
          * @param banner banner which impression was confirmed.
          */
         void onAdapterImpressionConfirmed(PubnativeNetworkBannerAdapter banner);
 
         /**
-         * Called whenever the banner was clicked by the user
+         * Called whenever the banner was clicked by the user.
          *
          * @param banner banner that was clicked.
          */
@@ -111,7 +111,7 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     //==============================================================================================
 
     /**
-     * Starts loading the interstitial ad
+     * Starts loading the interstitial ad.
      *
      * @param context valid Context.
      */
@@ -128,7 +128,7 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     public abstract void destroy();
 
     /**
-     * Tells if the interstitial is ready to be shown in the screen
+     * Tells if the interstitial is ready to be shown in the screen.
      *
      * @return true if it's ready, false if it's not.
      */

@@ -35,9 +35,9 @@ public class PubnativeNetworkHubFactory {
     protected static final String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
     /**
-     * Creates a new hub instance by using the values passed in using model
+     * Creates a new hub instance by using the values passed in using model.
      *
-     * @param model network model that contains the values needed for creating the hub
+     * @param model network model that contains the values needed for creating the hub.
      *
      * @return instance of PubnativeNetworkHub if created, else null.
      */
