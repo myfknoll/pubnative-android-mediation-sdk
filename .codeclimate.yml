@@ -5,6 +5,8 @@ engines:
     channel: 'beta'
   
 exclude_paths: [
-  "build/",
-  "src/test/"
+  "build/"
+  "mediation/src/test/"
+  "mediation.adaters/"
+  "mediation.demo/src/main/java/net/pubnative/mediation/demo/"
 ]

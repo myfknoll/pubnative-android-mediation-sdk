@@ -54,29 +54,29 @@ public abstract class PubnativeAdModel {
     //==============================================================================================
 
     /**
-     * Listener with all callbacks of the model
+     * Listener with all callbacks of the model.
      */
     public interface Listener {
 
         /**
-         * Callback that will be invoked when the impression is confirmed
+         * Callback that will be invoked when the impression is confirmed.
          *
-         * @param model model where the impression was confirmed
+         * @param model model where the impression was confirmed.
          */
         void onAdImpressionConfirmed(PubnativeAdModel model);
 
         /**
-         * Callback that will be invoked when the ad click was detected
+         * Callback that will be invoked when the ad click was detected.
          *
-         * @param model model where the click was confirmed
+         * @param model model where the click was confirmed.
          */
         void onAdClick(PubnativeAdModel model);
     }
 
     /**
-     * Sets the a listener for tracking callbacks
+     * Sets the a listener for tracking callbacks.
      *
-     * @param listener valid Listener
+     * @param listener valid Listener.
      */
     public void setListener(PubnativeAdModel.Listener listener) {
 
@@ -90,51 +90,51 @@ public abstract class PubnativeAdModel {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * gets title of the current ad
+     * gets title of the current ad.
      *
-     * @return short string with ad title
+     * @return short string with ad title.
      */
     public abstract String getTitle();
 
     /**
-     * gets description of the current ad
+     * gets description of the current ad.
      *
-     * @return long string with ad details
+     * @return long string with ad details.
      */
     public abstract String getDescription();
 
     /**
-     * gets the URL where to download the ad icon from
+     * gets the URL where to download the ad icon from.
      *
-     * @return icon URL string
+     * @return icon URL string.
      */
     public abstract String getIconUrl();
 
     /**
-     * gets the URL where to download the ad banner from
+     * gets the URL where to download the ad banner from.
      *
-     * @return banner URL string
+     * @return banner URL string.
      */
     public abstract String getBannerUrl();
 
     /**
-     * gets the call to action string (download, free, etc)
+     * gets the call to action string (download, free, etc).
      *
-     * @return call to action string
+     * @return call to action string.
      */
     public abstract String getCallToAction();
 
     /**
-     * gets the star rating in a base of 5 stars
+     * gets the star rating in a base of 5 stars.
      *
      * @return float with value between 0.0 and 5.0
      */
     public abstract float getStarRating();
 
     /**
-     * gets the advertising disclosure item for the current network (Ad choices, Sponsor label, etc)
+     * gets the advertising disclosure item for the current network (Ad choices, Sponsor label, etc).
      *
-     * @param context context
+     * @param context context.
      *
      * @return Disclosure view to be added on top of the ad.
      */
@@ -145,11 +145,11 @@ public abstract class PubnativeAdModel {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Sets the title view for tracking
+     * Sets the title view for tracking.
      *
-     * @param view valid View containing the title
+     * @param view valid View containing the title.
      *
-     * @return this object
+     * @return this object.
      */
     public PubnativeAdModel withTitle(View view) {
 
@@ -159,11 +159,11 @@ public abstract class PubnativeAdModel {
     }
 
     /**
-     * Sets the description view for tracking
+     * Sets the description view for tracking.
      *
-     * @param view valid View containing the description
+     * @param view valid View containing the description.
      *
-     * @return this object
+     * @return this object.
      */
     public PubnativeAdModel withDescription(View view) {
 
@@ -173,11 +173,11 @@ public abstract class PubnativeAdModel {
     }
 
     /**
-     * Sets the icon view for tracking
+     * Sets the icon view for tracking.
      *
-     * @param view valid View containing the icon
+     * @param view valid View containing the icon.
      *
-     * @return this object
+     * @return this object.
      */
     public PubnativeAdModel withIcon(View view) {
 
@@ -187,11 +187,11 @@ public abstract class PubnativeAdModel {
     }
 
     /**
-     * Sets the banner view for tracking
+     * Sets the banner view for tracking.
      *
-     * @param view valid View containing the banner
+     * @param view valid View containing the banner.
      *
-     * @return this object
+     * @return this object.
      */
     public PubnativeAdModel withBanner(View view) {
 
@@ -201,11 +201,11 @@ public abstract class PubnativeAdModel {
     }
 
     /**
-     * Sets the rating view for tracking
+     * Sets the rating view for tracking.
      *
-     * @param view valid View containing the rating
+     * @param view valid View containing the rating.
      *
-     * @return this object
+     * @return this object.
      */
     public PubnativeAdModel withRating(View view) {
 
@@ -215,11 +215,11 @@ public abstract class PubnativeAdModel {
     }
 
     /**
-     * Sets the call to action view for tracking
+     * Sets the call to action view for tracking.
      *
-     * @param view valid View containing the call to action
+     * @param view valid View containing the call to action.
      *
-     * @return this object
+     * @return this object.
      */
     public PubnativeAdModel withCallToAction(View view) {
 
@@ -233,15 +233,15 @@ public abstract class PubnativeAdModel {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Start tracking a view to automatically confirm impressions and handle clicks
+     * Start tracking a view to automatically confirm impressions and handle clicks.
      *
-     * @param context context
-     * @param adView  view that will handle clicks and will be tracked to confirm impression
+     * @param context context.
+     * @param adView  view that will handle clicks and will be tracked to confirm impression.
      */
     public abstract void startTracking(Context context, ViewGroup adView);
 
     /**
-     * Stop using the view for confirming impression and handle clicks
+     * Stop using the view for confirming impression and handle clicks.
      */
     public abstract void stopTracking();
     //==============================================================================================
@@ -249,9 +249,9 @@ public abstract class PubnativeAdModel {
     //==============================================================================================
 
     /**
-     * Sets extended tracking (used to initialize the view)
+     * Sets extended tracking (used to initialize the view.
      *
-     * @param insightModel insight model with all the tracking data
+     * @param insightModel insight model with all the tracking data.
      */
     public void setInsightModel(PubnativeInsightModel insightModel) {
 
@@ -259,7 +259,8 @@ public abstract class PubnativeAdModel {
         mInsightModel = insightModel;
         // We set the creative based on  the model creative
         if (mInsightModel != null) {
-            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mInsightModel.getAdFormat())) {
+            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(
+                                                mInsightModel.getAdFormat())) {
                 mInsightModel.setCreativeUrl(getIconUrl());
             } else {
                 mInsightModel.setCreativeUrl(getBannerUrl());

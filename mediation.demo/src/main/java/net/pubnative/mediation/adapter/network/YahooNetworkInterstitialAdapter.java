@@ -34,10 +34,9 @@ import com.flurry.android.ads.FlurryAdInterstitialListener;
 import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
         implements FlurryAdInterstitialListener {
@@ -192,7 +191,9 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     }
 
     @Override
-    public void onError(FlurryAdInterstitial flurryAdInterstitial, FlurryAdErrorType flurryAdErrorType, int i) {
+    public void onError(FlurryAdInterstitial flurryAdInterstitial,
+                        FlurryAdErrorType flurryAdErrorType,
+                        int i) {
 
         Log.v(TAG, "onError: " + i);
         invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);

@@ -29,9 +29,9 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import net.pubnative.library.feed.banner.PubnativeFeedBanner;
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.Map;
+
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class PubnativeLibraryNetworkFeedBannerAdapter
         extends PubnativeNetworkFeedBannerAdapter implements PubnativeFeedBanner.Listener {
@@ -122,7 +122,8 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     }
 
     @Override
-    public void onPubnativeFeedBannerLoadFailed(PubnativeFeedBanner feedBanner, Exception exception) {
+    public void onPubnativeFeedBannerLoadFailed(PubnativeFeedBanner feedBanner, Exception exception)
+    {
 
         Log.v(TAG, "onPubnativeFeedBannerLoadFailed");
         invokeLoadFail(exception);

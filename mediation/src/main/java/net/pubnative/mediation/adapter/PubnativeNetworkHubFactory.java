@@ -25,21 +25,21 @@ package net.pubnative.mediation.adapter;
 
 import android.util.Log;
 
-import net.pubnative.mediation.config.model.PubnativeNetworkModel;
-
 import java.lang.reflect.Constructor;
+
+import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 
 public class PubnativeNetworkHubFactory {
 
     private static         String TAG             = PubnativeNetworkHubFactory.class.getSimpleName();
-    protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
+    protected static final String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
     /**
      * Creates a new hub instance by using the values passed in using model
      *
      * @param model network model that contains the values needed for creating the hub
      *
-     * @return instance of PubnativeNetworkHub if created, else null
+     * @return instance of PubnativeNetworkHub if created, else null.
      */
     public static PubnativeNetworkHub createHub(PubnativeNetworkModel model) {
 

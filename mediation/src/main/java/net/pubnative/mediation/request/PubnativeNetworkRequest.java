@@ -50,7 +50,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     //==============================================================================================
 
     /**
-     * Interface for request callbacks that will inform about the request status
+     * Interface for request callbacks that will inform about the request status.
      */
     public interface Listener {
 
@@ -82,7 +82,10 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
      * @param placementName valid placementId provided by Pubnative.
      * @param listener      valid Listener to keep track of request callbacks.
      */
-    public synchronized void start(Context context, String appToken, final String placementName, PubnativeNetworkRequest.Listener listener) {
+    public synchronized void start(Context context,
+                                   String appToken,
+                                   final String placementName,
+                                   PubnativeNetworkRequest.Listener listener) {
 
         Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
         if (listener == null) {
@@ -119,11 +122,15 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub,
+                                          PubnativeNetworkModel network,
+                                          Map extras) {
 
         PubnativeNetworkRequestAdapter adapter = hub.getRequestAdapter();
         if (adapter == null) {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(),
+                    0,
+                    PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             getNextNetwork();
         } else {
             adapter.setExtras(extras);
@@ -163,7 +170,8 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
 
                 mIsRunning = false;
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this, exception);
+                    mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this,
+                                                              exception);
                 }
                 mListener = null;
             }
@@ -183,12 +191,15 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter, PubnativeAdModel ad) {
+    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter,
+                                                       PubnativeAdModel ad) {
 
         Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
         if (ad == null) {
-            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, PubnativeException.REQUEST_NO_FILL);
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(),
+                                           responseTime,
+                                           PubnativeException.REQUEST_NO_FILL);
             getNextNetwork();
         } else {
             // Track succeded network
@@ -202,7 +213,8 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter, Exception exception) {
+    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter,
+                                                       Exception exception) {
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network

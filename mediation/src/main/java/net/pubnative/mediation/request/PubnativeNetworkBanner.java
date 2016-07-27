@@ -9,9 +9,8 @@ import android.util.Log;
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkBannerAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         implements PubnativeNetworkBannerAdapter.AdListener,
@@ -29,9 +28,8 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
 
         /**
          * Called whenever the banner finished loading an ad
-         * w
          *
-         * @param banner banner that finished the initialize
+         * @param banner banner that finished the initialize.
          */
         void onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner banner);
 
@@ -39,35 +37,35 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
          * Called whenever the banner failed loading an ad
          *
          * @param banner    banner that failed the initialize
-         * @param exception exception with the description of the initialize error
+         * @param exception exception with the description of the initialize error.
          */
         void onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner banner, Exception exception);
 
         /**
          * Called when the banner was just shown on the screen
          *
-         * @param banner banner that was shown in the screen
+         * @param banner banner that was shown in the screen.
          */
         void onPubnativeNetworkBannerShow(PubnativeNetworkBanner banner);
 
         /**
          * Called when the banner impression was confrimed
          *
-         * @param banner banner which impression was confirmed
+         * @param banner banner which impression was confirmed.
          */
         void onPubnativeNetworkBannerImpressionConfirmed(PubnativeNetworkBanner banner);
 
         /**
          * Called whenever the banner was clicked by the user
          *
-         * @param banner banner that was clicked
+         * @param banner banner that was clicked.
          */
         void onPubnativeNetworkBannerClick(PubnativeNetworkBanner banner);
 
         /**
          * Called whenever the banner was removed from the screen
          *
-         * @param banner banner that was hidden
+         * @param banner banner that was hidden.
          */
         void onPubnativeNetworkBannerHide(PubnativeNetworkBanner banner);
     }
@@ -79,7 +77,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Loads the interstitial ads before being shown
+     * Loads the interstitial ads before being shown.
      */
     public synchronized void load(Context context, String appToken, String placement) {
 
@@ -88,7 +86,8 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
             mHandler = new Handler(Looper.getMainLooper());
         }
         if (mListener == null) {
-            Log.w(TAG, "initialize - Warning: listener was not set, have you configured one using setListener()?");
+            Log.w(TAG, "initialize - Warning: listener was not set, have you configured one " +
+                    "using setListener()?");
         }
         if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.BANNER_PARAMETERS_INVALID);
@@ -102,7 +101,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * This method will show the banner if the ad is available
+     * This method will show the banner if the ad is available.
      */
     public synchronized void show() {
 
@@ -119,7 +118,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Tells if the banner is ready to be shown
+     * Tells if the banner is ready to be shown.
      */
     public synchronized boolean isReady() {
 
@@ -132,7 +131,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Destroy the current banner
+     * Destroy the current banner.
      */
     public void destroy() {
 
@@ -141,7 +140,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Hides the current banner
+     * Hides the current banner.
      */
     public void hide() {
 
@@ -173,11 +172,13 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network,
+                                          Map extras) {
 
         mAdapter = hub.getBannerAdapter();
         if (mAdapter == null) {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0,
+                    PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             getNextNetwork();
         } else {
             mStartTimestamp = System.currentTimeMillis();
@@ -216,7 +217,8 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner.this, exception);
+                    mListener.onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner.this,
+                            exception);
                 }
                 mListener = null;
             }
@@ -315,6 +317,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         Log.v(TAG, "onPubnativeBannerHide");
         invokeHide();
     }
+    //==============================================================================================
     // PubnativeNetworkBannerAdapter.LoadListener
     //----------------------------------------------------------------------------------------------
 

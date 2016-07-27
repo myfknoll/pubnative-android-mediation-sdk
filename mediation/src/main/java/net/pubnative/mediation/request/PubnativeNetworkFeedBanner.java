@@ -33,9 +33,9 @@ import android.view.ViewGroup;
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedBannerAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.Map;
+
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         implements PubnativeNetworkFeedBannerAdapter.AdListener,
@@ -53,15 +53,14 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     protected long                              mStartTimestamp;
 
     /**
-     * Interface for callbacks related to the feedBanner view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour.
      */
     public interface Listener {
 
         /**
          * Called whenever the feedBanner finished loading an ad
-         * w
          *
-         * @param feedBanner feedBanner that finished the initialize
+         * @param feedBanner feedBanner that finished the initialize.
          */
         void onPubnativeNetworkFeedBannerLoadFinish(PubnativeNetworkFeedBanner feedBanner);
 
@@ -69,35 +68,36 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
          * Called whenever the feedBanner failed loading an ad
          *
          * @param feedBanner feedBanner that failed the initialize
-         * @param exception  exception with the description of the initialize error
+         * @param exception  exception with the description of the initialize error.
          */
-        void onPubnativeNetworkFeedBannerLoadFail(PubnativeNetworkFeedBanner feedBanner, Exception exception);
+        void onPubnativeNetworkFeedBannerLoadFail(PubnativeNetworkFeedBanner feedBanner,
+                                                  Exception exception);
 
         /**
          * Called when the feedBanner was just shown on the screen
          *
-         * @param feedBanner feedBanner that was shown in the screen
+         * @param feedBanner feedBanner that was shown in the screen.
          */
         void onPubnativeNetworkFeedBannerShow(PubnativeNetworkFeedBanner feedBanner);
 
         /**
          * Called when the feedBanner impression was confrimed
          *
-         * @param feedBanner feedBanner which impression was confirmed
+         * @param feedBanner feedBanner which impression was confirmed.
          */
         void onPubnativeNetworkFeedBannerImpressionConfirmed(PubnativeNetworkFeedBanner feedBanner);
 
         /**
          * Called whenever the feedBanner was clicked by the user
          *
-         * @param feedBanner feedBanner that was clicked
+         * @param feedBanner feedBanner that was clicked.
          */
         void onPubnativeNetworkFeedBannerClick(PubnativeNetworkFeedBanner feedBanner);
 
         /**
          * Called whenever the feedBanner was removed from the screen
          *
-         * @param feedBanner feedBanner that was hidden
+         * @param feedBanner feedBanner that was hidden.
          */
         void onPubnativeNetworkFeedBannerHide(PubnativeNetworkFeedBanner feedBanner);
     }
@@ -108,7 +108,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     /**
      * Sets a callback listener for this feedBanner object
      *
-     * @param listener valid PubnativeNetworkFeedBanner.Listener object
+     * @param listener valid PubnativeNetworkFeedBanner.Listener object.
      */
     public void setListener(Listener listener) {
 
@@ -120,7 +120,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
      * Loads the feedBanner ads before being shown
      * @param context valid context
      * @param appToken valid app token string
-     * @param placement valid placement string
+     * @param placement valid placement string.
      */
     public synchronized void load(Context context, String appToken, String placement) {
 
@@ -129,11 +129,12 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
             mHandler = new Handler(Looper.getMainLooper());
         }
         if (mListener == null) {
-            Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
+            Log.e(TAG, "initialize - Error: listener was not set, have you configured one using " +
+                    "setListener()?");
         }
-        if (context == null ||
-            TextUtils.isEmpty(appToken) ||
-            TextUtils.isEmpty(placement)) {
+        if (context == null
+                || TextUtils.isEmpty(appToken)
+                || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.FEED_BANNER_PARAMETERS_INVALID);
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.FEED_BANNER_LOADING);
@@ -148,7 +149,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     /**
      * Tells if the feedBanner is ready to be shown
      *
-     * @return true if ready, false if not
+     * @return true if ready, false if not.
      */
     public synchronized boolean isReady() {
 
@@ -163,7 +164,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     /**
      * This method will show the feedBanner if the ad is available
      *
-     * @param container valid view group container for the banner
+     * @param container valid view group container for the banner.
      */
     public synchronized void show(ViewGroup container) {
 
@@ -183,7 +184,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Destroy the current Feed banner
+     * Destroy the current Feed banner.
      */
     public void destroy() {
 
@@ -192,7 +193,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Hides the current InFeed banner
+     * Hides the current InFeed banner.
      */
     public void hide() {
 
@@ -224,11 +225,15 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub,
+                                          PubnativeNetworkModel network,
+                                          Map extras) {
 
         mAdapter = hub.getFeedBannerAdapter();
         if (mAdapter == null) {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(),
+                    0,
+                    PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             getNextNetwork();
         } else {
             mStartTimestamp = System.currentTimeMillis();
@@ -251,7 +256,8 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
 
                 Log.v(TAG, "invokeLoadFinish");
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkFeedBannerLoadFinish(PubnativeNetworkFeedBanner.this);
+                    mListener.onPubnativeNetworkFeedBannerLoadFinish(
+                            PubnativeNetworkFeedBanner.this);
                 }
             }
         });
@@ -266,7 +272,8 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkFeedBannerLoadFail(PubnativeNetworkFeedBanner.this, exception);
+                    mListener.onPubnativeNetworkFeedBannerLoadFail(PubnativeNetworkFeedBanner.this,
+                                                                    exception);
                 }
                 mListener = null;
             }
@@ -297,7 +304,8 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkFeedBannerImpressionConfirmed(PubnativeNetworkFeedBanner.this);
+                    mListener.onPubnativeNetworkFeedBannerImpressionConfirmed(
+                            PubnativeNetworkFeedBanner.this);
                 }
             }
         });
@@ -354,7 +362,8 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     }
 
     @Override
-    public void onAdapterLoadFail(PubnativeNetworkFeedBannerAdapter feedBanner, Exception exception) {
+    public void onAdapterLoadFail(PubnativeNetworkFeedBannerAdapter feedBanner, Exception exception)
+    {
 
         Log.v(TAG, "onAdapterLoadFail");
         mIsLoading = false;

@@ -31,8 +31,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.utils.PubnativeDeviceUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +40,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 public class PubnativeHttpRequest {
 
@@ -65,7 +64,7 @@ public class PubnativeHttpRequest {
         /**
          * Called when the HttpRequest is about to execute
          *
-         * @param request request that is about to execute
+         * @param request request that is about to execute.
          */
         void onPubnativeHttpRequestStart(PubnativeHttpRequest request);
 
@@ -73,7 +72,7 @@ public class PubnativeHttpRequest {
          * Called when the HttpRequest has just finished with a valid String response
          *
          * @param request request that have just finished
-         * @param result  string with the given response from the server
+         * @param result  string with the given response from the server.
          */
         void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result);
 
@@ -81,7 +80,7 @@ public class PubnativeHttpRequest {
          * Called when the HttpRequest fails, after this method the request will be stopped
          *
          * @param request   request that have just failed
-         * @param exception exception with more info about the error
+         * @param exception exception with more info about the error.
          */
         void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception);
     }
@@ -93,7 +92,7 @@ public class PubnativeHttpRequest {
     /**
      * Sets timeout for connection and reading, if not specified default is 0 ms
      *
-     * @param timeoutInMillis time in milliseconds
+     * @param timeoutInMillis time in milliseconds.
      */
     public void setTimeout(int timeoutInMillis) {
 
@@ -112,7 +111,7 @@ public class PubnativeHttpRequest {
      *
      * @param context   valid Context object
      * @param urlString URL where the request will be done
-     * @param listener  valid Listener for callbacks
+     * @param listener  valid Listener for callbacks.
      */
     public void start(Context context, final String urlString, Listener listener) {
 
@@ -123,9 +122,11 @@ public class PubnativeHttpRequest {
             Log.w(TAG, "Warning: null listener specified, performing request without callbacks");
         }
         if (context == null) {
-            invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null context provided, dropping call"));
+            invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null context " +
+                    "provided, dropping call"));
         } else if (TextUtils.isEmpty(urlString)) {
-            invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null or empty url, dropping call"));
+            invokeFail(new IllegalArgumentException("PubnativeHttpRequest - Error: null or empty " +
+                    "url, dropping call"));
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             invokeStart();
             new Thread(new Runnable() {
@@ -170,7 +171,8 @@ public class PubnativeHttpRequest {
                 connection.setRequestMethod("POST");
                 connection.setUseCaches(false);
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Length", Integer.toString(mPOSTString.getBytes().length));
+                connection.setRequestProperty("Content-Length",
+                                              Integer.toString(mPOSTString.getBytes().length));
                 OutputStream connectionOutputStream = connection.getOutputStream();
                 OutputStreamWriter wr = new OutputStreamWriter(connectionOutputStream, "UTF-8");
                 wr.write(mPOSTString);
@@ -191,11 +193,13 @@ public class PubnativeHttpRequest {
                 Map errorData = new HashMap();
                 errorData.put("statusCode", responseCode+"");
                 try {
-                    errorData.put("errorString", stringFromInputStream(connection.getErrorStream()));
+                    errorData.put("errorString",
+                                  stringFromInputStream(connection.getErrorStream()));
                 } catch (PubnativeException ex) {
                     errorData.put("parsingException", ex.toString());
                 }
-                invokeFail(PubnativeException.extraException(PubnativeException.NETWORK_INVALID_STATUS_CODE, errorData));
+                invokeFail(PubnativeException.extraException(PubnativeException.NETWORK_INVALID_STATUS_CODE,
+                                                             errorData));
             }
         } catch (Exception exception) {
             invokeFail(exception);
@@ -230,7 +234,8 @@ public class PubnativeHttpRequest {
             }
             errorData.put("serverResponse", result);
             errorData.put("IOException", e.getMessage());
-            throw PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE, errorData);
+            throw PubnativeException.extraException(PubnativeException.NETWORK_INVALID_RESPONSE,
+                                                    errorData);
         }
         return result;
     }

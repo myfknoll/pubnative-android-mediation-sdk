@@ -27,9 +27,9 @@ import android.content.Context;
 import android.util.Log;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
-
 import java.util.Map;
+
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAdapter {
 
@@ -54,7 +54,8 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
          * @param adapter Object used for requesting the ad.
          * @param ad      Loaded ad object.
          */
-        void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter, PubnativeAdModel ad);
+        void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter,
+                                                    PubnativeAdModel ad);
 
         /**
          * Invoked when ad request is failed or when networks gives no ad.
@@ -62,7 +63,8 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
          * @param adapter   Object used for requesting the ad.
          * @param exception Exception raised with proper message to indicate request failure.
          */
-        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter, Exception exception);
+        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter,
+                                                    Exception exception);
     }
 
     /**
@@ -78,7 +80,7 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
     /**
      * Sets listener for this request
      *
-     * @param listener valid listener
+     * @param listener valid listener.
      */
     public void setListener(Listener listener) {
 

@@ -33,10 +33,11 @@ import android.util.Log;
 
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
-import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 public class PubnativeInsightDataModel {
 
@@ -174,13 +175,15 @@ public class PubnativeInsightDataModel {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Adds network insight data to the insight
+     * Adds network insight data to the insight.
      *
-     * @param priorityRuleModel valid PubnativePriorityRuleModel object
-     * @param responseTime      valid long in milliseconds
-     * @param crashModel        valid PubnativeInsightCrashModel or null
+     * @param priorityRuleModel valid PubnativePriorityRuleModel object.
+     * @param responseTime      valid long in milliseconds.
+     * @param crashModel        valid PubnativeInsightCrashModel or null.
      */
-    public void addNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime, PubnativeInsightCrashModel crashModel) {
+    public void addNetwork(PubnativePriorityRuleModel priorityRuleModel,
+                           long responseTime,
+                           PubnativeInsightCrashModel crashModel) {
 
         Log.v(TAG, "addNetwork");
         if (priorityRuleModel != null) {
@@ -200,9 +203,9 @@ public class PubnativeInsightDataModel {
     }
 
     /**
-     * Adds a network code to the attempted_networks list
+     * Adds a network code to the attempted_networks list.
      *
-     * @param network valid String
+     * @param network valid String.
      */
     public void addAttemptedNetwork(String network) {
 
@@ -216,9 +219,9 @@ public class PubnativeInsightDataModel {
     }
 
     /**
-     * Adds a network code to the unreachable_networks list
+     * Adds a network code to the unreachable_networks list.
      *
-     * @param network valid String
+     * @param network valid String.
      */
     public void addUnreachableNetwork(String network) {
 
@@ -232,7 +235,7 @@ public class PubnativeInsightDataModel {
     }
 
     /**
-     * Clear all related request tracking insight data
+     * Clear all related request tracking insight data.
      */
     public void reset() {
 
@@ -250,7 +253,7 @@ public class PubnativeInsightDataModel {
     /**
      * Fills insight data model with default available data.
      *
-     * @param context valid Context object
+     * @param context valid Context object.
      */
     public void fillDefaults(Context context) {
 
@@ -264,10 +267,13 @@ public class PubnativeInsightDataModel {
             retry = 0;
             os_version = Build.VERSION.RELEASE;
             device_name = Build.MODEL;
-            sdk_version = net.pubnative.mediation.BuildConfig.VERSION_NAME + " (" + net.pubnative.mediation.BuildConfig.VERSION_CODE + ")";
+            sdk_version = net.pubnative.mediation.BuildConfig.VERSION_NAME
+                    + " ("
+                    + net.pubnative.mediation.BuildConfig.VERSION_CODE
+                    + ")";
             // Connection type
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
-                    Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService
+                    (Context.CONNECTIVITY_SERVICE);
             if (connectivityManager != null) {
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {

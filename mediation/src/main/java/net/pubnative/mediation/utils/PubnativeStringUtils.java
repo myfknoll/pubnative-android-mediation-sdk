@@ -38,7 +38,8 @@ public class PubnativeStringUtils {
      * Reads string from given InputStream object
      *
      * @param inputStream InputStream object from which we need to read the string
-     * @return The string read from the inputStream object. Null if input stream is null or read fails.
+     * @return The string read from the inputStream object.
+     *         Null if input stream is null or read fails.
      */
     public static String readStringFromInputStream(InputStream inputStream) {
 

@@ -39,7 +39,7 @@ public class PubnativeDeviceUtils {
      *
      * @param context valid context object.
      *
-     * @return PackageInfo object if context is valid, else null
+     * @return PackageInfo object if context is valid, else null.
      */
     public static PackageInfo getPackageInfo(Context context) {
 
@@ -54,25 +54,28 @@ public class PubnativeDeviceUtils {
     }
 
     /**
-     * Checks if the current network is available and connected to internet
+     * Checks if the current network is available and connected to internet.
      *
-     * @param context valid context
+     * @param context valid context.
      *
-     * @return true if it's available and connected
+     * @return true if it's available and connected.
      */
     public static boolean isNetworkAvailable(Context context) {
 
         Log.v(TAG, "isNetworkAvailable");
         boolean result;
         Context appContext = context.getApplicationContext();
-        final ConnectivityManager connectivityManager = ((ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE));
+        final ConnectivityManager connectivityManager =
+                ((ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivityManager == null) {
-            Log.e(TAG, "ERROR: Couldn't retrieve valid ConnectivityManager, please ensure that you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
+            Log.e(TAG, "ERROR: Couldn't retrieve valid ConnectivityManager, please ensure that " +
+                    "you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
             result = false;
         } else {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
             if (info == null) {
-                Log.e(TAG, "ERROR: Couldn't retrieve valid NetworkInfo, please ensure that you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
+                Log.e(TAG, "ERROR: Couldn't retrieve valid NetworkInfo, please ensure that you" +
+                        " added `ACCESS_NETWORK_STATE` permission to your Manifest file");
                 result = false;
             } else {
                 result = info.isConnectedOrConnecting();
@@ -82,13 +85,15 @@ public class PubnativeDeviceUtils {
     }
 
     /**
-     * Check size of the screen
-     * @param context
-     * @return true if screen large or extra large
+     * Check size of the screen.
+     * @param context context.
+     * @return true if screen large or extra large.
      */
     public static boolean isTablet(Context context) {
-        boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
-        boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        boolean xlarge = ((context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
         return (xlarge || large);
     }
 }

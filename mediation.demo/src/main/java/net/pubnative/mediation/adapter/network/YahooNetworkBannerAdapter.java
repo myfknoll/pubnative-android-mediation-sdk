@@ -14,10 +14,9 @@ import com.flurry.android.ads.FlurryAdErrorType;
 import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         implements FlurryAdBannerListener {
@@ -109,7 +108,8 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
             // create container for banner
             ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
             RelativeLayout container = new RelativeLayout(mContext);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             container.setLayoutParams(params);
             rootView.addView(container);
             //create flurry banner

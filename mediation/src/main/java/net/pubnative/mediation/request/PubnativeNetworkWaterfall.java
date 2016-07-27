@@ -36,10 +36,10 @@ import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.insights.model.PubnativeInsightModel;
 import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
-import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 public abstract class PubnativeNetworkWaterfall {
 
@@ -56,9 +56,9 @@ public abstract class PubnativeNetworkWaterfall {
     //==============================================================================================
 
     /**
-     * Sets the targeting model for the request
+     * Sets the targeting model for the request.
      *
-     * @param targeting targeting model with extended targeting config
+     * @param targeting targeting model with extended targeting config.
      */
     public void setTargeting(PubnativeAdTargetingModel targeting) {
 
@@ -67,9 +67,9 @@ public abstract class PubnativeNetworkWaterfall {
     }
 
     /**
-     * Add additional and customisable request parameters for API requests
-     * @param key valid key String
-     * @param value valid key Value
+     * Add additional and customisable request parameters for API requests.
+     * @param key valid key String.
+     * @param value valid key Value.
      */
     public void setRequestParameter(String key, String value) {
 
@@ -97,10 +97,15 @@ public abstract class PubnativeNetworkWaterfall {
             if(mRequestParameters != null) {
                 extras.putAll(mRequestParameters);
             }
-            mPlacement.load(mContext, appToken, placementName, extras, new PubnativePlacement.Listener() {
+            mPlacement.load(mContext,
+                            appToken,
+                            placementName,
+                            extras,
+                            new PubnativePlacement.Listener() {
 
                 @Override
-                public void onPubnativePlacementReady(PubnativePlacement placement, boolean pacingActive) {
+                public void onPubnativePlacementReady(PubnativePlacement placement,
+                                                      boolean pacingActive) {
 
                     if (pacingActive) {
                         onWaterfallLoadFinish(pacingActive);
@@ -110,7 +115,8 @@ public abstract class PubnativeNetworkWaterfall {
                 }
 
                 @Override
-                public void onPubnativePlacementLoadFail(PubnativePlacement placement, Exception exception) {
+                public void onPubnativePlacementLoadFail(PubnativePlacement placement,
+                                                         Exception exception) {
 
                     onWaterfallError(exception);
                 }
@@ -122,9 +128,15 @@ public abstract class PubnativeNetworkWaterfall {
 
     protected void startTracking() {
 
-        String requestUrl = (String) mPlacement.getConfig().getGlobal(PubnativeConfigModel.GLOBAL.REQUEST_BEACON);
-        String impressionUrl = (String) mPlacement.getConfig().getGlobal(PubnativeConfigModel.GLOBAL.IMPRESSION_BEACON);
-        String clickUrl = (String) mPlacement.getConfig().getGlobal(PubnativeConfigModel.GLOBAL.CLICK_BEACON);
+        String requestUrl = (String) mPlacement
+                .getConfig()
+                .getGlobal(PubnativeConfigModel.GLOBAL.REQUEST_BEACON);
+        String impressionUrl = (String) mPlacement
+                .getConfig()
+                .getGlobal(PubnativeConfigModel.GLOBAL.IMPRESSION_BEACON);
+        String clickUrl = (String) mPlacement
+                .getConfig()
+                .getGlobal(PubnativeConfigModel.GLOBAL.CLICK_BEACON);
         mInsight = new PubnativeInsightModel(mContext);
         mInsight.setInsightURLs(requestUrl, impressionUrl, clickUrl);
         mInsight.setPlacement(mPlacement.getName());
@@ -163,7 +175,8 @@ public abstract class PubnativeNetworkWaterfall {
         } else {
             PubnativeNetworkHub hub = PubnativeNetworkHubFactory.createHub(network);
             if (hub == null) {
-                mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_NOT_FOUND);
+                mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0,
+                                                 PubnativeException.ADAPTER_NOT_FOUND);
                 getNextNetwork();
             } else {
                 Map<String, String> extras = new HashMap<String, String>();
@@ -190,5 +203,6 @@ public abstract class PubnativeNetworkWaterfall {
 
     protected abstract void onWaterfallError(Exception exception);
 
-    protected abstract void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras);
+    protected abstract void onWaterfallNextNetwork(PubnativeNetworkHub hub,
+                                                   PubnativeNetworkModel network, Map extras);
 }

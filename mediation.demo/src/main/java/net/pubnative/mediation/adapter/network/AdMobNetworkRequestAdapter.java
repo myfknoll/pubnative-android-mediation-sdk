@@ -9,13 +9,14 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
-public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements NativeAppInstallAd.OnAppInstallAdLoadedListener {
+public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
+        implements NativeAppInstallAd.OnAppInstallAdLoadedListener {
 
     public static final    String TAG           = AdMobNetworkRequestAdapter.class.getSimpleName();
     protected static final String ADMOB_UNIT_ID = "unit_id";

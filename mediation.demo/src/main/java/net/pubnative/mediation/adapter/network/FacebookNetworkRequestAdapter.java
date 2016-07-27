@@ -33,9 +33,9 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements AdListener {
@@ -93,7 +93,9 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
+        Log.v(TAG, "onError: " + (adError != null
+                ? (adError.getErrorCode() + " - " + adError.getErrorMessage())
+                : ""));
         if (adError == null) {
             invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         } else {
@@ -104,7 +106,10 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
                     invokeLoaded(null);
                     break;
                 default:
-                    invokeFailed(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+                    invokeFailed(new Exception("FacebookNetworkInterstitialAdapter -code "
+                            + adError.getErrorCode()
+                            + " -message "
+                            + adError.getErrorMessage()));
             }
         }
     }

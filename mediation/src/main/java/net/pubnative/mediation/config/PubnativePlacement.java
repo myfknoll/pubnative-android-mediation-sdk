@@ -32,11 +32,11 @@ import net.pubnative.mediation.config.model.PubnativeDeliveryRuleModel;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.Map;
 import java.util.UUID;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class PubnativePlacement implements PubnativeConfigManager.Listener {
 
@@ -51,7 +51,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     protected int                     mCurrentNetworkIndex;
 
     /**
-     * Interface for placement callbacks
+     * Interface for placement callbacks.
      */
     public interface Listener {
 
@@ -59,14 +59,14 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
          * Called when the placement was loaded
          *
          * @param placement    placement that finished loading
-         * @param pacingActive indicates if the pacing cap is active or not
+         * @param pacingActive indicates if the pacing cap is active or not.
          */
         void onPubnativePlacementReady(PubnativePlacement placement, boolean pacingActive);
 
         /**
          * Called when the placement initialize failed
          *
-         * @param placement placement that failed loading
+         * @param placement placement that failed loading.
          */
         void onPubnativePlacementLoadFail(PubnativePlacement placement, Exception exception);
     }
@@ -78,13 +78,18 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
      * @param appToken      app token string
      * @param placementName placement name string
      * @param extras        valid Map with extra request details
-     * @param listener      valid listener to callback when the placement is ready
+     * @param listener      valid listener to callback when the placement is ready.
      */
-    public void load(Context context, String appToken, String placementName, Map extras, final Listener listener) {
+    public void load(Context context,
+                     String appToken,
+                     String placementName,
+                     Map extras,
+                     final Listener listener) {
 
         Log.v(TAG, "initialize");
         if (listener == null) {
-            Log.e(TAG, "initialize", new IllegalArgumentException("listener cannot be null, dropping this call"));
+            Log.e(TAG, "initialize", new IllegalArgumentException("listener cannot be null, " +
+                    "dropping this call"));
         } else {
             mListener = listener;
             if (context == null ||
@@ -108,7 +113,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
      * Returns this placement tracking UUID, this will be unique
      * for each instance of PubnativePlacement objects
      *
-     * @return String representation of the UUID
+     * @return String representation of the UUID.
      */
     public String getTrackingUUID() {
 
@@ -119,7 +124,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Returns the configured app token for this placement
      *
-     * @return valid apptoken string, null if not set
+     * @return valid apptoken string, null if not set.
      */
     public String getAppToken() {
 
@@ -130,7 +135,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Gets this placement ad format code
      *
-     * @return valid string if loaded, null if not
+     * @return valid string if loaded, null if not.
      */
     public String getAdFormatCode() {
 
@@ -145,7 +150,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Gets the current delivery rule model
      *
-     * @return valid PubnativeDeliveryRuleModel if loaded, null if not
+     * @return valid PubnativeDeliveryRuleModel if loaded, null if not.
      */
     public PubnativeDeliveryRuleModel getDeliveryRule() {
 
@@ -160,7 +165,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Gest the loaded config model
      *
-     * @return loaded PubnativeConfigModel object
+     * @return loaded PubnativeConfigModel object.
      */
     public PubnativeConfigModel getConfig() {
 
@@ -171,7 +176,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Gets this placement name
      *
-     * @return valid placement name string
+     * @return valid placement name string.
      */
     public String getName() {
 
@@ -182,7 +187,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Gets the current priority model
      *
-     * @return valid PubnativePriorityRuleModel, null if there are no more
+     * @return valid PubnativePriorityRuleModel, null if there are no more.
      */
     public PubnativePriorityRuleModel currentPriority() {
 
@@ -197,7 +202,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     /**
      * Gets the current network model
      *
-     * @return valid PubnativeNetworkModel, null if there are no more
+     * @return valid PubnativeNetworkModel, null if there are no more.
      */
     public PubnativeNetworkModel currentNetwork() {
 
@@ -211,7 +216,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     }
 
     /**
-     * Waterfalls to the next network
+     * Waterfalls to the next network.
      */
     public void next() {
 
@@ -276,7 +281,9 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
             PubnativeDeliveryRuleModel deliveryRuleModel = mPlacementModel.delivery_rule;
             Calendar overdueCalendar = deliveryRuleModel.getPacingOverdueCalendar();
             Calendar pacingCalendar = PubnativeDeliveryManager.getPacingCalendar(mPlacementName);
-            if (overdueCalendar == null || pacingCalendar == null || pacingCalendar.before(overdueCalendar)) {
+            if (overdueCalendar == null
+                    || pacingCalendar == null
+                    || pacingCalendar.before(overdueCalendar)) {
                 // Pacing cap reset or deactivated or not reached
                 result = false;
             } else {

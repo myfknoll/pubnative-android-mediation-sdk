@@ -35,10 +35,10 @@ import com.flurry.android.ads.FlurryAdTargeting;
 import com.flurry.android.ads.FlurryGender;
 
 import net.pubnative.mediation.adapter.model.FlurryNativeAdModel;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements FlurryAdNativeListener {
@@ -153,7 +153,9 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     }
 
     @Override
-    public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
+    public void onError(FlurryAdNative flurryAdNative,
+                        FlurryAdErrorType flurryAdErrorType,
+                        int errCode) {
 
         Log.v(TAG, "onError: " + errCode);
         endFlurrySession(mContext);
@@ -162,7 +164,10 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         } else if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
             invokeLoaded(null);
         } else {
-            invokeFailed(new Exception("YahooNetworkAdapterHub - " + errCode + " - " + flurryAdErrorType.name()));
+            invokeFailed(new Exception("YahooNetworkAdapterHub - "
+                    + errCode
+                    + " - "
+                    + flurryAdErrorType.name()));
         }
     }
 

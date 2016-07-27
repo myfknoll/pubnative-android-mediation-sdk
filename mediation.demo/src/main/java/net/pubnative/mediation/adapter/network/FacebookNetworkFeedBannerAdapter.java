@@ -35,10 +35,9 @@ import com.facebook.ads.AdSize;
 import com.facebook.ads.AdView;
 import com.facebook.ads.ImpressionListener;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAdapter
         implements AdListener, ImpressionListener {
@@ -97,7 +96,9 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        container.addView(mFeedBanner, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(mFeedBanner,
+                          new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                     ViewGroup.LayoutParams.MATCH_PARENT));
         invokeShow();
     }
 
@@ -125,7 +126,9 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
+        Log.v(TAG, "onError: " + (adError != null
+                ? (adError.getErrorCode() + " - " + adError.getErrorMessage())
+                : ""));
         if (adError == null) {
             invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         } else {
@@ -139,7 +142,8 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
                     Map errorData = new HashMap();
                     errorData.put("errorCode", adError.getErrorCode());
                     errorData.put("message", adError.getErrorMessage());
-                    invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
+                    invokeLoadFail(PubnativeException.extraException(
+                            PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
             }
         }
     }

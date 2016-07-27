@@ -37,7 +37,8 @@ public class PubnativeTestUtils {
     private static String TAG = PubnativeDeviceUtils.class.getSimpleName();
 
     /**
-     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
+     * Scans all classes accessible from the context class loader which belong to the given package
+     * and subpackages.
      *
      * @param packageName The base package
      * @return The classes
@@ -76,7 +77,8 @@ public class PubnativeTestUtils {
      * @return The classes
      * @throws ClassNotFoundException
      */
-    private static List findClasses(File directory, String packageName) throws ClassNotFoundException {
+    private static List findClasses(File directory,
+                                    String packageName) throws ClassNotFoundException {
         List classes = new ArrayList();
         if (!directory.exists()) {
             return classes;
@@ -86,7 +88,9 @@ public class PubnativeTestUtils {
             if (file.isDirectory()) {
                 assert !file.getName().contains(".");
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
-            } else if (file.getName().endsWith(".class") && !file.getName().contains("$") && !file.getName().endsWith("Test.class")) {
+            } else if (file.getName().endsWith(".class")
+                    && !file.getName().contains("$")
+                    && !file.getName().endsWith("Test.class")) {
                 classes.add(file.getName().substring(0, file.getName().length() - 6));
             }
         }

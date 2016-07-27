@@ -27,9 +27,9 @@ import android.content.Context;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
-
 import java.util.Map;
+
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetworkAdapter {
 
@@ -40,56 +40,56 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     protected LoadListener mLoadListener;
 
     /**
-     * Interface for callbacks related to the feedBanner view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour.
      */
     public interface LoadListener {
 
         /**
-         * Called whenever the feedBanner finished loading an ad
+         * Called whenever the feedBanner finished loading an ad.
          *
-         * @param feedBanner feedBanner that finished the initialize
+         * @param feedBanner feedBanner that finished the initialize.
          */
         void onAdapterLoadFinish(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called whenever the feedBanner failed loading an ad
+         * Called whenever the feedBanner failed loading an ad.
          *
-         * @param feedBanner feedBanner that failed the initialize
-         * @param exception    exception with the description of the initialize error
+         * @param feedBanner feedBanner that failed the initialize.
+         * @param exception    exception with the description of the initialize error.
          */
         void onAdapterLoadFail(PubnativeNetworkFeedBannerAdapter feedBanner, Exception exception);
     }
     
     /**
-     * Interface for callbacks related to the feedBanner view behaviour
+     * Interface for callbacks related to the feedBanner view behaviour.
      */
     public interface AdListener {
 
         /**
-         * Called when the feedBanner was just shown on the screen
+         * Called when the feedBanner was just shown on the screen.
          *
-         * @param feedBanner feedBanner that was shown in the screen
+         * @param feedBanner feedBanner that was shown in the screen.
          */
         void onAdapterShow(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called when the feedBanner impression was confirmed
+         * Called when the feedBanner impression was confirmed.
          *
-         * @param feedBanner feedBanner which impression was confirmed
+         * @param feedBanner feedBanner which impression was confirmed.
          */
         void onAdapterImpressionConfirmed(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called whenever the feedBanner was clicked by the user
+         * Called whenever the feedBanner was clicked by the user.
          *
-         * @param feedBanner feedBanner that was clicked
+         * @param feedBanner feedBanner that was clicked.
          */
         void onAdapterClick(PubnativeNetworkFeedBannerAdapter feedBanner);
 
         /**
-         * Called whenever the feed banner was removed from the screen
+         * Called whenever the feed banner was removed from the screen.
          *
-         * @param feedBanner feedBanner that was hidden
+         * @param feedBanner feedBanner that was hidden.
          */
         void onAdapterHide(PubnativeNetworkFeedBannerAdapter feedBanner);
     }
@@ -110,7 +110,7 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     }
     
     /**
-     * Creates a new instance of PubnativeNetworkFeedBannerAdapter
+     * Creates a new instance of PubnativeNetworkFeedBannerAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -137,33 +137,33 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     // Abstract
     //==============================================================================================
     /**
-     * Starts loading the feedBanner ad
+     * Starts loading the feedBanner ad.
      *
-     * @param context valid Context
+     * @param context valid Context.
      *
      */
     public abstract void load(Context context);
 
     /**
-     * Tells if the feedBanner is ready to be shown in the screen
+     * Tells if the feedBanner is ready to be shown in the screen.
      *
-     * @return true if ready, false if not
+     * @return true if ready, false if not.
      */
     public abstract boolean isReady();
 
     /**
-     * Starts showing the feedBanner for the adapted network
-     * @param container valid container for the feed banner
+     * Starts showing the feedBanner for the adapted network.
+     * @param container valid container for the feed banner.
      */
     public abstract void show(ViewGroup container);
 
     /**
-     * Destroys the current feedBanner for the adapted network
+     * Destroys the current feedBanner for the adapted network.
      */
     public abstract void destroy();
 
     /**
-     * Hides the current feedBanner for the adapted network
+     * Hides the current feedBanner for the adapted network.
      */
     public abstract void hide();
 
