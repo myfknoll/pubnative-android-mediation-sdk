@@ -36,14 +36,13 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.insights.model.PubnativeInsightDataModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightRequestModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
+import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 public class PubnativeInsightsManager {
 
@@ -58,14 +57,14 @@ public class PubnativeInsightsManager {
     //==============================================================================================
 
     /**
-     * Queues impression/click tracking data and sends it to pubnative server..
+     * Queues impression/click tracking data and sends it to pubnative server.
      *
      * @param context   valid Context object.
      * @param baseURL   the base URL of the tracking server.
      * @param extras    added parameters that will be included as querystring parameters.
      * @param dataModel PubnativeInsightDataModel object with values filled in.
      */
-    public synchronized static void trackData(Context context,
+    public static synchronized void trackData(Context context,
                                               String baseURL,
                                               Map<String, String> extras,
                                               PubnativeInsightDataModel dataModel) {
@@ -89,8 +88,7 @@ public class PubnativeInsightsManager {
             PubnativeInsightRequestModel model =
                     new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
             // Enqueue failed
-            List<PubnativeInsightRequestModel> failedList =
-                    getTrackingList(context, INSIGHTS_FAILED_DATA);
+            List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
             enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
             setTrackingList(context, INSIGHTS_FAILED_DATA, null);
             // Enqueue current
@@ -104,15 +102,14 @@ public class PubnativeInsightsManager {
     // WORKFLOW
     //==============================================================================================
 
-    protected synchronized static void trackNext(final Context context) {
+    protected static synchronized void trackNext(final Context context) {
 
         Log.v(TAG, "trackNext");
         if (context == null) {
             Log.e(TAG, "trackNext - context can't be null. Dropping call");
         } else if (sIdle) {
             sIdle = false;
-            final PubnativeInsightRequestModel model =
-                    dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
+            final PubnativeInsightRequestModel model = dequeueInsightItem(context, INSIGHTS_PENDING_DATA);
             if (model == null) {
                 Log.w(TAG, "trackNext - Dequeued item is null. Dropping call");
                 sIdle = true;
@@ -128,21 +125,16 @@ public class PubnativeInsightsManager {
                         }
 
                         @Override
-                        public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request,
-                                                                 String result) {
+                        public void onPubnativeHttpRequestFinish(PubnativeHttpRequest request, String result) {
 
                             Log.v(TAG, "onPubnativeHttpRequestFinish");
                             if (TextUtils.isEmpty(result)) {
-                                trackingFailed(context,
-                                        model,
-                                        "invalid insight response (empty or null)");
+                                trackingFailed(context, model, "invalid insight response (empty or null)");
                             } else {
                                 try {
                                     PubnativeInsightsAPIResponseModel response =
-                                            new Gson().fromJson(result,
-                                                    PubnativeInsightsAPIResponseModel.class);
-                                    if (PubnativeInsightsAPIResponseModel.Status.OK
-                                                                        .equals(response.status)) {
+                                            new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
+                                    if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                                         trackingFinished(context, model);
                                     } else {
                                         trackingFailed(context, model, response.error_message);
@@ -151,18 +143,15 @@ public class PubnativeInsightsManager {
                                     Map errorData = new HashMap();
                                     errorData.put("parsingException", e.toString());
                                     errorData.put("serverResponse", result);
-                                    trackingFailed(context,
-                                            model,
-                                            PubnativeException.extraException(
-                                                    PubnativeException.NETWORK_INVALID_RESPONSE,
-                                                    errorData).toString());
+                                    trackingFailed(context, model, PubnativeException.extraException(
+                                                                            PubnativeException.NETWORK_INVALID_RESPONSE,
+                                                                            errorData).toString());
                                 }
                             }
                         }
 
                         @Override
-                        public void onPubnativeHttpRequestFail(PubnativeHttpRequest request,
-                                                               Exception exception) {
+                        public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
 
                             Log.v(TAG, "onPubnativeHttpRequestFail: " + exception);
                             trackingFailed(context, model, exception.toString());
@@ -179,9 +168,7 @@ public class PubnativeInsightsManager {
         }
     }
 
-    protected static void trackingFailed(Context context,
-                                         PubnativeInsightRequestModel model,
-                                         String message) {
+    protected static void trackingFailed(Context context, PubnativeInsightRequestModel model, String message) {
 
         Log.v(TAG, "trackingFailed");
         // Add a retry
@@ -214,9 +201,7 @@ public class PubnativeInsightsManager {
     // QUEUE
     //==============================================================================================
 
-    protected static void enqueueInsightItem(Context context,
-                                             String listKey,
-                                             PubnativeInsightRequestModel model) {
+    protected static void enqueueInsightItem(Context context, String listKey, PubnativeInsightRequestModel model) {
 
         Log.v(TAG, "enqueueInsightItem");
         if (context != null && model != null) {
@@ -229,9 +214,7 @@ public class PubnativeInsightsManager {
         }
     }
 
-    protected static void enqueueInsightList(Context context,
-                                             String listKey,
-                                             List<PubnativeInsightRequestModel> list) {
+    protected static void enqueueInsightList(Context context, String listKey, List<PubnativeInsightRequestModel> list) {
 
         Log.v(TAG, "enqueueInsightList");
         if (context != null && list != null) {
@@ -244,8 +227,7 @@ public class PubnativeInsightsManager {
         }
     }
 
-    protected static PubnativeInsightRequestModel dequeueInsightItem(Context context,
-                                                                     String listKey) {
+    protected static PubnativeInsightRequestModel dequeueInsightItem(Context context, String listKey) {
 
         Log.v(TAG, "dequeueInsightItem");
         PubnativeInsightRequestModel result = null;
@@ -266,8 +248,7 @@ public class PubnativeInsightsManager {
     // TRACKING LIST
     //----------------------------------------------------------------------------------------------
 
-    protected static List<PubnativeInsightRequestModel> getTrackingList(Context context,
-                                                                        String listKey) {
+    protected static List<PubnativeInsightRequestModel> getTrackingList(Context context, String listKey) {
 
         Log.v(TAG, "getTrackingList");
         List<PubnativeInsightRequestModel> result = null;
@@ -278,11 +259,9 @@ public class PubnativeInsightsManager {
                 if (!TextUtils.isEmpty(pendingListString)) {
                     try {
                         PubnativeInsightRequestModel[] cacheModel =
-                                new Gson().fromJson(pendingListString,
-                                                    PubnativeInsightRequestModel[].class);
+                                new Gson().fromJson(pendingListString, PubnativeInsightRequestModel[].class);
                         if (cacheModel != null && cacheModel.length > 0) {
-                            result = new ArrayList<PubnativeInsightRequestModel>(
-                                                    Arrays.asList(cacheModel));
+                            result = new ArrayList<PubnativeInsightRequestModel>(Arrays.asList(cacheModel));
                         }
                     } catch (JsonSyntaxException e) {
                         // Do nothing

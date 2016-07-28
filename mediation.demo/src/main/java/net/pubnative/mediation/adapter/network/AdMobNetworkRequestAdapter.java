@@ -9,11 +9,11 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.formats.NativeAppInstallAd;
 
 import net.pubnative.mediation.adapter.model.AdMobNativeAppInstallAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements NativeAppInstallAd.OnAppInstallAdLoadedListener {
@@ -22,7 +22,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     protected static final String ADMOB_UNIT_ID = "unit_id";
 
     /**
-     * Creates a new instance of AdMobNetworkRequestAdapter
+     * Creates a new instance of AdMobNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */

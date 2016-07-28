@@ -33,11 +33,10 @@ import android.util.Log;
 
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
+import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 public class PubnativeInsightDataModel {
 
@@ -272,8 +271,8 @@ public class PubnativeInsightDataModel {
                     + net.pubnative.mediation.BuildConfig.VERSION_CODE
                     + ")";
             // Connection type
-            ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService
-                    (Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivityManager != null) {
                 NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {

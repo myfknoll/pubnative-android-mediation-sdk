@@ -33,9 +33,9 @@ import com.facebook.ads.AdListener;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements AdListener {
@@ -46,7 +46,7 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     protected              NativeAd mNativeAd                   = null;
 
     /**
-     * Creates a new instance of FacebookNetworkRequestAdapter
+     * Creates a new instance of FacebookNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -93,9 +93,7 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null
-                ? (adError.getErrorCode() + " - " + adError.getErrorMessage())
-                : ""));
+        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
         if (adError == null) {
             invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         } else {

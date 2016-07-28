@@ -71,10 +71,10 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     public String getIconUrl() {
 
         Log.v(TAG, "getIconUrl");
-        // secOrigImg:   The secured original image, size:
-        //               627px x 627px. Optional asset, not present for the video ads
-        // secImage:     The secured image, size:
-        //               82px x 82px. Optional asset, not present for the video ads.
+        // secOrigImg:   The secured original image, size: 627px x 627px.
+        //               Optional asset, not present for the video ads
+        // secImage:     The secured image, size: 82px x 82px.
+        //               Optional asset, not present for the video ads.
         return getStringValueOfFirstAsset("secOrigImg", "secImage");
     }
 
@@ -82,8 +82,8 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     public String getBannerUrl() {
 
         Log.v(TAG, "getBannerUrl");
-        // secHqImage:  The secured high quality image, size:
-        //              1200px x 627px. Optional asset, not present for the video ads
+        // secHqImage:  The secured high quality image, size: 1200px x 627px.
+        //              Optional asset, not present for the video ads
         return getStringValueOfFirstAsset("secHqImage");
     }
 

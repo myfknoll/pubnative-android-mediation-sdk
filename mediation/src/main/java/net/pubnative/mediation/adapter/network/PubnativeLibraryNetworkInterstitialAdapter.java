@@ -28,19 +28,20 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.library.interstitial.PubnativeInterstitial;
-import java.util.Map;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.Map;
 
-public class PubnativeLibraryNetworkInterstitialAdapter
-        extends PubnativeNetworkInterstitialAdapter implements PubnativeInterstitial.Listener {
+
+public class PubnativeLibraryNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
+        implements PubnativeInterstitial.Listener {
 
     private static String TAG = PubnativeLibraryNetworkInterstitialAdapter.class.getSimpleName();
 
     protected PubnativeInterstitial mInterstitial;
 
     /**
-     * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter
+     * Creates a new instance of PubnativeLibraryNetworkInterstitialAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -112,8 +113,7 @@ public class PubnativeLibraryNetworkInterstitialAdapter
     }
 
     @Override
-    public void onPubnativeInterstitialLoadFail(PubnativeInterstitial interstitial,
-                                                Exception exception) {
+    public void onPubnativeInterstitialLoadFail(PubnativeInterstitial interstitial, Exception exception) {
 
         Log.v(TAG, "onPubnativeInterstitialLoadFail", exception);
         invokeLoadFail(exception);

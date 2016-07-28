@@ -3,9 +3,9 @@ package net.pubnative.mediation.exceptions;
 import android.util.Log;
 
 import org.json.JSONException;
-import java.util.Map;
-
 import org.json.JSONObject;
+
+import java.util.Map;
 
 public class PubnativeException extends Exception {
 
@@ -69,9 +69,9 @@ public class PubnativeException extends Exception {
     public static final PubnativeException BANNER_LOAD_FAILED              = new PubnativeException(7003, "Banner failed on load");
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param errorCode Error code
+     * @param errorCode Error code.
      * @param message   Error message.
      */
     public PubnativeException(int errorCode, String message) {
@@ -81,7 +81,7 @@ public class PubnativeException extends Exception {
     }
 
     /**
-     * This will return this exception error code number
+     * This will return this exception error code number.
      *
      * @return valid int representing the error code.
      */
@@ -130,8 +130,7 @@ public class PubnativeException extends Exception {
     public static PubnativeException extraException(PubnativeException exception, Map extraMap) {
 
         Log.v(TAG, "extraException");
-        PubnativeException extraException = new PubnativeException(exception.getErrorCode(),
-                                                                    exception.getMessage());
+        PubnativeException extraException = new PubnativeException(exception.getErrorCode(), exception.getMessage());
         extraException.mExtraMap = extraMap;
         return extraException;
     }

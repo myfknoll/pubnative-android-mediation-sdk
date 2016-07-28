@@ -16,8 +16,9 @@ import com.facebook.ads.AdView;
 import com.facebook.ads.ImpressionListener;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
-import java.util.Map;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
+
+import java.util.Map;
 
 public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         implements AdListener,
@@ -29,7 +30,7 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     protected boolean mIsLoaded = false;
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of PubnativeNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -58,8 +59,7 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
 
         Log.v(TAG, "show");
         if (mBannerView != null) {
-            ViewGroup rootView =
-                    (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
+            ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
             RelativeLayout container = new RelativeLayout(mContext);
             RelativeLayout.LayoutParams params =
                     new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -110,9 +110,7 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         Log.v(TAG, "createRequest");
         mContext = context;
         String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
-        AdSize bannerSize = PubnativeDeviceUtils.isTablet(context)
-                ? AdSize.BANNER_HEIGHT_90
-                : AdSize.BANNER_HEIGHT_50;
+        AdSize bannerSize = PubnativeDeviceUtils.isTablet(context) ? AdSize.BANNER_HEIGHT_90 : AdSize.BANNER_HEIGHT_50;
         if (TextUtils.isEmpty(placementId)) {
             invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
         } else {
@@ -131,9 +129,7 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null
-                ? (adError.getErrorCode() + " - " + adError.getErrorMessage())
-                : ""));
+        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
         if (adError == null) {
             invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         } else {

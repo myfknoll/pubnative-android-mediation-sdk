@@ -3,8 +3,9 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.Map;
 import net.pubnative.mediation.exceptions.PubnativeException;
+
+import java.util.Map;
 
 
 public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdapter {
@@ -68,7 +69,7 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
         void onAdapterClick(PubnativeNetworkBannerAdapter banner);
 
         /**
-         * Called whenever the banner was removed from the screen
+         * Called whenever the banner was removed from the screen.
          *
          * @param banner banner that was hidden.
          */

@@ -9,8 +9,9 @@ import android.util.Log;
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkBannerAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
-import java.util.Map;
 import net.pubnative.mediation.exceptions.PubnativeException;
+
+import java.util.Map;
 
 public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         implements PubnativeNetworkBannerAdapter.AdListener,
@@ -27,43 +28,43 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     public interface Listener {
 
         /**
-         * Called whenever the banner finished loading an ad
+         * Called whenever the banner finished loading an ad.
          *
          * @param banner banner that finished the initialize.
          */
         void onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner banner);
 
         /**
-         * Called whenever the banner failed loading an ad
+         * Called whenever the banner failed loading an ad.
          *
-         * @param banner    banner that failed the initialize
+         * @param banner    banner that failed the initialize.
          * @param exception exception with the description of the initialize error.
          */
         void onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner banner, Exception exception);
 
         /**
-         * Called when the banner was just shown on the screen
+         * Called when the banner was just shown on the screen.
          *
          * @param banner banner that was shown in the screen.
          */
         void onPubnativeNetworkBannerShow(PubnativeNetworkBanner banner);
 
         /**
-         * Called when the banner impression was confrimed
+         * Called when the banner impression was confrimed.
          *
          * @param banner banner which impression was confirmed.
          */
         void onPubnativeNetworkBannerImpressionConfirmed(PubnativeNetworkBanner banner);
 
         /**
-         * Called whenever the banner was clicked by the user
+         * Called whenever the banner was clicked by the user.
          *
          * @param banner banner that was clicked.
          */
         void onPubnativeNetworkBannerClick(PubnativeNetworkBanner banner);
 
         /**
-         * Called whenever the banner was removed from the screen
+         * Called whenever the banner was removed from the screen.
          *
          * @param banner banner that was hidden.
          */
@@ -86,8 +87,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
             mHandler = new Handler(Looper.getMainLooper());
         }
         if (mListener == null) {
-            Log.w(TAG, "initialize - Warning: listener was not set, have you configured one " +
-                    "using setListener()?");
+            Log.w(TAG, "initialize - Warning: listener was not set, have you configured one using setListener()?");
         }
         if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.BANNER_PARAMETERS_INVALID);
@@ -172,13 +172,13 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network,
-                                          Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
 
         mAdapter = hub.getBannerAdapter();
         if (mAdapter == null) {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0,
-                    PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(),
+                                             0,
+                                             PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             getNextNetwork();
         } else {
             mStartTimestamp = System.currentTimeMillis();
@@ -217,8 +217,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner.this,
-                            exception);
+                    mListener.onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner.this, exception);
                 }
                 mListener = null;
             }

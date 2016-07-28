@@ -259,8 +259,7 @@ public abstract class PubnativeAdModel {
         mInsightModel = insightModel;
         // We set the creative based on  the model creative
         if (mInsightModel != null) {
-            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(
-                                                mInsightModel.getAdFormat())) {
+            if (PubnativePlacementModel.AdFormatCode.NATIVE_ICON.equals(mInsightModel.getAdFormat())) {
                 mInsightModel.setCreativeUrl(getIconUrl());
             } else {
                 mInsightModel.setCreativeUrl(getBannerUrl());

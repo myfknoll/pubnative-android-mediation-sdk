@@ -26,10 +26,9 @@ package net.pubnative.mediation.config;
 import com.google.gson.Gson;
 
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
+import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 import java.io.InputStream;
-
-import net.pubnative.mediation.utils.PubnativeStringUtils;
 
 public class PubnativeConfigTestUtils {
 
@@ -41,8 +40,7 @@ public class PubnativeConfigTestUtils {
     public static PubnativeConfigModel getTestConfig(String filename) {
 
         PubnativeConfigModel result = null;
-        InputStream configStream =
-                        PubnativeConfigTestUtils.class.getResourceAsStream("/configs/" + filename);
+        InputStream configStream = PubnativeConfigTestUtils.class.getResourceAsStream("/configs/" + filename);
         String configString = PubnativeStringUtils.readStringFromInputStream(configStream);
         try {
             result = new Gson().fromJson(configString, PubnativeConfigModel.class);

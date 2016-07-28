@@ -68,14 +68,14 @@ public class PubnativeDeviceUtils {
         final ConnectivityManager connectivityManager =
                 ((ConnectivityManager) appContext.getSystemService(Context.CONNECTIVITY_SERVICE));
         if (connectivityManager == null) {
-            Log.e(TAG, "ERROR: Couldn't retrieve valid ConnectivityManager, please ensure that " +
-                    "you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
+            Log.e(TAG, "ERROR: Couldn't retrieve valid ConnectivityManager, please ensure that "
+                    + "you added `ACCESS_NETWORK_STATE` permission to your Manifest file");
             result = false;
         } else {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
             if (info == null) {
-                Log.e(TAG, "ERROR: Couldn't retrieve valid NetworkInfo, please ensure that you" +
-                        " added `ACCESS_NETWORK_STATE` permission to your Manifest file");
+                Log.e(TAG, "ERROR: Couldn't retrieve valid NetworkInfo, please ensure that you"
+                        + " added `ACCESS_NETWORK_STATE` permission to your Manifest file");
                 result = false;
             } else {
                 result = info.isConnectedOrConnecting();
@@ -90,10 +90,10 @@ public class PubnativeDeviceUtils {
      * @return true if screen large or extra large.
      */
     public static boolean isTablet(Context context) {
-        boolean xlarge = ((context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
-        boolean large = ((context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        boolean xlarge =
+                ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK)
+                          == Configuration.SCREENLAYOUT_SIZE_LARGE);
         return (xlarge || large);
     }
 }

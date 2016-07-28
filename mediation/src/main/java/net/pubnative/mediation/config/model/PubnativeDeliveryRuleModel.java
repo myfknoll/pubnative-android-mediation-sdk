@@ -26,10 +26,10 @@ package net.pubnative.mediation.config.model;
 import android.content.Context;
 import android.util.Log;
 
+import net.pubnative.mediation.config.PubnativeDeliveryManager;
+
 import java.util.Calendar;
 import java.util.List;
-
-import net.pubnative.mediation.config.PubnativeDeliveryManager;
 
 public class PubnativeDeliveryRuleModel {
 
@@ -89,12 +89,10 @@ public class PubnativeDeliveryRuleModel {
         Log.v(TAG, "getPacingOverdueCalendar");
         boolean frequencyCapReached = false;
         if (isDayImpressionCapActive()) {
-            frequencyCapReached = imp_cap_day <= PubnativeDeliveryManager.getCurrentDailyCount(
-                    context, placementID);
+            frequencyCapReached = imp_cap_day <= PubnativeDeliveryManager.getCurrentDailyCount(context, placementID);
         }
         if (!frequencyCapReached && isHourImpressionCapActive()) {
-            frequencyCapReached = imp_cap_hour <= PubnativeDeliveryManager.getCurrentHourlyCount(
-                    context, placementID);
+            frequencyCapReached = imp_cap_hour <= PubnativeDeliveryManager.getCurrentHourlyCount(context, placementID);
         }
         return frequencyCapReached;
     }

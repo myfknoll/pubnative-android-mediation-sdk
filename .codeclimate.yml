@@ -3,10 +3,11 @@ engines:
     enabled: true 
     config: 'config/checkstyle/checkstyle.xml'
     channel: 'beta'
-  
+
 exclude_paths: [
   "build/",
-  "mediation/src/test/",
+  "**/test/",
   "mediation.adaters/",
-  "mediation.demo/src/main/java/net/pubnative/mediation/demo/"
+  "**/demo/",
+  "**/model/"
 ]

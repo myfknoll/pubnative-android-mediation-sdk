@@ -27,9 +27,9 @@ import android.content.Context;
 import android.util.Log;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
-import java.util.Map;
-
 import net.pubnative.mediation.request.model.PubnativeAdModel;
+
+import java.util.Map;
 
 public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAdapter {
 
@@ -37,7 +37,7 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
     protected Listener mListener;
 
     /**
-     * Listener
+     * Listener.
      */
     public interface Listener {
 
@@ -54,8 +54,7 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
          * @param adapter Object used for requesting the ad.
          * @param ad      Loaded ad object.
          */
-        void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter,
-                                                    PubnativeAdModel ad);
+        void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter, PubnativeAdModel ad);
 
         /**
          * Invoked when ad request is failed or when networks gives no ad.
@@ -63,12 +62,11 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
          * @param adapter   Object used for requesting the ad.
          * @param exception Exception raised with proper message to indicate request failure.
          */
-        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter,
-                                                    Exception exception);
+        void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter, Exception exception);
     }
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of PubnativeNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -78,7 +76,7 @@ public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAda
     }
 
     /**
-     * Sets listener for this request
+     * Sets listener for this request.
      *
      * @param listener valid listener.
      */

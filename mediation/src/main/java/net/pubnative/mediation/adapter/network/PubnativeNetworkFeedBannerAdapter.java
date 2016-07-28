@@ -27,9 +27,9 @@ import android.content.Context;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import java.util.Map;
-
 import net.pubnative.mediation.exceptions.PubnativeException;
+
+import java.util.Map;
 
 public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetworkAdapter {
 

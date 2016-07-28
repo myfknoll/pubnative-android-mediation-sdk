@@ -29,19 +29,19 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import net.pubnative.library.feed.banner.PubnativeFeedBanner;
-import java.util.Map;
-
 import net.pubnative.mediation.exceptions.PubnativeException;
 
-public class PubnativeLibraryNetworkFeedBannerAdapter
-        extends PubnativeNetworkFeedBannerAdapter implements PubnativeFeedBanner.Listener {
+import java.util.Map;
+
+public class PubnativeLibraryNetworkFeedBannerAdapter extends PubnativeNetworkFeedBannerAdapter
+        implements PubnativeFeedBanner.Listener {
 
     private static String TAG = PubnativeLibraryNetworkFeedBannerAdapter.class.getSimpleName();
 
     protected PubnativeFeedBanner mFeedBanner;
 
     /**
-     * Creates a new instance of PubnativeLibraryNetworkFeedBannerAdapter
+     * Creates a new instance of PubnativeLibraryNetworkFeedBannerAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -122,8 +122,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     }
 
     @Override
-    public void onPubnativeFeedBannerLoadFailed(PubnativeFeedBanner feedBanner, Exception exception)
-    {
+    public void onPubnativeFeedBannerLoadFailed(PubnativeFeedBanner feedBanner, Exception exception) {
 
         Log.v(TAG, "onPubnativeFeedBannerLoadFailed");
         invokeLoadFail(exception);

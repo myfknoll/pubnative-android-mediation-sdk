@@ -32,10 +32,9 @@ import android.util.Log;
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
-
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
         implements PubnativeNetworkInterstitialAdapter.LoadListener,
@@ -67,8 +66,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
          * @param interstitial interstitial that failed the initialize.
          * @param exception    exception with the description of the initialize error.
          */
-        void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial,
-                                                    Exception exception);
+        void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial, Exception exception);
 
         /**
          * Called when the interstitial was just shown on the screen.
@@ -82,8 +80,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
          *
          * @param interstitial interstitial which impression was confirmed.
          */
-        void onPubnativeNetworkInterstitialImpressionConfirmed(
-                PubnativeNetworkInterstitial interstitial);
+        void onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial interstitial);
 
         /**
          * Called whenever the interstitial was clicked by the user.
@@ -124,11 +121,8 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "initialize");
         if (mListener == null) {
-            Log.e(TAG, "initialize - Error: listener was not set, have you configured one using " +
-                    "setListener()?");
-        } else if (context == null
-                || TextUtils.isEmpty(appToken)
-                || TextUtils.isEmpty(placement)) {
+            Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
+        } else if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID);
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_LOADING);
@@ -192,15 +186,13 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub,
-                                          PubnativeNetworkModel network,
-                                          Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
 
         mAdapter = hub.getInterstitialAdapter();
         if (mAdapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(),
-                    0,
-                    PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+                                             0,
+                                             PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
 
             getNextNetwork();
         } else {
@@ -224,8 +216,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
 
                 Log.v(TAG, "invokeLoadFinish");
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialLoadFinish(
-                            PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial.this);
                 }
             }
         });
@@ -240,8 +231,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialLoadFail(
-                            PubnativeNetworkInterstitial.this, exception);
+                    mListener.onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial.this, exception);
                 }
                 mListener = null;
             }
@@ -272,8 +262,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialImpressionConfirmed(
-                            PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial.this);
                 }
             }
         });
@@ -325,8 +314,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     }
 
     @Override
-    public void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial,
-                                  Exception exception) {
+    public void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial, Exception exception) {
 
         Log.v(TAG, "onAdapterLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;

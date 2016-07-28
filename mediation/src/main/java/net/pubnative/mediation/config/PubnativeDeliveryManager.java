@@ -178,9 +178,7 @@ public class PubnativeDeliveryManager {
      * @param placementID valid String.
      * @param calendar    calendar object with the timestamp.
      */
-    public static void setImpressionLastUpdate(Context context,
-                                               String placementID,
-                                               Calendar calendar) {
+    public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar) {
 
         Log.v(TAG, "setImpressionLastUpdate");
         if (context != null && !TextUtils.isEmpty(placementID)) {
@@ -255,15 +253,10 @@ public class PubnativeDeliveryManager {
         }
     }
 
-    protected static void setImpressionCount(Context context,
-                                             String impressionCapType,
-                                             String placementID,
-                                             int value) {
+    protected static void setImpressionCount(Context context, String impressionCapType, String placementID, int value) {
 
         Log.v(TAG, "setImpressionCount");
-        if (context != null
-                && !TextUtils.isEmpty(impressionCapType)
-                && !TextUtils.isEmpty(placementID)) {
+        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
             SharedPreferences.Editor editor = getPreferencesEditor(context);
             if (editor != null) {
                 String placementTrackingKey = placementID.concat(impressionCapType);
@@ -277,16 +270,12 @@ public class PubnativeDeliveryManager {
         }
     }
 
-    protected static int getImpressionCount(Context context,
-                                            String impressionCapType,
-                                            String placementID) {
+    protected static int getImpressionCount(Context context, String impressionCapType, String placementID) {
 
         Log.v(TAG, "getImpressionCount");
         updateImpressionCount(context, placementID);
         int result = 0;
-        if (context != null
-                && !TextUtils.isEmpty(impressionCapType)
-                && !TextUtils.isEmpty(placementID)) {
+        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
             SharedPreferences preferences = getPreferences(context);
             if (preferences != null) {
                 String placementTrackingKey = placementID.concat(impressionCapType);

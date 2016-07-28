@@ -25,9 +25,9 @@ package net.pubnative.mediation.config.model;
 
 import android.content.Context;
 
-import java.util.Map;
-
 import net.pubnative.mediation.config.PubnativeConfigManager;
+
+import java.util.Map;
 
 public class PubnativeConfigRequestModel {
 

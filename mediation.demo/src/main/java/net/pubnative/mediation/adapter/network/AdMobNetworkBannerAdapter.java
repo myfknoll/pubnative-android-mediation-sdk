@@ -12,11 +12,11 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
+import net.pubnative.mediation.exceptions.PubnativeException;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
-
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
 
@@ -58,8 +58,8 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
         if (mAdView != null) {
             ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
             RelativeLayout container = new RelativeLayout(mContext);
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                                                                 ViewGroup.LayoutParams.MATCH_PARENT);
             container.setLayoutParams(params);
             container.setGravity(Gravity.BOTTOM);
             rootView.addView(container);
@@ -141,8 +141,8 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
     //==============================================================================================
     // AdListener
     //----------------------------------------------------------------------------------------------
-    private com.google.android.gms.ads.AdListener listener =
-                                new com.google.android.gms.ads.AdListener() {
+
+    private com.google.android.gms.ads.AdListener listener = new com.google.android.gms.ads.AdListener() {
 
         @Override
         public void onAdClosed() {

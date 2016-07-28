@@ -26,16 +26,16 @@ package net.pubnative.mediation.adapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkBannerAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedBannerAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 
 import java.util.Map;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 
 public abstract class PubnativeNetworkHub {
 
     protected Map mNetworkData;
 
     /**
-     * Sets the network data to be used by the adapter hub to create the different formats adapters
+     * Sets the network data to be used by the adapter hub to create the different formats adapters.
      *
      * @param data map with the network data required.
      */
@@ -45,28 +45,28 @@ public abstract class PubnativeNetworkHub {
     }
 
     /**
-     * This method will return the network dependent adapter for requests
+     * This method will return the network dependent adapter for requests.
      *
      * @return valid PubnativeNetworkRequestAdapter.
      */
     public abstract PubnativeNetworkRequestAdapter getRequestAdapter();
 
     /**
-     * Gets the network dependent adapter for interstitials
+     * Gets the network dependent adapter for interstitials.
      *
      * @return valid PubnativeNetworkInterstitialAdapter.
      */
     public abstract PubnativeNetworkInterstitialAdapter getInterstitialAdapter();
 
     /**
-     * Gets the network dependent adapter for feedBanner
+     * Gets the network dependent adapter for feedBanner.
      *
      * @return valid PubnativeNetworkFeedBannerAdapter.
      */
     public abstract PubnativeNetworkFeedBannerAdapter getFeedBannerAdapter();
 
     /**
-     * Gets the network dependent adapter for banner
+     * Gets the network dependent adapter for banner.
      *
      * @return valid PubnativeNetworkBannerAdapter.
      */

@@ -37,11 +37,10 @@ public class PubnativeTestUtils {
     private static String TAG = PubnativeDeviceUtils.class.getSimpleName();
 
     /**
-     * Scans all classes accessible from the context class loader which belong to the given package
-     * and subpackages.
+     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
      *
-     * @param packageName The base package
-     * @return The classes
+     * @param packageName The base package.
+     * @return The classes.
      * @throws ClassNotFoundException
      * @throws IOException
      */
@@ -72,13 +71,12 @@ public class PubnativeTestUtils {
     /**
      * Recursive method used to find all classes in a given directory and subdirs.
      *
-     * @param directory   The base directory
-     * @param packageName The package name for classes found inside the base directory
+     * @param directory   The base directory.
+     * @param packageName The package name for classes found inside the base directory.
      * @return The classes
      * @throws ClassNotFoundException
      */
-    private static List findClasses(File directory,
-                                    String packageName) throws ClassNotFoundException {
+    private static List findClasses(File directory, String packageName) throws ClassNotFoundException {
         List classes = new ArrayList();
         if (!directory.exists()) {
             return classes;
@@ -89,8 +87,8 @@ public class PubnativeTestUtils {
                 assert !file.getName().contains(".");
                 classes.addAll(findClasses(file, packageName + "." + file.getName()));
             } else if (file.getName().endsWith(".class")
-                    && !file.getName().contains("$")
-                    && !file.getName().endsWith("Test.class")) {
+                        && !file.getName().contains("$")
+                        && !file.getName().endsWith("Test.class")) {
                 classes.add(file.getName().substring(0, file.getName().length() - 6));
             }
         }

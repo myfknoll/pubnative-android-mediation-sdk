@@ -7,11 +7,11 @@ import android.util.Log;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.insights.PubnativeInsightsManager;
+import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 
 /**
  * Created by davidmartin on 04/05/16.
@@ -39,7 +39,7 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Sets the placement name for this insight
+     * Sets the placement name for this insight.
      *
      * @param placement valid placement name.
      */
@@ -49,7 +49,7 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Sets the segments list
+     * Sets the segments list.
      *
      * @param deliverySegments valid segments list.
      */
@@ -72,7 +72,7 @@ public class PubnativeInsightModel {
     //==============================================================================================
 
     /**
-     * Sets the data targeting values
+     * Sets the data targeting values.
      *
      * @param targeting valid targeting model.
      */
@@ -85,7 +85,7 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Gets the ad format code
+     * Gets the ad format code.
      *
      * @return valid ad format code string.
      */
@@ -96,7 +96,7 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Sets the creative url of the data
+     * Sets the creative url of the data.
      *
      * @param url valid url string for the creative.
      */
@@ -107,7 +107,7 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Adds extra fields to be added in the insight query string
+     * Adds extra fields to be added in the insight query string.
      *
      * @param extras dictionary with extras key and values.
      */
@@ -123,9 +123,9 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Adds extra fields to be added in the insight query string
+     * Adds extra fields to be added in the insight query string.
      *
-     * @param key   key string
+     * @param key   key string.
      * @param value value string.
      */
     public void addExtra(String key, String value) {
@@ -140,10 +140,10 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * This will set up the insight urls to use in the track process
+     * This will set up the insight urls to use in the track process.
      *
-     * @param requestUrl    valid request url string
-     * @param impressionUrl valid impression url string
+     * @param requestUrl    valid request url string.
+     * @param impressionUrl valid impression url string.
      * @param clickUrl      valid click url string.
      */
     public void setInsightURLs(String requestUrl, String impressionUrl, String clickUrl) {
@@ -158,9 +158,10 @@ public class PubnativeInsightModel {
     //==============================================================================================
 
     /**
-     * Sets the current network as unreachable due to the passed exception
-     * @param priorityRuleModel valid model
-     * @param responseTime time in milliseconds that this network took to fail
+     * Sets the current network as unreachable due to the passed exception.
+     *
+     * @param priorityRuleModel valid model.
+     * @param responseTime time in milliseconds that this network took to fail.
      * @param exception exception with the details.
      */
     public void trackUnreachableNetwork(PubnativePriorityRuleModel priorityRuleModel,
@@ -176,9 +177,10 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Sets the current network as attempted but failed
-     * @param priorityRuleModel valid model
-     * @param responseTime time in milliseconds that this attempt took to fail
+     * Sets the current network as attempted but failed.
+     *
+     * @param priorityRuleModel valid model.
+     * @param responseTime time in milliseconds that this attempt took to fail.
      * @param exception exception with details.
      */
     public void trackAttemptedNetwork(PubnativePriorityRuleModel priorityRuleModel,
@@ -194,12 +196,12 @@ public class PubnativeInsightModel {
     }
 
     /**
-     * Sets the current network as succeded
-     * @param priorityRuleModel valid model
+     * Sets the current network as succeded.
+     *
+     * @param priorityRuleModel valid model.
      * @param responseTime time in milliseconds that it took this request to be success.
      */
-    public void trackSuccededNetwork(PubnativePriorityRuleModel priorityRuleModel,
-                                     long responseTime) {
+    public void trackSuccededNetwork(PubnativePriorityRuleModel priorityRuleModel, long responseTime) {
 
         Log.v(TAG, "trackSuccededNetwork");
         mData.network = priorityRuleModel.network_code;

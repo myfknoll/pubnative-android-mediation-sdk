@@ -28,20 +28,19 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.library.banner.PubnativeBanner;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-import net.pubnative.mediation.exceptions.PubnativeException;
-
-public class PubnativeLibraryNetworkBannerAdapter
-        extends PubnativeNetworkBannerAdapter implements PubnativeBanner.Listener {
+public class PubnativeLibraryNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
+        implements PubnativeBanner.Listener {
 
     private static String TAG = PubnativeLibraryNetworkBannerAdapter.class.getSimpleName();
 
     protected PubnativeBanner mBanner;
 
     /**
-     * Creates a new instance of PubnativeLibraryNetworkBannerAdapter
+     * Creates a new instance of PubnativeLibraryNetworkBannerAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -57,8 +56,7 @@ public class PubnativeLibraryNetworkBannerAdapter
     public void load(Context context) {
 
         Log.v(TAG, "load");
-        if (context == null
-                || mData == null) {
+        if (context == null || mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             String appToken = (String) mData.get(KEY_APP_TOKEN);
@@ -67,10 +65,7 @@ public class PubnativeLibraryNetworkBannerAdapter
             } else {
                 mBanner = new PubnativeBanner();
                 mBanner.setListener(this);
-                mBanner.load(context,
-                        appToken,
-                        PubnativeBanner.Size.BANNER_50,
-                        PubnativeBanner.Position.BOTTOM);
+                mBanner.load(context, appToken, PubnativeBanner.Size.BANNER_50, PubnativeBanner.Position.BOTTOM);
             }
         }
     }

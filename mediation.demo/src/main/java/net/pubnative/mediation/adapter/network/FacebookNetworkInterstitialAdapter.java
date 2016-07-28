@@ -33,9 +33,9 @@ import com.facebook.ads.ImpressionListener;
 import com.facebook.ads.InterstitialAd;
 import com.facebook.ads.InterstitialAdListener;
 
-import java.util.Map;
-
 import net.pubnative.mediation.exceptions.PubnativeException;
+
+import java.util.Map;
 
 public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
         implements InterstitialAdListener,
@@ -45,7 +45,7 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
     private InterstitialAd mInterstitial;
 
     /**
-     * Creates a new instance of FacebookNetworkInterstitialAdapter
+     * Creates a new instance of FacebookNetworkInterstitialAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -123,9 +123,7 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null
-                ? (adError.getErrorCode() + " - " + adError.getErrorMessage())
-                : ""));
+        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
         if (adError == null) {
             invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
         } else {

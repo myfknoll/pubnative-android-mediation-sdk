@@ -28,8 +28,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import java.util.Map;
 import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
+
+import java.util.Map;
 
 public abstract class PubnativeNetworkAdapter {
 
@@ -59,7 +60,7 @@ public abstract class PubnativeNetworkAdapter {
     //==============================================================================================
 
     /**
-     * Creates a new instance of PubnativeNetworkRequestAdapter
+     * Creates a new instance of PubnativeNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
@@ -69,7 +70,7 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
-     * This method sets the extras for the adapter request
+     * This method sets the extras for the adapter request.
      *
      * @param extras valid extras Map.
      */
@@ -80,7 +81,7 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
-     * This method sets the extras for the adapter request
+     * This method sets the extras for the adapter request.
      *
      * @param targeting valid targeting filed.
      */
@@ -91,9 +92,9 @@ public abstract class PubnativeNetworkAdapter {
     }
 
     /**
-     * Starts this adapter process
+     * Starts this adapter process.
      *
-     * @param context         valid context
+     * @param context         valid context.
      * @param timeoutInMillis timeout in milliseconds, if 0, then no timeout is set.
      */
     public abstract void execute(Context context, int timeoutInMillis);

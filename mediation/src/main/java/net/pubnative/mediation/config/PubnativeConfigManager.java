@@ -36,14 +36,13 @@ import net.pubnative.mediation.config.model.PubnativeConfigModel;
 import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 import net.pubnative.mediation.insights.model.PubnativeInsightsAPIResponseModel;
+import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import net.pubnative.mediation.network.PubnativeHttpRequest;
 
 public class PubnativeConfigManager {
 
@@ -69,8 +68,7 @@ public class PubnativeConfigManager {
         /**
          * Invoked when config manager returns a config.
          *
-         * @param configModel PubnativeConfigModel object when cached/download config is available,
-         *                    else null.
+         * @param configModel PubnativeConfigModel object when cached/download config is available, else null.
          */
         void onConfigLoaded(PubnativeConfigModel configModel);
     }
@@ -97,7 +95,7 @@ public class PubnativeConfigManager {
      * @param extras   valid extras map with parameters for the request.
      * @param listener listener to be used for tracking the config loaded callback.
      */
-    public synchronized static void getConfig(Context context,
+    public static synchronized void getConfig(Context context,
                                               String appToken,
                                               Map extras,
                                               PubnativeConfigManager.Listener listener) {
@@ -185,37 +183,29 @@ public class PubnativeConfigManager {
         return currentConfig;
     }
 
-    protected static void updateConfig(Context context,
-                                       String appToken,
-                                       PubnativeConfigModel configModel) {
+    protected static void updateConfig(Context context, String appToken, PubnativeConfigModel configModel) {
 
         Log.v(TAG, "updateConfig");
         if (context != null) {
-            if (TextUtils.isEmpty(appToken)
-                    || configModel == null
-                    || configModel.isEmpty()) {
+            if (TextUtils.isEmpty(appToken) || configModel == null || configModel.isEmpty()) {
                 clean(context);
             } else {
                 setStoredConfig(context, configModel);
                 setStoredAppToken(context, appToken);
                 setStoredTimestamp(context, System.currentTimeMillis());
                 if (configModel.globals.containsKey(PubnativeConfigModel.GLOBAL.REFRESH)) {
-                    Double refresh = (Double) configModel.globals.get(
-                                                        PubnativeConfigModel.GLOBAL.REFRESH);
+                    Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.GLOBAL.REFRESH);
                     setStoredRefresh(context, refresh.longValue());
                 }
             }
         }
     }
 
-    protected static synchronized  void downloadConfig(
-            final PubnativeConfigRequestModel requestModel) {
+    protected static synchronized void downloadConfig(final PubnativeConfigRequestModel requestModel) {
 
         Log.v(TAG, "downloadConfig");
         PubnativeHttpRequest http = new PubnativeHttpRequest();
-        http.start(requestModel.context,
-                getConfigDownloadUrl(requestModel),
-                new PubnativeHttpRequest.Listener() {
+        http.start(requestModel.context, getConfigDownloadUrl(requestModel), new PubnativeHttpRequest.Listener() {
 
             @Override
             public void onPubnativeHttpRequestStart(PubnativeHttpRequest request) {
@@ -232,8 +222,7 @@ public class PubnativeConfigManager {
             }
 
             @Override
-            public void onPubnativeHttpRequestFail(PubnativeHttpRequest request,
-                                                   Exception exception) {
+            public void onPubnativeHttpRequestFail(PubnativeHttpRequest request, Exception exception) {
 
                 Log.v(TAG, "onPubnativeHttpRequestFail: " + exception.toString());
                 serveStoredConfig(requestModel);
@@ -241,8 +230,7 @@ public class PubnativeConfigManager {
         });
     }
 
-    protected static void processConfigDownloadResponse(PubnativeConfigRequestModel request,
-                                                        String result) {
+    protected static void processConfigDownloadResponse(PubnativeConfigRequestModel request, String result) {
 
         Log.v(TAG, "processConfigDownloadResponse");
         if (TextUtils.isEmpty(result)) {
@@ -252,7 +240,7 @@ public class PubnativeConfigManager {
         } else {
             try {
                 PubnativeConfigAPIResponseModel response = new Gson().fromJson(result,
-                                                        PubnativeConfigAPIResponseModel.class);
+                                                                               PubnativeConfigAPIResponseModel.class);
                 if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                     // Update delivery manager's tracking data
                     updateDeliveryManagerCache(request.context, response.config);
@@ -311,20 +299,16 @@ public class PubnativeConfigManager {
                     PubnativeDeliveryManager.resetPacingCalendar(placementId);
                 } else {
                     // Check if impression cap (hour) changed
-                    if (storedPlacement.delivery_rule.imp_cap_hour
-                            != newPlacement.delivery_rule.imp_cap_hour) {
+                    if (storedPlacement.delivery_rule.imp_cap_hour != newPlacement.delivery_rule.imp_cap_hour) {
                         PubnativeDeliveryManager.resetHourlyImpressionCount(context, placementId);
                     }
                     // check if impression cap (day) changed
-                    if (storedPlacement.delivery_rule.imp_cap_day
-                            != newPlacement.delivery_rule.imp_cap_day) {
+                    if (storedPlacement.delivery_rule.imp_cap_day != newPlacement.delivery_rule.imp_cap_day) {
                         PubnativeDeliveryManager.resetDailyImpressionCount(context, placementId);
                     }
                     // check if pacing cap changed
-                    if (storedPlacement.delivery_rule.pacing_cap_minute
-                            != newPlacement.delivery_rule.pacing_cap_minute
-                        || storedPlacement.delivery_rule.pacing_cap_hour
-                            != newPlacement.delivery_rule.pacing_cap_hour) {
+                    if (storedPlacement.delivery_rule.pacing_cap_minute != newPlacement.delivery_rule.pacing_cap_minute
+                        || storedPlacement.delivery_rule.pacing_cap_hour != newPlacement.delivery_rule.pacing_cap_hour) {
                         PubnativeDeliveryManager.resetPacingCalendar(placementId);
                     }
                 }
@@ -335,8 +319,7 @@ public class PubnativeConfigManager {
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected static void invokeLoaded(PubnativeConfigModel configModel,
-                                       PubnativeConfigManager.Listener listener) {
+    protected static void invokeLoaded(PubnativeConfigModel configModel, PubnativeConfigManager.Listener listener) {
 
         Log.v(TAG, "invokeLoaded");
         if (listener != null) {
@@ -381,8 +364,7 @@ public class PubnativeConfigManager {
         String configDownloadBaseUrl = CONFIG_DOWNLOAD_BASE_URL;
         PubnativeConfigModel storedConfig = getStoredConfig(context);
         if (storedConfig != null && !storedConfig.isEmpty()) {
-            String configUrl = (String) storedConfig.globals.get(
-                                                        PubnativeConfigModel.GLOBAL.CONFIG_URL);
+            String configUrl = (String) storedConfig.globals.get(PubnativeConfigModel.GLOBAL.CONFIG_URL);
             if (!TextUtils.isEmpty(configUrl)) {
                 configDownloadBaseUrl = configUrl;
             }

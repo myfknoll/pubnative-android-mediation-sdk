@@ -25,9 +25,9 @@ package net.pubnative.mediation.adapter;
 
 import android.util.Log;
 
-import java.lang.reflect.Constructor;
-
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
+
+import java.lang.reflect.Constructor;
 
 public class PubnativeNetworkHubFactory {
 

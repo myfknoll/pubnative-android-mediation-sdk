@@ -122,15 +122,13 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub,
-                                          PubnativeNetworkModel network,
-                                          Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
 
         PubnativeNetworkRequestAdapter adapter = hub.getRequestAdapter();
         if (adapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(),
-                    0,
-                    PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
+                                             0,
+                                             PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             getNextNetwork();
         } else {
             adapter.setExtras(extras);
@@ -170,8 +168,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
 
                 mIsRunning = false;
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this,
-                                                              exception);
+                    mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this, exception);
                 }
                 mListener = null;
             }
@@ -191,8 +188,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter,
-                                                       PubnativeAdModel ad) {
+    public void onPubnativeNetworkAdapterRequestLoaded(PubnativeNetworkRequestAdapter adapter, PubnativeAdModel ad) {
 
         Log.v(TAG, "onAdapterRequestLoaded");
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
@@ -213,8 +209,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter,
-                                                       Exception exception) {
+    public void onPubnativeNetworkAdapterRequestFailed(PubnativeNetworkRequestAdapter adapter, Exception exception) {
 
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network

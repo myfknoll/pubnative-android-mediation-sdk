@@ -7,10 +7,11 @@ import android.util.Log;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
+import net.pubnative.mediation.exceptions.PubnativeException;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
 
@@ -19,7 +20,7 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     protected InterstitialAd mInterstitial;
 
     /**
-     * Creates a new instance of AdMobNetworkRequestAdapter
+     * Creates a new instance of AdMobNetworkRequestAdapter.
      *
      * @param data server configured data for the current adapter network.
      */

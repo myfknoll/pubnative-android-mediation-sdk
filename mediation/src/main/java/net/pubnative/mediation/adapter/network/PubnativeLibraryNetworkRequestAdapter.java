@@ -29,10 +29,10 @@ import android.util.Log;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
+import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.List;
 import java.util.Map;
-import net.pubnative.mediation.exceptions.PubnativeException;
 
 public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements PubnativeRequest.Listener {
