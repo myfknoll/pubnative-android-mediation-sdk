@@ -201,9 +201,9 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     }
 
     @Override
-    public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int i) {
+    public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int errorCode) {
 
-        Log.v(TAG, "onError: " + i);
+        Log.v(TAG, "onError: " + errorCode);
         invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
     }
 }

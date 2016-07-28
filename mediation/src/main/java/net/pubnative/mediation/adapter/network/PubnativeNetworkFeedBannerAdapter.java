@@ -100,7 +100,7 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     /**
      * Sets loadlistener for this request.
      *
-     * @param loadListener  valid listener.
+     * @param listener  valid listener.
      */
     public void setLoadListener(PubnativeNetworkFeedBannerAdapter.LoadListener listener) {
 
@@ -111,7 +111,7 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     /**
      * Sets adlistener for this request.
      *
-     * @param adListener  valid listener.
+     * @param listener  valid listener.
      */
     public void setAdListener(PubnativeNetworkFeedBannerAdapter.AdListener listener) {
 
