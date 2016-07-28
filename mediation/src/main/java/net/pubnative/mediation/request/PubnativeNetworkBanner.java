@@ -71,6 +71,11 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         void onPubnativeNetworkBannerHide(PubnativeNetworkBanner banner);
     }
 
+    /**
+     * Sets listener for this request.
+     *
+     * @param listener valid listener.
+     */
     public void setListener(Listener listener) {
 
         Log.v(TAG, "setListener");

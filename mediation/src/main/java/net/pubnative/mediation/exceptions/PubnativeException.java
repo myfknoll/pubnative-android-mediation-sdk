@@ -127,6 +127,13 @@ public class PubnativeException extends Exception {
         return result;
     }
 
+    /**
+     * This method used to get invalid network exception.
+     *
+     * @param exception network exception.
+     * @param extraMap  contains error code and error message.
+     * @return PubnativeException.
+     */
     public static PubnativeException extraException(PubnativeException exception, Map extraMap) {
 
         Log.v(TAG, "extraException");

@@ -164,6 +164,12 @@ public class PubnativeConfigManager {
         invokeLoaded(getStoredConfig(request.context), request.listener);
     }
 
+    /**
+     * This method used to get stored config for ad request.
+     *
+     * @param context valid context.
+     * @return        PubnativeConfigModel.
+     */
     public static PubnativeConfigModel getStoredConfig(Context context) {
 
         Log.v(TAG, "getStoredConfig");

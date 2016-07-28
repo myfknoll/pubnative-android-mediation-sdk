@@ -44,7 +44,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     protected Context                 mContext;
     protected Listener                mListener;
     protected String                  mAppToken;
-    protected String                  mRequestID;
+    protected String                  mRequestId;
     protected String                  mPlacementName;
     protected PubnativePlacementModel mPlacementModel;
     protected PubnativeConfigModel    mConfigModel;
@@ -96,7 +96,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
                 mAppToken = appToken;
                 mPlacementName = placementName;
                 mCurrentNetworkIndex = -1;
-                mRequestID = UUID.randomUUID().toString();
+                mRequestId = UUID.randomUUID().toString();
                 PubnativeConfigManager.getConfig(mContext, mAppToken, extras, this);
             }
         }
@@ -110,7 +110,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
     public String getTrackingUUID() {
 
         Log.v(TAG, "getUUID");
-        return mRequestID;
+        return mRequestId;
     }
 
     /**

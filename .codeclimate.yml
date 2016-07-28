@@ -3,7 +3,10 @@ engines:
     enabled: true 
     config: 'config/checkstyle/checkstyle.xml'
     channel: 'beta'
-
+ratings:
+   paths:  [
+   "**.java"
+   ]
 exclude_paths: [
   "build/",
   "**/test/",

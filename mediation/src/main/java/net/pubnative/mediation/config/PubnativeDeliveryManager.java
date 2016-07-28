@@ -66,125 +66,125 @@ public class PubnativeDeliveryManager {
     //----------------------------------------------------------------------------------------------
 
     /**
-     * Gets the Calendar Object that points to the last pacing update for the given placementID.
+     * Gets the Calendar Object that points to the last pacing update for the given placementId.
      *
-     * @param placementID valid String.
+     * @param placementId valid String.
      *
      * @return Calendar object.
      */
-    public static Calendar getPacingCalendar(String placementID) {
+    public static Calendar getPacingCalendar(String placementId) {
 
         Log.v(TAG, "getPacingCalendar");
         Calendar result = null;
-        if (getInstance().mCurrentPacing.containsKey(placementID)) {
-            result = getInstance().mCurrentPacing.get(placementID);
+        if (getInstance().mCurrentPacing.containsKey(placementId)) {
+            result = getInstance().mCurrentPacing.get(placementId);
         }
         return result;
     }
 
     /**
-     * Sets the current pacing calendar to the current time for the given placementID.
+     * Sets the current pacing calendar to the current time for the given placementId.
      *
-     * @param placementID valid String.
+     * @param placementId valid String.
      */
-    public static void updatePacingCalendar(String placementID) {
+    public static void updatePacingCalendar(String placementId) {
 
         Log.v(TAG, "updatePacingCalendar");
-        getInstance().mCurrentPacing.put(placementID, Calendar.getInstance());
+        getInstance().mCurrentPacing.put(placementId, Calendar.getInstance());
     }
 
     /**
-     * Removes current pacing Calendar from the system for the given placementID.
+     * Removes current pacing Calendar from the system for the given placementId.
      *
-     * @param placementID valid String.
+     * @param placementId valid String.
      */
-    public static void resetPacingCalendar(String placementID) {
+    public static void resetPacingCalendar(String placementId) {
 
         Log.v(TAG, "resetPacingCalendar");
-        getInstance().mCurrentPacing.put(placementID, null);
+        getInstance().mCurrentPacing.put(placementId, null);
     }
 
     /**
-     * Logs an impression for the given placementID.
+     * Logs an impression for the given placementId.
      *
      * @param context     valid Context.
-     * @param placementID valid String.
+     * @param placementId valid String.
      */
-    public static void logImpression(Context context, String placementID) {
+    public static void logImpression(Context context, String placementId) {
 
         Log.v(TAG, "logImpression");
-        int dayCount = getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
-        int hourCount = getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID);
-        setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, ++dayCount);
-        setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, ++hourCount);
+        int dayCount = getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementId);
+        int hourCount = getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementId);
+        setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementId, ++dayCount);
+        setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementId, ++hourCount);
     }
 
     /**
-     * Resets daily impression count for the given placementID.
+     * Resets daily impression count for the given placementId.
      *
      * @param context     valid Context.
-     * @param placementID valid String.
+     * @param placementId valid String.
      */
-    public static void resetDailyImpressionCount(Context context, String placementID) {
+    public static void resetDailyImpressionCount(Context context, String placementId) {
 
         Log.v(TAG, "resetDailyImpressionCount");
-        setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, 0);
+        setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementId, 0);
     }
 
     /**
-     * Resets hourly impression count for the given placementID.
+     * Resets hourly impression count for the given placementId.
      *
      * @param context     valid Context.
-     * @param placementID valid String.
+     * @param placementId valid String.
      */
-    public static void resetHourlyImpressionCount(Context context, String placementID) {
+    public static void resetHourlyImpressionCount(Context context, String placementId) {
 
         Log.v(TAG, "resetHourlyImpressionCount");
-        setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, 0);
+        setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementId, 0);
     }
 
     /**
-     * Gets current daily impression count for the given placementID.
+     * Gets current daily impression count for the given placementId.
      *
      * @param context     valid Context.
-     * @param placementID valid String.
+     * @param placementId valid String.
      *
      * @return daily impression count.
      */
-    public static int getCurrentDailyCount(Context context, String placementID) {
+    public static int getCurrentDailyCount(Context context, String placementId) {
 
         Log.v(TAG, "getCurrentDailyCount");
-        return getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID);
+        return getImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementId);
     }
 
     /**
-     * Gets current hourly impression count for the given placementID.
+     * Gets current hourly impression count for the given placementId.
      *
      * @param context     valid Context.
-     * @param placementID valid String.
+     * @param placementId valid String.
      *
      * @return hourly impression count.
      */
-    public static int getCurrentHourlyCount(Context context, String placementID) {
+    public static int getCurrentHourlyCount(Context context, String placementId) {
 
         Log.v(TAG, "getCurrentHourlyCount");
-        return getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID);
+        return getImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementId);
     }
 
     /**
-     * Sets the last impression tracking update for the given placementID.
+     * Sets the last impression tracking update for the given placementId.
      *
      * @param context     valid Context object.
-     * @param placementID valid String.
+     * @param placementId valid String.
      * @param calendar    calendar object with the timestamp.
      */
-    public static void setImpressionLastUpdate(Context context, String placementID, Calendar calendar) {
+    public static void setImpressionLastUpdate(Context context, String placementId, Calendar calendar) {
 
         Log.v(TAG, "setImpressionLastUpdate");
-        if (context != null && !TextUtils.isEmpty(placementID)) {
+        if (context != null && !TextUtils.isEmpty(placementId)) {
             SharedPreferences.Editor editor = getPreferencesEditor(context);
             if (editor != null) {
-                String placementLastUpdateKey = placementID.concat(IMPRESSION_LAST_UPDATE_APPEND);
+                String placementLastUpdateKey = placementId.concat(IMPRESSION_LAST_UPDATE_APPEND);
                 if (calendar == null) {
                     editor.remove(placementLastUpdateKey);
                 } else {
@@ -196,21 +196,21 @@ public class PubnativeDeliveryManager {
     }
 
     /**
-     * Gets the last impression update for the given placementID.
+     * Gets the last impression update for the given placementId.
      *
      * @param context     valid Context.
-     * @param placementID valid String.
+     * @param placementId valid String.
      *
      * @return Calendar with the timestamp.
      */
-    public static Calendar getImpressionLastUpdate(Context context, String placementID) {
+    public static Calendar getImpressionLastUpdate(Context context, String placementId) {
 
         Log.v(TAG, "getImpressionLastUpdate");
         Calendar result = null;
-        if (context != null && !TextUtils.isEmpty(placementID)) {
+        if (context != null && !TextUtils.isEmpty(placementId)) {
             SharedPreferences preferences = getPreferences(context);
             if (preferences != null) {
-                String placementLastUpdateKey = placementID.concat(IMPRESSION_LAST_UPDATE_APPEND);
+                String placementLastUpdateKey = placementId.concat(IMPRESSION_LAST_UPDATE_APPEND);
                 long frequencyMillis = preferences.getLong(placementLastUpdateKey, 0);
                 if (frequencyMillis > 0) {
                     result = Calendar.getInstance();
@@ -225,11 +225,11 @@ public class PubnativeDeliveryManager {
     // Private
     //----------------------------------------------------------------------------------------------
 
-    protected static void updateImpressionCount(Context context, String placementID) {
+    protected static void updateImpressionCount(Context context, String placementId) {
 
         Log.v(TAG, "updateImpressionCount");
-        if (context != null && !TextUtils.isEmpty(placementID)) {
-            Calendar storedCalendar = getImpressionLastUpdate(context, placementID);
+        if (context != null && !TextUtils.isEmpty(placementId)) {
+            Calendar storedCalendar = getImpressionLastUpdate(context, placementId);
             if (storedCalendar != null) {
                 Calendar dayCalendar = Calendar.getInstance();
                 dayCalendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -237,29 +237,29 @@ public class PubnativeDeliveryManager {
                 dayCalendar.set(Calendar.SECOND, 0);
                 dayCalendar.set(Calendar.MILLISECOND, 0);
                 if (storedCalendar.before(dayCalendar)) {
-                    setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementID, 0);
-                    setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, 0);
+                    setImpressionCount(context, IMPRESSION_COUNT_DAY_APPEND, placementId, 0);
+                    setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementId, 0);
                 } else {
                     Calendar hourCalendar = Calendar.getInstance();
                     hourCalendar.set(Calendar.MINUTE, 0);
                     hourCalendar.set(Calendar.SECOND, 0);
                     hourCalendar.set(Calendar.MILLISECOND, 0);
                     if (storedCalendar.before(hourCalendar)) {
-                        setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementID, 0);
+                        setImpressionCount(context, IMPRESSION_COUNT_HOUR_APPEND, placementId, 0);
                     }
                 }
             }
-            setImpressionLastUpdate(context, placementID, Calendar.getInstance());
+            setImpressionLastUpdate(context, placementId, Calendar.getInstance());
         }
     }
 
-    protected static void setImpressionCount(Context context, String impressionCapType, String placementID, int value) {
+    protected static void setImpressionCount(Context context, String impressionCapType, String placementId, int value) {
 
         Log.v(TAG, "setImpressionCount");
-        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
+        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementId)) {
             SharedPreferences.Editor editor = getPreferencesEditor(context);
             if (editor != null) {
-                String placementTrackingKey = placementID.concat(impressionCapType);
+                String placementTrackingKey = placementId.concat(impressionCapType);
                 if (value == 0) {
                     editor.remove(placementTrackingKey);
                 } else {
@@ -270,15 +270,15 @@ public class PubnativeDeliveryManager {
         }
     }
 
-    protected static int getImpressionCount(Context context, String impressionCapType, String placementID) {
+    protected static int getImpressionCount(Context context, String impressionCapType, String placementId) {
 
         Log.v(TAG, "getImpressionCount");
-        updateImpressionCount(context, placementID);
+        updateImpressionCount(context, placementId);
         int result = 0;
-        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementID)) {
+        if (context != null && !TextUtils.isEmpty(impressionCapType) && !TextUtils.isEmpty(placementId)) {
             SharedPreferences preferences = getPreferences(context);
             if (preferences != null) {
-                String placementTrackingKey = placementID.concat(impressionCapType);
+                String placementTrackingKey = placementId.concat(impressionCapType);
                 result = preferences.getInt(placementTrackingKey, 0);
             }
         }

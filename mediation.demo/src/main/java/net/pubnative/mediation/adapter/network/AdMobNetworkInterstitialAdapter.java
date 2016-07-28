@@ -72,12 +72,12 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     protected void createRequest(Context context) {
 
         Log.v(TAG, "createRequest");
-        String unitID = (String) mData.get(ADMOB_UNIT_ID);
-        if (TextUtils.isEmpty(unitID)) {
+        String unitId = (String) mData.get(ADMOB_UNIT_ID);
+        if (TextUtils.isEmpty(unitId)) {
             invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
         } else {
             mInterstitial = new InterstitialAd(context);
-            mInterstitial.setAdUnitId(unitID);
+            mInterstitial.setAdUnitId(unitId);
             mInterstitial.setAdListener(new InterstitialAdListener());
             mInterstitial.loadAd(getAdRequest());
         }

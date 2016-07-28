@@ -106,13 +106,22 @@ public abstract class PubnativeNetworkInterstitialAdapter extends PubnativeNetwo
     //==============================================================================================
     // Overridable methods
     //==============================================================================================
-
+    /**
+     * Sets loadlistener for this request.
+     *
+     * @param listener  valid listener.
+     */
     public void setLoadListener(PubnativeNetworkInterstitialAdapter.LoadListener listener) {
 
         Log.v(TAG, "setLoadListener");
         mLoadListener = listener;
     }
 
+    /**
+     * Sets adlistener for this request.
+     *
+     * @param listener  valid listener.
+     */
     public void setAdListener(PubnativeNetworkInterstitialAdapter.AdListener listener) {
 
         Log.v(TAG, "setAdListener");

@@ -97,12 +97,22 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     //==============================================================================================
     // Overridable methods
     //==============================================================================================
+    /**
+     * Sets loadlistener for this request.
+     *
+     * @param loadListener  valid listener.
+     */
     public void setLoadListener(PubnativeNetworkFeedBannerAdapter.LoadListener listener) {
 
         Log.v(TAG, "setLoadListener");
         mLoadListener = listener;
     }
 
+    /**
+     * Sets adlistener for this request.
+     *
+     * @param adListener  valid listener.
+     */
     public void setAdListener(PubnativeNetworkFeedBannerAdapter.AdListener listener) {
 
         Log.v(TAG, "setAdListener");

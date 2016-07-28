@@ -51,7 +51,7 @@ public class PubnativeHttpRequest {
     //==============================================================================================
     // Request properties
     protected int      mTimeoutInMillis = 4000; // 4 seconds
-    protected String   mPOSTString      = null;
+    protected String   mPostString      = null;
     // Inner
     protected Listener mListener        = null;
     protected Handler  mHandler         = null;
@@ -101,10 +101,15 @@ public class PubnativeHttpRequest {
         mTimeoutInMillis = timeoutInMillis;
     }
 
+    /**
+     * Sets tracking data for ad request.
+     *
+     * @param postString value for request params.
+     */
     public void setPOSTString(String postString) {
 
         Log.v(TAG, "setPOSTString");
-        mPOSTString = postString;
+        mPostString = postString;
     }
 
     /**
@@ -165,16 +170,16 @@ public class PubnativeHttpRequest {
             // 2. Set connection properties
             connection.setDoInput(true);
             connection.setConnectTimeout(mTimeoutInMillis);
-            if (TextUtils.isEmpty(mPOSTString)) {
+            if (TextUtils.isEmpty(mPostString)) {
                 connection.setRequestMethod("GET");
             } else {
                 connection.setRequestMethod("POST");
                 connection.setUseCaches(false);
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Length", Integer.toString(mPOSTString.getBytes().length));
+                connection.setRequestProperty("Content-Length", Integer.toString(mPostString.getBytes().length));
                 OutputStream connectionOutputStream = connection.getOutputStream();
                 OutputStreamWriter wr = new OutputStreamWriter(connectionOutputStream, "UTF-8");
-                wr.write(mPOSTString);
+                wr.write(mPostString);
                 wr.flush();
                 wr.close();
             }

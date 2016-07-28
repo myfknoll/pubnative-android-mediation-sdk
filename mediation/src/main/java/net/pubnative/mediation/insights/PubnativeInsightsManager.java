@@ -60,24 +60,24 @@ public class PubnativeInsightsManager {
      * Queues impression/click tracking data and sends it to pubnative server.
      *
      * @param context   valid Context object.
-     * @param baseURL   the base URL of the tracking server.
+     * @param baseUrl   the base URL of the tracking server.
      * @param extras    added parameters that will be included as querystring parameters.
      * @param dataModel PubnativeInsightDataModel object with values filled in.
      */
     public static synchronized void trackData(Context context,
-                                              String baseURL,
+                                              String baseUrl,
                                               Map<String, String> extras,
                                               PubnativeInsightDataModel dataModel) {
 
         Log.v(TAG, "trackData");
         if (context == null) {
             Log.e(TAG, "trackData - context can't be null. Dropping call");
-        } else if (TextUtils.isEmpty(baseURL)) {
+        } else if (TextUtils.isEmpty(baseUrl)) {
             Log.e(TAG, "trackData - baseURL can't be empty. Dropping call");
         } else if (dataModel == null) {
             Log.e(TAG, "trackData - dataModel can't be null. Dropping call");
         } else {
-            Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
+            Uri.Builder uriBuilder = Uri.parse(baseUrl).buildUpon();
             // Fill with passed parameters
             if (extras != null && extras.size() > 0) {
                 for (String key : extras.keySet()) {

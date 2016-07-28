@@ -192,9 +192,9 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     }
 
     @Override
-    public void onError(FlurryAdInterstitial flurryAdInterstitial, FlurryAdErrorType flurryAdErrorType, int i) {
+    public void onError(FlurryAdInterstitial flurryAdInterstitial, FlurryAdErrorType flurryAdErrorType, int errorCode) {
 
-        Log.v(TAG, "onError: " + i);
+        Log.v(TAG, "onError: " + errorCode);
         invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
     }
 }

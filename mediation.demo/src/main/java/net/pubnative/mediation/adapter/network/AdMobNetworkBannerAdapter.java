@@ -111,7 +111,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
             mAdView = new AdView(mContext);
             mAdView.setAdSize(AdSize.SMART_BANNER);
             mAdView.setAdUnitId(unitId);
-            mAdView.setAdListener(listener);
+            mAdView.setAdListener(mListener);
             mAdView.loadAd(getAdRequest());
         }
     }
@@ -142,7 +142,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
     // AdListener
     //----------------------------------------------------------------------------------------------
 
-    private com.google.android.gms.ads.AdListener listener = new com.google.android.gms.ads.AdListener() {
+    private com.google.android.gms.ads.AdListener mListener = new com.google.android.gms.ads.AdListener() {
 
         @Override
         public void onAdClosed() {
