@@ -196,7 +196,8 @@ public class PubnativeHttpRequest {
             } else {
                 Map errorData = new HashMap();
                 errorData.put("statusCode", responseCode+"");
-                try {errorData.put("errorString", stringFromInputStream(connection.getErrorStream()));
+                try {
+                    errorData.put("errorString", stringFromInputStream(connection.getErrorStream()));
                 } catch (PubnativeException ex) {
                     errorData.put("parsingException", ex.toString());
                 }

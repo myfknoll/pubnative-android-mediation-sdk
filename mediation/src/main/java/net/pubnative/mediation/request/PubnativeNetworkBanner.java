@@ -321,7 +321,6 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         Log.v(TAG, "onPubnativeBannerHide");
         invokeHide();
     }
-    //==============================================================================================
     // PubnativeNetworkBannerAdapter.LoadListener
     //----------------------------------------------------------------------------------------------
 

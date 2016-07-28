@@ -85,8 +85,7 @@ public class PubnativeInsightsManager {
                 }
             }
             dataModel.generated_at = System.currentTimeMillis()*1000;
-            PubnativeInsightRequestModel model =
-                    new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
+            PubnativeInsightRequestModel model = new PubnativeInsightRequestModel(uriBuilder.build().toString(), dataModel);
             // Enqueue failed
             List<PubnativeInsightRequestModel> failedList = getTrackingList(context, INSIGHTS_FAILED_DATA);
             enqueueInsightList(context, INSIGHTS_PENDING_DATA, failedList);
@@ -132,8 +131,7 @@ public class PubnativeInsightsManager {
                                 trackingFailed(context, model, "invalid insight response (empty or null)");
                             } else {
                                 try {
-                                    PubnativeInsightsAPIResponseModel response =
-                                            new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
+                                    PubnativeInsightsAPIResponseModel response = new Gson().fromJson(result, PubnativeInsightsAPIResponseModel.class);
                                     if (PubnativeInsightsAPIResponseModel.Status.OK.equals(response.status)) {
                                         trackingFinished(context, model);
                                     } else {
@@ -258,8 +256,7 @@ public class PubnativeInsightsManager {
                 String pendingListString = preferences.getString(listKey, null);
                 if (!TextUtils.isEmpty(pendingListString)) {
                     try {
-                        PubnativeInsightRequestModel[] cacheModel =
-                                new Gson().fromJson(pendingListString, PubnativeInsightRequestModel[].class);
+                        PubnativeInsightRequestModel[] cacheModel = new Gson().fromJson(pendingListString, PubnativeInsightRequestModel[].class);
                         if (cacheModel != null && cacheModel.length > 0) {
                             result = new ArrayList<PubnativeInsightRequestModel>(Arrays.asList(cacheModel));
                         }

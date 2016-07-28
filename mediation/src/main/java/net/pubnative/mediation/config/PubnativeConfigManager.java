@@ -400,8 +400,7 @@ public class PubnativeConfigManager {
         return getStringSharedPreference(context, CONFIG_STRING_KEY);
     }
 
-    protected static synchronized void setStoredConfig(Context context, PubnativeConfigModel config)
-    {
+    protected static synchronized void setStoredConfig(Context context, PubnativeConfigModel config) {
 
         Log.v(TAG, "setStoredConfig");
         // ensuring the string "null" is not getting saved.
