@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PubnativeConfigManager {
 
-    private static         String                            TAG                       = PubnativeConfigManager.class.getSimpleName();
+    private static   final String                            TAG                       = PubnativeConfigManager.class.getSimpleName();
     protected static final String                            SHARED_PREFERENCES_CONFIG = "net.pubnative.mediation";
     protected static final String                            CONFIG_STRING_KEY         = "config";
     protected static final String                            APP_TOKEN_STRING_KEY      = "appToken";
@@ -343,7 +343,7 @@ public class PubnativeConfigManager {
 
         Log.v(TAG, "dequeueRequest");
         PubnativeConfigRequestModel result = null;
-        if (sQueue != null && sQueue.size() > 0) {
+        if (sQueue != null && !sQueue.isEmpty()) {
             result = sQueue.remove(0);
         }
         return result;
@@ -452,7 +452,7 @@ public class PubnativeConfigManager {
         String result = null;
         if (context != null && !TextUtils.isEmpty(key)) {
             SharedPreferences preferences = getSharedPreferences(context);
-            if (preferences != null && preferences.contains((key))) {
+            if (preferences != null && preferences.contains(key)) {
                 result = preferences.getString(key, null);
             }
         }

@@ -33,7 +33,7 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkRequestAdapter extends PubnativeNetworkAdapter {
 
-    private static String TAG = PubnativeNetworkRequestAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeNetworkRequestAdapter.class.getSimpleName();
     protected Listener mListener;
 
     /**

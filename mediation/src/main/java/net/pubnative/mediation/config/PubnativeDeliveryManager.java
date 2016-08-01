@@ -34,13 +34,14 @@ import java.util.Map;
 
 public class PubnativeDeliveryManager {
 
-    private static         String                TAG                           = PubnativeDeliveryManager.class.getSimpleName();
+    private   static final String                TAG                           = PubnativeDeliveryManager.class.getSimpleName();
     protected static final String                IMPRESSION_PREFERENCES_KEY    = "net.pubnative.mediation.frequency_manager";
     protected static final String                IMPRESSION_COUNT_DAY_APPEND   = "_impression_count_day";
     protected static final String                IMPRESSION_COUNT_HOUR_APPEND  = "_impression_count_hour";
     protected static final String                IMPRESSION_LAST_UPDATE_APPEND = "_impression_last_update";
     protected              Map<String, Calendar> mCurrentPacing                = new HashMap<String, Calendar>();
 
+    protected static PubnativeDeliveryManager    sInstance                     = null;
     //==============================================================================================
     // PubnativeDeliveryManager
     //==============================================================================================
@@ -50,8 +51,6 @@ public class PubnativeDeliveryManager {
     private PubnativeDeliveryManager() {
 
     }
-
-    protected static PubnativeDeliveryManager sInstance = null;
 
     protected static synchronized PubnativeDeliveryManager getInstance() {
 

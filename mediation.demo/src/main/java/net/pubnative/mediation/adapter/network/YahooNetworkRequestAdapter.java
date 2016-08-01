@@ -43,9 +43,9 @@ import java.util.Map;
 public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements FlurryAdNativeListener {
 
-    private static      String TAG                = YahooNetworkRequestAdapter.class.getSimpleName();
-    public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
-    public static final String KEY_FLURRY_API_KEY = "api_key";
+    private static final String TAG                = YahooNetworkRequestAdapter.class.getSimpleName();
+    public  static final String KEY_AD_SPACE_NAME  = "ad_space_name";
+    public  static final String KEY_FLURRY_API_KEY = "api_key";
     protected Context mContext;
 
     /**
@@ -115,9 +115,9 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
 
             if (mTargeting.gender == null) {
                 result.setGender(FlurryGender.UNKNOWN);
-            } else if (mTargeting.gender.equals("female")) {
+            } else if ("female".equals(mTargeting.gender)) {
                 result.setGender(FlurryGender.FEMALE);
-            } else if (mTargeting.gender.equals("male")) {
+            } else if ("male".equals(mTargeting.gender)) {
                 result.setGender(FlurryGender.MALE);
             } else {
                 result.setGender(FlurryGender.UNKNOWN);

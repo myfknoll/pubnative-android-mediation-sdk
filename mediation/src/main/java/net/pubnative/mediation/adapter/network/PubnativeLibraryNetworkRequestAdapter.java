@@ -37,7 +37,7 @@ import java.util.Map;
 public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements PubnativeRequest.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
 
     public PubnativeLibraryNetworkRequestAdapter(Map data) {
 
@@ -98,7 +98,7 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
-            if (ads != null && ads.size() > 0) {
+            if (ads != null && !ads.isEmpty()) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
             }
             invokeLoaded(wrapAd);

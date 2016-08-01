@@ -32,7 +32,7 @@ import android.util.Log;
 
 public class PubnativeDeviceUtils {
 
-    private static String TAG = PubnativeDeviceUtils.class.getSimpleName();
+    private static final String TAG = PubnativeDeviceUtils.class.getSimpleName();
 
     /**
      * Gets you the PackageInfo object based on the Context object passed in.
@@ -87,8 +87,8 @@ public class PubnativeDeviceUtils {
      * @return true if screen large or extra large
      */
     public static boolean isTablet(Context context) {
-        boolean xlarge = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
-        boolean large = ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
-        return (xlarge || large);
+        boolean xlarge = (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4;
+        boolean large = (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE;
+        return xlarge || large;
     }
 }

@@ -27,8 +27,6 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 
 public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
 
-    private static String TAG = PubnativeLibraryNetworkAdapter.class.getSimpleName();
-
     @Override
     public PubnativeNetworkRequestAdapter getRequestAdapter() {
 

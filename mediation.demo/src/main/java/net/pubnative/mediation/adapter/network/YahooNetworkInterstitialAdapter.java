@@ -42,7 +42,7 @@ import java.util.Map;
 public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
         implements FlurryAdInterstitialListener {
 
-    private static String TAG = YahooNetworkInterstitialAdapter.class.getSimpleName();
+    private static final String TAG = YahooNetworkInterstitialAdapter.class.getSimpleName();
     private FlurryAdInterstitial mInterstitial;
 
     /**
@@ -94,9 +94,9 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
             result.setAge(mTargeting.age);
             if (mTargeting.gender == null) {
                 result.setGender(FlurryGender.UNKNOWN);
-            } else if (mTargeting.gender.equals("female")) {
+            } else if ("female".equals(mTargeting.gender)) {
                 result.setGender(FlurryGender.FEMALE);
-            } else if (mTargeting.gender.equals("male")) {
+            } else if ("male".equals(mTargeting.gender)) {
                 result.setGender(FlurryGender.MALE);
             } else {
                 result.setGender(FlurryGender.UNKNOWN);

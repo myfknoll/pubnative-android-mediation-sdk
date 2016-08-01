@@ -40,7 +40,7 @@ import java.util.Map;
 public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         implements AdListener {
 
-    private static         String   TAG                         = FacebookNetworkRequestAdapter.class.getSimpleName();
+    private static   final String   TAG                         = FacebookNetworkRequestAdapter.class.getSimpleName();
     protected static final String   KEY_PLACEMENT_ID            = "placement_id";
     protected static final int      FACEBOOK_ERROR_NO_FILL_1203 = 1203;
     protected              NativeAd mNativeAd                   = null;
@@ -113,7 +113,7 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     public void onAdLoaded(Ad ad) {
 
         Log.v(TAG, "onAdLoaded");
-        if (ad == mNativeAd) {
+        if (ad.equals(mNativeAd)) {
             FacebookNativeAdModel wrapModel = new FacebookNativeAdModel((NativeAd) ad);
             invokeLoaded(wrapModel);
         }

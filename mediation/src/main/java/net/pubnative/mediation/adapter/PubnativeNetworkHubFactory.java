@@ -31,8 +31,8 @@ import java.lang.reflect.Constructor;
 
 public class PubnativeNetworkHubFactory {
 
-    private static         String TAG             = PubnativeNetworkHubFactory.class.getSimpleName();
-    protected final static String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
+    private   static final String TAG             = PubnativeNetworkHubFactory.class.getSimpleName();
+    protected static final String NETWORK_PACKAGE = "net.pubnative.mediation.adapter.network";
 
     /**
      * Creates a new hub instance by using the values passed in using model

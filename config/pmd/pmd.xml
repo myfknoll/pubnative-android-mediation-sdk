@@ -130,7 +130,6 @@
    <rule ref="rulesets/java/imports.xml/UnnecessaryFullyQualifiedName"/>
    <rule ref="rulesets/java/imports.xml/UnusedImports"/>
    <rule ref="rulesets/java/j2ee.xml/DoNotCallSystemExit"/>
-   <rule ref="rulesets/java/j2ee.xml/DoNotUseThreads"/>
    <rule ref="rulesets/java/j2ee.xml/LocalHomeNamingConvention"/>
    <rule ref="rulesets/java/j2ee.xml/LocalInterfaceSessionNamingConvention"/>
    <rule ref="rulesets/java/j2ee.xml/MDBAndSessionBeanNamingConvention"/>

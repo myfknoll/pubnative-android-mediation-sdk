@@ -39,7 +39,7 @@ import java.util.Map;
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         implements PubnativeNetworkRequestAdapter.Listener {
 
-    private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
+    private static final String TAG = PubnativeNetworkRequest.class.getSimpleName();
     protected PubnativeNetworkRequest.Listener mListener;
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;

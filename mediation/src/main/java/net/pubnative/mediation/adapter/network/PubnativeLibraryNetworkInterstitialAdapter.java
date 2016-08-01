@@ -35,7 +35,7 @@ import java.util.Map;
 public class PubnativeLibraryNetworkInterstitialAdapter
         extends PubnativeNetworkInterstitialAdapter implements PubnativeInterstitial.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkInterstitialAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeLibraryNetworkInterstitialAdapter.class.getSimpleName();
 
     protected PubnativeInterstitial mInterstitial;
 

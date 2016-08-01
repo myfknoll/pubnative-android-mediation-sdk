@@ -132,9 +132,9 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
             result.setAge(mTargeting.age);
             if (mTargeting.gender == null) {
                 result.setGender(FlurryGender.UNKNOWN);
-            } else if (mTargeting.gender.equals("female")) {
+            } else if ("female".equals(mTargeting.gender)) {
                 result.setGender(FlurryGender.FEMALE);
-            } else if (mTargeting.gender.equals("male")) {
+            } else if ("male".equals(mTargeting.gender)) {
                 result.setGender(FlurryGender.MALE);
             } else {
                 result.setGender(FlurryGender.UNKNOWN);

@@ -32,7 +32,7 @@ import java.io.InputStreamReader;
 
 public class PubnativeStringUtils {
 
-    private static String TAG = PubnativeStringUtils.class.getSimpleName();
+    private static final String TAG = PubnativeStringUtils.class.getSimpleName();
 
     /**
      * Reads string from given InputStream object

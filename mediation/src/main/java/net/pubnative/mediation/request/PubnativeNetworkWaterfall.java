@@ -43,7 +43,7 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkWaterfall {
 
-    private static         String TAG                           = PubnativeNetworkRequest.class.getSimpleName();
+    private   static final String TAG                           = PubnativeNetworkRequest.class.getSimpleName();
     protected static final String TRACKING_PARAMETER_APP_TOKEN  = "app_token";
     protected static final String TRACKING_PARAMETER_REQUEST_ID = "reqid";
     protected Context                   mContext;

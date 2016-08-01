@@ -189,7 +189,7 @@ public class PubnativeHttpRequest {
                 }
             } else {
                 Map errorData = new HashMap();
-                errorData.put("statusCode", responseCode+"");
+                errorData.put("statusCode", String.format("%d", responseCode));
                 try {
                     errorData.put("errorString", stringFromInputStream(connection.getErrorStream()));
                 } catch (PubnativeException ex) {

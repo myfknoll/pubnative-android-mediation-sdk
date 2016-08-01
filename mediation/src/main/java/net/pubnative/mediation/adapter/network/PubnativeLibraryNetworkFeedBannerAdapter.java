@@ -36,7 +36,7 @@ import java.util.Map;
 public class PubnativeLibraryNetworkFeedBannerAdapter
         extends PubnativeNetworkFeedBannerAdapter implements PubnativeFeedBanner.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkFeedBannerAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeLibraryNetworkFeedBannerAdapter.class.getSimpleName();
 
     protected PubnativeFeedBanner mFeedBanner;
 

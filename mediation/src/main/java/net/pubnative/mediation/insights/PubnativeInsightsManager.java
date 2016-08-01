@@ -46,7 +46,7 @@ import java.util.Map;
 
 public class PubnativeInsightsManager {
 
-    private static         String  TAG                      = PubnativeInsightsManager.class.getSimpleName();
+    private   static final String  TAG                      = PubnativeInsightsManager.class.getSimpleName();
     protected static final String  INSIGHTS_PREFERENCES_KEY = "net.pubnative.mediation.tracking.PubnativeInsightsManager";
     protected static final String  INSIGHTS_PENDING_DATA    = "pending_data";
     protected static final String  INSIGHTS_FAILED_DATA     = "failed_data";
@@ -76,7 +76,7 @@ public class PubnativeInsightsManager {
         } else {
             Uri.Builder uriBuilder = Uri.parse(baseURL).buildUpon();
             // Fill with passed parameters
-            if (extras != null && extras.size() > 0) {
+            if (extras != null && !extras.isEmpty()) {
                 for (String key : extras.keySet()) {
                     uriBuilder.appendQueryParameter(key, extras.get(key));
                 }
@@ -223,7 +223,7 @@ public class PubnativeInsightsManager {
         PubnativeInsightRequestModel result = null;
         if (context != null) {
             List<PubnativeInsightRequestModel> pendingList = getTrackingList(context, listKey);
-            if (pendingList != null && pendingList.size() > 0) {
+            if (pendingList != null && !pendingList.isEmpty()) {
                 result = pendingList.get(0);
                 pendingList.remove(0);
                 setTrackingList(context, listKey, pendingList);
@@ -267,7 +267,7 @@ public class PubnativeInsightsManager {
         if (context != null) {
             SharedPreferences.Editor editor = getSharedPreferencesEditor(context);
             if (editor != null) {
-                if (pendingList == null || pendingList.size() == 0) {
+                if (pendingList == null || pendingList.isEmpty()) {
                     editor.remove(listKey);
                 } else {
                     String cacheModelString = new Gson().toJson(pendingList.toArray());
