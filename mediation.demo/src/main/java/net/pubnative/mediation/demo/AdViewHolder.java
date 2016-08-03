@@ -24,6 +24,7 @@
 package net.pubnative.mediation.demo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,8 +126,10 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             mDescription.setText(model.getDescription());
             mRating.setRating(model.getStarRating());
             mRating.setVisibility(View.VISIBLE);
-            Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
-            Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
+            mIcon.setImageBitmap(model.getIcon());
+            mBanner.setImageBitmap(model.getBanner());
+            //Picasso.with(mContext).load(model.getIconUrl()).into(mIcon);
+            //Picasso.with(mContext).load(model.getBannerUrl()).into(mBanner);
             View sponsorView = model.getAdvertisingDisclosureView(mContext);
             if (sponsorView != null) {
                 mAdDisclosure.addView(sponsorView);

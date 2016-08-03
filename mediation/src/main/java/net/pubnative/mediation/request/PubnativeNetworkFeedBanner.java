@@ -235,6 +235,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
             // Add ML extras for adapter
             mAdapter.setExtras(extras);
             mAdapter.setLoadListener(this);
+            mAdapter.setCacheResources(true);
             mAdapter.execute(mContext, network.timeout);
         }
     }

@@ -24,6 +24,7 @@
 package net.pubnative.mediation.request.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +49,9 @@ public abstract class PubnativeAdModel {
     protected            View                      mBannerView            = null;
     protected            View                      mRatingView            = null;
     protected            View                      mCallToActionView      = null;
+    //Bitmap
+    public               Bitmap                    mIcon                  = null;
+    public               Bitmap                    mBanner                = null;
 
     //==============================================================================================
     // Listener
@@ -116,6 +120,24 @@ public abstract class PubnativeAdModel {
      * @return banner URL string
      */
     public abstract String getBannerUrl();
+
+    /**
+     * gets the icon image
+     *
+     * @return icon bitmap image
+     */
+    public Bitmap getIcon(){
+        return mIcon;
+    }
+
+    /**
+     * gets the banner image
+     *
+     * @return banner bitmap image
+     */
+    public Bitmap getBanner(){
+        return mBanner;
+    }
 
     /**
      * gets the call to action string (download, free, etc)

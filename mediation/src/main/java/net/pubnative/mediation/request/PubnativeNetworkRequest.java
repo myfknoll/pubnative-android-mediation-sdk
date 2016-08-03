@@ -24,6 +24,8 @@
 package net.pubnative.mediation.request;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -34,7 +36,15 @@ import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
+import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         implements PubnativeNetworkRequestAdapter.Listener {
@@ -45,6 +55,8 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     protected Handler                          mHandler;
     protected PubnativeAdModel                 mAd;
     protected long                             mRequestStartTimestamp;
+    //Executor
+    private final ExecutorService              mExecutorService = Executors.newFixedThreadPool(2);
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -197,7 +209,28 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             // Default tracking data
             mAd = ad;
             mAd.setInsightModel(mInsight);
-            invokeLoad(mAd);
+
+            if(adapter.mIsCacheResources){
+                Set<Callable<Bitmap>> resourceSet = new HashSet<Callable<Bitmap>>();
+                resourceSet.add(new ImageDownloadUtil(mAd.getIconUrl()));   // added icon url on 0 position
+                resourceSet.add(new ImageDownloadUtil(mAd.getBannerUrl())); // added banner url on 1 position
+
+                List<Future<Bitmap>> resourceList;
+                try{
+                    resourceList = mExecutorService.invokeAll(resourceSet);
+                    if(resourceList != null && !resourceList.isEmpty()){
+                        mAd.mIcon = resourceList.get(0).get();    // icon image on 0 position
+                        mAd.mBanner = resourceList.get(1).get();  // banner image on 1 position
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                } finally {
+                    mExecutorService.shutdown();
+                    invokeLoad(mAd);
+                }
+            } else {
+                invokeLoad(mAd);
+            }
         }
     }
 
@@ -210,4 +243,29 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         getNextNetwork();
     }
+
+    //==============================================================================================
+    // Inner callable class
+    //==============================================================================================
+    private class ImageDownloadUtil implements Callable<Bitmap>{
+        String urlString;
+
+        public ImageDownloadUtil(String urlString){
+            this.urlString = urlString;
+        }
+
+        @Override
+        public Bitmap call() throws Exception {
+            Bitmap image = null;
+            try {
+                URL url = new URL(urlString);
+                image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+            return image;
+        }
+    }
 }
+
+
