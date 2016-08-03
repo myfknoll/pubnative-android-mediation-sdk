@@ -26,6 +26,7 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 
 import net.pubnative.library.feed.banner.PubnativeFeedBanner;
@@ -87,7 +88,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
 
         Log.v(TAG, "show");
         if (mFeedBanner != null) {
-            mFeedBanner.show(container);
+            container.addView(mFeedBanner.getView());
         }
     }
 
@@ -96,7 +97,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
 
         Log.v(TAG, "destroy");
         if (mFeedBanner != null) {
-            mFeedBanner.destroy();
+
         }
     }
 
@@ -105,7 +106,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
 
         Log.v(TAG, "hide");
         if (mFeedBanner != null) {
-            mFeedBanner.hide();
+            mFeedBanner.getView().setVisibility(View.GONE);
         }
     }
 
@@ -126,13 +127,6 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
 
         Log.v(TAG, "onPubnativeFeedBannerLoadFailed");
         invokeLoadFail(exception);
-    }
-
-    @Override
-    public void onPubnativeFeedBannerShow(PubnativeFeedBanner feedBanner) {
-
-        Log.v(TAG, "onPubnativeFeedBannerShow");
-        invokeShow();
     }
 
     @Override

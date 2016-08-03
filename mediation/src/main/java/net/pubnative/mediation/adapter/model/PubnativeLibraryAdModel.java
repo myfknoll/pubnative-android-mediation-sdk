@@ -136,6 +136,12 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
         // Do nothing
     }
 
+    public void setUseCaching(boolean enable) {
+
+        Log.d(TAG, "setUseCaching() called with: " + "enable = [" + enable + "]");
+        mAdModel.setUseCaching(enable);
+    }
+
     //==============================================================================================
     // Callbacks
     //==============================================================================================

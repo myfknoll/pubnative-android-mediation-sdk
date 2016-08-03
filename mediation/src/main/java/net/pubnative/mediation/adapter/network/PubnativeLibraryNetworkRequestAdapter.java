@@ -82,7 +82,7 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
                 request.setParameter((String) key, value);
             }
         }
-        request.start(context, PubnativeRequest.Endpoint.NATIVE, this);
+        request.start(context, this);
     }
 
     //==============================================================================================
@@ -100,6 +100,7 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
             net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
             if (ads != null && ads.size() > 0) {
                 wrapAd = new PubnativeLibraryAdModel(ads.get(0));
+                wrapAd.setUseCaching(mUseCaching);
             }
             invokeLoaded(wrapAd);
         }
