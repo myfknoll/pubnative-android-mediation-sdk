@@ -52,4 +52,14 @@ public class PubnativeLibraryNetworkAdapter extends PubnativeNetworkHub {
 
         return new PubnativeLibraryNetworkBannerAdapter(mNetworkData);
     }
+
+    @Override
+    public PubnativeNetworkVideoAdapter getVideoAdapter() {
+        return null;
+    }
+
+    @Override
+    public PubnativeNetworkFeedVideoAdapter getFeedVideoAdapter() {
+        return null;
+    }
 }

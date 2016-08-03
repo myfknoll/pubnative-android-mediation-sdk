@@ -90,6 +90,22 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
+    public void onVideoClick(View view) {
+
+        Log.v(TAG, "onVideoClick");
+        // Launch video activity
+        Intent intent = new Intent(this, VideoAdActivity.class);
+        startActivity(intent);
+    }
+
+    public void onFeedVideoClick(View view) {
+
+        Log.v(TAG, "onFeedVideoClick");
+        // Launch feed video activity
+        Intent intent = new Intent(this, FeedVideoActivity.class);
+        startActivity(intent);
+    }
+
     protected void setDefaults() {
 
         Log.v(TAG, "setDefaults");

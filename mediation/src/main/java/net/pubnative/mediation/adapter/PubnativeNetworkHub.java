@@ -25,8 +25,10 @@ package net.pubnative.mediation.adapter;
 
 import net.pubnative.mediation.adapter.network.PubnativeNetworkBannerAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedBannerAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedVideoAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
 
 import java.util.Map;
 
@@ -71,4 +73,18 @@ public abstract class PubnativeNetworkHub {
      * @return valid PubnativeNetworkBannerAdapter
      */
     public abstract PubnativeNetworkBannerAdapter getBannerAdapter();
+
+    /**
+     * Gets the network dependent adapter for video
+     *
+     * @return valid PubnativeNetworkVideoAdapter
+     */
+    public abstract PubnativeNetworkVideoAdapter getVideoAdapter();
+
+    /**
+     * Gets the network dependent adapter for feed video
+     *
+     * @return valid PubnativeNetworkFeedVideoAdapter
+     */
+    public abstract PubnativeNetworkFeedVideoAdapter getFeedVideoAdapter();
 }

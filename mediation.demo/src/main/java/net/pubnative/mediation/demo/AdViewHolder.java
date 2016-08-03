@@ -34,6 +34,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.ads.MediaView;
 import com.squareup.picasso.Picasso;
 
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
@@ -65,6 +66,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
     protected     RatingBar             mRating;
     protected     ImageView             mIcon;
     protected     ImageView             mBanner;
+    protected     MediaView             mMediaView;
 
     public AdViewHolder(Context context, View convertView) {
 
@@ -82,6 +84,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mRating = (RatingBar) convertView.findViewById(R.id.ad_rating);
         mIcon = (ImageView) convertView.findViewById(R.id.ad_icon_image);
         mBanner = (ImageView) convertView.findViewById(R.id.ad_banner_image);
+        mMediaView = (MediaView) convertView.findViewById(R.id.ad_media_view);
 
     }
 
@@ -105,6 +108,8 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         mAdapterName.setText("");
         mRating.setRating(0f);
         mRating.setVisibility(View.GONE);
+        mMediaView.setVisibility(View.GONE);
+        mBanner.setVisibility(View.VISIBLE);
         mBanner.setImageDrawable(null);
         mIcon.setImageDrawable(null);
         mAdLoading.setVisibility(View.GONE);
@@ -130,6 +135,13 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
             View sponsorView = model.getAdvertisingDisclosureView(mContext);
             if (sponsorView != null) {
                 mAdDisclosure.addView(sponsorView);
+            }
+            MediaView mediaView = (MediaView) model.setNativeAd(mMediaView);
+            if(mediaView != null){
+                mMediaView.setVisibility(View.VISIBLE);
+                mBanner.setVisibility(View.GONE);
+            }else{
+                mBanner.setVisibility(View.VISIBLE);
             }
             // Tracking
             model.withTitle(mTitle)

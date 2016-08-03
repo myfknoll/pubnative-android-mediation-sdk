@@ -26,4 +26,14 @@ public class AdMobNetworkAdapter extends PubnativeNetworkHub {
 
         return new AdMobNetworkBannerAdapter(mNetworkData);
     }
+
+    @Override
+    public PubnativeNetworkVideoAdapter getVideoAdapter() {
+        return new AdMobNetworkVideoAdapter(mNetworkData);
+    }
+
+    @Override
+    public PubnativeNetworkFeedVideoAdapter getFeedVideoAdapter() {
+        return null;
+    }
 }
