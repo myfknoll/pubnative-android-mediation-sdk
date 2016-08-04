@@ -43,15 +43,15 @@ public abstract class PubnativeAdModel {
     protected            boolean               mImpressionTracked = false;
     protected            boolean               mClickTracked      = false;
     // View
-    protected            View                      mTitleView             = null;
-    protected            View                      mDescriptionView       = null;
-    protected            View                      mIconView              = null;
-    protected            View                      mBannerView            = null;
-    protected            View                      mRatingView            = null;
-    protected            View                      mCallToActionView      = null;
+    protected            View                  mTitleView         = null;
+    protected            View                  mDescriptionView   = null;
+    protected            View                  mIconView          = null;
+    protected            View                  mBannerView        = null;
+    protected            View                  mRatingView        = null;
+    protected            View                  mCallToActionView  = null;
     //Bitmap
-    public               Bitmap                    mIcon                  = null;
-    public               Bitmap                    mBanner                = null;
+    protected            Bitmap                mIcon              = null;
+    protected            Bitmap                mBanner            = null;
 
     //==============================================================================================
     // Listener
@@ -82,7 +82,7 @@ public abstract class PubnativeAdModel {
      *
      * @param listener valid Listener
      */
-    public void setListener(PubnativeAdModel.Listener listener) {
+    public void setListener(Listener listener) {
 
         Log.v(TAG, "setListener");
         mListener = listener;
@@ -122,18 +122,18 @@ public abstract class PubnativeAdModel {
     public abstract String getBannerUrl();
 
     /**
-     * gets the icon image
+     * gets the icon image for ad.
      *
-     * @return icon bitmap image
+     * @return icon bitmap image.
      */
     public Bitmap getIcon(){
         return mIcon;
     }
 
     /**
-     * gets the banner image
+     * gets the banner image for ad.
      *
-     * @return banner bitmap image
+     * @return banner bitmap image.
      */
     public Bitmap getBanner(){
         return mBanner;
@@ -161,6 +161,26 @@ public abstract class PubnativeAdModel {
      * @return Disclosure view to be added on top of the ad.
      */
     public abstract View getAdvertisingDisclosureView(Context context);
+
+    /**
+     * sets bitmap resource for ad request icon.
+     *
+     * @param icon valid bitmap.
+     */
+    public void setIcon(Bitmap icon){
+
+        this.mIcon = icon;
+    }
+
+    /**
+     * sets bitmap resource for ad request banner.
+     *
+     * @param banner valid bitmap.
+     */
+    public void setBanner(Bitmap banner){
+
+        this.mBanner = banner;
+    }
 
     //----------------------------------------------------------------------------------------------
     // VIEW TRACKING

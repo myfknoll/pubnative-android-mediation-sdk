@@ -24,8 +24,6 @@
 package net.pubnative.mediation.request;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -34,30 +32,32 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.network.PubnativeResourceRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeCacheModel;
 
-import java.net.URL;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
+import static net.pubnative.mediation.network.PubnativeResourceRequest.KEY_ICON;
 
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
-        implements PubnativeNetworkRequestAdapter.Listener {
+        implements PubnativeNetworkRequestAdapter.Listener,
+                   PubnativeNetworkResource.Listener {
 
     private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
 
-    private final ExecutorService              mExecutorService = Executors.newFixedThreadPool(2);
-    protected PubnativeNetworkRequest.Listener mListener;
+    protected Listener                         mListener;
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
     protected PubnativeAdModel                 mAd;
     protected long                             mRequestStartTimestamp;
-    protected boolean                          mIsCacheResource  = false;
+    protected boolean                          mIsCacheResource = false;
+
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -95,7 +95,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
      * @param placementName valid placementId provided by Pubnative.
      * @param listener      valid Listener to keep track of request callbacks.
      */
-    public synchronized void start(Context context, String appToken, final String placementName, PubnativeNetworkRequest.Listener listener) {
+    public synchronized void start(Context context, String appToken, final String placementName, Listener listener) {
 
         Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
         if (listener == null) {
@@ -111,11 +111,11 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Enables caching for ad resources.
+     * this method enables caching for ad resources.
      *
-     * @param enabled  true for enable, false for disbale.
+     * @param enabled true for enable, false for disable.
      */
-    public void setCacheResources(boolean enabled){
+    public void setCacheResources(boolean enabled) {
 
         Log.v(TAG, "setCacheResources");
         mIsCacheResource = enabled;
@@ -221,26 +221,17 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             // Default tracking data
             mAd = ad;
             mAd.setInsightModel(mInsight);
-
-            if(mIsCacheResource){
+            // Caching resources if enabled
+            if (mIsCacheResource) {
                 Log.v(TAG, "Caching resources");
-                Set<Callable<Bitmap>> resourceSet = new HashSet<Callable<Bitmap>>();
-                resourceSet.add(new ImageDownloadUtil(mAd.getIconUrl()));   // added icon url on 0 position
-                resourceSet.add(new ImageDownloadUtil(mAd.getBannerUrl())); // added banner url on 1 position
+                PubnativeNetworkResource resourceRequest = new PubnativeNetworkResource();
+                resourceRequest.setListener(this);
+                // adding callables to collection
+                Set resourceSet = new HashSet<Callable<PubnativeCacheModel>>();
+                resourceSet.add(new PubnativeResourceRequest(mAd.getIconUrl(), true));
+                resourceSet.add(new PubnativeResourceRequest(mAd.getBannerUrl(), false));
 
-                List<Future<Bitmap>> resourceList;
-                try{
-                    resourceList = mExecutorService.invokeAll(resourceSet);
-                    if(resourceList != null && !resourceList.isEmpty()){
-                        mAd.mIcon = resourceList.get(0).get();    // icon image on 0 position
-                        mAd.mBanner = resourceList.get(1).get();  // banner image on 1 position
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, e.getMessage());
-                } finally {
-                    mExecutorService.shutdown();
-                    invokeLoad(mAd);
-                }
+                resourceRequest.startDownload(resourceSet);
             } else {
                 invokeLoad(mAd);
             }
@@ -257,28 +248,26 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         getNextNetwork();
     }
 
-    //==============================================================================================
-    // Inner callable class
-    //==============================================================================================
-    private class ImageDownloadUtil implements Callable<Bitmap>{
-        String urlString;
+    //----------------------------------------------------------------------------------------------
+    // PubnativeNetworkResource
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onPubnativeNetworkResourceLoaded(List resourceList) {
 
-        public ImageDownloadUtil(String urlString){
-            this.urlString = urlString;
-        }
+        Log.e(TAG, "onPubnativeNetworkResourceLoaded");
+        Iterator iterator = resourceList.iterator();
+        while (iterator.hasNext()){
+            PubnativeCacheModel cacheModel = (PubnativeCacheModel) iterator.next();
+            if (mAd != null) {
+                if (KEY_ICON.equals(cacheModel.key)) {
+                    mAd.setIcon(cacheModel.image);
+                } else {
+                    mAd.setBanner(cacheModel.image);
+                }
 
-        @Override
-        public Bitmap call() throws Exception {
-            Bitmap image = null;
-            try {
-                URL url = new URL(urlString);
-                image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                invokeLoad(mAd);
             }
-            return image;
         }
     }
 }
-
 
