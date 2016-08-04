@@ -255,6 +255,8 @@ public abstract class PubnativeAdModel {
      * Stop using the view for confirming impression and handle clicks
      */
     public abstract void stopTracking();
+
+    public abstract void setLinkCaching(boolean enable);
     //==============================================================================================
     // Tracking data
     //==============================================================================================

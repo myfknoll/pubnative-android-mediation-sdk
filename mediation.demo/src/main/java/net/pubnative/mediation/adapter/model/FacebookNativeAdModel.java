@@ -177,6 +177,11 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
             mNativeAd.unregisterView();
         }
     }
+
+    @Override
+    public void setLinkCaching(boolean enable) {
+        //Do nothing
+    }
     //==============================================================================================
     // Callbacks
     //==============================================================================================

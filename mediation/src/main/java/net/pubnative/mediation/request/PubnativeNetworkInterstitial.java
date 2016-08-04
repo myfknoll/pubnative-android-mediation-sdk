@@ -189,7 +189,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras, boolean isCached) {
 
         mAdapter = hub.getInterstitialAdapter();
         if (mAdapter == null) {
@@ -199,6 +199,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
         } else {
             mStartTimestamp = System.currentTimeMillis();
             // Add ML extras for adapter
+            mAdapter.setCachingEnable(isCached);
             mAdapter.setExtras(extras);
             mAdapter.setLoadListener(this);
             mAdapter.execute(mContext, network.timeout);

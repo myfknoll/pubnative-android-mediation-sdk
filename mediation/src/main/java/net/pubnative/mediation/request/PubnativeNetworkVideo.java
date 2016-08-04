@@ -203,7 +203,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras, boolean isCached) {
 
         mAdapter = hub.getVideoAdapter();
         if (mAdapter == null) {
@@ -213,6 +213,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
         } else {
             mStartTimestamp = System.currentTimeMillis();
             // Add ML extras for adapter
+            mAdapter.setCachingEnable(isCached);
             mAdapter.setExtras(extras);
             mAdapter.setLoadListener(this);
             mAdapter.execute(mContext, network.timeout);

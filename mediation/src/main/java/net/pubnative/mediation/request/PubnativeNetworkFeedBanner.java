@@ -224,7 +224,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras, boolean isCached) {
 
         mAdapter = hub.getFeedBannerAdapter();
         if (mAdapter == null) {
@@ -233,6 +233,7 @@ public class PubnativeNetworkFeedBanner extends PubnativeNetworkWaterfall
         } else {
             mStartTimestamp = System.currentTimeMillis();
             // Add ML extras for adapter
+            mAdapter.setCachingEnable(isCached);
             mAdapter.setExtras(extras);
             mAdapter.setLoadListener(this);
             mAdapter.execute(mContext, network.timeout);
