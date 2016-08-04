@@ -29,30 +29,30 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.pubnative.library.feed.banner.PubnativeFeedBanner;
+import net.pubnative.library.feed.video.PubnativeFeedVideo;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeLibraryNetworkFeedBannerAdapter
-        extends PubnativeNetworkFeedBannerAdapter implements PubnativeFeedBanner.Listener {
+public class PubnativeLibraryNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapter
+        implements PubnativeFeedVideo.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkFeedBannerAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeLibraryNetworkFeedVideoAdapter.class.getSimpleName();
 
-    protected PubnativeFeedBanner mFeedBanner;
+    protected PubnativeFeedVideo mFeedVideo;
 
     /**
-     * Creates a new instance of PubnativeLibraryNetworkFeedBannerAdapter
+     * Creates a new instance of PubnativeLibraryNetworkFeedVideoAdapter.
      *
      * @param data server configured data for the current adapter network.
      */
-    public PubnativeLibraryNetworkFeedBannerAdapter(Map data) {
+    public PubnativeLibraryNetworkFeedVideoAdapter(Map data) {
 
         super(data);
     }
 
     //==============================================================================================
-    // PubnativeLibraryNetworkFeedBannerAdapter
+    // PubnativeLibraryNetworkFeedVideoAdapter
     //==============================================================================================
     @Override
     public void load(Context context) {
@@ -65,9 +65,9 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
             if (TextUtils.isEmpty(appToken)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                mFeedBanner = new PubnativeFeedBanner();
-                mFeedBanner.setListener(this);
-                mFeedBanner.load(context, appToken);
+                mFeedVideo = new PubnativeFeedVideo();
+                mFeedVideo.setListener(this);
+                mFeedVideo.load(context, appToken);
             }
         }
     }
@@ -77,8 +77,8 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
 
         Log.v(TAG, "isReady");
         boolean result = false;
-        if (mFeedBanner != null) {
-            result = mFeedBanner.isReady();
+        if (mFeedVideo != null) {
+            result = mFeedVideo.isReady();
         }
         return result;
     }
@@ -87,14 +87,13 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     public void show(ViewGroup container) {
 
         Log.v(TAG, "show");
-        if (mFeedBanner != null) {
-            View adView = mFeedBanner.getView();
+        if(mFeedVideo != null){
+            View adView = mFeedVideo.getView();
             ViewGroup parent = (ViewGroup)adView.getParent();
             if(parent != null) {
                 parent.removeView(adView);
             }
             container.addView(adView);
-            invokeShow();
         }
     }
 
@@ -102,44 +101,36 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     public void destroy() {
 
         Log.v(TAG, "destroy");
+        if (mFeedVideo != null) {
+            mFeedVideo.destroy();
+        }
     }
 
     @Override
     public void hide() {
 
         Log.v(TAG, "hide");
+        if (mFeedVideo != null) {
+            mFeedVideo.hide();
+        }
     }
 
     //==============================================================================================
     // Callabacks
     //==============================================================================================
-    // PubnativeFeedBanner.Listener
+    // PubnativeFeedVideo.Listener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onPubnativeFeedBannerLoadFinish(PubnativeFeedBanner feedBanner) {
+    public void onPubnativeFeedVideoLoadFinish(PubnativeFeedVideo video) {
 
-        Log.v(TAG, "onPubnativeFeedBannerLoadFinish");
+        Log.v(TAG, "onPubnativeFeedVideoLoadFinish");
         invokeLoadFinish(this);
     }
 
     @Override
-    public void onPubnativeFeedBannerLoadFailed(PubnativeFeedBanner feedBanner, Exception exception) {
+    public void onPubnativeFeedVideoLoadFail(PubnativeFeedVideo video, Exception exception) {
 
-        Log.v(TAG, "onPubnativeFeedBannerLoadFailed");
+        Log.v(TAG, "onPubnativeFeedVideoLoadFail");
         invokeLoadFail(exception);
-    }
-
-    @Override
-    public void onPubnativeFeedBannerImpressionConfirmed(PubnativeFeedBanner feedBanner) {
-
-        Log.v(TAG, "onPubnativeFeedBannerImpressionConfirmed");
-        invokeImpressionConfirmed();
-    }
-
-    @Override
-    public void onPubnativeFeedBannerClick(PubnativeFeedBanner feedBanner) {
-
-        Log.v(TAG, "onPubnativeFeedBannerClick");
-        invokeClick();
     }
 }
