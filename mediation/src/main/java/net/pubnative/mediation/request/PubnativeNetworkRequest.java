@@ -50,13 +50,14 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         implements PubnativeNetworkRequestAdapter.Listener {
 
     private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
+
+    private final ExecutorService              mExecutorService = Executors.newFixedThreadPool(2);
     protected PubnativeNetworkRequest.Listener mListener;
     protected boolean                          mIsRunning;
     protected Handler                          mHandler;
     protected PubnativeAdModel                 mAd;
     protected long                             mRequestStartTimestamp;
-    //Executor
-    private final ExecutorService              mExecutorService = Executors.newFixedThreadPool(2);
+    protected boolean                          mIsCacheResource  = false;
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -107,6 +108,17 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             mListener = listener;
             initialize(context, appToken, placementName);
         }
+    }
+
+    /**
+     * Enables caching for ad resources.
+     *
+     * @param enabled  true for enable, false for disbale.
+     */
+    public void setCacheResources(boolean enabled){
+
+        Log.v(TAG, "setCacheResources");
+        mIsCacheResource = enabled;
     }
 
     //==============================================================================================
@@ -210,7 +222,8 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             mAd = ad;
             mAd.setInsightModel(mInsight);
 
-            if(adapter.mIsCacheResources){
+            if(mIsCacheResource){
+                Log.v(TAG, "Caching resources");
                 Set<Callable<Bitmap>> resourceSet = new HashSet<Callable<Bitmap>>();
                 resourceSet.add(new ImageDownloadUtil(mAd.getIconUrl()));   // added icon url on 0 position
                 resourceSet.add(new ImageDownloadUtil(mAd.getBannerUrl())); // added banner url on 1 position

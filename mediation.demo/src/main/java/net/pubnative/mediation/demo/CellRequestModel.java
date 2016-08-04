@@ -36,6 +36,7 @@ public class CellRequestModel {
     public CellRequestModel(String placementID) {
 
         request = new PubnativeNetworkRequest();
+        request.setCacheResources(true);
         this.placementID = placementID;
     }
 

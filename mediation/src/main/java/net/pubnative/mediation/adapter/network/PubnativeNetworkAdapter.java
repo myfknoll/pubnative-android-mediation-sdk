@@ -35,7 +35,6 @@ import java.util.Map;
 public abstract class PubnativeNetworkAdapter {
 
     private static String                     TAG                   = PubnativeNetworkAdapter.class.getSimpleName();
-    public         boolean                    mIsCacheResources     = false;
     protected PubnativeNetworkAdapterRunnable mTimeoutRunnable;
     protected Map                             mData;
     protected Map<String, String>             mExtras;
@@ -90,17 +89,6 @@ public abstract class PubnativeNetworkAdapter {
 
         Log.v(TAG, "setExtras");
         mTargeting = targeting;
-    }
-
-    /**
-     * Sets caching is enabled or disabled for the request
-     *
-     * @param enabled true to enable, false to disable
-     */
-    public void setCacheResources(boolean enabled){
-
-        Log.v(TAG, "setCacheResources");
-        mIsCacheResources = enabled;
     }
 
     /**
