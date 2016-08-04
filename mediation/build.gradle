@@ -53,9 +53,9 @@ dependencies {
     compile 'net.pubnative:library.interstitial:2.2.0'
     compile 'net.pubnative:library.feed.banner:2.2.0'
     compile 'net.pubnative:library.banner:2.2.0'
-    //compile 'net.pubnative:library.feed.video:2.2.0'
-    //compile 'net.pubnative:library.video:2.2.0'
-    compile 'net.pubnative:advertising_id_client:1.0.0'
+    compile 'net.pubnative:library.video:2.2.0'
+    compile 'net.pubnative:library.feed.video:2.2.0'
+    compile 'net.pubnative:advertising_id_client:1.0.1'
 
     // JVM tests
     testCompile 'junit:junit:4.12'
