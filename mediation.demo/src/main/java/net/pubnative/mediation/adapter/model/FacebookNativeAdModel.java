@@ -179,7 +179,7 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
     }
 
     @Override
-    public void setUseCaching(boolean enable) {
+    public void setLinkCaching(boolean enable) {
         //Do nothing
     }
     //==============================================================================================

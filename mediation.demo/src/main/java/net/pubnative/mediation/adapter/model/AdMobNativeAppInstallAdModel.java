@@ -168,7 +168,7 @@ public class AdMobNativeAppInstallAdModel extends PubnativeAdModel {
     }
 
     @Override
-    public void setUseCaching(boolean enable) {
+    public void setLinkCaching(boolean enable) {
         //Do nothing
     }
 }

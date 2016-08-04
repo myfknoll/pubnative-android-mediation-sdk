@@ -256,7 +256,7 @@ public abstract class PubnativeAdModel {
      */
     public abstract void stopTracking();
 
-    public abstract void setUseCaching(boolean enable);
+    public abstract void setLinkCaching(boolean enable);
     //==============================================================================================
     // Tracking data
     //==============================================================================================

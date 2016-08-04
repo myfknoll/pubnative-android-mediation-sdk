@@ -156,7 +156,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     }
 
     @Override
-    public void setUseCaching(boolean enable) {
+    public void setLinkCaching(boolean enable) {
         //Do nothing
     }
 
