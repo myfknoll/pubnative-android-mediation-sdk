@@ -25,7 +25,7 @@ package net.pubnative.mediation.request;
 
 import android.util.Log;
 
-import net.pubnative.mediation.request.model.PubnativeCacheModel;
+import net.pubnative.mediation.request.model.PubnativeResourceCacheModel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,10 +60,10 @@ public class PubnativeNetworkResource {
     public void startDownload(Set querySet){
 
         Log.v(TAG, "startDownload");
-        List pubnativeCacheModels = new ArrayList<PubnativeCacheModel>();
+        List pubnativeCacheModels = new ArrayList<PubnativeResourceCacheModel>();
         try{
             mResourceList = mExecutorService.invokeAll(querySet);
-            Iterator<Future<PubnativeCacheModel>> iterator = mResourceList.iterator();
+            Iterator<Future<PubnativeResourceCacheModel>> iterator = mResourceList.iterator();
             while(iterator.hasNext()){
                 pubnativeCacheModels.add(iterator.next().get());
             }

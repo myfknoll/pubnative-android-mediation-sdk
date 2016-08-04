@@ -34,7 +34,7 @@ import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.network.PubnativeResourceRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
-import net.pubnative.mediation.request.model.PubnativeCacheModel;
+import net.pubnative.mediation.request.model.PubnativeResourceCacheModel;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -55,7 +55,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     protected Handler          mHandler;
     protected PubnativeAdModel mAd;
     protected long             mRequestStartTimestamp;
-    protected boolean          mIsCacheResource = false;
+    protected boolean          mIsCachingResourceEnabled = false;
 
     //==============================================================================================
     // Listener
@@ -117,7 +117,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     public void setCacheResources(boolean enabled) {
 
         Log.v(TAG, "setCacheResources");
-        mIsCacheResource = enabled;
+        mIsCachingResourceEnabled = enabled;
     }
 
     //==============================================================================================
@@ -222,12 +222,12 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             mAd = ad;
             mAd.setInsightModel(mInsight);
             // Caching resources if enabled
-            if (mIsCacheResource) {
+            if (mIsCachingResourceEnabled) {
                 Log.v(TAG, "Caching resources");
                 PubnativeNetworkResource resourceRequest = new PubnativeNetworkResource();
                 resourceRequest.setListener(this);
                 // adding callables to collection
-                Set resourceSet = new HashSet<Callable<PubnativeCacheModel>>();
+                Set resourceSet = new HashSet<Callable<PubnativeResourceCacheModel>>();
                 resourceSet.add(new PubnativeResourceRequest(mAd.getIconUrl(), ResourceType.ICON));
                 resourceSet.add(new PubnativeResourceRequest(mAd.getBannerUrl(), ResourceType.BANNER));
 
@@ -257,7 +257,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.e(TAG, "onPubnativeNetworkResourceLoaded");
         Iterator iterator = resourceList.iterator();
         while (iterator.hasNext()){
-            PubnativeCacheModel cacheModel = (PubnativeCacheModel) iterator.next();
+            PubnativeResourceCacheModel cacheModel = (PubnativeResourceCacheModel) iterator.next();
             if (mAd != null) {
                 if (ResourceType.ICON.equals(cacheModel.key)) {
                     mAd.setIcon(cacheModel.image);

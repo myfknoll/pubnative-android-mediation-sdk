@@ -26,28 +26,28 @@ package net.pubnative.mediation.network;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import net.pubnative.mediation.request.model.PubnativeCacheModel;
+import net.pubnative.mediation.request.model.PubnativeResourceCacheModel;
 
 import java.net.URL;
 import java.util.concurrent.Callable;
 
 public class PubnativeResourceRequest
-        implements Callable<PubnativeCacheModel> {
+        implements Callable<PubnativeResourceCacheModel> {
 
     private static final String TAG = PubnativeResourceRequest.class.getSimpleName();
     private String              mUrlString;
-    private PubnativeCacheModel mPubnativeResourceCacheModel;
+    private PubnativeResourceCacheModel mPubnativeResourceCacheModel;
 
     public PubnativeResourceRequest(String urlString, ResourceType type){
 
         Log.v(TAG, "PubnativeResourceRequest");
         mUrlString                       = urlString;
-        mPubnativeResourceCacheModel     = new PubnativeCacheModel();
+        mPubnativeResourceCacheModel     = new PubnativeResourceCacheModel();
         mPubnativeResourceCacheModel.key = type;
     }
 
     @Override
-    public PubnativeCacheModel call() throws Exception {
+    public PubnativeResourceCacheModel call() throws Exception {
 
         Log.v(TAG, "call");
         try {
