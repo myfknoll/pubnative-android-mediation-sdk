@@ -34,19 +34,16 @@ import java.util.concurrent.Callable;
 public class PubnativeResourceRequest
         implements Callable<PubnativeCacheModel> {
 
-    private static final String TAG         = PubnativeResourceRequest.class.getSimpleName();
-    public static  final String KEY_ICON    = "icon";
-    public static  final String KEY_BANNER  = "banner";
+    private static final String TAG = PubnativeResourceRequest.class.getSimpleName();
+    private String              mUrlString;
+    private PubnativeCacheModel mPubnativeResourceCacheModel;
 
-    private String                      mUrlString;
-    private PubnativeCacheModel         mPubnativeResourceCacheModel;
-
-    public PubnativeResourceRequest(String urlString, boolean isIcon){
+    public PubnativeResourceRequest(String urlString, ResourceType type){
 
         Log.v(TAG, "PubnativeResourceRequest");
         this.mUrlString                  = urlString;
         mPubnativeResourceCacheModel     = new PubnativeCacheModel();
-        mPubnativeResourceCacheModel.key = isIcon ? KEY_ICON : KEY_BANNER;
+        mPubnativeResourceCacheModel.key = type;
     }
 
     @Override
@@ -60,5 +57,10 @@ public class PubnativeResourceRequest
             Log.e(TAG, e.getMessage());
         }
         return mPubnativeResourceCacheModel;
+    }
+
+    public enum ResourceType {
+        ICON,
+        BANNER;
     }
 }

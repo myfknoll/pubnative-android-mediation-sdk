@@ -34,7 +34,7 @@ import java.util.Map;
 
 public abstract class PubnativeNetworkAdapter {
 
-    private static String                     TAG                   = PubnativeNetworkAdapter.class.getSimpleName();
+    private static String TAG = PubnativeNetworkAdapter.class.getSimpleName();
     protected PubnativeNetworkAdapterRunnable mTimeoutRunnable;
     protected Map                             mData;
     protected Map<String, String>             mExtras;

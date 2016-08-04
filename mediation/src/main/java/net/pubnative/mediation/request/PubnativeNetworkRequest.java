@@ -43,20 +43,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import static net.pubnative.mediation.network.PubnativeResourceRequest.KEY_ICON;
+import static net.pubnative.mediation.network.PubnativeResourceRequest.ResourceType;
 
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         implements PubnativeNetworkRequestAdapter.Listener,
                    PubnativeNetworkResource.Listener {
 
     private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
-
-    protected Listener                         mListener;
-    protected boolean                          mIsRunning;
-    protected Handler                          mHandler;
-    protected PubnativeAdModel                 mAd;
-    protected long                             mRequestStartTimestamp;
-    protected boolean                          mIsCacheResource = false;
+    protected Listener         mListener;
+    protected boolean          mIsRunning;
+    protected Handler          mHandler;
+    protected PubnativeAdModel mAd;
+    protected long             mRequestStartTimestamp;
+    protected boolean          mIsCacheResource = false;
 
     //==============================================================================================
     // Listener
@@ -228,8 +227,8 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
                 resourceRequest.setListener(this);
                 // adding callables to collection
                 Set resourceSet = new HashSet<Callable<PubnativeCacheModel>>();
-                resourceSet.add(new PubnativeResourceRequest(mAd.getIconUrl(), true));
-                resourceSet.add(new PubnativeResourceRequest(mAd.getBannerUrl(), false));
+                resourceSet.add(new PubnativeResourceRequest(mAd.getIconUrl(), ResourceType.ICON));
+                resourceSet.add(new PubnativeResourceRequest(mAd.getBannerUrl(), ResourceType.BANNER));
 
                 resourceRequest.startDownload(resourceSet);
             } else {
@@ -259,12 +258,11 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         while (iterator.hasNext()){
             PubnativeCacheModel cacheModel = (PubnativeCacheModel) iterator.next();
             if (mAd != null) {
-                if (KEY_ICON.equals(cacheModel.key)) {
+                if (ResourceType.ICON.equals(cacheModel.key)) {
                     mAd.setIcon(cacheModel.image);
                 } else {
                     mAd.setBanner(cacheModel.image);
                 }
-
                 invokeLoad(mAd);
             }
         }

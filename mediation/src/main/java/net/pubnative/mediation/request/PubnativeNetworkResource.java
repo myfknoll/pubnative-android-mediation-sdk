@@ -38,7 +38,6 @@ import java.util.concurrent.Future;
 public class PubnativeNetworkResource {
 
     public static final String TAG = PubnativeNetworkBanner.class.getSimpleName();
-
     private final ExecutorService mExecutorService = Executors.newFixedThreadPool(2);
     private       List            mResourceList;
     private       Listener        mListener;
