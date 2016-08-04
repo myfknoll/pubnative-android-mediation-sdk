@@ -41,7 +41,7 @@ public class PubnativeResourceRequest
     public PubnativeResourceRequest(String urlString, ResourceType type){
 
         Log.v(TAG, "PubnativeResourceRequest");
-        this.mUrlString                  = urlString;
+        mUrlString                       = urlString;
         mPubnativeResourceCacheModel     = new PubnativeCacheModel();
         mPubnativeResourceCacheModel.key = type;
     }

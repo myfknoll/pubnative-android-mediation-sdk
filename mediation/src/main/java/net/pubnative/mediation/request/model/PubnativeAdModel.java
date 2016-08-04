@@ -169,7 +169,7 @@ public abstract class PubnativeAdModel {
      */
     public void setIcon(Bitmap icon){
 
-        this.mIcon = icon;
+        mIcon = icon;
     }
 
     /**
@@ -179,7 +179,7 @@ public abstract class PubnativeAdModel {
      */
     public void setBanner(Bitmap banner){
 
-        this.mBanner = banner;
+        mBanner = banner;
     }
 
     /**
