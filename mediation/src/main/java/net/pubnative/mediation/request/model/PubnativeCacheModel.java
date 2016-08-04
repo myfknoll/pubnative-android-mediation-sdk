@@ -27,7 +27,7 @@ import android.graphics.Bitmap;
 
 import net.pubnative.mediation.network.PubnativeResourceRequest;
 
-public class PubnativeCacheModel extends Object{
+public class PubnativeCacheModel {
 
     public PubnativeResourceRequest.ResourceType key;
     public Bitmap image;

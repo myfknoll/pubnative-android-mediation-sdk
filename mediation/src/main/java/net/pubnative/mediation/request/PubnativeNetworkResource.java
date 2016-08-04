@@ -53,7 +53,7 @@ public class PubnativeNetworkResource {
     }
 
     /**
-     * this method used to asynchronous download of resources.
+     * this method is used to download resources asynchronously.
      *
      * @param querySet set of request urls.
      */
