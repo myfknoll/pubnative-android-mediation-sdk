@@ -142,13 +142,14 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
     }
 
     @Override
-    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras) {
+    protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras, boolean isCached) {
 
         PubnativeNetworkRequestAdapter adapter = hub.getRequestAdapter();
         if (adapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
             getNextNetwork();
         } else {
+            adapter.setCachingEnable(isCached);
             adapter.setExtras(extras);
             adapter.setListener(this);
             adapter.setTargeting(mTargeting);

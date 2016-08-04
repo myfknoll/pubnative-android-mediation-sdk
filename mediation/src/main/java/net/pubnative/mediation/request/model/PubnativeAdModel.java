@@ -182,6 +182,17 @@ public abstract class PubnativeAdModel {
         this.mBanner = banner;
     }
 
+    /**
+     * set native ad that may contain video & rich media (facebook network only)
+     *
+     * @param view view
+     *
+     * @return View view that will have rich media including video.
+     */
+    public View setNativeAd(View view){
+        return null;
+    };
+
     //----------------------------------------------------------------------------------------------
     // VIEW TRACKING
     //----------------------------------------------------------------------------------------------
@@ -286,6 +297,8 @@ public abstract class PubnativeAdModel {
      * Stop using the view for confirming impression and handle clicks
      */
     public abstract void stopTracking();
+
+    public abstract void setLinkCaching(boolean enable);
     //==============================================================================================
     // Tracking data
     //==============================================================================================

@@ -30,81 +30,96 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
+import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
-        implements PubnativeNetworkInterstitialAdapter.LoadListener,
-                   PubnativeNetworkInterstitialAdapter.AdListener {
+public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
+        implements PubnativeNetworkVideoAdapter.LoadListener,
+                   PubnativeNetworkVideoAdapter.AdListener {
 
-    private static final String TAG = PubnativeNetworkInterstitial.class.getSimpleName();
+    private static final String TAG = PubnativeNetworkVideo.class.getSimpleName();
     protected Listener                            mListener;
     protected Handler                             mHandler;
     protected boolean                             mIsLoading;
     protected boolean                             mIsShown;
-    protected PubnativeNetworkInterstitialAdapter mAdapter;
+    protected PubnativeNetworkVideoAdapter        mAdapter;
     protected long                                mStartTimestamp;
 
     /**
-     * Interface for callbacks related to the interstitial view behaviour
+     * Interface for callbacks related to the video view behaviour
      */
     public interface Listener {
 
         /**
-         * Called whenever the interstitial finished loading an ad
-         * w
+         * Called whenever the video finished loading an ad
          *
-         * @param interstitial interstitial that finished the initialize
+         * @param video video that finished the initialize
          */
-        void onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial interstitial);
+        void onPubnativeNetworkVideoLoadFinish(PubnativeNetworkVideo video);
 
         /**
-         * Called whenever the interstitial failed loading an ad
+         * Called whenever the video failed loading an ad
          *
-         * @param interstitial interstitial that failed the initialize
+         * @param video video that failed the initialize
          * @param exception    exception with the description of the initialize error
          */
-        void onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial interstitial, Exception exception);
+        void onPubnativeNetworkVideoLoadFail(PubnativeNetworkVideo video, Exception exception);
 
         /**
-         * Called when the interstitial was just shown on the screen
+         * Called when the video was just shown on the screen
          *
-         * @param interstitial interstitial that was shown in the screen
+         * @param video video that was shown in the screen
          */
-        void onPubnativeNetworkInterstitialShow(PubnativeNetworkInterstitial interstitial);
+        void onPubnativeNetworkVideoShow(PubnativeNetworkVideo video);
 
         /**
-         * Called when the interstitial impression was confrimed
+         * Called whenever the video finishes
          *
-         * @param interstitial interstitial which impression was confirmed
+         * @param video video that has been stopped
          */
-        void onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial interstitial);
+        void onPubnativeNetworkVideoStart(PubnativeNetworkVideo video);
 
         /**
-         * Called whenever the interstitial was clicked by the user
+         * Called whenever the video finishes
          *
-         * @param interstitial interstitial that was clicked
+         * @param video video that has been stopped
          */
-        void onPubnativeNetworkInterstitialClick(PubnativeNetworkInterstitial interstitial);
+        void onPubnativeNetworkVideoFinish(PubnativeNetworkVideo video);
 
         /**
-         * Called whenever the interstitial was removed from the screen
+         * Called whenever the video was clicked by the user
          *
-         * @param interstitial interstitial that was hidden
+         * @param video video that was clicked
          */
-        void onPubnativeNetworkInterstitialHide(PubnativeNetworkInterstitial interstitial);
+        void onPubnativeNetworkVideoClick(PubnativeNetworkVideo video);
+
+        /**
+         * Called when the impression is confirmed
+         *
+         * @param video video that was clicked
+         */
+        void onPubnativeNetworkVideoImpressionConfirmed(PubnativeNetworkVideo video);
+
+
+        /**
+         * Called whenever the video was removed from the screen
+         *
+         * @param video video that was hidden
+         */
+        void onPubnativeNetworkVideoHide(PubnativeNetworkVideo video);
     }
+
     //==============================================================================================
     // Public methods
     //==============================================================================================
-
     /**
-     * Sets a callback listener for this interstitial object
+     * Sets a callback listener for this video object
      *
-     * @param listener valid PubnativeNetworkInterstitial.Listener object
+     * @param listener valid PubnativeNetworkVideo.Listener object
      */
     public void setListener(Listener listener) {
 
@@ -113,7 +128,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Loads the interstitial ads before being shown
+     * Loads the video ads before being shown
      * @param context valid Context
      * @param appToken valid app token string
      * @param placement valid placement string
@@ -126,11 +141,11 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
         } else if (context == null ||
                    TextUtils.isEmpty(appToken) ||
                    TextUtils.isEmpty(placement)) {
-            invokeLoadFail(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID);
+            invokeLoadFail(PubnativeException.VIDEO_PARAMETERS_INVALID);
         } else if (mIsLoading) {
-            invokeLoadFail(PubnativeException.INTERSTITIAL_LOADING);
+            invokeLoadFail(PubnativeException.VIDEO_LOADING);
         } else if (mIsShown) {
-            invokeLoadFail(PubnativeException.INTERSTITIAL_SHOWN);
+            invokeLoadFail(PubnativeException.VIDEO_SHOWN);
         } else {
             mHandler = new Handler(Looper.getMainLooper());
             initialize(context, appToken, placement);
@@ -138,8 +153,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     }
 
     /**
-     * Tells if the interstitial is ready to be shown
-     *
+     * Tells if the video is ready to be shown
      * @return true if ready, false if not
      */
     public synchronized boolean isReady() {
@@ -153,23 +167,23 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     }
 
     /**
-     * This method will show the interstitial if the ad is available
+     * This method will show the video if the ad is available
      */
     public synchronized void show() {
 
         Log.v(TAG, "show");
         if (mIsShown) {
-            Log.v(TAG, "show - the ad is already shown");
+            Log.v(TAG, "show - the video ad is already shown");
         } else if (!isReady()) {
-            Log.v(TAG, "show - the ad is still not loaded");
+            Log.v(TAG, "show - the video ad is still not loaded");
         } else {
             mAdapter.show();
         }
     }
+
     //==============================================================================================
     // PubnativeNetworkWaterfall methods
     //==============================================================================================
-
     @Override
     protected void onWaterfallLoadFinish(boolean pacingActive) {
 
@@ -191,7 +205,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     @Override
     protected void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras, boolean isCached) {
 
-        mAdapter = hub.getInterstitialAdapter();
+        mAdapter = hub.getVideoAdapter();
         if (mAdapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
 
@@ -218,7 +232,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
 
                 Log.v(TAG, "invokeLoadFinish");
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialLoadFinish(PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkVideoLoadFinish(PubnativeNetworkVideo.this);
                 }
             }
         });
@@ -233,7 +247,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialLoadFail(PubnativeNetworkInterstitial.this, exception);
+                    mListener.onPubnativeNetworkVideoLoadFail(PubnativeNetworkVideo.this, exception);
                 }
                 mListener = null;
             }
@@ -249,7 +263,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialShow(PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkVideoShow(PubnativeNetworkVideo.this);
                 }
             }
         });
@@ -264,7 +278,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialImpressionConfirmed(PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkVideoImpressionConfirmed(PubnativeNetworkVideo.this);
                 }
             }
         });
@@ -279,7 +293,7 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialClick(PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkVideoClick(PubnativeNetworkVideo.this);
                 }
             }
         });
@@ -294,7 +308,37 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
             public void run() {
 
                 if (mListener != null) {
-                    mListener.onPubnativeNetworkInterstitialHide(PubnativeNetworkInterstitial.this);
+                    mListener.onPubnativeNetworkVideoHide(PubnativeNetworkVideo.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeVideoStart() {
+
+        Log.v(TAG, "invokeVideoStart");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkVideoStart(PubnativeNetworkVideo.this);
+                }
+            }
+        });
+    }
+
+    protected void invokeVideoFinish() {
+
+        Log.v(TAG, "invokeVideoFinish");
+        mHandler.post(new Runnable() {
+
+            @Override
+            public void run() {
+
+                if (mListener != null) {
+                    mListener.onPubnativeNetworkVideoFinish(PubnativeNetworkVideo.this);
                 }
             }
         });
@@ -303,20 +347,20 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     //==============================================================================================
     // Callbacks
     //==============================================================================================
-    // PubnativeNetworkInterstitialAdapter.LoadListener
+    // PubnativeNetworkVideoAdapter.LoadListener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onAdapterLoadFinish(PubnativeNetworkInterstitialAdapter interstitial) {
+    public void onAdapterLoadFinish(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterLoadFinish");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        interstitial.setAdListener(this);
+        video.setAdListener(this);
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
         invokeLoadFinish();
     }
 
     @Override
-    public void onAdapterLoadFail(PubnativeNetworkInterstitialAdapter interstitial, Exception exception) {
+    public void onAdapterLoadFail(PubnativeNetworkVideoAdapter video, Exception exception) {
 
         Log.v(TAG, "onAdapterLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
@@ -328,33 +372,47 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
         getNextNetwork();
     }
 
-    // PubnativeNetworkInterstitialAdapter.AdListener
+    // PubnativeNetworkVideoAdapter.AdListener
     //----------------------------------------------------------------------------------------------
     @Override
-    public void onAdapterShow(PubnativeNetworkInterstitialAdapter interstitial) {
+    public void onAdapterShow(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterShow");
         invokeShow();
     }
 
     @Override
-    public void onAdapterImpressionConfirmed(PubnativeNetworkInterstitialAdapter interstitial) {
+    public void onAdapterImpressionConfirmed(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterImpressionConfirmed");
         invokeImpressionConfirmed();
     }
 
     @Override
-    public void onAdapterClick(PubnativeNetworkInterstitialAdapter interstitial) {
+    public void onAdapterClick(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterClick");
         invokeClick();
     }
 
     @Override
-    public void onAdapterHide(PubnativeNetworkInterstitialAdapter interstitial) {
+    public void onAdapterHide(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterHide");
         invokeHide();
+    }
+
+    @Override
+    public void onAdapterVideoStart(PubnativeNetworkVideoAdapter interstitial) {
+
+        Log.v(TAG, "onAdapterVideoStart");
+        invokeVideoStart();
+    }
+
+    @Override
+    public void onAdapterVideoFinish(PubnativeNetworkVideoAdapter interstitial) {
+
+        Log.v(TAG, "onAdapterVideoFinish");
+        invokeVideoFinish();
     }
 }

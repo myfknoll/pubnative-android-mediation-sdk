@@ -129,6 +129,7 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         public void onAdLeftApplication() {
 
             Log.v(TAG, "onAdLeftApplication");
+            invokeClick();
         }
 
         @Override
