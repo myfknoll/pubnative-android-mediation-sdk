@@ -126,22 +126,10 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void onError(Ad ad, AdError adError) {
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        if (adError == null) {
-            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else {
-            switch (adError.getErrorCode()) {
-                case AdError.NO_FILL_ERROR_CODE:
-                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
-                case FacebookNetworkRequestAdapter.FACEBOOK_ERROR_NO_FILL_1203:
-                    invokeLoadFinish(null);
-                    break;
-                default:
-                    Map errorData = new HashMap();
-                    errorData.put("errorCode", adError.getErrorCode());
-                    errorData.put("message", adError.getErrorMessage());
-                    invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
-            }
-        }
+        Map errorData = new HashMap();
+        errorData.put("errorCode", adError.getErrorCode());
+        errorData.put("message", adError.getErrorMessage());
+        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
     }
 
     @Override
@@ -150,7 +138,7 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
         Log.v(TAG, "onAdLoaded");
         mIsLoaded = true;
         mFeedBanner.setImpressionListener(this);
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

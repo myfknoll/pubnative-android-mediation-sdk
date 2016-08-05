@@ -32,8 +32,8 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Map;
 
-public class PubnativeLibraryNetworkBannerAdapter
-        extends PubnativeNetworkBannerAdapter implements PubnativeBanner.Listener {
+public class PubnativeLibraryNetworkBannerAdapter extends PubnativeNetworkBannerAdapter implements
+                                                                                        PubnativeBanner.Listener {
 
     private static String TAG = PubnativeLibraryNetworkBannerAdapter.class.getSimpleName();
 
@@ -116,7 +116,7 @@ public class PubnativeLibraryNetworkBannerAdapter
     @Override
     public void onPubnativeBannerLoadFinish(PubnativeBanner banner) {
         Log.v(TAG, "onPubnativeBannerLoadFinish");
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

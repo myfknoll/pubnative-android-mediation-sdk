@@ -41,7 +41,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
 
     private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
     protected PubnativeNetworkRequest.Listener mListener;
-    protected boolean                          mIsRunning;
+    protected boolean                          mIsLoading;
     protected Handler                          mHandler;
     protected PubnativeAdModel                 mAd;
     protected long                             mRequestStartTimestamp;
@@ -87,10 +87,10 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
         if (listener == null) {
             Log.e(TAG, "start - Error: listener not specified, dropping the call");
-        } else if (mIsRunning) {
-            Log.e(TAG, "start - Error: request already running, dropping the call");
+        } else if (mIsLoading) {
+            Log.e(TAG, "start - Error: request already loading, dropping the call");
         } else {
-            mIsRunning = true;
+            mIsLoading = true;
             mHandler = new Handler(Looper.getMainLooper());
             mListener = listener;
             initialize(context, appToken, placementName);
@@ -145,7 +145,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
-                mIsRunning = false;
+                mIsLoading = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest.this, ad);
                 }
@@ -162,7 +162,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
-                mIsRunning = false;
+                mIsLoading = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this, exception);
                 }

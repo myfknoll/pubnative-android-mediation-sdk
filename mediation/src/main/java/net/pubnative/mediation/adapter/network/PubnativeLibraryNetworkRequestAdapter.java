@@ -94,16 +94,13 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
 
         Log.v(TAG, "onPubnativeRequestSuccess");
-        if (request == null) {
-            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else {
-            net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
-            if (ads != null && ads.size() > 0) {
-                wrapAd = new PubnativeLibraryAdModel(ads.get(0));
-                wrapAd.setLinkCaching(mUseCaching);
-            }
-            invokeLoaded(wrapAd);
+
+        net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
+        if (ads != null && ads.size() > 0) {
+            wrapAd = new PubnativeLibraryAdModel(ads.get(0));
+            wrapAd.setLinkCaching(mUseCaching);
         }
+        invokeLoaded(wrapAd);
     }
 
     @Override

@@ -45,7 +45,6 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
 
     private static      String TAG                = YahooNetworkRequestAdapter.class.getSimpleName();
     public static final String KEY_AD_SPACE_NAME  = "ad_space_name";
-    public static final String KEY_FLURRY_API_KEY = "api_key";
     protected Context mContext;
 
     /**
@@ -68,13 +67,12 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
-            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
             String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
-            if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
+            if (TextUtils.isEmpty(adSpaceName)) {
                 invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 mContext = context;
-                createRequest(adSpaceName, apiKey);
+                createRequest(adSpaceName);
             }
         }
     }
@@ -82,19 +80,9 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
     //==============================================================================================
     // YahooNetworkAdapterHub
     //==============================================================================================
-    protected void createRequest(String adSpaceName, String apiKey) {
+    protected void createRequest(String adSpaceName) {
 
         Log.v(TAG, "createRequest");
-        // configure flurry
-        new FlurryAgent.Builder()
-                .withLogEnabled(true)
-                .withLogLevel(Log.VERBOSE)
-                .withCaptureUncaughtExceptions(true)
-                .build(mContext, apiKey);
-        // execute/resume session
-        if (!FlurryAgent.isSessionActive()) {
-            FlurryAgent.onStartSession(mContext);
-        }
         // Make request
         FlurryAdNative flurryAdNative = new FlurryAdNative(mContext, adSpaceName);
         // Add targeting
@@ -157,9 +145,7 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
 
         Log.v(TAG, "onError: " + errCode);
         endFlurrySession(mContext);
-        if (flurryAdErrorType == null) {
-            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
+        if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
             invokeLoaded(null);
         } else {
             Map extra = new HashMap();

@@ -170,12 +170,12 @@ public abstract class PubnativeNetworkFeedBannerAdapter extends PubnativeNetwork
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeLoadFinish(PubnativeNetworkFeedBannerAdapter feedBanner) {
+    protected void invokeLoadFinish() {
 
         Log.v(TAG, "invokeLoadFinish");
         cancelTimeout();
         if (mLoadListener != null) {
-            mLoadListener.onAdapterLoadFinish(feedBanner);
+            mLoadListener.onAdapterLoadFinish(this);
         }
     }
 

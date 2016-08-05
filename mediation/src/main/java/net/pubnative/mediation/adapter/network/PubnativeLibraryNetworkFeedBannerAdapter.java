@@ -119,7 +119,7 @@ public class PubnativeLibraryNetworkFeedBannerAdapter
     public void onPubnativeFeedBannerLoadFinish(PubnativeFeedBanner feedBanner) {
 
         Log.v(TAG, "onPubnativeFeedBannerLoadFinish");
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

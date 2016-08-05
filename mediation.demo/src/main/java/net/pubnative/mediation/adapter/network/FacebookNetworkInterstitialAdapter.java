@@ -35,6 +35,7 @@ import com.facebook.ads.InterstitialAdListener;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter
@@ -124,19 +125,10 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
     public void onError(Ad ad, AdError adError) {
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        if (adError == null) {
-            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else {
-            switch (adError.getErrorCode()) {
-                case AdError.NO_FILL_ERROR_CODE:
-                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
-                case FacebookNetworkRequestAdapter.FACEBOOK_ERROR_NO_FILL_1203:
-                    invokeLoadFinish();
-                    break;
-                default:
-                    invokeLoadFail(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
-            }
-        }
+        Map extra = new HashMap();
+        extra.put("code", adError.getErrorCode());
+        extra.put("message", adError.getErrorMessage());
+        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
     }
 
     @Override

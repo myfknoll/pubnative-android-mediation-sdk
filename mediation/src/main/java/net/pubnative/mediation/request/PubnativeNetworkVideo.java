@@ -172,12 +172,14 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     public synchronized void show() {
 
         Log.v(TAG, "show");
-        if (mIsShown) {
+        if (mIsLoading) {
+            Log.v(TAG, "show - the video currently loading, try again later");
+        } else if (mIsShown) {
             Log.v(TAG, "show - the video ad is already shown");
-        } else if (!isReady()) {
-            Log.v(TAG, "show - the video ad is still not loaded");
-        } else {
+        } else if (isReady()) {
             mAdapter.show();
+        } else {
+            Log.v(TAG, "show - the video is not loaded, please load before");
         }
     }
 
@@ -208,7 +210,6 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
         mAdapter = hub.getVideoAdapter();
         if (mAdapter == null) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), 0, PubnativeException.ADAPTER_TYPE_NOT_IMPLEMENTED);
-
             getNextNetwork();
         } else {
             mStartTimestamp = System.currentTimeMillis();
@@ -225,12 +226,14 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     //==============================================================================================
     protected void invokeLoadFinish() {
 
+        Log.v(TAG, "invokeLoadFinish");
+
         mHandler.post(new Runnable() {
 
             @Override
             public void run() {
 
-                Log.v(TAG, "invokeLoadFinish");
+                mIsLoading = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkVideoLoadFinish(PubnativeNetworkVideo.this);
                 }
@@ -246,6 +249,7 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
+                mIsLoading = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkVideoLoadFail(PubnativeNetworkVideo.this, exception);
                 }
@@ -353,8 +357,10 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     public void onAdapterLoadFinish(PubnativeNetworkVideoAdapter video) {
 
         Log.v(TAG, "onAdapterLoadFinish");
-        long responseTime = System.currentTimeMillis() - mStartTimestamp;
+
         video.setAdListener(this);
+
+        long responseTime = System.currentTimeMillis() - mStartTimestamp;
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
         invokeLoadFinish();
     }
@@ -364,10 +370,10 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onAdapterLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        if (exception == PubnativeException.ADAPTER_TIMEOUT) {
+        if(exception.equals(PubnativeException.ADAPTER_TIMEOUT)) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         } else {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
         }
         getNextNetwork();
     }

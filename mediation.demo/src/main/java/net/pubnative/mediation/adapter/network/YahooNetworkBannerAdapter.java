@@ -63,7 +63,6 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
 
         Log.v(TAG, "destroy");
         if (mAdBanner != null) {
-            FlurryAgent.onEndSession(mContext);
             mAdBanner.destroy();
         }
     }
@@ -92,20 +91,10 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
 
         Log.v(TAG, "createRequest");
         mContext = context;
-        String apiKey = (String) mData.get(YahooNetworkRequestAdapter.KEY_FLURRY_API_KEY);
         String adSpaceName = (String) mData.get(YahooNetworkRequestAdapter.KEY_AD_SPACE_NAME);
-        if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
+        if (TextUtils.isEmpty(adSpaceName)) {
             invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
         } else {
-            // initialize flurry with new apiKey
-            new FlurryAgent.Builder()
-                    .withLogEnabled(true)
-                    .withLogLevel(Log.VERBOSE)
-                    .build(mContext, apiKey);
-            // execute/resume session
-            if (!FlurryAgent.isSessionActive()) {
-                FlurryAgent.onStartSession(context);
-            }
             // create container for banner
             ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
             RelativeLayout container = new RelativeLayout(mContext);
@@ -157,7 +146,7 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     public void onFetched(FlurryAdBanner flurryAdBanner) {
 
         Log.v(TAG, "onFetched");
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override
@@ -203,6 +192,9 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int i) {
 
         Log.v(TAG, "onError: " + i);
-        invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        Map extras = new HashMap();
+        extras.put("code", i);
+        extras.put("type", flurryAdErrorType.name());
+        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extras));
     }
 }

@@ -18,6 +18,7 @@ import com.facebook.ads.ImpressionListener;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
@@ -127,20 +128,10 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     @Override
     public void onError(Ad ad, AdError adError) {
 
-        Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        if (adError == null) {
-            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else {
-            switch (adError.getErrorCode()) {
-                case AdError.NO_FILL_ERROR_CODE:
-                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
-                case FacebookNetworkRequestAdapter.FACEBOOK_ERROR_NO_FILL_1203:
-                    invokeLoadFinish(null);
-                    break;
-                default:
-                    invokeLoadFail(new Exception("FacebookNetworkBannerAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
-            }
-        }
+        Map extras = new HashMap();
+        extras.put("code", adError.getErrorCode());
+        extras.put("message", adError.getErrorMessage());
+        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extras));
     }
 
     @Override
@@ -149,7 +140,7 @@ public class FacebookNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         Log.v(TAG, "onAdLoaded");
         mIsLoaded = true;
         mBannerView.setImpressionListener(this);
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

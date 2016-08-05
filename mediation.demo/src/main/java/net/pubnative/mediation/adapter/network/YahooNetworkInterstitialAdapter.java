@@ -62,18 +62,10 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         if (context == null || mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
-            String apiKey = (String) mData.get(YahooNetworkRequestAdapter.KEY_FLURRY_API_KEY);
             String adSpaceName = (String) mData.get(YahooNetworkRequestAdapter.KEY_AD_SPACE_NAME);
-            if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
+            if (TextUtils.isEmpty(adSpaceName)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
-                new FlurryAgent.Builder()
-                        .withLogEnabled(true)
-                        .withLogLevel(Log.VERBOSE)
-                        .build(context, apiKey);
-                if (!FlurryAgent.isSessionActive()) {
-                    FlurryAgent.onStartSession(context);
-                }
                 mInterstitial = new FlurryAdInterstitial(context, adSpaceName);
                 mInterstitial.setListener(this);
                 // Add targeting
@@ -195,6 +187,9 @@ public class YahooNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
     public void onError(FlurryAdInterstitial flurryAdInterstitial, FlurryAdErrorType flurryAdErrorType, int i) {
 
         Log.v(TAG, "onError: " + i);
-        invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        Map extras = new HashMap();
+        extras.put("code", i);
+        extras.put("type", flurryAdErrorType.name());
+        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extras));
     }
 }

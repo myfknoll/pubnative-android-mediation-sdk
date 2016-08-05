@@ -11,6 +11,7 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AdMobNetworkVideoAdapter extends PubnativeNetworkVideoAdapter {
@@ -123,7 +124,9 @@ public class AdMobNetworkVideoAdapter extends PubnativeNetworkVideoAdapter {
         public void onAdFailedToLoad(int var1) {
 
             Log.v(TAG, "onAdFailedToLoad");
-            invokeLoadFail(PubnativeException.VIDEO_LOADING);
+            Map extra = new HashMap();
+            extra.put("code", var1);
+            invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
 
         @Override
