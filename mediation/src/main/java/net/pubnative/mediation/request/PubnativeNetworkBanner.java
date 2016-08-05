@@ -340,10 +340,12 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onPubnativeBannerLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        if(exception.equals(PubnativeException.ADAPTER_TIMEOUT)) {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
-        } else {
+        if(!exception.getClass().isAssignableFrom(PubnativeException.class)) {
             mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
+        } else if (exception.equals(PubnativeException.ADAPTER_UNKNOWN_ERROR)) {
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
+        } else {
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         }
         getNextNetwork();
     }
