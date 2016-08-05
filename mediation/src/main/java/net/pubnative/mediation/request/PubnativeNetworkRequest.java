@@ -208,7 +208,18 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
-        mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+
+        // Attempted when exception is not PubnativeException or ADAPTER_UNKNOWN_ERROR type;
+        if(exception.getClass().isAssignableFrom(PubnativeException.class)) {
+            PubnativeException error = (PubnativeException) exception;
+            if(error.getErrorCode() == PubnativeException.ADAPTER_UNKNOWN_ERROR.getErrorCode()) {
+                mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
+            } else {
+                mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+            }
+        } else {
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
+        }
         getNextNetwork();
     }
 }

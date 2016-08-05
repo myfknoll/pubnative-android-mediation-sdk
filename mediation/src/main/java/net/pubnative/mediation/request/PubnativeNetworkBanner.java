@@ -336,7 +336,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         if (exception == PubnativeException.ADAPTER_TIMEOUT) {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         } else {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
         }
         getNextNetwork();
     }

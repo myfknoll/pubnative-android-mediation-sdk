@@ -162,7 +162,10 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         } else if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
             invokeLoaded(null);
         } else {
-            invokeFailed(new Exception("YahooNetworkAdapterHub - " + errCode + " - " + flurryAdErrorType.name()));
+            Map extra = new HashMap();
+            extra.put("code", errCode);
+            extra.put("type", flurryAdErrorType.name());
+            invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
     }
 
