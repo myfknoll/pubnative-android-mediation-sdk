@@ -24,6 +24,7 @@
 package net.pubnative.mediation.request.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,12 +43,15 @@ public abstract class PubnativeAdModel {
     protected            boolean               mImpressionTracked = false;
     protected            boolean               mClickTracked      = false;
     // View
-    protected            View                      mTitleView             = null;
-    protected            View                      mDescriptionView       = null;
-    protected            View                      mIconView              = null;
-    protected            View                      mBannerView            = null;
-    protected            View                      mRatingView            = null;
-    protected            View                      mCallToActionView      = null;
+    protected            View                  mTitleView         = null;
+    protected            View                  mDescriptionView   = null;
+    protected            View                  mIconView          = null;
+    protected            View                  mBannerView        = null;
+    protected            View                  mRatingView        = null;
+    protected            View                  mCallToActionView  = null;
+    //Bitmap
+    protected            Bitmap                mIcon              = null;
+    protected            Bitmap                mBanner            = null;
 
     //==============================================================================================
     // Listener
@@ -78,7 +82,7 @@ public abstract class PubnativeAdModel {
      *
      * @param listener valid Listener
      */
-    public void setListener(PubnativeAdModel.Listener listener) {
+    public void setListener(Listener listener) {
 
         Log.v(TAG, "setListener");
         mListener = listener;
@@ -118,6 +122,24 @@ public abstract class PubnativeAdModel {
     public abstract String getBannerUrl();
 
     /**
+     * gets the icon image for ad.
+     *
+     * @return icon bitmap image.
+     */
+    public Bitmap getIcon(){
+        return mIcon;
+    }
+
+    /**
+     * gets the banner image for ad.
+     *
+     * @return banner bitmap image.
+     */
+    public Bitmap getBanner(){
+        return mBanner;
+    }
+
+    /**
      * gets the call to action string (download, free, etc)
      *
      * @return call to action string
@@ -139,6 +161,26 @@ public abstract class PubnativeAdModel {
      * @return Disclosure view to be added on top of the ad.
      */
     public abstract View getAdvertisingDisclosureView(Context context);
+
+    /**
+     * sets bitmap resource for ad request icon.
+     *
+     * @param icon valid bitmap.
+     */
+    public void setIcon(Bitmap icon){
+
+        mIcon = icon;
+    }
+
+    /**
+     * sets bitmap resource for ad request banner.
+     *
+     * @param banner valid bitmap.
+     */
+    public void setBanner(Bitmap banner){
+
+        mBanner = banner;
+    }
 
     /**
      * set native ad that may contain video & rich media (facebook network only)

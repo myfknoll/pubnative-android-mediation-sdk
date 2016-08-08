@@ -21,27 +21,14 @@
 // SOFTWARE.
 //
 
-package net.pubnative.mediation.demo;
+package net.pubnative.mediation.request.model;
 
-import net.pubnative.mediation.request.PubnativeNetworkRequest;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
+import android.graphics.Bitmap;
 
-public class CellRequestModel {
+import net.pubnative.mediation.network.PubnativeResourceRequest;
 
-    private static final String TAG = CellRequestModel.class.getSimpleName();
-    public PubnativeNetworkRequest request;
-    public PubnativeAdModel        adModel;
-    public String                  placementID;
+public class PubnativeResourceCacheModel {
 
-    public CellRequestModel(String placementID) {
-
-        request = new PubnativeNetworkRequest();
-        request.setCacheResources(true);
-        this.placementID = placementID;
-    }
-
-    @Override
-    public int hashCode() {
-        return placementID.hashCode();
-    }
+    public PubnativeResourceRequest.ResourceType key;
+    public Bitmap image;
 }
