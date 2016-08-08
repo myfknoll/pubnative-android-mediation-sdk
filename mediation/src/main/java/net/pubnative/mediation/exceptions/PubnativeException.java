@@ -103,6 +103,18 @@ public class PubnativeException extends Exception {
     }
 
     @Override
+    public boolean equals(Object o) {
+
+        boolean result = false;
+        if(o.getClass().isAssignableFrom(PubnativeException.class)){
+
+            PubnativeException exception = (PubnativeException) o;
+            result = exception.getErrorCode() == mErrorCode;
+        }
+        return result;
+    }
+
+    @Override
     public String getMessage() {
 
         return String.valueOf("PubnativeException (" + getErrorCode() + "): " + super.getMessage());

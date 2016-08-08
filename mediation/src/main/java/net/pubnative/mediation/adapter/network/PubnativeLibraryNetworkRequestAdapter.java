@@ -50,10 +50,10 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
     protected void request(Context context) {
 
         Log.v(TAG, "request");
-        if (context != null && mData != null) {
-            createRequest(context);
-        } else {
+        if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
+        } else {
+            createRequest(context);
         }
     }
 
@@ -94,16 +94,13 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
 
         Log.v(TAG, "onPubnativeRequestSuccess");
-        if (request == null) {
-            invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
-        } else {
-            net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
-            if (ads != null && ads.size() > 0) {
-                wrapAd = new PubnativeLibraryAdModel(ads.get(0));
-                wrapAd.setLinkCaching(mUseCaching);
-            }
-            invokeLoaded(wrapAd);
+
+        net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
+        if (ads != null && ads.size() > 0) {
+            wrapAd = new PubnativeLibraryAdModel(ads.get(0));
+            wrapAd.setLinkCaching(mUseCaching);
         }
+        invokeLoaded(wrapAd);
     }
 
     @Override

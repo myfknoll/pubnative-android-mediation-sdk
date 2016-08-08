@@ -184,12 +184,12 @@ public abstract class PubnativeNetworkFeedVideoAdapter extends PubnativeNetworkA
     //==============================================================================================
     // Callback helpers
     //==============================================================================================
-    protected void invokeLoadFinish(PubnativeNetworkFeedVideoAdapter feedVideo) {
+    protected void invokeLoadFinish() {
 
         Log.v(TAG, "invokeLoadFinish");
         cancelTimeout();
         if (mLoadListener != null) {
-            mLoadListener.onAdapterLoadFinish(feedVideo);
+            mLoadListener.onAdapterLoadFinish(this);
         }
     }
 

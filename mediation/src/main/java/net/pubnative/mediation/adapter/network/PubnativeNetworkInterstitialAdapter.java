@@ -27,6 +27,7 @@ import android.content.Context;
 import android.util.Log;
 
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.request.PubnativeNetworkInterstitial;
 
 import java.util.Map;
 

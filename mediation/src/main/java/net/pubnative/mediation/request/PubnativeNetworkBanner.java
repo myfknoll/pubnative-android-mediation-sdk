@@ -137,7 +137,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     public void destroy() {
 
         Log.v(TAG, "destroy");
-        mAdapter.destroy();
+        if (mAdapter != null) {
+            mAdapter.destroy();
+        }
     }
 
     /**
@@ -199,6 +201,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
+                mIsLoading = false;
                 Log.v(TAG, "invokeLoadFinish");
                 if (mListener != null) {
                     mListener.onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner.this);
@@ -216,6 +219,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
+                mIsLoading = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkBannerLoadFail(PubnativeNetworkBanner.this, exception);
                 }
@@ -323,6 +327,11 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     public void onAdapterLoadFinish(PubnativeNetworkBannerAdapter banner) {
 
         Log.v(TAG, "onPubnativeBannerLoadFinish");
+
+        mIsLoading = false;
+
+        banner.setAdListener(this);
+
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
         mInsight.trackSuccededNetwork(mPlacement.currentPriority(), responseTime);
         invokeLoadFinish();
@@ -333,8 +342,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
 
         Log.v(TAG, "onPubnativeBannerLoadFail");
         long responseTime = System.currentTimeMillis() - mStartTimestamp;
-        if (exception == PubnativeException.ADAPTER_TIMEOUT) {
-            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+        if(!exception.getClass().isAssignableFrom(PubnativeException.class)
+           || exception.equals(PubnativeException.ADAPTER_UNKNOWN_ERROR)) {
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
         } else {
             mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         }

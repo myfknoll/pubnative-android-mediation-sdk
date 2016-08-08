@@ -13,6 +13,7 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter implements NativeAppInstallAd.OnAppInstallAdLoadedListener {
@@ -37,7 +38,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
     protected void request(Context context) {
 
         Log.v(TAG, "request");
-        if (context == null && mData == null) {
+        if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             String unitId = (String) mData.get(ADMOB_UNIT_ID);
@@ -80,7 +81,7 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
                 builder.setGender(AdRequest.GENDER_UNKNOWN);
             }
         }
-        return builder.addTestDevice("16F5F25826CB21FCB488335014973DA7").build();
+        return builder.build();
     }
 
     //==============================================================================================
@@ -91,15 +92,17 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
     protected class NativeAdListener extends com.google.android.gms.ads.AdListener {
 
         @Override
-        public void onAdFailedToLoad(int var1) {
+        public void onAdFailedToLoad(int errorCode) {
 
             Log.v(TAG, "onAdFailedToLoad");
-            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+            Map extra = new HashMap();
+            extra.put("code", errorCode);
+            invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
     }
+
     // NativeAppInstallAd.OnAppInstallAdLoadedListener
     //----------------------------------------------------------------------------------------------
-
     @Override
     public void onAppInstallAdLoaded(NativeAppInstallAd nativeAppInstallAd) {
 

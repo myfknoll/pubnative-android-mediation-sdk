@@ -100,7 +100,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         if (listener == null) {
             Log.e(TAG, "start - Error: listener not specified, dropping the call");
         } else if (mIsRunning) {
-            Log.e(TAG, "start - Error: request already running, dropping the call");
+            Log.e(TAG, "start - Error: request already loading, dropping the call");
         } else {
             mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
@@ -244,7 +244,14 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.e(TAG, "onAdapterRequestFailed: " + exception);
         // Waterfall to the next network
         long responseTime = System.currentTimeMillis() - mRequestStartTimestamp;
-        mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+
+        // Attempted when exception is not PubnativeException or ADAPTER_UNKNOWN_ERROR type;
+        if(!exception.getClass().isAssignableFrom(PubnativeException.class)
+           || exception.equals(PubnativeException.ADAPTER_UNKNOWN_ERROR)) {
+            mInsight.trackAttemptedNetwork(mPlacement.currentPriority(), responseTime, exception);
+        } else {
+            mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
+        }
         getNextNetwork();
     }
 

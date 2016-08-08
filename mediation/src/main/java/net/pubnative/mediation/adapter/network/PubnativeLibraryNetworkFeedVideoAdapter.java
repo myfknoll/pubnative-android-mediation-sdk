@@ -124,7 +124,7 @@ public class PubnativeLibraryNetworkFeedVideoAdapter extends PubnativeNetworkFee
     public void onPubnativeFeedVideoLoadFinish(PubnativeFeedVideo video) {
 
         Log.v(TAG, "onPubnativeFeedVideoLoadFinish");
-        invokeLoadFinish(this);
+        invokeLoadFinish();
     }
 
     @Override

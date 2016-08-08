@@ -14,8 +14,8 @@ public class PubnativeNetworkFeedBannerAdapterTest {
     @Test
     public void invokeLoadFinish_withNullListener_pass() {
         PubnativeNetworkFeedBannerAdapter adapter = mock(PubnativeNetworkFeedBannerAdapter.class);
-        doCallRealMethod().when(adapter).invokeLoadFinish(adapter);
-        adapter.invokeLoadFinish(adapter);
+        doCallRealMethod().when(adapter).invokeLoadFinish();
+        adapter.invokeLoadFinish();
     }
 
     @Test
@@ -56,10 +56,10 @@ public class PubnativeNetworkFeedBannerAdapterTest {
     @Test
     public void invokeLoadFinish_withValidListener_callbackLoadFinish() {
         PubnativeNetworkFeedBannerAdapter adapter = mock(PubnativeNetworkFeedBannerAdapter.class);
-        doCallRealMethod().when(adapter).invokeLoadFinish(adapter);
+        doCallRealMethod().when(adapter).invokeLoadFinish();
         PubnativeNetworkFeedBannerAdapter.LoadListener listener = spy(PubnativeNetworkFeedBannerAdapter.LoadListener.class);
         adapter.mLoadListener = listener;
-        adapter.invokeLoadFinish(adapter);
+        adapter.invokeLoadFinish();
         verify(listener).onAdapterLoadFinish(eq(adapter));
     }
 
