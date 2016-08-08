@@ -99,10 +99,10 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
         if (listener == null) {
             Log.e(TAG, "start - Error: listener not specified, dropping the call");
-        } else if (mIsLoading) {
+        } else if (mIsRunning) {
             Log.e(TAG, "start - Error: request already loading, dropping the call");
         } else {
-            mIsLoading = true;
+            mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
             mListener = listener;
             initialize(context, appToken, placementName);
@@ -168,7 +168,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
-                mIsLoading = false;
+                mIsRunning = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkRequestLoaded(PubnativeNetworkRequest.this, ad);
                 }
@@ -185,7 +185,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             @Override
             public void run() {
 
-                mIsLoading = false;
+                mIsRunning = false;
                 if (mListener != null) {
                     mListener.onPubnativeNetworkRequestFailed(PubnativeNetworkRequest.this, exception);
                 }
