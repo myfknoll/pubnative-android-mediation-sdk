@@ -32,19 +32,31 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkRequestAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.network.PubnativeResourceRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
+import net.pubnative.mediation.request.model.PubnativeResourceCacheModel;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+
+import static net.pubnative.mediation.network.PubnativeResourceRequest.ResourceType;
 
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
-        implements PubnativeNetworkRequestAdapter.Listener {
+        implements PubnativeNetworkRequestAdapter.Listener,
+                   PubnativeNetworkResource.Listener {
 
     private static String TAG = PubnativeNetworkRequest.class.getSimpleName();
-    protected PubnativeNetworkRequest.Listener mListener;
-    protected boolean                          mIsRunning;
-    protected Handler                          mHandler;
-    protected PubnativeAdModel                 mAd;
-    protected long                             mRequestStartTimestamp;
+    protected Listener         mListener;
+    protected boolean          mIsRunning;
+    protected Handler          mHandler;
+    protected PubnativeAdModel mAd;
+    protected long             mRequestStartTimestamp;
+    protected boolean          mIsCachingResourceEnabled = false;
+
     //==============================================================================================
     // Listener
     //==============================================================================================
@@ -82,7 +94,7 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
      * @param placementName valid placementId provided by Pubnative.
      * @param listener      valid Listener to keep track of request callbacks.
      */
-    public synchronized void start(Context context, String appToken, final String placementName, PubnativeNetworkRequest.Listener listener) {
+    public synchronized void start(Context context, String appToken, final String placementName, Listener listener) {
 
         Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
         if (listener == null) {
@@ -95,6 +107,17 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             mListener = listener;
             initialize(context, appToken, placementName);
         }
+    }
+
+    /**
+     * this method enables caching for ad resources.
+     *
+     * @param enabled true for enable, false for disable.
+     */
+    public void setCacheResources(boolean enabled) {
+
+        Log.v(TAG, "setCacheResources");
+        mIsCachingResourceEnabled = enabled;
     }
 
     //==============================================================================================
@@ -198,7 +221,20 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             // Default tracking data
             mAd = ad;
             mAd.setInsightModel(mInsight);
-            invokeLoad(mAd);
+            // Caching resources if enabled
+            if (mIsCachingResourceEnabled) {
+                Log.v(TAG, "Caching resources");
+                PubnativeNetworkResource resourceRequest = new PubnativeNetworkResource();
+                resourceRequest.setListener(this);
+                // adding callables to collection
+                Set resourceSet = new HashSet<Callable<PubnativeResourceCacheModel>>();
+                resourceSet.add(new PubnativeResourceRequest(mAd.getIconUrl(), ResourceType.ICON));
+                resourceSet.add(new PubnativeResourceRequest(mAd.getBannerUrl(), ResourceType.BANNER));
+
+                resourceRequest.startDownload(resourceSet);
+            } else {
+                invokeLoad(mAd);
+            }
         }
     }
 
@@ -211,4 +247,26 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
         mInsight.trackUnreachableNetwork(mPlacement.currentPriority(), responseTime, exception);
         getNextNetwork();
     }
+
+    //----------------------------------------------------------------------------------------------
+    // PubnativeNetworkResource
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onPubnativeNetworkResourceLoaded(List resourceList) {
+
+        Log.e(TAG, "onPubnativeNetworkResourceLoaded");
+        Iterator iterator = resourceList.iterator();
+        while (iterator.hasNext()){
+            PubnativeResourceCacheModel cacheModel = (PubnativeResourceCacheModel) iterator.next();
+            if (mAd != null) {
+                if (ResourceType.ICON.equals(cacheModel.key)) {
+                    mAd.setIcon(cacheModel.image);
+                } else {
+                    mAd.setBanner(cacheModel.image);
+                }
+                invokeLoad(mAd);
+            }
+        }
+    }
 }
+
