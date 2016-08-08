@@ -46,6 +46,7 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
 
     private static final String  TAG = YahooNetworkFeedVideoAdapter.class.getSimpleName();
     public  static final String KEY_AD_SPACE_NAME  = "ad_space_name";
+    public  static final String KEY_FLURRY_API_KEY = "api_key";
     private static final String AD_ASSET_VIDEO_URL = "videoUrl";
     //==============================================================================================
     // Properties
@@ -77,10 +78,18 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
-            if (TextUtils.isEmpty(adSpaceName)) {
+            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
+            if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(adSpaceName)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 mContext = context;
+                new FlurryAgent.Builder()
+                        .withLogEnabled(true)
+                        .build(context, apiKey);
+                // execute/resume session
+                if (!FlurryAgent.isSessionActive()) {
+                    FlurryAgent.onStartSession(context);
+                }
                 // Make request
                 FlurryAdNative flurryAdNative = new FlurryAdNative(context, adSpaceName);
                 // Add targeting
@@ -168,6 +177,7 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
 
         Log.v(TAG, "onFetched");
 
+        FlurryAgent.onEndSession(mContext);
         if(flurryAdNative.isVideoAd()) {
             invokeLoadFinish();
         } else {
@@ -183,6 +193,7 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
 
         Log.v(TAG, "onError: " + errCode);
 
+        FlurryAgent.onEndSession(mContext);
         Map extras = new HashMap();
         extras.put("code", errCode);
         extras.put("type", flurryAdErrorType.name());

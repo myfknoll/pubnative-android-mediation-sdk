@@ -137,7 +137,9 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     public void destroy() {
 
         Log.v(TAG, "destroy");
-        mAdapter.destroy();
+        if (mAdapter != null) {
+            mAdapter.destroy();
+        }
     }
 
     /**

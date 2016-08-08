@@ -63,6 +63,7 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
 
         Log.v(TAG, "destroy");
         if (mAdBanner != null) {
+            FlurryAgent.onEndSession(mContext);
             mAdBanner.destroy();
         }
     }
@@ -92,9 +93,18 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         Log.v(TAG, "createRequest");
         mContext = context;
         String adSpaceName = (String) mData.get(YahooNetworkRequestAdapter.KEY_AD_SPACE_NAME);
-        if (TextUtils.isEmpty(adSpaceName)) {
+        String apiKey = (String) mData.get(YahooNetworkRequestAdapter.KEY_FLURRY_API_KEY);
+        if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(adSpaceName)) {
             invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
         } else {
+            // initialize flurry with new apiKey
+            new FlurryAgent.Builder()
+                    .withLogEnabled(true)
+                    .build(mContext, apiKey);
+            // execute/resume session
+            if (!FlurryAgent.isSessionActive()) {
+                FlurryAgent.onStartSession(context);
+            }
             // create container for banner
             ViewGroup rootView = (ViewGroup) ((Activity) mContext).findViewById(android.R.id.content);
             RelativeLayout container = new RelativeLayout(mContext);
