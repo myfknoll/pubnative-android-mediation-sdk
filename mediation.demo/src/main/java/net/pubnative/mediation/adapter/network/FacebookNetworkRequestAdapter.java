@@ -95,20 +95,22 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     public void onError(Ad ad, AdError adError) {
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        switch (adError.getErrorCode()) {
-            case AdError.NO_FILL_ERROR_CODE:
-            case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
-            case FACEBOOK_ERROR_NO_FILL_1203: {
-                invokeLoaded(null);
+        if (adError == null) {
+            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        } else {
+            switch (adError.getErrorCode()) {
+                case AdError.NO_FILL_ERROR_CODE:
+                case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
+                case FACEBOOK_ERROR_NO_FILL_1203:
+                    invokeLoaded(null);
+                break;
+                default:
+                    Map extra = new HashMap();
+                    extra.put("code", adError.getErrorCode());
+                    extra.put("message", adError.getErrorMessage());
+                    invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
+                break;
             }
-            break;
-            default: {
-                Map extra = new HashMap();
-                extra.put("code", adError.getErrorCode());
-                extra.put("message", adError.getErrorMessage());
-                invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
-            }
-            break;
         }
     }
 

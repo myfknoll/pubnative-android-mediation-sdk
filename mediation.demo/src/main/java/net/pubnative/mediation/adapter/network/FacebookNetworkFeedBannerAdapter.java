@@ -126,10 +126,14 @@ public class FacebookNetworkFeedBannerAdapter extends PubnativeNetworkFeedBanner
     public void onError(Ad ad, AdError adError) {
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        Map errorData = new HashMap();
-        errorData.put("errorCode", adError.getErrorCode());
-        errorData.put("message", adError.getErrorMessage());
-        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
+        if (adError == null) {
+            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        } else {
+            Map errorData = new HashMap();
+            errorData.put("errorCode", adError.getErrorCode());
+            errorData.put("message", adError.getErrorMessage());
+            invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, errorData));
+        }
     }
 
     @Override

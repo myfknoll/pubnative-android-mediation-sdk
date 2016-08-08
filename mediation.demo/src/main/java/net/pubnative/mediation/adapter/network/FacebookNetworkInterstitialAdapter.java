@@ -125,10 +125,14 @@ public class FacebookNetworkInterstitialAdapter extends PubnativeNetworkIntersti
     public void onError(Ad ad, AdError adError) {
 
         Log.v(TAG, "onError: " + (adError != null ? (adError.getErrorCode() + " - " + adError.getErrorMessage()) : ""));
-        Map extra = new HashMap();
-        extra.put("code", adError.getErrorCode());
-        extra.put("message", adError.getErrorMessage());
-        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
+        if (adError == null) {
+            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+        } else {
+            Map extra = new HashMap();
+            extra.put("code", adError.getErrorCode());
+            extra.put("message", adError.getErrorMessage());
+            invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
+        }
     }
 
     @Override

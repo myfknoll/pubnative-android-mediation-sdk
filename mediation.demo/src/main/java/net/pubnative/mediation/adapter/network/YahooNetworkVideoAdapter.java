@@ -190,6 +190,7 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
     public void onError(FlurryAdInterstitial flurryAdInterstitial, FlurryAdErrorType flurryAdErrorType, int errorCode) {
 
         Log.v(TAG, "onError: " + errorCode);
+        
         Map extras = new HashMap();
         extras.put("code", errorCode);
         extras.put("type", flurryAdErrorType.name());

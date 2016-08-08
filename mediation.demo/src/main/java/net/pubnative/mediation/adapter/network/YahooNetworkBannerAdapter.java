@@ -94,7 +94,7 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
         mContext = context;
         String adSpaceName = (String) mData.get(YahooNetworkRequestAdapter.KEY_AD_SPACE_NAME);
         String apiKey = (String) mData.get(YahooNetworkRequestAdapter.KEY_FLURRY_API_KEY);
-        if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(adSpaceName)) {
+        if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(apiKey)) {
             invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
         } else {
             // initialize flurry with new apiKey

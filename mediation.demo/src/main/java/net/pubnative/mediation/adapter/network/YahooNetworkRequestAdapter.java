@@ -70,7 +70,7 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         } else {
             String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
             String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
-            if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(adSpaceName)) {
+            if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(apiKey)) {
                 invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 mContext = context;
