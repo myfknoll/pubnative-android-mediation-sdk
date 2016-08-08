@@ -199,11 +199,11 @@ public class YahooNetworkBannerAdapter extends PubnativeNetworkBannerAdapter
     }
 
     @Override
-    public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int i) {
+    public void onError(FlurryAdBanner flurryAdBanner, FlurryAdErrorType flurryAdErrorType, int errorCode) {
 
-        Log.v(TAG, "onError: " + i);
+        Log.v(TAG, "onError: " + errorCode);
         Map extras = new HashMap();
-        extras.put("code", i);
+        extras.put("code", errorCode);
         extras.put("type", flurryAdErrorType.name());
         invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extras));
     }

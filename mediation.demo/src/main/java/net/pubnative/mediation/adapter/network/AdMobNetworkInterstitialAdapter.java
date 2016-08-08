@@ -120,11 +120,11 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         }
 
         @Override
-        public void onAdFailedToLoad(int var1) {
+        public void onAdFailedToLoad(int errorCode) {
 
             Log.v(TAG, "onAdFailedToLoad");
             Map extra = new HashMap();
-            extra.put("code", var1);
+            extra.put("code", errorCode);
             invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
 

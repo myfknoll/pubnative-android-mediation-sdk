@@ -92,11 +92,11 @@ public class AdMobNetworkRequestAdapter extends PubnativeNetworkRequestAdapter i
     protected class NativeAdListener extends com.google.android.gms.ads.AdListener {
 
         @Override
-        public void onAdFailedToLoad(int var1) {
+        public void onAdFailedToLoad(int errorCode) {
 
             Log.v(TAG, "onAdFailedToLoad");
             Map extra = new HashMap();
-            extra.put("code", var1);
+            extra.put("code", errorCode);
             invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
     }
