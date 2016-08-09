@@ -39,6 +39,7 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
 
         mAdModel = model;
     }
+
     //==============================================================================================
     // PubnativeAdModel methods
     //==============================================================================================
