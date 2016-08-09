@@ -281,6 +281,36 @@ public abstract class PubnativeAdModel {
         return this;
     }
 
+    public View getTitleView() {
+
+        return mTitleView;
+    }
+
+    public View getDescriptionView() {
+
+        return mDescriptionView;
+    }
+
+    public View getIconView() {
+
+        return mIconView;
+    }
+
+    public View getBannerView() {
+
+        return mBannerView;
+    }
+
+    public View getRatingView() {
+
+        return mRatingView;
+    }
+
+    public View getCallToActionView() {
+
+        return mCallToActionView;
+    }
+
     //----------------------------------------------------------------------------------------------
     // TRACKING
     //----------------------------------------------------------------------------------------------
