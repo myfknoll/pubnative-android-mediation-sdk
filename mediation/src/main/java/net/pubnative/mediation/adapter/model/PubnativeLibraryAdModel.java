@@ -29,16 +29,16 @@ import android.view.ViewGroup;
 
 import net.pubnative.library.request.model.PubnativeAdModel;
 
-public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.model.PubnativeAdModel implements PubnativeAdModel.Listener {
+public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.model.PubnativeAdModel
+        implements PubnativeAdModel.Listener {
 
-    private static String        TAG            = PubnativeLibraryAdModel.class.getSimpleName();
-    protected net.pubnative.library.request.model.PubnativeAdModel mAdModel = null;
+    private static String                                               TAG      = PubnativeLibraryAdModel.class.getSimpleName();
+    protected      net.pubnative.library.request.model.PubnativeAdModel mAdModel = null;
 
     public PubnativeLibraryAdModel(PubnativeAdModel model) {
 
         mAdModel = model;
     }
-
     //==============================================================================================
     // PubnativeAdModel methods
     //==============================================================================================
@@ -149,18 +149,21 @@ public class PubnativeLibraryAdModel extends net.pubnative.mediation.request.mod
 
     @Override
     public void onPubnativeAdModelImpression(PubnativeAdModel pubnativeAdModel, View view) {
+
         Log.v(TAG, "onPubnativeAdModelImpression");
         invokeOnAdImpressionConfirmed();
     }
 
     @Override
     public void onPubnativeAdModelClick(PubnativeAdModel pubnativeAdModel, View view) {
+
         Log.v(TAG, "onPubnativeAdModelClick");
         invokeOnAdClick();
     }
 
     @Override
     public void onPubnativeAdModelOpenOffer(PubnativeAdModel pubnativeAdModel) {
+
         Log.v(TAG, "onPubnativeAdModelOpenOffer");
     }
 }

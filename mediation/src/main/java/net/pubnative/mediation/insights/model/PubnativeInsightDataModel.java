@@ -36,7 +36,9 @@ import net.pubnative.mediation.request.model.PubnativeAdTargetingModel;
 import net.pubnative.mediation.utils.PubnativeDeviceUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PubnativeInsightDataModel {
 
@@ -68,6 +70,7 @@ public class PubnativeInsightDataModel {
     public String                             education;
     public List<String>                       interests;
     public String                             gender;
+    public List<String>                       keywords;
     public Boolean                            iap; // In app purchase enabled, Just open it for the user to fill
     public Float                              iap_total; // In app purchase total spent, just open for the user to fill
     public Long                               generated_at;
@@ -75,6 +78,33 @@ public class PubnativeInsightDataModel {
     //==============================================================================================
     // Object
     //==============================================================================================
+
+    public Map<String, String> getTrackingParameters() {
+
+        Map<String, String> result = new HashMap<String, String>();
+        if(age != null) {
+            result.put("age", String.valueOf(age));
+        }
+        if(education != null) {
+            result.put("education", education);
+        }
+        if(gender != null) {
+            result.put("gender", gender);
+        }
+        if(interests != null) {
+            result.put("interests", TextUtils.join(",", interests));
+        }
+        if(keywords != null) {
+            result.put("keywords", TextUtils.join(",", keywords));
+        }
+        if(iap != null) {
+            result.put("iap", String.valueOf(iap));
+        }
+        if(iap_total != null) {
+            result.put("iap_total", String.valueOf(iap_total));
+        }
+        return result;
+    }
 
     @Override
     public boolean equals(Object object) {

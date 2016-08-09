@@ -36,6 +36,10 @@ public class CellRequestModel {
     public CellRequestModel(String placementID) {
 
         request = new PubnativeNetworkRequest();
+        request.addKeyword("game");
+        request.addKeyword("social");
+        request.setGender(PubnativeNetworkRequest.Gender.MALE);
+        request.setParameter("icon_size", "50x50");
         request.setCacheResources(true);
         this.placementID = placementID;
     }
