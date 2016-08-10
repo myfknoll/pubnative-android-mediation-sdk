@@ -9,12 +9,15 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
@@ -42,7 +45,7 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
     private WindowManager mWindowManager;
     private Context mContext;
     private View mContainer;
-    private LinearLayout mParentView;
+    private RelativeLayout mParentView;
     private FacebookRenderer mRenderer;
 
     /**
@@ -112,7 +115,7 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
     private RelativeLayout prepareFullscreenView() {
 
         Log.v(TAG, "prepareFullscreenView");
-        mParentView = new LinearLayout(mContext) {
+        mParentView = new RelativeLayout(mContext) {
             @Override
             public boolean dispatchKeyEvent(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
@@ -133,57 +136,38 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
         windowParams.format = PixelFormat.RGBA_8888;
 
         mWindowManager.addView(mParentView, windowParams);
+        mParentView.setGravity(Gravity.CENTER);
 
-        RelativeLayout container = new RelativeLayout(mContext) {
-
-            @Override
-            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
-                int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
-                int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
-                int calculatedHeight = originalWidth * 9 / 16;
-                int finalWidth, finalHeight;
-
-                if (calculatedHeight > originalHeight)
-                {
-                    finalWidth = originalHeight * 16 / 9;
-                    finalHeight = originalHeight;
-                }
-                else
-                {
-                    finalWidth = originalWidth;
-                    finalHeight = calculatedHeight;
-                }
-
-                super.onMeasure(
-                        MeasureSpec.makeMeasureSpec(finalWidth, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY));
-            }
-        };
+        RelativeLayout container = new RelativeLayout(mContext);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         container.setLayoutParams(params);
         mParentView.addView(container);
-        mParentView.setGravity(Gravity.CENTER);
 
         return container;
     }
 
-    private void prepareCtaButton(FacebookNativeAdModel adModel) {
+    private void prepareCloseButton() {
 
-        Log.v(TAG, "prepareCtaButton");
-        Button btn = new Button(mContext);
+        Log.v(TAG, "prepareCloseButton");
+        ImageView closeBtn = new ImageView(mContext);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
-        btn.getBackground().setColorFilter(0xFF779C43, PorterDuff.Mode.MULTIPLY);
-        btn.setTextColor(Color.WHITE);
-        btn.setText(adModel.getCallToAction());
+        closeBtn.setImageDrawable(mContext.getResources().getDrawable(android.R.drawable.ic_notification_clear_all));
+        closeBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                destroy();
+            }
+        });
+
         ViewGroup parent = (ViewGroup) mContainer.getParent();
         int index = parent.indexOfChild(mContainer);
-        parent.addView(btn, index - 1, params);
+        parent.addView(closeBtn, index - 1, params);
     }
 
     //==============================================================================================
@@ -216,8 +200,9 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
         if (mContainer != null) {
             FacebookNativeAdModel adModel = new FacebookNativeAdModel(mNative);
             mRenderer.renderView(mContainer, adModel);
-            prepareCtaButton(adModel);
-            mNative.registerViewForInteraction(mParentView);
+            prepareCloseButton();
+            mContainer.setClickable(true);
+            mNative.registerViewForInteraction(mRenderer.getMediaView(mContainer));
         }
         invokeLoadFinish();
     }

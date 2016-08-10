@@ -1,9 +1,14 @@
 package net.pubnative.mediation.adapter.renderer;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.facebook.ads.MediaView;
@@ -50,9 +55,42 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
             container.setVisibility(View.INVISIBLE);
         }
 
-        MediaView mediaView = new MediaView(context);
+        MediaView mediaView = new MediaView(context) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+                int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
+                int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
+                int calculatedHeight = originalWidth * 9 / 16;
+                int finalWidth, finalHeight;
+
+                if (calculatedHeight > originalHeight)
+                {
+                    finalWidth = originalHeight * 16 / 9;
+                    finalHeight = originalHeight;
+                }
+                else
+                {
+                    finalWidth = originalWidth;
+                    finalHeight = calculatedHeight;
+                }
+
+                super.onMeasure(
+                        MeasureSpec.makeMeasureSpec(finalWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY));
+            }
+        };
         int containerIndex = parent.indexOfChild(container);
         parent.addView(mediaView, containerIndex + 1, mediaParams);
+
+        container.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                Log.d(TAG, "FacebookRenderer - onClick: click-click!");
+            }
+        });
 
         return container;
     }
@@ -72,9 +110,23 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
             adModel.updateMediaView(mediaView);
             mediaView.setVisibility(View.VISIBLE);
             view.setVisibility(View.INVISIBLE);
+
+            Button btn = new Button(view.getContext());
+            RelativeLayout.LayoutParams btnParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            btnParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            btnParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            btn.getBackground().setColorFilter(0xFF779C43, PorterDuff.Mode.MULTIPLY);
+            btn.setText(adModel.getCallToAction());
+            btn.setTextColor(Color.WHITE);
+            mediaView.addView(btn, btnParams);
         }
 
+    }
 
+    public MediaView getMediaView(View view) {
+        MediaViewHolder viewHolder = mViewHolder.get(view);
+        return viewHolder.getMediaView();
     }
 
     static class MediaViewHolder {
