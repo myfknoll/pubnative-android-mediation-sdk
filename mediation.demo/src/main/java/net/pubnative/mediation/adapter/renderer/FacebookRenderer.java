@@ -2,18 +2,13 @@ package net.pubnative.mediation.adapter.renderer;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.facebook.ads.MediaView;
 
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
-import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.WeakHashMap;
 
@@ -21,7 +16,7 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
 
     private static final String TAG = FacebookRenderer.class.getSimpleName();
 
-    private WeakHashMap<View, FacebookViewHolder> mViewHolder;
+    private WeakHashMap<View, MediaViewHolder> mViewHolder;
 
     public FacebookRenderer() {
         mViewHolder = new WeakHashMap<>();
@@ -31,7 +26,6 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
     public View createView(Context context, ViewGroup parent) {
 
         Log.v(TAG, "FacebookRenderer - createView");
-
         RelativeLayout container = new RelativeLayout(context);
         ViewGroup.LayoutParams params = parent.getLayoutParams();
         parent.addView(container, params);
@@ -67,10 +61,9 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
     public void renderView(View view, FacebookNativeAdModel adModel) {
 
         Log.d(TAG, "FacebookRenderer - renderView");
-
-        FacebookViewHolder viewHolder = mViewHolder.get(view);
+        MediaViewHolder viewHolder = mViewHolder.get(view);
         if (viewHolder == null) {
-            viewHolder = FacebookViewHolder.prepareView(view);
+            viewHolder = MediaViewHolder.prepareView(view);
             mViewHolder.put(view, viewHolder);
         }
 
@@ -84,16 +77,16 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
 
     }
 
-    static class FacebookViewHolder {
+    static class MediaViewHolder {
 
         private MediaView        mMediaView;
 
-        private FacebookViewHolder(MediaView mediaView) {
+        private MediaViewHolder(MediaView mediaView) {
 
             mMediaView = mediaView;
         }
 
-        static FacebookViewHolder prepareView(View view) {
+        static MediaViewHolder prepareView(View view) {
             MediaView mediaView = null;
             if (view != null) {
                 ViewGroup parent = (ViewGroup) view.getParent();
@@ -103,7 +96,7 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
                     mediaView = (MediaView) viewBelow;
                 }
             }
-            return new FacebookViewHolder(mediaView);
+            return new MediaViewHolder(mediaView);
         }
 
         public MediaView getMediaView() {
