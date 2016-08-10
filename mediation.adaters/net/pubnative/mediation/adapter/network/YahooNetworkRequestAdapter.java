@@ -68,9 +68,9 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
-            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
             String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
-            if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
+            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
+            if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(apiKey)) {
                 invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 mContext = context;
@@ -88,8 +88,6 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
         // configure flurry
         new FlurryAgent.Builder()
                 .withLogEnabled(true)
-                .withLogLevel(Log.VERBOSE)
-                .withCaptureUncaughtExceptions(true)
                 .build(mContext, apiKey);
         // execute/resume session
         if (!FlurryAgent.isSessionActive()) {
@@ -157,12 +155,13 @@ public class YahooNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
 
         Log.v(TAG, "onError: " + errCode);
         endFlurrySession(mContext);
-        if (flurryAdErrorType == null) {
-            invokeFailed(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
+        if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
             invokeLoaded(null);
         } else {
-            invokeFailed(new Exception("YahooNetworkAdapterHub - " + errCode + " - " + flurryAdErrorType.name()));
+            Map extra = new HashMap();
+            extra.put("code", errCode);
+            extra.put("type", flurryAdErrorType.name());
+            invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
     }
 
