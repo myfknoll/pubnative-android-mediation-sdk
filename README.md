@@ -1,6 +1,6 @@
 ![ScreenShot](PNLogo.png)
 
-[![Circle CI](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk.svg?style=shield)](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk) ![Version](https://img.shields.io/badge/version-1.0.1-blue.svg) ![Gradle](https://img.shields.io/badge/gradle-net.pubnative:mediation:1.0.1-green.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg) [![Coverage Status](https://coveralls.io/repos/github/pubnative/pubnative-android-mediation-sdk/badge.svg?branch=code_coverage_configuration)](https://coveralls.io/github/pubnative/pubnative-android-mediation-sdk?branch=code_coverage_configuration)
+[![Circle CI](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk.svg?style=shield)](https://circleci.com/gh/pubnative/pubnative-android-mediation-sdk) ![Version](https://img.shields.io/badge/version-1.2.0-blue.svg) ![Gradle](https://img.shields.io/badge/gradle-net.pubnative:mediation:1.2.0-green.svg) ![License](https://img.shields.io/badge/license-MIT-lightgrey.svg) [![Coverage Status](https://coveralls.io/repos/github/pubnative/pubnative-android-mediation-sdk/badge.svg?branch=code_coverage_configuration)](https://coveralls.io/github/pubnative/pubnative-android-mediation-sdk?branch=code_coverage_configuration)
 
 PubNative is an API-based publisher platform dedicated to native advertising which does not require the integration of an Library.
 
@@ -53,7 +53,7 @@ Optionally but not necessary for better tracking
 Add the following dependency to your project `build.gradle` file
 
 ```
-compile 'net.pubnative:mediation:1.0.1'
+compile 'net.pubnative:mediation:1.2.0'
 ```
 
 <a name="install_manual"></a>
@@ -103,10 +103,16 @@ request.start(context, "<APP_TOKEN>", "<PLACEMENT_NAME>", new PubnativeNetworkRe
 <a name="usage_track_ad"></a>
 ### 2) Track ad
 
-For confirming impressions and handling clicks, the `PubnativeadModel` has methods to automatically track the ad view and confirm the impression and to handle the click and open the offer, just specify the view that contains the ad to the `startTracking` method.
+For confirming impressions of the ad and handling clicks, the `PubnativeadModel` has methods to automatically track the ad view items for confirming the impression, and handling to open the offer when the user interacts, you just need to specify the view that contains the ad along with each item to the `startTracking` method. (you just need to specify the views for the items that you are using)
 
 ```java
-ad.startTracking(<CONTEXT>, <AD_VIEW>);
+ad.withTitle(<TITlE_VIEW>)
+  .withDescription(<DESCRIPTION_VIEW>)
+  .withIcon(<ICON_VIEW>)
+  .withBanner(<BANNER_VIEW>)
+  .withRating(<RATING_VIEW>)
+  .withCallToAction(<CALL_TO_ACTION_VIEW>)
+  .startTracking(<CONTEXT>, <AD_CONTAINER_VIEW_GROUP>);
 ```
 
 Optionally, you can set up a listener on the model to listen for callbacks on the tracking process.
@@ -118,13 +124,14 @@ ad.setListener(new PubnativeAdModel.Listener() {
     public void onAdImpressionConfirmed(PubnativeAdModel model) {
         // Called when the ad impression was confirmed
     }
-    
+
     @Override
     public void onAdClick(PubnativeAdModel model) {
         // Called when the ad was clicked
     }
 });
 ```
+
 <a name="networks"></a>
 # Third party networks
 

@@ -77,16 +77,14 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
         if (context == null || mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
-            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
             String adSpaceName = (String) mData.get(KEY_AD_SPACE_NAME);
-            if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
+            String apiKey = (String) mData.get(KEY_FLURRY_API_KEY);
+            if (TextUtils.isEmpty(adSpaceName) || TextUtils.isEmpty(apiKey)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
                 mContext = context;
                 new FlurryAgent.Builder()
                         .withLogEnabled(true)
-                        .withLogLevel(Log.VERBOSE)
-                        .withCaptureUncaughtExceptions(true)
                         .build(context, apiKey);
                 // execute/resume session
                 if (!FlurryAgent.isSessionActive()) {
@@ -173,21 +171,20 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
     //==============================================================================================
     // FlurryAdNativeListener
     //----------------------------------------------------------------------------------------------
-    protected void endFlurrySession(Context context) {
-
-        Log.v(TAG, "endFlurrySession");
-        FlurryAgent.onEndSession(context);
-    }
 
     @Override
     public void onFetched(FlurryAdNative flurryAdNative) {
 
         Log.v(TAG, "onFetched");
-        endFlurrySession(mContext);
+
+        FlurryAgent.onEndSession(mContext);
         if(flurryAdNative.isVideoAd()) {
-            invokeLoadFinish(this);
+            invokeLoadFinish();
         } else {
-            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
+            Map extras = new HashMap();
+            extras.put("code", 0);
+            extras.put("type", FlurryAdErrorType.FETCH.name());
+            invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extras));
         }
     }
 
@@ -195,14 +192,12 @@ public class YahooNetworkFeedVideoAdapter extends PubnativeNetworkFeedVideoAdapt
     public void onError(FlurryAdNative flurryAdNative, FlurryAdErrorType flurryAdErrorType, int errCode) {
 
         Log.v(TAG, "onError: " + errCode);
-        endFlurrySession(mContext);
-        if (flurryAdErrorType == null) {
-            invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-        } else if (FlurryAdErrorType.FETCH == flurryAdErrorType) {
-            invokeLoadFinish(null);
-        } else {
-            invokeLoadFail(new Exception("YahooNetworkAdapterHub - " + errCode + " - " + flurryAdErrorType.name()));
-        }
+
+        FlurryAgent.onEndSession(mContext);
+        Map extras = new HashMap();
+        extras.put("code", errCode);
+        extras.put("type", flurryAdErrorType.name());
+        invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extras));
     }
 
     @Override

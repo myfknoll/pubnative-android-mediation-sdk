@@ -35,6 +35,7 @@ import com.facebook.ads.NativeAd;
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
@@ -102,9 +103,13 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
                 case AdError.LOAD_TOO_FREQUENTLY_ERROR_CODE:
                 case FACEBOOK_ERROR_NO_FILL_1203:
                     invokeLoaded(null);
-                    break;
+                break;
                 default:
-                    invokeFailed(new Exception("FacebookNetworkInterstitialAdapter -code " + adError.getErrorCode() + " -message " + adError.getErrorMessage()));
+                    Map extra = new HashMap();
+                    extra.put("code", adError.getErrorCode());
+                    extra.put("message", adError.getErrorMessage());
+                    invokeFailed(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
+                break;
             }
         }
     }
@@ -123,6 +128,6 @@ public class FacebookNetworkRequestAdapter extends PubnativeNetworkRequestAdapte
     public void onAdClicked(Ad ad) {
 
         Log.v(TAG, "onAdClicked");
-        // Do nothing
+        // Do nothing, just ignore thiss
     }
 }
