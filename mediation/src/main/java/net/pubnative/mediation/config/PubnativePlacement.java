@@ -35,7 +35,6 @@ import net.pubnative.mediation.config.model.PubnativePriorityRuleModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
-import java.util.Map;
 import java.util.UUID;
 
 public class PubnativePlacement implements PubnativeConfigManager.Listener {
@@ -80,7 +79,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
      * @param extras        valid Map with extra request details
      * @param listener      valid listener to callback when the placement is ready
      */
-    public void load(Context context, String appToken, String placementName, Map extras, final Listener listener) {
+    public void load(Context context, String appToken, String placementName, final Listener listener) {
 
         Log.v(TAG, "initialize");
         if (listener == null) {
@@ -99,7 +98,7 @@ public class PubnativePlacement implements PubnativeConfigManager.Listener {
                 mPlacementName = placementName;
                 mCurrentNetworkIndex = -1;
                 mRequestID = UUID.randomUUID().toString();
-                PubnativeConfigManager.getConfig(mContext, mAppToken, extras, this);
+                PubnativeConfigManager.getConfig(mContext, mAppToken, this);
             }
         }
     }

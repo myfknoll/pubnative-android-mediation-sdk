@@ -27,13 +27,10 @@ import android.content.Context;
 
 import net.pubnative.mediation.config.PubnativeConfigManager;
 
-import java.util.Map;
-
 public class PubnativeConfigRequestModel {
 
     public Context                         context;
     public String                          appToken;
-    public Map<String, String>             extras;
     public PubnativeConfigManager.Listener listener;
 
     //==============================================================================================

@@ -26,6 +26,7 @@ package net.pubnative.mediation.request;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
@@ -35,6 +36,7 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.network.PubnativeResourceRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 import net.pubnative.mediation.request.model.PubnativeResourceCacheModel;
+import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import static net.pubnative.mediation.config.PubnativeConfigService.sIsConfigDownloading;
 import static net.pubnative.mediation.network.PubnativeResourceRequest.ResourceType;
 
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
@@ -90,22 +93,25 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
      * Starts a new mAd request.
      *
      * @param context       valid Context object.
-     * @param appToken      valid AppToken provided by Pubnative.
      * @param placementName valid placementId provided by Pubnative.
      * @param listener      valid Listener to keep track of request callbacks.
      */
-    public synchronized void start(Context context, String appToken, final String placementName, Listener listener) {
+    public synchronized void start(Context context, final String placementName, Listener listener) {
 
-        Log.v(TAG, "start: -placement: " + placementName + " -appToken:" + appToken);
+        Log.v(TAG, "start: -placement: " + placementName);
         if (listener == null) {
             Log.e(TAG, "start - Error: listener not specified, dropping the call");
         } else if (mIsRunning) {
             Log.e(TAG, "start - Error: request already loading, dropping the call");
-        } else {
+        } else if(context == null){
+            Log.e(TAG, "start - Error: context is null, dropping the call");
+        } else if(TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context)) && sIsConfigDownloading) {
+            Log.w(TAG, "initialize - Warning: config not downloaded yet, have you downloaded one using init()?");
+        }  else {
             mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
             mListener = listener;
-            initialize(context, appToken, placementName);
+            initialize(context, PubnativeConfigUtils.getStoredAppToken(context), placementName);
         }
     }
 

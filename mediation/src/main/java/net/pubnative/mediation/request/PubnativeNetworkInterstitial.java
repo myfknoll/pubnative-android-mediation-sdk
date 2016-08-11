@@ -33,8 +33,11 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 import java.util.Map;
+
+import static net.pubnative.mediation.config.PubnativeConfigService.sIsConfigDownloading;
 
 public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
         implements PubnativeNetworkInterstitialAdapter.LoadListener,
@@ -115,25 +118,24 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     /**
      * Loads the interstitial ads before being shown
      * @param context valid Context
-     * @param appToken valid app token string
      * @param placement valid placement string
      */
-    public synchronized void load(Context context, String appToken, String placement) {
+    public synchronized void load(Context context, String placement) {
 
         Log.v(TAG, "initialize");
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
-        } else if (context == null ||
-                   TextUtils.isEmpty(appToken) ||
-                   TextUtils.isEmpty(placement)) {
+        } else if (context == null || TextUtils.isEmpty(placement)){
             invokeLoadFail(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID);
+        } else if(TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context)) && sIsConfigDownloading) {
+            Log.w(TAG, "initialize - Warning: config not downloaded yet, have you downloaded one using init()?");
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_LOADING);
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_SHOWN);
         } else {
             mHandler = new Handler(Looper.getMainLooper());
-            initialize(context, appToken, placement);
+            initialize(context, PubnativeConfigUtils.getStoredAppToken(context), placement);
         }
     }
 

@@ -29,6 +29,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import net.pubnative.mediation.Pubnative;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.demo.Settings;
 import net.pubnative.mediation.demo.SettingsActivity;
@@ -49,6 +50,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setDefaults();
+        Pubnative.init(this, Settings.getAppToken(this));
     }
 
     public void onSettingsClick(View v) {

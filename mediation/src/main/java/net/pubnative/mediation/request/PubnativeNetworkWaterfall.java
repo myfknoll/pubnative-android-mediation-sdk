@@ -51,33 +51,6 @@ public abstract class PubnativeNetworkWaterfall {
     protected PubnativeInsightModel     mInsight;
     protected PubnativeAdTargetingModel mTargeting;
     protected Map<String, String>       mRequestParameters;
-    //==============================================================================================
-    // Tracking data
-    //==============================================================================================
-
-    /**
-     * Sets the targeting model for the request
-     *
-     * @param targeting targeting model with extended targeting config
-     */
-    public void setTargeting(PubnativeAdTargetingModel targeting) {
-
-        Log.v(TAG, "setTargeting");
-        mTargeting = targeting;
-    }
-
-    /**
-     * Add additional and customisable request parameters for API requests
-     * @param key valid key String
-     * @param value valid key Value
-     */
-    public void setRequestParameter(String key, String value) {
-
-        if(mRequestParameters == null){
-            mRequestParameters = new HashMap<String, String>();
-        }
-        mRequestParameters.put(key, value);
-    }
 
     //==============================================================================================
     // Private methods
@@ -90,14 +63,7 @@ public abstract class PubnativeNetworkWaterfall {
         } else if (PubnativeDeviceUtils.isNetworkAvailable(context)) {
             mContext = context;
             mPlacement = new PubnativePlacement();
-            Map extras = new HashMap();
-            if (mTargeting != null) {
-                extras.putAll(mTargeting.toDictionary());
-            }
-            if(mRequestParameters != null) {
-                extras.putAll(mRequestParameters);
-            }
-            mPlacement.load(mContext, appToken, placementName, extras, new PubnativePlacement.Listener() {
+            mPlacement.load(mContext, appToken, placementName, new PubnativePlacement.Listener() {
 
                 @Override
                 public void onPubnativePlacementReady(PubnativePlacement placement, boolean pacingActive) {
