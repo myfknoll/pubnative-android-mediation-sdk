@@ -63,6 +63,7 @@ public class VideoAdActivity extends StandardAdUnitActivity implements Pubnative
     public void onPubnativeNetworkVideoClick(PubnativeNetworkVideo video) {
         Log.v(TAG, "onPubnativeNetworkVideoClick");
         showToast("video click");
+        video.destroy();
     }
 
     @Override

@@ -1,52 +1,41 @@
 package net.pubnative.mediation.adapter.network;
 
+import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
-import com.facebook.ads.AdSettings;
-import com.facebook.ads.ImpressionListener;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
 import net.pubnative.mediation.adapter.renderer.FacebookRenderer;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAdapter
         implements AdListener,
-                   ImpressionListener {
+                   PubnativeAdModel.Listener {
 
     private static final String TAG = FacebookNetworkVideoAdapter.class.getSimpleName();
     //==============================================================================================
     // Properties
     //==============================================================================================
     private NativeAd mNative;
-    private WindowManager mWindowManager;
     private Context mContext;
     private View mContainer;
-    private RelativeLayout mParentView;
     private FacebookRenderer mRenderer;
+    private Dialog mDialog;
 
     /**
      * Creates a new instance of PubnativeLibraryNetworkVideoAdapter.
@@ -68,14 +57,12 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
         Log.v(TAG, "load");
         if (context != null && mData != null) {
             mContext = context;
-            mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             mRenderer = new FacebookRenderer();
-            mContainer = mRenderer.createView(context, prepareFullscreenView());
+            mContainer = mRenderer.createView(context, prepareDialogView());
             String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
                 mNative = new NativeAd(context, placementId);
                 mNative.setAdListener(this);
-                mNative.setImpressionListener(this);
                 mNative.loadAd();
             } else {
                 invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
@@ -96,6 +83,9 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
     public void show() {
 
         Log.v(TAG, "show");
+        if (mDialog != null && !mDialog.isShowing()) {
+            mDialog.show();
+        }
         super.show();
     }
 
@@ -104,7 +94,9 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
 
         Log.v(TAG, "destroy");
         mNative.unregisterView();
-        mWindowManager.removeView(mParentView);
+        if (mDialog != null) {
+            mDialog.dismiss();
+        }
         super.destroy();
     }
 
@@ -112,40 +104,26 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
     // Helpers
     //==============================================================================================
 
-    private RelativeLayout prepareFullscreenView() {
+    private RelativeLayout prepareDialogView(){
 
-        Log.v(TAG, "prepareFullscreenView");
-        mParentView = new RelativeLayout(mContext) {
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent event) {
-                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                    mWindowManager.removeView(this);
-                    return true;
-                }
-                return super.dispatchKeyEvent(event);
-            }
-        };
-
-        mParentView.setBackgroundColor(Color.BLACK);
-
-        WindowManager.LayoutParams windowParams = new WindowManager.LayoutParams();
-        windowParams.gravity = Gravity.CENTER;
-        windowParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-        windowParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        windowParams.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        windowParams.format = PixelFormat.RGBA_8888;
-
-        mWindowManager.addView(mParentView, windowParams);
-        mParentView.setGravity(Gravity.CENTER);
+        mDialog = new Dialog(mContext, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        RelativeLayout layout = new RelativeLayout(mContext);
+        RelativeLayout.LayoutParams lParams = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layout.setLayoutParams(lParams);
 
         RelativeLayout container = new RelativeLayout(mContext);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         params.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
         container.setLayoutParams(params);
-        mParentView.addView(container);
+        mDialog.setContentView(layout);
+
+        layout.addView(container);
 
         return container;
+
     }
 
     private void prepareCloseButton() {
@@ -161,7 +139,7 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
 
             @Override
             public void onClick(View v) {
-                destroy();
+                mDialog.dismiss();
             }
         });
 
@@ -173,7 +151,7 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
     //==============================================================================================
     // Callabacks
     //==============================================================================================
-    // AdListener
+    // NativeAd.AdListener
     //----------------------------------------------------------------------------------------------
 
     @Override
@@ -198,9 +176,10 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
             return;
         }
         if (mContainer != null) {
-            FacebookNativeAdModel adModel = new FacebookNativeAdModel(mNative);
-            mRenderer.renderView(mContainer, adModel);
             prepareCloseButton();
+            FacebookNativeAdModel adModel = new FacebookNativeAdModel(mNative);
+            adModel.setListener(this);
+            mRenderer.renderView(mContainer, adModel);
             mContainer.setClickable(true);
             mNative.registerViewForInteraction(mRenderer.getMediaView(mContainer));
         }
@@ -209,15 +188,22 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
 
     @Override
     public void onAdClicked(Ad ad) {
-
         Log.v(TAG, "onAdClicked");
         invokeClick();
     }
 
-    @Override
-    public void onLoggingImpression(Ad ad) {
+    // PubnativeAdModel.AdListener
+    //----------------------------------------------------------------------------------------------
 
+    @Override
+    public void onAdImpressionConfirmed(PubnativeAdModel model) {
         Log.v(TAG, "onLoggingImpression");
         invokeImpressionConfirmed();
+    }
+
+    @Override
+    public void onAdClick(PubnativeAdModel model) {
+        Log.v(TAG, "onAdClicked");
+        invokeClick();
     }
 }

@@ -34,6 +34,7 @@ import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Map;
 
@@ -180,6 +181,19 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             mAdapter.show();
         } else {
             Log.v(TAG, "show - the video is not loaded, please load before");
+        }
+    }
+
+    /**
+     * This method will destroy the video if the ad is available
+     */
+    public synchronized void destroy() {
+
+        Log.v(TAG, "destroy");
+        if (mAdapter != null) {
+            mAdapter.destroy();
+        } else {
+            Log.v(TAG, "destroy - the video is not loaded, please load before");
         }
     }
 
