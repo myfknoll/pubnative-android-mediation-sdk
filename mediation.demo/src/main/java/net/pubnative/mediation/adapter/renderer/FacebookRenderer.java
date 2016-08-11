@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,6 +12,7 @@ import android.widget.RelativeLayout;
 import com.facebook.ads.MediaView;
 
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
+import net.pubnative.mediation.renderer.PubnativeRenderer;
 
 import java.util.WeakHashMap;
 
