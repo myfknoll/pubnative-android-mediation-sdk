@@ -53,12 +53,6 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         }
     }
 
-    public void updateMediaView(MediaView mediaView){
-        if (mediaView != null) {
-            mediaView.setNativeAd(mNativeAd);
-        }
-    }
-
     //==============================================================================================
     // PubnativeAdModel methods
     //==============================================================================================

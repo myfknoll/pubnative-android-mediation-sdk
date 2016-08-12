@@ -106,7 +106,7 @@ public class FacebookRenderer implements PubnativeRenderer<FacebookNativeAdModel
 
         MediaView mediaView = viewHolder.getMediaView();
         if (mediaView != null) {
-            adModel.updateMediaView(mediaView);
+            adModel.setNativeAd(mediaView);
             mediaView.setVisibility(View.VISIBLE);
             view.setVisibility(View.INVISIBLE);
 
