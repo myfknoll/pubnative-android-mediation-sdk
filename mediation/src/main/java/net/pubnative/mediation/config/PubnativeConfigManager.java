@@ -61,7 +61,6 @@ public class PubnativeConfigManager {
     //==============================================================================================
     // Singleton
     //----------------------------------------------------------------------------------------------
-
     private PubnativeConfigManager() {
         // do some initialization here may be.
     }
@@ -69,7 +68,6 @@ public class PubnativeConfigManager {
     //----------------------------------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------------------------------
-
     /**
      * Gets a config asynchronously with listener callback, downloading a new one when outdated
      *
@@ -154,5 +152,4 @@ public class PubnativeConfigManager {
         }
         return result;
     }
-
 }

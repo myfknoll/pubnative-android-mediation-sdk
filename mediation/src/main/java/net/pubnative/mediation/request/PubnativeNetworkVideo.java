@@ -37,8 +37,6 @@ import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 import java.util.Map;
 
-import static net.pubnative.mediation.config.PubnativeConfigService.sIsConfigDownloading;
-
 public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
         implements PubnativeNetworkVideoAdapter.LoadListener,
                    PubnativeNetworkVideoAdapter.AdListener {
@@ -141,8 +139,8 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
         } else if (context == null || TextUtils.isEmpty(placement)){
             invokeLoadFail(PubnativeException.VIDEO_PARAMETERS_INVALID);
-        } else if(TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context)) && sIsConfigDownloading) {
-            Log.w(TAG, "initialize - Warning: config not downloaded yet, have you downloaded one using init()?");
+        } else if (TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context))) {
+            Log.e(TAG, "initialize - Error: request can't be completed, we are fetching config file");
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.VIDEO_LOADING);
         } else if (mIsShown) {

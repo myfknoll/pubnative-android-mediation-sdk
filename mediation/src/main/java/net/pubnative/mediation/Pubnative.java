@@ -15,23 +15,23 @@ public abstract class Pubnative {
     public  static final String APP_TOKEN_KEY = "app_token";
     public  static final String EXTRAS        = "extras";
 
-    public static void init(Context context, String appToken){
+    public static void init(Context context, String appToken) {
         init(context, appToken, null);
     }
 
-    public static void init(Context context, String appToken, HashMap<String, String> requestParams){
+    public static void init(Context context, String appToken, HashMap<String, String> requestParams) {
 
         Log.v(TAG, "init");
-        if(context == null){
-            Log.v(TAG, "init - warning: Context is null");
-        } else if(TextUtils.isEmpty(appToken)){
-            Log.v(TAG, "init - warning: apptoken is null");
-        }else{
+        if (context == null) {
+            Log.v(TAG, "init - warning: invalid context");
+        } else if (TextUtils.isEmpty(appToken)) {
+            Log.v(TAG, "init - warning: invalid apptoken");
+        } else {
             Intent intent = new Intent(context, PubnativeConfigService.class);
             Bundle bundle = new Bundle();
             bundle.putString(APP_TOKEN_KEY, appToken);
             // put extras, not necessary
-            if(requestParams != null && !requestParams.isEmpty()){
+            if (requestParams != null && !requestParams.isEmpty()) {
                 bundle.putSerializable(EXTRAS, requestParams);
             }
             intent.putExtras(bundle);

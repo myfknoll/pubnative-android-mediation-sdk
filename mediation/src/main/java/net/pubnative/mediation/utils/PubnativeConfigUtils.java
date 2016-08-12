@@ -17,6 +17,7 @@ import net.pubnative.mediation.Pubnative;
 import net.pubnative.mediation.config.PubnativeConfigService;
 import net.pubnative.mediation.config.PubnativeDeliveryManager;
 import net.pubnative.mediation.config.model.PubnativeConfigModel;
+import net.pubnative.mediation.config.model.PubnativeConfigRequestModel;
 import net.pubnative.mediation.config.model.PubnativePlacementModel;
 
 import java.util.HashMap;
@@ -65,23 +66,25 @@ public class PubnativeConfigUtils {
     }
 
     /**
-     * gets url to download config data.
+     * gets config download url.
      *
-     * @param appToken valid app token.
-     * @param context  valid context
-     * @return         config data url.
+     * @param request request params.
+     * @return        valid string url.
      */
-
-    public static String getConfigDownloadUrl(String appToken, Context context, HashMap<String, String> extras) {
+    public static String getConfigDownloadUrl(PubnativeConfigRequestModel request) {
 
         Log.v(TAG, "getConfigDownloadUrl");
-        Uri.Builder uriBuilder = Uri.parse(getConfigDownloadBaseUrl(context)).buildUpon();
-        uriBuilder.appendQueryParameter(APP_TOKEN_KEY, appToken);
-        if (extras != null) {
-            for (String key : extras.keySet()) {
-                String value = extras.get(key);
+        Uri.Builder uriBuilder = Uri.parse(getConfigDownloadBaseUrl(request.context)).buildUpon();
+        uriBuilder.appendQueryParameter(APP_TOKEN_KEY, request.appToken);
+        if (request.extras != null && !request.extras.isEmpty()) {
+            for (String key : request.extras.keySet()) {
+                String value = request.extras.get(key);
                 uriBuilder.appendQueryParameter(key, value);
             }
+            //store request params in app AppPreferences
+            PubnativeConfigUtils.setStoredParams(request.context, new Gson().toJson(request.extras));
+        }else{
+            PubnativeConfigUtils.setStoredParams(request.context, null);
         }
         return uriBuilder.build().toString();
     }
@@ -145,8 +148,8 @@ public class PubnativeConfigUtils {
                 if (configModel.globals.containsKey(PubnativeConfigModel.GLOBAL.REFRESH)) {
                     Double refresh = (Double) configModel.globals.get(PubnativeConfigModel.GLOBAL.REFRESH);
                     setStoredRefresh(context, refresh.longValue());
+                    scheduleConfigUpdate(context, refresh.longValue(), appToken);
                 }
-                updateConfig(context, appToken);
             }
         }
     }
@@ -154,23 +157,22 @@ public class PubnativeConfigUtils {
     /**
      * checks config needs update.
      *
-     * @param context  valid context.
-     * @param appToken valid apptoken.
-     * @return         true if needs update, false otherwise.
+     * @param request request params.
+     * @return        true if needs update, false otherwise.
      */
-    public static boolean configNeedsUpdate(Context context, String appToken) {
+    public static boolean configNeedsUpdate(PubnativeConfigRequestModel request) {
 
         Log.v(TAG, "configNeedsUpdate");
         boolean result = false;
-        String storedConfigString = getStoredConfigString(context);
-        String storedAppToken = getStoredAppToken(context);
-        Long refresh = getStoredRefresh(context);
-        Long storedTimestamp = getStoredTimestamp(context);
+        String storedConfigString = getStoredConfigString(request.context);
+        String storedAppToken = getStoredAppToken(request.context);
+        Long refresh = getStoredRefresh(request.context);
+        Long storedTimestamp = getStoredTimestamp(request.context);
         Long currentTimestamp = System.currentTimeMillis();
         if (TextUtils.isEmpty(storedConfigString)) {
             // There is no stored config
             result = true;
-        } else if (!storedAppToken.equals(appToken)) {
+        } else if (!storedAppToken.equals(request.appToken)) {
             // Stored config is different than the requested app token
             result = true;
         } else if (refresh == null ||
@@ -187,17 +189,18 @@ public class PubnativeConfigUtils {
     /**
      * resets alarm for next config update call.
      *
-     * @param context  valid context.
-     * @param appToken valid apptoken.
+     * @param request valid request params.
      */
-    public static void reScheduleConfigUpdate(Context context, String appToken){
+    public static void reScheduleConfigUpdate(PubnativeConfigRequestModel request){
 
         Log.v(TAG, "reScheduleConfigUpdate");
-        Long refresh = getStoredRefresh(context);
-        Long storedTimestamp = getStoredTimestamp(context);
+        Long refresh = getStoredRefresh(request.context);
+        Long storedTimestamp = getStoredTimestamp(request.context);
         Long currentTimestamp = System.currentTimeMillis();
         Long remainingTime = refresh - (TimeUnit.MILLISECONDS.toMinutes(currentTimestamp - storedTimestamp));
-        scheduleConfigUpdate(context, TimeUnit.MINUTES.toMillis(remainingTime), appToken);
+        if(remainingTime > 0){
+            scheduleConfigUpdate(request.context, TimeUnit.MINUTES.toMillis(remainingTime), request.appToken);
+        }
     }
 
     /**
@@ -213,25 +216,14 @@ public class PubnativeConfigUtils {
         setStoredRefresh(context, null);
         setStoredConfig(context, null);
     }
-
-    protected static void updateConfig(Context context, String appToken) {
-
-        Log.v(TAG, "updateConfig");
-        Long refresh = getStoredRefresh(context);
-        if (refresh == null) {
-            // There is no previous refresh or timestamp stored
-            scheduleConfigUpdate(context, 0L, appToken);
-        } else {
-            // refresh time was elapsed
-            scheduleConfigUpdate(context, getStoredRefresh(context), appToken);
-        }
-    }
+    //----------------------------------------------------------------------------------------------
+    // Private
+    //----------------------------------------------------------------------------------------------
 
     private static void scheduleConfigUpdate(Context context, Long refreshTime, String appToken){
 
         Log.v(TAG, "scheduleConfigUpdate");
-        Long interval = TimeUnit.MINUTES.toMillis(refreshTime);
-        Long startTime = System.currentTimeMillis() + interval;
+        Long startTimeStamp = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(refreshTime);
         Intent intent = new Intent(context, PubnativeConfigService.class);
         Bundle bundle = new Bundle();
         bundle.putString(APP_TOKEN_KEY, appToken);
@@ -247,7 +239,7 @@ public class PubnativeConfigUtils {
         //setting up alarm for next call to update config
         AlarmManager alarmManager =(AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getService(context, REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, startTime, interval, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, startTimeStamp, pendingIntent);
     }
 
     //==============================================================================================

@@ -45,7 +45,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import static net.pubnative.mediation.config.PubnativeConfigService.sIsConfigDownloading;
 import static net.pubnative.mediation.network.PubnativeResourceRequest.ResourceType;
 
 public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
@@ -103,11 +102,11 @@ public class PubnativeNetworkRequest extends PubnativeNetworkWaterfall
             Log.e(TAG, "start - Error: listener not specified, dropping the call");
         } else if (mIsRunning) {
             Log.e(TAG, "start - Error: request already loading, dropping the call");
-        } else if(context == null){
+        } else if (context == null){
             Log.e(TAG, "start - Error: context is null, dropping the call");
-        } else if(TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context)) && sIsConfigDownloading) {
-            Log.w(TAG, "initialize - Warning: config not downloaded yet, have you downloaded one using init()?");
-        }  else {
+        } else if (TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context))) {
+            Log.e(TAG, "initialize - Error: request can't be completed, we are fetching config file");
+        } else {
             mIsRunning = true;
             mHandler = new Handler(Looper.getMainLooper());
             mListener = listener;
