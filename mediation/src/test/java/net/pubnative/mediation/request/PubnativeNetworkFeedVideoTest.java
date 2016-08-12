@@ -224,20 +224,7 @@ public class PubnativeNetworkFeedVideoTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(null, "app_token", "testPlacementName");
-
-        verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID));
-    }
-
-    @Test
-    public void load_withNullAppToken_callBackLoadFail() {
-
-        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
-        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
+        request.load(null, "testPlacementName");
 
         verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID));
     }
@@ -250,20 +237,7 @@ public class PubnativeNetworkFeedVideoTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
-
-        verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID));
-    }
-
-    @Test
-    public void load_withEmptyAppToken_callBackLoadFail() {
-
-        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
-        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "", "testPlacementName");
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null);
 
         verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID));
     }
@@ -276,37 +250,9 @@ public class PubnativeNetworkFeedVideoTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "");
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "");
 
         verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID));
-    }
-
-    @Test
-    public void load_withValidListnerAndTrueIsLoading_callBackLoadFail() {
-
-        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
-        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-        request.mIsLoading = true;
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName");
-
-        verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_LOADING));
-    }
-
-    @Test
-    public void load_withValidListnerAndTrueIsShown_callBackLoadFail() {
-
-        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
-        PubnativeNetworkFeedVideo.Listener listener = spy(PubnativeNetworkFeedVideo.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-        request.mIsShown = true;
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName");
-
-        verify(listener).onPubnativeNetworkFeedVideoLoadFail(eq(request), eq(PubnativeException.FEED_VIDEO_SHOWN));
     }
 
     @Test
@@ -315,16 +261,7 @@ public class PubnativeNetworkFeedVideoTest {
         PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
         request.mHandler = new Handler();
 
-        request.load(null, "app_token", "testPlacementName");
-    }
-
-    @Test
-    public void load_withNullAppTokenNullListener_pass() {
-
-        PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
-        request.mHandler = new Handler();
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
+        request.load(null, "testPlacementName");
     }
 
     @Test
@@ -333,7 +270,7 @@ public class PubnativeNetworkFeedVideoTest {
         PubnativeNetworkFeedVideo request = spy(PubnativeNetworkFeedVideo.class);
         request.mHandler = new Handler();
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null);
     }
 
     @Test

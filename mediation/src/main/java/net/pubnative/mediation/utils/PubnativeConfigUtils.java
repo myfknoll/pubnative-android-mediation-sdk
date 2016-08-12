@@ -201,9 +201,9 @@ public class PubnativeConfigUtils {
     }
 
     /**
-     * Completely resets all stored config data
+     * Completely resets all stored config data.
      *
-     * @param context valid context object
+     * @param context valid context object.
      */
     public static void clean(Context context) {
 
