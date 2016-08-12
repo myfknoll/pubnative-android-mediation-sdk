@@ -128,6 +128,7 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
     @Override
     public View getAdvertisingDisclosureView(Context context) {
 
+        Log.v(TAG, "getAdvertisingDisclosureView");
         return null;
     }
 
@@ -153,6 +154,11 @@ public class FlurryNativeAdModel extends PubnativeAdModel implements FlurryAdNat
             mFlurryAdNative.setListener(null);
             mFlurryAdNative.removeTrackingView();
         }
+    }
+
+    @Override
+    public void setLinkCaching(boolean enable) {
+        //Do nothing
     }
 
     //==============================================================================================

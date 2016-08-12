@@ -11,6 +11,7 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitialAdapter {
@@ -119,10 +120,12 @@ public class AdMobNetworkInterstitialAdapter extends PubnativeNetworkInterstitia
         }
 
         @Override
-        public void onAdFailedToLoad(int var1) {
+        public void onAdFailedToLoad(int errorCode) {
 
             Log.v(TAG, "onAdFailedToLoad");
-            invokeLoadFail(PubnativeException.INTERSTITIAL_LOADING);
+            Map extra = new HashMap();
+            extra.put("code", errorCode);
+            invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
 
         @Override

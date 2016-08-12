@@ -16,6 +16,7 @@ import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
@@ -43,7 +44,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
     public void load(Context context) {
 
         Log.v(TAG, "load");
-        if (context == null && mData == null) {
+        if (context == null || mData == null) {
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             mIsLoaded = false;
@@ -153,19 +154,9 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
         @Override
         public void onAdFailedToLoad(int errorCode) {
 
-            Log.v(TAG, "onError: " + errorCode);
-            super.onAdFailedToLoad(errorCode);
-            switch (errorCode) {
-                case AdRequest.ERROR_CODE_INTERNAL_ERROR:
-                case AdRequest.ERROR_CODE_INVALID_REQUEST:
-                case AdRequest.ERROR_CODE_NETWORK_ERROR:
-                case AdRequest.ERROR_CODE_NO_FILL:
-                    invokeLoadFail(PubnativeException.BANNER_LOAD_FAILED);
-                    break;
-                default:
-                    invokeLoadFail(PubnativeException.ADAPTER_UNKNOWN_ERROR);
-                    break;
-            }
+            Map extra = new HashMap();
+            extra.put("code", errorCode);
+            invokeLoadFail(PubnativeException.extraException(PubnativeException.ADAPTER_UNKNOWN_ERROR, extra));
         }
 
         @Override
@@ -174,7 +165,7 @@ public class AdMobNetworkBannerAdapter extends PubnativeNetworkBannerAdapter {
             Log.v(TAG, "onAdLoaded");
             super.onAdLoaded();
             mIsLoaded = true;
-            invokeLoadFinish(AdMobNetworkBannerAdapter.this);
+            invokeLoadFinish();
         }
 
         @Override
