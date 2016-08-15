@@ -13,10 +13,11 @@ import android.widget.RelativeLayout;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdListener;
+import com.facebook.ads.AdSettings;
+import com.facebook.ads.MediaView;
 import com.facebook.ads.NativeAd;
 
 import net.pubnative.mediation.adapter.model.FacebookNativeAdModel;
-import net.pubnative.mediation.adapter.renderer.FacebookRenderer;
 import net.pubnative.mediation.exceptions.PubnativeException;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
 
@@ -34,7 +35,7 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
     private NativeAd mNative;
     private Context mContext;
     private View mContainer;
-    private FacebookRenderer mRenderer;
+    private MediaView mMediaView;
     private Dialog mDialog;
 
     /**
@@ -57,8 +58,8 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
         Log.v(TAG, "load");
         if (context != null && mData != null) {
             mContext = context;
-            mRenderer = new FacebookRenderer();
-            mContainer = mRenderer.createView(context, prepareDialogView());
+            AdSettings.addTestDevice("e356e5959d9062f96086af6250f3ead8");
+            mContainer = prepareDialogView();
             String placementId = (String) mData.get(FacebookNetworkRequestAdapter.KEY_PLACEMENT_ID);
             if (!TextUtils.isEmpty(placementId)) {
                 mNative = new NativeAd(context, placementId);
@@ -122,6 +123,45 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
 
         layout.addView(container);
 
+        mMediaView = new MediaView(mContext) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
+                int originalWidth = MeasureSpec.getSize(widthMeasureSpec);
+                int originalHeight = MeasureSpec.getSize(heightMeasureSpec);
+                int calculatedHeight = originalWidth * 9 / 16;
+                int finalWidth, finalHeight;
+
+                if (calculatedHeight > originalHeight)
+                {
+                    finalWidth = originalHeight * 16 / 9;
+                    finalHeight = originalHeight;
+                }
+                else
+                {
+                    finalWidth = originalWidth;
+                    finalHeight = calculatedHeight;
+                }
+
+                super.onMeasure(
+                        MeasureSpec.makeMeasureSpec(finalWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(finalHeight, MeasureSpec.EXACTLY));
+            }
+        };
+        MediaView.LayoutParams mediaParams = new MediaView.LayoutParams(params.width, params.height);
+        mediaParams.setMargins(params.leftMargin,
+                               params.topMargin,
+                               params.rightMargin,
+                               params.bottomMargin);
+
+        int[] rules = params.getRules();
+        for (int i = 0; i < rules.length; i++) {
+            mediaParams.addRule(i, rules[i]);
+        }
+        container.setVisibility(View.INVISIBLE);
+        mMediaView.setLayoutParams(mediaParams);
+        layout.addView(mMediaView);
+
         return container;
 
     }
@@ -179,9 +219,8 @@ public class FacebookNetworkVideoAdapter extends PubnativeLibraryNetworkVideoAda
             prepareCloseButton();
             FacebookNativeAdModel adModel = new FacebookNativeAdModel(mNative);
             adModel.setListener(this);
-            mRenderer.renderView(mContainer, adModel);
-            mContainer.setClickable(true);
-            mNative.registerViewForInteraction(mRenderer.getMediaView(mContainer));
+            View view = adModel.setNativeAd(mMediaView);
+            adModel.startTracking(mContext, (ViewGroup) view);
         }
         invokeLoadFinish();
     }

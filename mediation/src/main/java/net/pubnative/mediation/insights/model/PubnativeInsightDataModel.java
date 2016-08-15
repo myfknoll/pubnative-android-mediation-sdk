@@ -281,14 +281,14 @@ public class PubnativeInsightDataModel {
         }
     }
 
-    public void setTargetting(PubnativeAdTargetingModel targetting) {
+    public void setTargeting(PubnativeAdTargetingModel targeting) {
 
         Log.v(TAG, "setTargeting");
-        age = targetting.age;
-        education = targetting.education;
-        interests = targetting.interests;
-        gender = targetting.gender;
-        iap = targetting.iap;
-        iap_total = targetting.iap_total;
+        age = targeting.age;
+        education = targeting.education;
+        interests = targeting.interests;
+        gender = targeting.gender;
+        iap = targeting.iap;
+        iap_total = targeting.iap_total;
     }
 }
