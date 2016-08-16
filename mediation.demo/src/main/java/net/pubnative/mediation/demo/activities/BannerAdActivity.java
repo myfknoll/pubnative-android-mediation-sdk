@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import net.pubnative.mediation.Pubnative;
 import net.pubnative.mediation.demo.Settings;
 import net.pubnative.mediation.request.PubnativeNetworkBanner;
 
@@ -22,7 +23,7 @@ public class BannerAdActivity extends StandardAdUnitActivity implements Pubnativ
         }
         mBanner = new PubnativeNetworkBanner();
         mBanner.setListener(this);
-        mBanner.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        mBanner.load(this, mPlacementSpinner.getSelectedItem().toString());
     }
 
     @Override

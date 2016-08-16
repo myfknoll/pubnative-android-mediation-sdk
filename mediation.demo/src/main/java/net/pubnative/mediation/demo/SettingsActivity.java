@@ -32,7 +32,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import net.pubnative.mediation.config.PubnativeConfigManager;
+import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 public class SettingsActivity extends Activity {
 
@@ -68,14 +68,14 @@ public class SettingsActivity extends Activity {
 
         Log.v(TAG, "onBackPressed");
         Settings.setAppToken(this, mAppToken.getText().toString());
-        PubnativeConfigManager.clean(this);
+        PubnativeConfigUtils.clean(this);
         super.onBackPressed();
     }
 
     public void onResetConfigClick(View view) {
 
         Log.v(TAG, "onResetConfigClick");
-        PubnativeConfigManager.clean(this);
+        PubnativeConfigUtils.clean(this);
         Toast.makeText(this, "Stored config reset!", Toast.LENGTH_SHORT).show();
     }
 
