@@ -80,7 +80,7 @@ public class PubnativeInsightModel {
 
         Log.v(TAG, "setTargeting");
         if (targeting != null) {
-            mData.setTargetting(targeting);
+            mData.setTargeting(targeting);
         }
     }
 

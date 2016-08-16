@@ -65,7 +65,7 @@ public class PubnativeInsightDataModelTest {
         // valid string
         PubnativeAdTargetingModel targeting = new PubnativeAdTargetingModel();
         targeting.addInterest("sampleText");
-        dataModelSpy.setTargetting(targeting);
+        dataModelSpy.setTargeting(targeting);
         assertThat(dataModelSpy.interests).isNotNull();
         assertThat(dataModelSpy.interests.size()).isNotZero();
 
@@ -75,13 +75,13 @@ public class PubnativeInsightDataModelTest {
         // interest as empty string
         PubnativeAdTargetingModel emptyInterest = new PubnativeAdTargetingModel();
         emptyInterest.addInterest("");
-        dataModelSpy.setTargetting(emptyInterest);
+        dataModelSpy.setTargeting(emptyInterest);
         assertThat(dataModelSpy.interests).isNull();
 
         // interest as null
         PubnativeAdTargetingModel nullInterest = new PubnativeAdTargetingModel();
         nullInterest.addInterest(null);
-        dataModelSpy.setTargetting(nullInterest);
+        dataModelSpy.setTargeting(nullInterest);
         assertThat(dataModelSpy.interests).isNull();
     }
 

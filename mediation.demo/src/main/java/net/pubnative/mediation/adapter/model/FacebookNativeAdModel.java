@@ -24,9 +24,13 @@
 package net.pubnative.mediation.adapter.model;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdChoicesView;
@@ -150,6 +154,15 @@ public class FacebookNativeAdModel extends PubnativeAdModel implements Impressio
         if (view != null && mNativeAd != null && view instanceof MediaView) {
             MediaView mediaView = (MediaView) view;
             mediaView.setNativeAd(mNativeAd);
+            Button btn = new Button(view.getContext());
+            RelativeLayout.LayoutParams btnParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            btnParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            btnParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            btn.getBackground().setColorFilter(0xFF779C43, PorterDuff.Mode.MULTIPLY);
+            btn.setText(getCallToAction());
+            btn.setTextColor(Color.WHITE);
+            mediaView.addView(btn, btnParams);
             result = mediaView;
         }
         return result;
