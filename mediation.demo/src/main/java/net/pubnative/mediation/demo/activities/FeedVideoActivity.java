@@ -28,7 +28,7 @@ public class FeedVideoActivity extends StandardAdUnitActivity implements Pubnati
         mLoaderContainer.setVisibility(View.VISIBLE);
         mFeedVideo = new PubnativeNetworkFeedVideo();
         mFeedVideo.setListener(this);
-        mFeedVideo.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        mFeedVideo.load(this, mPlacementSpinner.getSelectedItem().toString());
     }
 
     //==============================================================================================

@@ -1,6 +1,9 @@
-<manifest
-    package="net.pubnative.mediation">
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="net.pubnative.mediation">
 
-    <application/>
+    <application>
+        <service android:name=".config.PubnativeConfigService" />
+    </application>
 
 </manifest>

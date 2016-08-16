@@ -24,7 +24,6 @@
 package net.pubnative.mediation.demo;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +35,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.ads.MediaView;
-import com.squareup.picasso.Picasso;
 
 import net.pubnative.mediation.request.PubnativeNetworkRequest;
 import net.pubnative.mediation.request.model.PubnativeAdModel;
@@ -159,7 +157,7 @@ public class AdViewHolder implements PubnativeNetworkRequest.Listener,
         Log.v(TAG, "onRequestClick");
         cleanView();
         mAdLoading.setVisibility(View.VISIBLE);
-        mCellRequestModel.request.start(mContext, Settings.getAppToken(mContext), mCellRequestModel.placementID, this);
+        mCellRequestModel.request.start(mContext, mCellRequestModel.placementID, this);
     }
 
     //==============================================================================================

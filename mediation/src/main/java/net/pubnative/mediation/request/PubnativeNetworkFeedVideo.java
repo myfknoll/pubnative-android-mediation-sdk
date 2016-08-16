@@ -34,6 +34,7 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkFeedVideoAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 import java.util.Map;
 
@@ -132,10 +133,9 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
     /**
      * Loads the feedVideo ads before being shown
      * @param context   valid Context
-     * @param appToken  valid app token string
      * @param placement valid placement string
      */
-    public synchronized void load(Context context, String appToken, String placement) {
+    public synchronized void load(Context context, String placement) {
 
         Log.v(TAG, "initialize");
         if (mHandler == null) {
@@ -143,17 +143,17 @@ public class PubnativeNetworkFeedVideo extends PubnativeNetworkWaterfall
         }
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
-        } else if (context == null
-                   || TextUtils.isEmpty(appToken)
-                   || TextUtils.isEmpty(placement)) {
+        } else if (context == null || TextUtils.isEmpty(placement)){
             invokeLoadFail(PubnativeException.FEED_VIDEO_PARAMETERS_INVALID);
+        } else if (TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context))) {
+            Log.e(TAG, "initialize - Error: request can't be completed, we are fetching config file");
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.FEED_VIDEO_LOADING);
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.FEED_VIDEO_SHOWN);
         } else {
             mIsLoading = true;
-            initialize(context, appToken, placement);
+            initialize(context, PubnativeConfigUtils.getStoredAppToken(context), placement);
         }
     }
 

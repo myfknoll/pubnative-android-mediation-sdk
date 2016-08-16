@@ -29,6 +29,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import net.pubnative.mediation.Pubnative;
+import net.pubnative.mediation.demo.MediationApplication;
 import net.pubnative.mediation.demo.R;
 import net.pubnative.mediation.demo.Settings;
 import net.pubnative.mediation.demo.SettingsActivity;
@@ -38,9 +40,8 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final String  TAG       = MainActivity.class.getSimpleName();
-    private static final String  APP_TOKEN = "7c26af3aa5f6c0a4ab9f4414787215f3bdd004f80b1b358e72c3137c94f5033c";
-    private              boolean mIsDefaultsSet   = false;
+    private static final String  TAG            = MainActivity.class.getSimpleName();
+    private              boolean mIsDefaultsSet = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +113,7 @@ public class MainActivity extends Activity {
         if(!mIsDefaultsSet) {
             mIsDefaultsSet = true;
             // App token
-            Settings.setAppToken(this, APP_TOKEN);
+            Settings.setAppToken(this, MediationApplication.APP_TOKEN);
             // Placements
             List<String> placements = new ArrayList<>();
             placements.add("facebook_only");

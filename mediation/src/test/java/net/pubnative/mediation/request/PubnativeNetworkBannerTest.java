@@ -169,12 +169,12 @@ public class PubnativeNetworkBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(null, "app_token", "testPlacementName");
+        request.load(null, "testPlacementName");
 
         verify(listener).onPubnativeNetworkBannerLoadFail(eq(request), eq(PubnativeException.BANNER_PARAMETERS_INVALID));
     }
 
-    @Test
+    /*@Test
     public void load_withNullAppToken_callBackLoadFail() {
 
         PubnativeNetworkBanner request = spy(PubnativeNetworkBanner.class);
@@ -185,7 +185,7 @@ public class PubnativeNetworkBannerTest {
         request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
 
         verify(listener).onPubnativeNetworkBannerLoadFail(eq(request), eq(PubnativeException.BANNER_PARAMETERS_INVALID));
-    }
+    }*/
 
     @Test
     public void load_withNullPlacementName_callBackLoadFail() {
@@ -195,23 +195,11 @@ public class PubnativeNetworkBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null);
 
         verify(listener).onPubnativeNetworkBannerLoadFail(eq(request), eq(PubnativeException.BANNER_PARAMETERS_INVALID));
     }
 
-    @Test
-    public void load_withEmptyAppToken_callBackLoadFail() {
-
-        PubnativeNetworkBanner request = spy(PubnativeNetworkBanner.class);
-        PubnativeNetworkBanner.Listener listener = spy(PubnativeNetworkBanner.Listener.class);
-        request.mHandler = new Handler();
-        request.mListener = listener;
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "", "testPlacementName");
-
-        verify(listener).onPubnativeNetworkBannerLoadFail(eq(request), eq(PubnativeException.BANNER_PARAMETERS_INVALID));
-    }
 
     @Test
     public void load_withEmptyPlacementName_callBackLoadFail() {
@@ -221,7 +209,7 @@ public class PubnativeNetworkBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "");
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "");
 
         verify(listener).onPubnativeNetworkBannerLoadFail(eq(request), eq(PubnativeException.BANNER_PARAMETERS_INVALID));
     }
@@ -232,16 +220,7 @@ public class PubnativeNetworkBannerTest {
         PubnativeNetworkBanner request = spy(PubnativeNetworkBanner.class);
         request.mHandler = new Handler();
 
-        request.load(null, "app_token", "testPlacementName");
-    }
-
-    @Test
-    public void load_withNullAppTokenNullListener_pass() {
-
-        PubnativeNetworkBanner request = spy(PubnativeNetworkBanner.class);
-        request.mHandler = new Handler();
-
-        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
+        request.load(null, "testPlacementName");
     }
 
     @Test
@@ -250,7 +229,7 @@ public class PubnativeNetworkBannerTest {
         PubnativeNetworkBanner request = spy(PubnativeNetworkBanner.class);
         request.mHandler = new Handler();
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null);
     }
 
     @Test
