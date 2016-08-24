@@ -27,8 +27,8 @@ task projectInfo << {
 //==================================================================================================
 apply plugin: 'com.android.library'
 android {
-    compileSdkVersion 10
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 10
@@ -69,42 +69,7 @@ dependencies {
 apply plugin: "net.saliman.cobertura"
 apply plugin: "com.github.kt3k.coveralls"
 cobertura.coverageFormats = ['html', 'xml']
-//==================================================================================================
-// BINTRAY
-//==================================================================================================
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                name project.name
-                description "Pubnative mediation Android"
-                url "http://www.pubnative.net"
-                licenses {
-                    license {
-                        name "MIT"
-                        url "https://opensource.org/licenses/MIT"
-                    }
-                }
-                developers {
-                    developer {
-                        id "cerberillo"
-                        name "David Martin"
-                        email "david@martinmacias.com"
-                    }
-                }
-                scm {
-                    connection "${project.property("repositoryURL")}.git"
-                    developerConnection "${project.property("repositoryURL")}.git"
-                    url project.property("repositoryURL")
-                }
-            }
-        }
-    }
-}
+
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
@@ -120,20 +85,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives javadocJar
     archives sourcesJar
-}
-bintray {
-    user = System.getenv("BINTRAY_USER")
-    key = System.getenv("BINTRAY_API_KEY")
-    pkg {
-        configurations = ['archives']
-        userOrg = 'pubnative'
-        repo = 'maven'
-        name = project.name
-        version {
-            name = project.version?:"BETA"
-            vcsTag = project.version?:"BETA"
-        }
-    }
 }
 
 //==================================================================================================
