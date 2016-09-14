@@ -31,9 +31,10 @@ import android.util.Log;
 
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
-import net.pubnative.mediation.adapter.network.PubnativeNetworkVideoAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
+import net.pubnative.mediation.utils.PubnativeConfigUtils;
+import net.pubnative.mediation.request.model.PubnativeAdModel;
 
 import java.util.Map;
 
@@ -130,25 +131,24 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
     /**
      * Loads the video ads before being shown
      * @param context valid Context
-     * @param appToken valid app token string
      * @param placement valid placement string
      */
-    public synchronized void load(Context context, String appToken, String placement) {
+    public synchronized void load(Context context, String placement) {
 
         Log.v(TAG, "initialize");
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
-        } else if (context == null ||
-                   TextUtils.isEmpty(appToken) ||
-                   TextUtils.isEmpty(placement)) {
+        } else if (context == null || TextUtils.isEmpty(placement)){
             invokeLoadFail(PubnativeException.VIDEO_PARAMETERS_INVALID);
+        } else if (TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context))) {
+            Log.e(TAG, "initialize - Error: request can't be completed, we are fetching config file");
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.VIDEO_LOADING);
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.VIDEO_SHOWN);
         } else {
             mHandler = new Handler(Looper.getMainLooper());
-            initialize(context, appToken, placement);
+            initialize(context, PubnativeConfigUtils.getStoredAppToken(context), placement);
         }
     }
 
@@ -180,6 +180,19 @@ public class PubnativeNetworkVideo extends PubnativeNetworkWaterfall
             mAdapter.show();
         } else {
             Log.v(TAG, "show - the video is not loaded, please load before");
+        }
+    }
+
+    /**
+     * This method will destroy the video if the ad is available
+     */
+    public synchronized void destroy() {
+
+        Log.v(TAG, "destroy");
+        if (mAdapter != null) {
+            mAdapter.destroy();
+        } else {
+            Log.v(TAG, "destroy - the video is not loaded, please load before");
         }
     }
 

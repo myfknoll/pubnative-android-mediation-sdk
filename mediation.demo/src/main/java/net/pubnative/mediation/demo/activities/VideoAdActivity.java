@@ -16,7 +16,7 @@ public class VideoAdActivity extends StandardAdUnitActivity implements Pubnative
         mLoaderContainer.setVisibility(View.VISIBLE);
         PubnativeNetworkVideo video = new PubnativeNetworkVideo();
         video.setListener(this);
-        video.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        video.load(this, mPlacementSpinner.getSelectedItem().toString());
     }
 
     //==============================================================================================
@@ -63,6 +63,7 @@ public class VideoAdActivity extends StandardAdUnitActivity implements Pubnative
     public void onPubnativeNetworkVideoClick(PubnativeNetworkVideo video) {
         Log.v(TAG, "onPubnativeNetworkVideoClick");
         showToast("video click");
+        video.destroy();
     }
 
     @Override

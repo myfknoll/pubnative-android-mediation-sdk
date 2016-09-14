@@ -23,40 +23,58 @@
 
 package net.pubnative.mediation.adapter.network;
 
+import com.facebook.ads.AdSettings;
+
 import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 
 public class FacebookNetworkAdapter extends PubnativeNetworkHub {
 
+
+    private static final String MEDIATION_SERVICE_NAME = "Pubnative ML";
+
+    private void setAdSettings() {
+        AdSettings.setMediationService(MEDIATION_SERVICE_NAME);
+    }
+
     @Override
     public PubnativeNetworkRequestAdapter getRequestAdapter() {
 
+        setAdSettings();
         return new FacebookNetworkRequestAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkInterstitialAdapter getInterstitialAdapter() {
 
+        setAdSettings();
         return new FacebookNetworkInterstitialAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkFeedBannerAdapter getFeedBannerAdapter() {
+
+        setAdSettings();
         return new FacebookNetworkFeedBannerAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkBannerAdapter getBannerAdapter() {
 
+        setAdSettings();
         return new FacebookNetworkBannerAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkVideoAdapter getVideoAdapter() {
-        return null;
+
+        setAdSettings();
+        return new FacebookNetworkVideoAdapter(mNetworkData);
     }
 
     @Override
     public PubnativeNetworkFeedVideoAdapter getFeedVideoAdapter() {
+
+        setAdSettings();
         return null;
     }
 }

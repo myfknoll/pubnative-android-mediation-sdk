@@ -64,9 +64,17 @@ public class YahooNetworkVideoAdapter extends PubnativeNetworkVideoAdapter
             invokeLoadFail(PubnativeException.ADAPTER_ILLEGAL_ARGUMENTS);
         } else {
             String adSpaceName = (String) mData.get(YahooNetworkRequestAdapter.KEY_AD_SPACE_NAME);
-            if (TextUtils.isEmpty(adSpaceName)) {
+            String apiKey = (String) mData.get(YahooNetworkRequestAdapter.KEY_FLURRY_API_KEY);
+            if (TextUtils.isEmpty(apiKey) || TextUtils.isEmpty(adSpaceName)) {
                 invokeLoadFail(PubnativeException.ADAPTER_MISSING_DATA);
             } else {
+                new FlurryAgent.Builder()
+                        .withLogEnabled(true)
+                        .withLogLevel(Log.VERBOSE)
+                        .build(context, apiKey);
+                if (!FlurryAgent.isSessionActive()) {
+                    FlurryAgent.onStartSession(context);
+                }
                 mInterstitial = new FlurryAdInterstitial(context, adSpaceName);
                 mInterstitial.setListener(this);
                 // Add targeting

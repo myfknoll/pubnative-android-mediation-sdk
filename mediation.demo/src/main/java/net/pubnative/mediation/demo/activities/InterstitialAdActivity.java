@@ -16,7 +16,7 @@ public class InterstitialAdActivity extends StandardAdUnitActivity implements Pu
         mLoaderContainer.setVisibility(View.VISIBLE);
         PubnativeNetworkInterstitial interstitial = new PubnativeNetworkInterstitial();
         interstitial.setListener(this);
-        interstitial.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        interstitial.load(this, mPlacementSpinner.getSelectedItem().toString());
     }
 
     //==============================================================================================

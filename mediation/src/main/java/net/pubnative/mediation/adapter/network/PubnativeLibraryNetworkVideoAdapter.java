@@ -95,7 +95,7 @@ public class PubnativeLibraryNetworkVideoAdapter extends PubnativeNetworkVideoAd
 
         Log.v(TAG, "destroy");
         if (mVideo != null) {
-            mVideo.destroy();
+            mVideo.hide();
         }
     }
 

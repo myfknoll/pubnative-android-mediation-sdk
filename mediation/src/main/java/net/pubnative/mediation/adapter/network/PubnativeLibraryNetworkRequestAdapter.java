@@ -26,18 +26,23 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.util.Log;
 
+import net.pubnative.library.request.PubnativeMeta;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
+import net.pubnative.mediation.adapter.model.PubnativeCPICacheItem;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
 import java.util.List;
 import java.util.Map;
 
-public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkRequestAdapter
+public class PubnativeLibraryNetworkRequestAdapter
+        extends PubnativeNetworkRequestAdapter
         implements PubnativeRequest.Listener {
 
-    private static String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
+    private static final String TAG = PubnativeLibraryNetworkRequestAdapter.class.getSimpleName();
+
+    private Context mContext = null;
 
     public PubnativeLibraryNetworkRequestAdapter(Map data) {
 
@@ -53,6 +58,7 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
         if (context == null || mData == null) {
             invokeFailed(PubnativeException.ADAPTER_MISSING_DATA);
         } else {
+            mContext = context;
             createRequest(context);
         }
     }
@@ -63,18 +69,24 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
     protected void createRequest(Context context) {
 
         Log.v(TAG, "createRequest");
+
         PubnativeRequest request = new PubnativeRequest();
+
         // We add all params
         for (Object key : mData.keySet()) {
+
             Object value = mData.get(key);
             request.setParameter((String) key, value.toString());
         }
+
         // Add extras
         if (mExtras != null) {
             for (String key : mExtras.keySet()) {
                 request.setParameter(key, mExtras.get(key));
             }
         }
+
+        // Add targetting
         if (mTargeting != null) {
             Map targeting = mTargeting.toDictionary();
             for (Object key : targeting.keySet()) {
@@ -82,6 +94,7 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
                 request.setParameter((String) key, value);
             }
         }
+
         request.start(context, this);
     }
 
@@ -95,18 +108,27 @@ public class PubnativeLibraryNetworkRequestAdapter extends PubnativeNetworkReque
 
         Log.v(TAG, "onPubnativeRequestSuccess");
 
-        net.pubnative.mediation.request.model.PubnativeAdModel wrapAd = null;
-        if (ads != null && ads.size() > 0) {
-            wrapAd = new PubnativeLibraryAdModel(ads.get(0));
-            wrapAd.setLinkCaching(mUseCaching);
+        PubnativeAdModel ad = ads.get(0);
+
+        // If the revenue model is CPA
+        if (ad.isRevenueModelCPA()) {
+            // Inject into cache and serve from cache
+            ad = PubnativeLibraryCPICache.get(mContext);
         }
-        invokeLoaded(wrapAd);
+
+        invokeLoaded(new PubnativeLibraryAdModel(ad));
     }
 
     @Override
     public void onPubnativeRequestFailed(PubnativeRequest request, Exception ex) {
 
         Log.v(TAG, "onPubnativeRequestFailed: " + ex);
-        invokeFailed(ex);
+
+        PubnativeAdModel ad = PubnativeLibraryCPICache.get(mContext);
+        if(ad == null) {
+            invokeFailed(ex);
+        } else {
+            invokeLoaded(new PubnativeLibraryAdModel(ad));
+        }
     }
 }

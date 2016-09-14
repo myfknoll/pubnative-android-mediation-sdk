@@ -28,7 +28,7 @@ public class FeedBannerActivity extends StandardAdUnitActivity implements Pubnat
         mLoaderContainer.setVisibility(View.VISIBLE);
         mFeedBanner = new PubnativeNetworkFeedBanner();
         mFeedBanner.setListener(this);
-        mFeedBanner.load(this, Settings.getAppToken(this), mPlacementSpinner.getSelectedItem().toString());
+        mFeedBanner.load(this, mPlacementSpinner.getSelectedItem().toString());
     }
 
     //==============================================================================================
