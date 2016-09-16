@@ -26,10 +26,8 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.util.Log;
 
-import net.pubnative.library.request.PubnativeMeta;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
-import net.pubnative.mediation.adapter.model.PubnativeCPICacheItem;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
@@ -108,15 +106,23 @@ public class PubnativeLibraryNetworkRequestAdapter
 
         Log.v(TAG, "onPubnativeRequestSuccess");
 
-        PubnativeAdModel ad = ads.get(0);
+        PubnativeAdModel ad = null;
+
+        if(ads != null && ads.size() > 0) {
+            ad = ads.get(0);
+        }
 
         // If the revenue model is CPA
-        if (ad.isRevenueModelCPA()) {
+        if (ad == null || ad.isRevenueModelCPA()) {
             // Inject into cache and serve from cache
             ad = PubnativeLibraryCPICache.get(mContext);
         }
 
-        invokeLoaded(new PubnativeLibraryAdModel(ad));
+        if (ad == null) {
+            invokeLoaded(null);
+        } else {
+            invokeLoaded(new PubnativeLibraryAdModel(ad));
+        }
     }
 
     @Override
