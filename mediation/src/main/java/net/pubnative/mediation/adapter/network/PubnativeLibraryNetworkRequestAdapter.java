@@ -26,8 +26,10 @@ package net.pubnative.mediation.adapter.network;
 import android.content.Context;
 import android.util.Log;
 
+import net.pubnative.library.request.PubnativeMeta;
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
+import net.pubnative.mediation.adapter.model.PubnativeCPICacheItem;
 import net.pubnative.mediation.adapter.model.PubnativeLibraryAdModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
 
