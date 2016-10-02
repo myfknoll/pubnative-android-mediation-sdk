@@ -144,6 +144,7 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     protected void invokeLoadFinish() {
 
         Log.v(TAG, "invokeLoadFinish");
+        cancelTimeout();
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFinish(this);
         }
@@ -153,6 +154,7 @@ public abstract class PubnativeNetworkBannerAdapter extends PubnativeNetworkAdap
     protected void invokeLoadFail(Exception exception) {
 
         Log.v(TAG, "invokeLoadFail", exception);
+        cancelTimeout();
         if (mLoadListener != null) {
             mLoadListener.onAdapterLoadFail(this, exception);
         }

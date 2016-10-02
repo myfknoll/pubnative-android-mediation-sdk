@@ -10,7 +10,6 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkBannerAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 import java.util.Map;
 
@@ -30,6 +29,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
 
         /**
          * Called whenever the banner finished loading an ad
+         * w
          *
          * @param banner banner that finished the initialize
          */
@@ -81,7 +81,7 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
     /**
      * Loads the interstitial ads before being shown
      */
-    public synchronized void load(Context context, String placement) {
+    public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
         if (mHandler == null) {
@@ -89,16 +89,15 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
         }
         if (mListener == null) {
             Log.w(TAG, "initialize - Warning: listener was not set, have you configured one using setListener()?");
-        } else if (context == null || TextUtils.isEmpty(placement)){
+        }
+        if (context == null || TextUtils.isEmpty(appToken) || TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.BANNER_PARAMETERS_INVALID);
-        } else if (TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context))) {
-            Log.e(TAG, "initialize - Error: request can't be completed, we are fetching config file");
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.BANNER_LOADING);
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.BANNER_SHOWN);
         } else {
-            initialize(context, PubnativeConfigUtils.getStoredAppToken(context), placement);
+            initialize(context, appToken, placement);
         }
     }
 
@@ -207,7 +206,6 @@ public class PubnativeNetworkBanner extends PubnativeNetworkWaterfall
                 if (mListener != null) {
                     mListener.onPubnativeNetworkBannerLoadFinish(PubnativeNetworkBanner.this);
                 }
-                mListener = null;
             }
         });
     }

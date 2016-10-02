@@ -7,15 +7,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import net.pubnative.mediation.adapter.network.PubnativeLibraryCPICache;
-import net.pubnative.mediation.config.PubnativeConfigService;
+import net.pubnative.mediation.config.PubnativeConfigManager;
+import net.pubnative.mediation.config.model.PubnativeConfigModel;
 
 import java.util.HashMap;
 
 public class Pubnative {
 
-    private static final String TAG           = Pubnative.class.getSimpleName();
-    public  static final String APP_TOKEN_KEY = "app_token";
-    public  static final String EXTRAS        = "extras";
+    private static final String TAG = Pubnative.class.getSimpleName();
 
     public static void init(Context context, String appToken) {
         init(context, appToken, null);
@@ -29,15 +28,13 @@ public class Pubnative {
         } else if (TextUtils.isEmpty(appToken)) {
             Log.v(TAG, "init - warning: invalid apptoken");
         } else {
-            Intent intent = new Intent(context, PubnativeConfigService.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(APP_TOKEN_KEY, appToken);
-            // put extras, not necessary
-            if (requestParams != null && !requestParams.isEmpty()) {
-                bundle.putSerializable(EXTRAS, requestParams);
-            }
-            intent.putExtras(bundle);
-            context.startService(intent);
+            // cache config
+            PubnativeConfigManager.getConfig(context, appToken, requestParams, new PubnativeConfigManager.Listener() {
+                @Override
+                public void onConfigLoaded(PubnativeConfigModel configModel) {
+                    // do nothing
+                }
+            });
 
             // cache ads
             PubnativeLibraryCPICache.init(context, appToken);

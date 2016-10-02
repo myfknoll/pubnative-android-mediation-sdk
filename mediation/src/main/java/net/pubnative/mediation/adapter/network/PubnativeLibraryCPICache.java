@@ -29,7 +29,6 @@ import android.util.Log;
 
 import net.pubnative.library.request.PubnativeRequest;
 import net.pubnative.library.request.model.PubnativeAdModel;
-import net.pubnative.library.request.model.api.PubnativeAPIV3DataModel;
 import net.pubnative.mediation.adapter.model.PubnativeCPICacheItem;
 
 import java.util.ArrayList;
@@ -38,10 +37,10 @@ import java.util.List;
 
 public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
 
-    private static final String                      TAG                         = PubnativeLibraryCPICache.class.getSimpleName();
-    private static final String                      CACHE_SIZE_PARAMETER        = "5";
-    private static final int                         CACHE_MIN_SIZE              = 2;
-    private static final long                        CACHE_AD_VALIDITY_THRESHOLD = 1800000; // 30 Minutes
+    private   static final String                    TAG                         = PubnativeLibraryCPICache.class.getSimpleName();
+    private   static final String                    CACHE_SIZE_PARAMETER        = "5";
+    private   static final int                       CACHE_MIN_SIZE              = 2;
+    private   static final long                      CACHE_AD_VALIDITY_THRESHOLD = 1800000; // 30 Minutes
     protected static     List<PubnativeCPICacheItem> sAdQueue                    = new ArrayList<PubnativeCPICacheItem>();
     protected            String                      mAppToken                   = null;
     //==============================================================================================
@@ -51,7 +50,7 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
 
     private PubnativeLibraryCPICache() {}
 
-    private static synchronized PubnativeLibraryCPICache getInstance() {
+    protected static synchronized PubnativeLibraryCPICache getInstance() {
         if (sInstance == null) {
             sInstance = new PubnativeLibraryCPICache();
         }
@@ -79,8 +78,6 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
         return result;
     }
 
-
-
     //==============================================================================================
     // Private
     //==============================================================================================
@@ -103,23 +100,28 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
     //==============================================================================================
     // QUEUE
     //==============================================================================================
-    private void enqueue(List<PubnativeAdModel> ads) {
+    protected void enqueue(List<PubnativeAdModel> ads) {
 
         // Refill cache with received response from server
         for (PubnativeAdModel ad : ads) {
-            ad.fetch(); // Add CPI click cache
             ad.setUseClickCaching(true);
+            ad.fetch();
             enqueue(ad);
         }
     }
 
-    private void enqueue(PubnativeAdModel ad) {
+    protected void enqueue(PubnativeAdModel ad) {
 
         // Refill cache with received response from server
         sAdQueue.add(new PubnativeCPICacheItem(ad));
     }
 
-    private PubnativeAdModel dequeue() {
+    protected void enqueue(PubnativeCPICacheItem ad) {
+
+        sAdQueue.add(ad);
+    }
+
+    protected PubnativeAdModel dequeue() {
 
         Log.v(TAG, "dequeue");
         PubnativeAdModel result = null;
@@ -134,6 +136,18 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
             }
         }
         return result;
+    }
+
+    protected void clear() {
+
+        Log.v(TAG, "clear");
+        sAdQueue.clear();
+    }
+
+    protected int getQueueSize() {
+
+        Log.v(TAG, "getQueueSize");
+        return sAdQueue.size();
     }
 
     //==============================================================================================

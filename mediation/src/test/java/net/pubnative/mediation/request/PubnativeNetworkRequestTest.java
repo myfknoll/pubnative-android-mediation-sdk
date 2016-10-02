@@ -48,7 +48,7 @@ public class PubnativeNetworkRequestTest {
     public void start_withNullListener_pass() {
         // This should not crash
         PubnativeNetworkRequest request = spy(PubnativeNetworkRequest.class);
-        request.start(RuntimeEnvironment.application.getApplicationContext(), "testPlacementName", null);
+        request.start(RuntimeEnvironment.application.getApplicationContext(), "app_token", "testPlacementName", null);
     }
 
     @Test

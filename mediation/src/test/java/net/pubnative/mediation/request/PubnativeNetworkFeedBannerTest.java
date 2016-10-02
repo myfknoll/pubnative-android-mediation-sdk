@@ -170,7 +170,20 @@ public class PubnativeNetworkFeedBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(null, "testPlacementName");
+        request.load(null, "app_token", "testPlacementName");
+
+        verify(listener).onPubnativeNetworkFeedBannerLoadFail(eq(request), eq(PubnativeException.FEED_BANNER_PARAMETERS_INVALID));
+    }
+
+    @Test
+    public void load_withNullAppToken_callBackLoadFail() {
+
+        PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
+        PubnativeNetworkFeedBanner.Listener listener = spy(PubnativeNetworkFeedBanner.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
 
         verify(listener).onPubnativeNetworkFeedBannerLoadFail(eq(request), eq(PubnativeException.FEED_BANNER_PARAMETERS_INVALID));
     }
@@ -183,7 +196,20 @@ public class PubnativeNetworkFeedBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), null);
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
+
+        verify(listener).onPubnativeNetworkFeedBannerLoadFail(eq(request), eq(PubnativeException.FEED_BANNER_PARAMETERS_INVALID));
+    }
+
+    @Test
+    public void load_withEmptyAppToken_callBackLoadFail() {
+
+        PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
+        PubnativeNetworkFeedBanner.Listener listener = spy(PubnativeNetworkFeedBanner.Listener.class);
+        request.mHandler = new Handler();
+        request.mListener = listener;
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "", "testPlacementName");
 
         verify(listener).onPubnativeNetworkFeedBannerLoadFail(eq(request), eq(PubnativeException.FEED_BANNER_PARAMETERS_INVALID));
     }
@@ -196,7 +222,7 @@ public class PubnativeNetworkFeedBannerTest {
         request.mHandler = new Handler();
         request.mListener = listener;
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), "");
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", "");
 
         verify(listener).onPubnativeNetworkFeedBannerLoadFail(eq(request), eq(PubnativeException.FEED_BANNER_PARAMETERS_INVALID));
     }
@@ -207,7 +233,16 @@ public class PubnativeNetworkFeedBannerTest {
         PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
         request.mHandler = new Handler();
 
-        request.load(null, "testPlacementName");
+        request.load(null, "app_token", "testPlacementName");
+    }
+
+    @Test
+    public void load_withNullAppTokenNullListener_pass() {
+
+        PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
+        request.mHandler = new Handler();
+
+        request.load(RuntimeEnvironment.application.getApplicationContext(), null, "testPlacementName");
     }
 
     @Test
@@ -216,7 +251,7 @@ public class PubnativeNetworkFeedBannerTest {
         PubnativeNetworkFeedBanner request = spy(PubnativeNetworkFeedBanner.class);
         request.mHandler = new Handler();
 
-        request.load(RuntimeEnvironment.application.getApplicationContext(), null);
+        request.load(RuntimeEnvironment.application.getApplicationContext(), "app_token", null);
     }
 
     @Test

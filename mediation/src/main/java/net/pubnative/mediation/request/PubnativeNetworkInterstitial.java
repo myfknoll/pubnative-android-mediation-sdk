@@ -33,7 +33,6 @@ import net.pubnative.mediation.adapter.PubnativeNetworkHub;
 import net.pubnative.mediation.adapter.network.PubnativeNetworkInterstitialAdapter;
 import net.pubnative.mediation.config.model.PubnativeNetworkModel;
 import net.pubnative.mediation.exceptions.PubnativeException;
-import net.pubnative.mediation.utils.PubnativeConfigUtils;
 
 import java.util.Map;
 
@@ -116,24 +115,25 @@ public class PubnativeNetworkInterstitial extends PubnativeNetworkWaterfall
     /**
      * Loads the interstitial ads before being shown
      * @param context valid Context
+     * @param appToken valid app token string
      * @param placement valid placement string
      */
-    public synchronized void load(Context context, String placement) {
+    public synchronized void load(Context context, String appToken, String placement) {
 
         Log.v(TAG, "initialize");
         if (mListener == null) {
             Log.e(TAG, "initialize - Error: listener was not set, have you configured one using setListener()?");
-        } else if (context == null || TextUtils.isEmpty(placement)){
+        } else if (context == null ||
+                   TextUtils.isEmpty(appToken) ||
+                   TextUtils.isEmpty(placement)) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_PARAMETERS_INVALID);
-        } else if (TextUtils.isEmpty(PubnativeConfigUtils.getStoredAppToken(context))) {
-            Log.e(TAG, "initialize - Error: request can't be completed, we are fetching config file");
         } else if (mIsLoading) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_LOADING);
         } else if (mIsShown) {
             invokeLoadFail(PubnativeException.INTERSTITIAL_SHOWN);
         } else {
             mHandler = new Handler(Looper.getMainLooper());
-            initialize(context, PubnativeConfigUtils.getStoredAppToken(context), placement);
+            initialize(context, appToken, placement);
         }
     }
 

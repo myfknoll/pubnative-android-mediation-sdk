@@ -113,7 +113,6 @@ public class PubnativeLibraryNetworkRequestAdapter
         if(ads != null && ads.size() > 0) {
             ad = ads.get(0);
         }
-
         // If the revenue model is CPA
         if (ad == null || ad.isRevenueModelCPA()) {
             // Inject into cache and serve from cache
