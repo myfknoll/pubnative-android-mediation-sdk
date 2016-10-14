@@ -42,6 +42,7 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
     private   static final int                       CACHE_MIN_SIZE              = 2;
     private   static final long                      CACHE_AD_VALIDITY_THRESHOLD = 1800000; // 30 Minutes
     protected static     List<PubnativeCPICacheItem> sAdQueue                    = new ArrayList<PubnativeCPICacheItem>();
+    protected static     boolean                     sIsRequesting               = false;
     protected            String                      mAppToken                   = null;
     //==============================================================================================
     // SINGLETON
@@ -51,6 +52,7 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
     private PubnativeLibraryCPICache() {}
 
     protected static synchronized PubnativeLibraryCPICache getInstance() {
+
         if (sInstance == null) {
             sInstance = new PubnativeLibraryCPICache();
         }
@@ -61,7 +63,10 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
     // Public
     //==============================================================================================
     public static void init(Context context, String appToken) {
-        getInstance().request(context, appToken);
+
+        if (getInstance().isCacheSizeCritical()) {
+            getInstance().request(context, appToken);
+        }
     }
 
     public synchronized static PubnativeAdModel get(Context context) {
@@ -71,7 +76,7 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
         // DEQUEUE
         result = getInstance().dequeue();
         // CHECK IF WE NEED TO REQUEST MORE ADS
-        if (sAdQueue.size() < CACHE_MIN_SIZE) {
+        if (getInstance().isCacheSizeCritical()) {
             getInstance().request(context, getInstance().mAppToken);
         }
 
@@ -88,7 +93,10 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
             Log.w(TAG, "context is nil and required, dropping this call");
         } else if (TextUtils.isEmpty(appToken)) {
             Log.w(TAG, "appToken is nil or empty and required, dropping this call");
+        } else if (sIsRequesting) {
+            Log.v(TAG, "currently requesting, dropping this call");
         } else {
+            sIsRequesting = true;
             mAppToken = appToken;
             PubnativeRequest request = new PubnativeRequest();
             request.setParameter(PubnativeRequest.Parameters.APP_TOKEN, mAppToken);
@@ -100,6 +108,11 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
     //==============================================================================================
     // QUEUE
     //==============================================================================================
+    protected boolean isCacheSizeCritical() {
+
+        return sAdQueue.size() < CACHE_MIN_SIZE;
+    }
+
     protected void enqueue(List<PubnativeAdModel> ads) {
 
         // Refill cache with received response from server
@@ -158,11 +171,12 @@ public class PubnativeLibraryCPICache implements PubnativeRequest.Listener {
     public void onPubnativeRequestSuccess(PubnativeRequest request, List<PubnativeAdModel> ads) {
 
         enqueue(ads);
+        sIsRequesting = false;
     }
 
     @Override
     public void onPubnativeRequestFailed(PubnativeRequest request, Exception ex) {
 
-        // Do nothing, we will retry next time
+        sIsRequesting = false;
     }
 }

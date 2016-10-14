@@ -178,7 +178,7 @@ public abstract class PubnativeNetworkWaterfall {
                     extras.putAll(mRequestParameters);
                 }
 
-                onWaterfallNextNetwork(hub, network, extras, mPlacement.currentPriority().cache_links);
+                onWaterfallNextNetwork(hub, network, extras);
             }
         }
     }
@@ -190,5 +190,5 @@ public abstract class PubnativeNetworkWaterfall {
 
     protected abstract void onWaterfallError(Exception exception);
 
-    protected abstract void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras, boolean isCached);
+    protected abstract void onWaterfallNextNetwork(PubnativeNetworkHub hub, PubnativeNetworkModel network, Map extras);
 }

@@ -40,7 +40,7 @@ public abstract class PubnativeNetworkAdapter {
     protected Map<String, String>             mExtras;
     protected Handler                         mHandler;
     protected PubnativeAdTargetingModel       mTargeting;
-    protected boolean                         mUseCaching = false;
+
     //==============================================================================================
     // Adapter Runnable
     //==============================================================================================
@@ -90,16 +90,6 @@ public abstract class PubnativeNetworkAdapter {
 
         Log.v(TAG, "setExtras");
         mTargeting = targeting;
-    }
-
-    public void setCachingEnable(boolean enable) {
-        Log.v(TAG, "setCachingEnable");
-        mUseCaching = enable;
-    }
-
-    public boolean isCachingEnable() {
-        Log.v(TAG, "isCachingEnable");
-        return mUseCaching;
     }
 
     /**
